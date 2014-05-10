@@ -1,5 +1,17 @@
 Rails.application.routes.draw do
   root 'pages#index'
+
+  resources :sessions
+  get 'login' => 'sessions#new'
+  get 'logout' => 'sessions#destroy'
+  get 'login/complete' => 'sessions#complete'
+
+  namespace :api, format: false, defaults: {format: 'json'} do
+    resources :users do
+      get :me, on: :collection
+    end
+  end
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

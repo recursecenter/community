@@ -15,6 +15,8 @@ gem 'uglifier', '>= 1.3.0'
 
 gem 'rails_12factor'
 
+gem 'oauth2'
+
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
@@ -29,6 +31,9 @@ gem 'spring',        group: :development
 
 gem 'pry-rails'
 
+group :development do
+  gem 'pry-remote'
+end
+
 # Use unicorn as the app server
 gem 'unicorn'
-
