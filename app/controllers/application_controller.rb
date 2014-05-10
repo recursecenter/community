@@ -6,4 +6,12 @@ class ApplicationController < ActionController::Base
   def current_user
     @current_user ||= User.where(id: session[:user_id]).first
   end
+
+  def login(user)
+    session[:user_id] = user.id
+  end
+
+  def logout
+    reset_session
+  end
 end

@@ -11,7 +11,7 @@ class SessionsController < ApplicationController
 
       user = User.create_or_update(user_data: user_data, batch_data: batch_data)
 
-      session[:user_id] = user.id
+      login(user)
 
       redirect_to root_url
     else
@@ -21,7 +21,7 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    reset_session
+    logout
     render text: "Logged out"
   end
 
