@@ -37,6 +37,7 @@ $ lein cljsbuild auto
 
 ## Needs
 
+- CSRF protection for API
 - use HS accounts (single sign-on)
 - subforums
 - editing
