@@ -1,5 +1,17 @@
 # community.hackerschool.com
 
+## Running the code
+
+```sh
+$ bundle
+...snip...
+$ foreman start
+
+# In another terminal:
+$ cd client
+$ lein cljsbuild auto
+```
+
 ## Needs
 
 - use HS accounts (single sign-on)

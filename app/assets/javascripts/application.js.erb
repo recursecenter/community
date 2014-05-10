@@ -13,4 +13,11 @@
 //= require jquery
 //= require jquery_ujs
 //= require turbolinks
-//= require_tree .
+
+<% if Rails.env.development? %>
+    <% require_asset "client-prod" %>
+<% else %>
+    <% require_asset "client-dev/goog/base" %>
+    <% require_asset "client-dev" %>
+    <% require_asset "load-client" %>
+<% end %>

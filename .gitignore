@@ -16,3 +16,6 @@
 /tmp
 
 .env
+
+app/assets/javascripts/client-dev.js
+app/assets/javascripts/client-dev
