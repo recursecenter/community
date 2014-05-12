@@ -10,6 +10,8 @@ Rails.application.routes.draw do
     resources :users do
       get :me, on: :collection
     end
+
+    resources :subforum_groups
   end
 
   # The priority is based upon order of creation: first created -> highest priority.

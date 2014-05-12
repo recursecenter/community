@@ -1,5 +1,6 @@
 (ns community.core
-  (:require [community.api]
+  (:require [community.api :as api]
+            [community.util :as util :refer-macros [<?]]
             [om.core :as om]
             [om.dom :as dom]
             [cljs.core.async :as async])
@@ -53,7 +54,7 @@
 
 (def app-state
   (atom {:current-user nil
-         :subforum-groups nil}))
+         :subforum-groups []}))
 
 (defn *forum-view [{:as app
                     :keys [current-user subforum-groups]}
@@ -62,27 +63,24 @@
     om/IRender
     (render [this]
       (dom/div nil
-        (dom/h1 nil (str "Hey " (or (get current-user "first_name")
-                                    "fella")))
-        (when subforum-groups
-          (apply dom/div #js{:id "subforum-groups"}
+        (dom/h1 nil (str "Hey " (:first-name current-user "there")))
+        (when-not (empty? subforum-groups)
+          (apply dom/ol #js {:id "subforum-groups"}
                  (for [group subforum-groups]
-                   (dom/div nil (:name group)))))))
+                   (dom/li nil (:name group)))))))
 
     om/IDidMount
     (did-mount [this]
-      (community.api/GET "/users/me"
-        {:handler (fn [user-data]
-                    (om/update! app :current-user user-data))
-         :error-handler (fn [{:keys [status] :as res}]
-                          (if (== status 403)
-                            (set! (.-location js/document) "/login")
-                            (prn res)))})
-      (let [soonTM #(om/update! app :subforum-groups
-                                [{:name "Group1"}
-                                 {:name "Group2"}
-                                 {:name "Group3"}])]
-        (js/setTimeout soonTM 1000)))))
+      (go
+        (try
+          (om/update! app :current-user    (<? (api/GET "/users/me")))
+          (om/update! app :subforum-groups (<? (api/GET "/subforum_groups")))
+
+          (catch ExceptionInfo e
+            (if (== 403 (:status (ex-data e)))
+              (set! (.-location js/document) "/login")
+              ;; TODO: display an error modal
+              (prn (ex-data e)))))))))
 
 (js/$
  #(om/root *forum-view
