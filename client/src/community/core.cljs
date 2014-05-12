@@ -5,6 +5,50 @@
 
 (enable-console-print!)
 
+;;;;;; prototype app-state
+(comment
+
+  ;; app-state
+  {:current-user current-user
+   :subforum-groups subforum groups}
+
+  ;; current-user
+  {:first-name "" :last-name "" :email "" :avatar ""}
+
+  ;; subforum-groups
+  [{:name "Subforum group 1"
+    :subforums subforums}
+   ...]
+
+  ;; subforums
+  [{:name "Subforum 1"
+    :unread? true
+    :description ""
+    :threads threads}
+   ...]
+
+  ;; threads
+  [{:name "Thread 1"
+    :author user1
+    :last-updated Date
+    :unread? true
+    :posts posts}
+   ...]
+
+  ;; user1
+  like current-user
+
+  ;; posts
+  [{:author user1
+    :content "important discussion"
+    :last-modified Date
+    :created-at Date}
+   ...]
+
+
+
+  )
+
 (def app-state
   (atom {:current-user nil
          :subforum-groups nil}))
