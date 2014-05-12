@@ -1,3 +1,10 @@
+# Random ideas
+
+- use prismatic's [schema](https://github.com/prismatic/schema) to
+  validate global app state and declaratively specify "models" on the
+  client.
+
+
 
 # Models
 
