@@ -1,6 +1,7 @@
 (defproject community "0.1.0-SNAPSHOT"
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.clojure/clojurescript "0.0-2202"]
+                 [org.clojure/core.async "0.1.303.0-886421-alpha"]
                  [om "0.6.2"]
                  [cljs-ajax "0.2.4"]]
 

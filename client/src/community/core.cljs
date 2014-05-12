@@ -1,7 +1,9 @@
 (ns community.core
   (:require [community.api]
             [om.core :as om]
-            [om.dom :as dom]))
+            [om.dom :as dom]
+            [cljs.core.async :as async])
+  (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (enable-console-print!)
 
@@ -10,7 +12,7 @@
 
   ;; app-state
   {:current-user current-user
-   :subforum-groups subforum groups}
+   :subforum-groups subforum-groups}
 
   ;; current-user
   {:first-name "" :last-name "" :email "" :avatar ""}
@@ -63,7 +65,7 @@
         (dom/h1 nil (str "Hey " (or (get current-user "first_name")
                                     "fella")))
         (when subforum-groups
-          (apply dom/div #js {:id "subforum-groups"}
+          (apply dom/div #js{:id "subforum-groups"}
                  (for [group subforum-groups]
                    (dom/div nil (:name group)))))))
 
