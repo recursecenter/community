@@ -67,7 +67,12 @@
         (when-not (empty? subforum-groups)
           (apply dom/ol #js {:id "subforum-groups"}
                  (for [group subforum-groups]
-                   (dom/li nil (:name group)))))))
+                   (dom/li nil
+                           (dom/h2 nil (:name group))
+                           (when-not (empty? (:subforums group))
+                             (apply dom/ol nil
+                                    (for [subforum (:subforums group)]
+                                      (dom/li nil (:name subforum)))))))))))
 
     om/IDidMount
     (did-mount [this]

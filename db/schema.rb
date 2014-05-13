@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140512214828) do
+ActiveRecord::Schema.define(version: 20140513153440) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,6 +19,13 @@ ActiveRecord::Schema.define(version: 20140512214828) do
   create_table "subforum_groups", force: true do |t|
     t.string   "name",       null: false
     t.integer  "ordinal",    null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "subforums", force: true do |t|
+    t.string   "name"
+    t.integer  "subforum_group_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
