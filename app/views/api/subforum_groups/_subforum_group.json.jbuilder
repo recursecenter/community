@@ -1,6 +1,6 @@
 json.extract! subforum_group, :name
 json.subforums do
   json.array! subforum_group.subforums do |subforum|
-    json.extract! subforum, :name
+    json.extract! subforum, :id, :name
   end
 end

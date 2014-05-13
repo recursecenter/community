@@ -1,6 +1,7 @@
 (ns community.core
   (:require [community.api :as api]
             [community.util :as util :refer-macros [<?]]
+            [community.util.routing :as r]
             [om.core :as om]
             [om.dom :as dom]
             [cljs.core.async :as async])
@@ -53,8 +54,32 @@
   )
 
 (def app-state
-  (atom {:current-user nil
+  (atom {:route nil
+         :current-user nil
          :subforum-groups []}))
+
+(def routes
+  (r/routes
+    (r/route :index [])
+    (r/route :subforum ["f" :id])))
+
+(defn link-to [route & body]
+  (apply dom/a #js {:href route
+                    :onClick (fn [e]
+                               (.preventDefault e)
+                               (.pushState js/history nil nil route))}
+         body))
+
+;; TODO:
+;; - figure out the appropriate way to handle setting the route on click
+;; - change addEventListener to goog
+;; - set state in the url
+;; - somehow render different componenets based on the route
+;; - set page title
+(.addEventListener js/window "popstate"
+                   (fn [e]
+                     (.log js/console (str "popstate: " (.-location js/document)))
+                     (swap! app-state assoc :route (routes (.-location js/document)))))
 
 (defn *forum-view [{:as app
                     :keys [current-user subforum-groups]}
@@ -72,7 +97,8 @@
                            (when-not (empty? (:subforums group))
                              (apply dom/ol nil
                                     (for [subforum (:subforums group)]
-                                      (dom/li nil (:name subforum)))))))))))
+                                      (dom/li nil (link-to (routes :subforum {:id (:id subforum)})
+                                                           (:name subforum))))))))))))
 
     om/IDidMount
     (did-mount [this]
