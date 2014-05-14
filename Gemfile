@@ -31,6 +31,7 @@ gem 'pry-rails'
 
 group :development do
   gem 'pry-remote'
+  gem 'quiet_assets'
 end
 
 # Use unicorn as the app server
