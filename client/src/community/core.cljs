@@ -2,56 +2,13 @@
   (:require [community.api :as api]
             [community.util :as util :refer-macros [<?]]
             [community.util.routing :as r]
+            [community.models :as models]
             [om.core :as om]
             [om.dom :as dom]
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (enable-console-print!)
-
-;;;;;; prototype app-state
-(comment
-
-  ;; app-state
-  {:current-user current-user
-   :subforum-groups subforum-groups}
-
-  ;; current-user
-  {:first-name "" :last-name "" :email "" :avatar ""}
-
-  ;; subforum-groups
-  [{:name "Subforum group 1"
-    :subforums subforums}
-   ...]
-
-  ;; subforums
-  [{:name "Subforum 1"
-    :unread? true
-    :description ""
-    :threads threads}
-   ...]
-
-  ;; threads
-  [{:name "Thread 1"
-    :author user1
-    :last-updated Date
-    :unread? true
-    :posts posts}
-   ...]
-
-  ;; user1
-  like current-user
-
-  ;; posts
-  [{:author user1
-    :content "important discussion"
-    :last-modified Date
-    :created-at Date}
-   ...]
-
-
-
-  )
 
 (def app-state
   (atom {:route-data nil
@@ -61,7 +18,7 @@
 (def routes
   (r/routes
     (r/route :index [])
-    (r/route :subforum ["f" :id])))
+    (r/route :subforum ["f" :slug :id])))
 
 (def *pushstate-enabled*
   (boolean (.-pushState js/history)))
@@ -98,6 +55,7 @@
                     :keys [current-user subforum-groups]}
                    owner]
   (reify
+
     om/IRender
     (render [this]
       (dom/div nil
@@ -109,13 +67,16 @@
                            (when-not (empty? (:subforums group))
                              (apply dom/ol nil
                                     (for [subforum (:subforums group)]
-                                      (dom/li nil (link-to (routes :subforum {:id (:id subforum)})
+                                      (dom/li nil (link-to (routes :subforum {:id (:id subforum)
+                                                                              :slug (:slug subforum)})
                                                            (:name subforum))))))))))))
 
     om/IDidMount
     (did-mount [this]
       (go
-        (om/update! app :subforum-groups (<? (api/GET "/subforum_groups")))))))
+        (let [subforum-groups (mapv models/subforum-group
+                                    (<? (api/GET "/subforum_groups")))]
+          (om/update! app :subforum-groups subforum-groups))))))
 
 
 ;; Subforum view, displays threads
@@ -124,6 +85,7 @@
                        :keys []}
                       owner]
   (reify
+
     om/IRender
     (render [this]
       (dom/h1 nil "a subforum"))))
@@ -135,6 +97,7 @@
                   :keys [current-user route-data]}
                  owner]
   (reify
+
     om/IRender
     (render [this]
       (dom/div #js{:id "app"}
