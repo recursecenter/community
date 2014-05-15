@@ -26,15 +26,17 @@
 (comment
 
   ;; app-state
-  {:current-user current-user
-   :subforum-groups subforum-groups}
+  {:route-data route-data
+   :current-user current-user
+   :subforum-groups subforum-groups
+   :subforums subforums}
 
   ;; current-user
   {:first-name "" :last-name "" :email "" :avatar ""}
 
   ;; subforum-groups
   [{:name "Subforum group 1"
-    :subforums subforums}
+    :subforums-ids [1 2 3 ...]}
    ...]
 
   ;; subforums
