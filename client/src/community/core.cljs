@@ -13,7 +13,8 @@
 (def app-state
   (atom {:route-data nil
          :current-user nil
-         :subforum-groups []}))
+         :subforum-groups []
+         :subforums {}}))
 
 (def routes
   (r/routes
@@ -73,9 +74,12 @@
 
     om/IDidMount
     (did-mount [this]
+      ;; TODO: Fix?
       (go
-        (let [subforum-groups (mapv models/subforum-group
-                                    (<? (api/GET "/subforum_groups")))]
+        (let [api-data (<? (api/GET "/subforum_groups"))
+              subforum-groups (mapv models/subforum-group api-data)
+              subforum-list (mapv models/subforum (mapcat :subforums api-data))
+              subforums (into {} (map vector (map :id subforum-list) subforum-list))]
           (om/update! app :subforum-groups subforum-groups))))))
 
 
