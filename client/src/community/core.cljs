@@ -159,7 +159,7 @@
               ;; TODO: display an error modal
               (prn (ex-data e)))))))))
 
-(js/$
- #(om/root *forum-view
-           app-state
-           {:target (.getElementById js/document "app")}))
+(defn init-app
+  "Mounts the om application onto target element."
+  [target]
+  (om/root *app-view app-state {:target target}))
