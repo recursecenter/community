@@ -29,7 +29,8 @@
 
   Keyword
   (unparse [k params]
-    (if (contains? params k)
+    (if (and (contains? params k)
+             (k params))
       (k params)
       (throw (js/Error. "Missing route parameter")))))
 
