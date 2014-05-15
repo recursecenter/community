@@ -54,7 +54,7 @@
   )
 
 (def app-state
-  (atom {:route nil
+  (atom {:route-data nil
          :current-user nil
          :subforum-groups []}))
 
@@ -63,24 +63,37 @@
     (r/route :index [])
     (r/route :subforum ["f" :id])))
 
+(def *pushstate-enabled*
+  (boolean (.-pushState js/history)))
+
 (defn link-to [route & body]
   (apply dom/a #js {:href route
                     :onClick (fn [e]
-                               (.preventDefault e)
-                               (.pushState js/history nil nil route))}
+                               (when *pushstate-enabled*
+                                 (.preventDefault e)
+                                 (.pushState js/history nil nil route)
+                                 (.dispatchEvent js/window (js/Event. "popstate"))))}
          body))
 
+(defn set-route! [app]
+  (let [route (routes (-> js/document .-location .-pathname))]
+    (swap! app assoc :route-data route)))
+
+;; set initial route
+(set-route! app-state)
+
 ;; TODO:
-;; - figure out the appropriate way to handle setting the route on click
-;; - change addEventListener to goog
-;; - set state in the url
 ;; - somehow render different componenets based on the route
 ;; - set page title
-(.addEventListener js/window "popstate"
-                   (fn [e]
-                     (.log js/console (str "popstate: " (.-location js/document)))
-                     (swap! app-state assoc :route (routes (.-location js/document)))))
+(.addEventListener js/window "popstate" (partial set-route! app-state))
 
+
+;;; Views
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;; Subforum groups and subforums
+;;
 (defn *forum-view [{:as app
                     :keys [current-user subforum-groups]}
                    owner]
@@ -88,7 +101,6 @@
     om/IRender
     (render [this]
       (dom/div nil
-        (dom/h1 nil (str "Hey " (:first-name current-user "there")))
         (when-not (empty? subforum-groups)
           (apply dom/ol #js {:id "subforum-groups"}
                  (for [group subforum-groups]
@@ -103,9 +115,43 @@
     om/IDidMount
     (did-mount [this]
       (go
+        (om/update! app :subforum-groups (<? (api/GET "/subforum_groups")))))))
+
+
+;; Subforum view, displays threads
+;;
+(defn *subforum-view [{:as app
+                       :keys []}
+                      owner]
+  (reify
+    om/IRender
+    (render [this]
+      (dom/h1 nil "a subforum"))))
+
+
+;; Main app, responsible for login
+;;
+(defn *app-view [{:as app
+                  :keys [current-user route-data]}
+                 owner]
+  (reify
+    om/IRender
+    (render [this]
+      (dom/div #js{:id "app"}
+        (if-not current-user
+          (dom/h1 nil "Logging in...")
+          (dom/div nil
+            (dom/h1 nil (str "user: " (:first-name current-user)))
+            ;; view dispatch
+            (case (:route route-data)
+              :index (om/build *forum-view app)
+              :subforum (om/build *subforum-view app))))))
+
+    om/IDidMount
+    (did-mount [this]
+      (go
         (try
-          (om/update! app :current-user    (<? (api/GET "/users/me")))
-          (om/update! app :subforum-groups (<? (api/GET "/subforum_groups")))
+          (om/update! app :current-user (<? (api/GET "/users/me")))
 
           (catch ExceptionInfo e
             (if (== 403 (:status (ex-data e)))
