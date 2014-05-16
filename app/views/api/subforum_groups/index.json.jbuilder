@@ -1,5 +1,5 @@
 json.subforum_groups do
-  json.array! @subforum_groups, partial: 'api/subforum_groups/subforum_group', as: :subforum_group
+  json.array! @subforum_groups, partial: 'subforum_group', as: :subforum_group
 end
 
 json.subforums do

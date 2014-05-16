@@ -71,7 +71,7 @@
 (defn forum-index []
   (let [out (async/chan 1)]
     (go
-      (let [res (<? (GET "/pages/forum_index"))
+      (let [res (<? (GET "/subforum_groups"))
             subforums (get res "subforums")
             subforum-groups (get res "subforum_groups")]
         (>! out
