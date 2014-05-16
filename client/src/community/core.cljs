@@ -48,27 +48,30 @@
 ;;; Components
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defn subforum-group
+  [{:keys [name subforums]}]
+  (dom/li nil
+    (dom/h2 nil name)
+    (when-not (empty? subforums)
+      (apply dom/ol nil
+        (for [{:keys [id slug] :as subforum} subforums]
+          (dom/li nil (link-to (routes :subforum {:id id :slug slug})
+                               (:name subforum))))))))
 
 (defn forum-component
   [{:as app
     :keys [current-user subforum-groups subforums]}
    owner]
   (reify
-
     om/IRender
     (render [this]
       (dom/div nil
         (when-not (empty? subforum-groups)
           (apply dom/ol #js {:id "subforum-groups"}
                  (for [group subforum-groups]
-                   (dom/li nil
-                           (dom/h2 nil (:name group))
-                           (when-not (empty? (:subforum-ids group))
-                             (apply dom/ol nil
-                                    (for [subforum (map subforums (:subforum-ids group))]
-                                      (dom/li nil (link-to (routes :subforum {:id (:id subforum)
-                                                                              :slug (:slug subforum)})
-                                                           (:name subforum))))))))))))
+                   (subforum-group
+                    (assoc group :subforums
+                           (map subforums (:subforum-ids group)))))))))
 
     om/IDidMount
     (did-mount [this]
@@ -83,7 +86,6 @@
     :keys []}
    owner]
   (reify
-
     om/IRender
     (render [this]
       (dom/h1 nil "a subforum"))))
@@ -94,7 +96,6 @@
     :keys [current-user route-data]}
    owner]
   (reify
-
     om/IRender
     (render [this]
       (dom/div #js{:id "app"}
