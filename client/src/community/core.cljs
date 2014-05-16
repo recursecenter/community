@@ -9,6 +9,7 @@
 
 (enable-console-print!)
 
+;; TODO
 (def app-state
   (atom {:route-data nil
          :current-user nil
@@ -48,6 +49,33 @@
 ;;; Components
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+
+(defn subforum-component [{:keys [route-data subforum] :as app}
+                          owner]
+  (reify
+    om/IDidMount
+    (did-mount [this]
+      (go
+        (try
+          (let [subforum (<? (api/subforum (:id @route-data)))]
+            (println subforum))
+
+          (catch ExceptionInfo e
+            ;; TODO: display an error modal
+            (if (== 404 (:status (ex-data e)))
+              (om/update! app [:route-data :route] :page-not-found)
+              ;; TODO: generic error component
+              (throw e))))))
+
+    om/IRender
+    (render [this]
+      (if (and subforum (not (empty? (:threads subforum))))
+        (apply dom/ol nil
+               (for [thread (:threads subforum)]
+                 (dom/li nil (dom/h2 nil (:topic thread)))))
+        (dom/h2 nil "loading...")))))
+
+
 (defn subforum-group
   [{:keys [name subforums]}]
   (dom/li nil
@@ -64,7 +92,7 @@
     om/IDidMount
     (did-mount [this]
       (go
-        (let [{:keys [subforum-groups subforums]} (<? (api/forum-index))]
+        (let [{:keys [subforum-groups subforums]} (<? (api/subforum-groups))]
           (om/update! app :subforum-groups subforum-groups)
           (om/update! app :subforums subforums))))
 
@@ -79,12 +107,11 @@
                            (map subforums (:subforum-ids group)))))))))))
 
 
-(defn subforum-component [{:as app :keys []}
-                          owner]
+(defn page-not-found-component [app owner]
   (reify
     om/IRender
     (render [this]
-      (dom/h1 nil "a subforum"))))
+      (dom/h1 nil "Page not found"))))
 
 
 (defn app-component [{:as app :keys [current-user route-data]}
@@ -111,9 +138,11 @@
           (dom/div nil
             (dom/h1 nil (str "user: " (:first-name current-user)))
             ;; view dispatch
-            (case (:route route-data)
+            (condp = (:route route-data)
               :index (om/build forum-component app)
-              :subforum (om/build subforum-component app))))))))
+              :subforum (om/build subforum-component app)
+              ;; this should just be the default case
+              :page-not-found (om/build page-not-found-component app))))))))
 
 (defn init-app
   "Mounts the om application onto target element."

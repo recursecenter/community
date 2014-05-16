@@ -68,7 +68,7 @@
             (>! out e)))))
     out))
 
-(defn forum-index []
+(defn subforum-groups []
   (let [out (async/chan 1)]
     (go
       (let [res (<? (GET "/subforum_groups"))
@@ -79,4 +79,11 @@
              :subforums (into {} (for [[id subforum] subforums]
                                    [(int (name id)) (models/subforum (format-keys subforum))]))})
         (async/close! out)))
+    out))
+
+(defn subforum [id]
+  (let [out (async/chan 1)]
+    (go
+      (>! out (ex-info "foo" {:status 404}))
+      (async/close! out))
     out))
