@@ -121,7 +121,7 @@
 
           (catch ExceptionInfo e
             ;; TODO: display an error modal
-            (prn (ex-info e))))))))
+            (prn (ex-data e))))))))
 
 (defn init-app
   "Mounts the om application onto target element."
