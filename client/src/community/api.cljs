@@ -39,15 +39,15 @@
      (GET resource {}))
   ([resource opts]
      (let [out (async/chan 1)
-           default-opts {:handler
-                         (fn [res]
-                           (async/put! out (format-keys res) #(async/close! out)))
-
-                         :error-handler
-                         (fn [error-res]
-                           (async/put! out
-                                       (ex-info (str "Failure to GET " resource) error-res)
-                                       #(async/close! out)))}]
+           on-error (fn [error-res]
+                      (let [err (ex-info (str "Failure to GET " resource) error-res)]
+                        (async/put! out err #(async/close! out))))
+           on-possible-success (fn [res]
+                                 (if (symbol? res) ; we expect edn
+                                   (on-error res)
+                                   (async/put! out (format-keys res) #(async/close! out))))
+           default-opts {:handler on-possible-success
+                         :error-handler on-error}]
        (ajax/GET (api-path resource)
                  (merge default-opts opts))
        out)))
