@@ -1,2 +1,2 @@
 json.extract! subforum_group, :name
-json.subforums subforum_group.subforums, :id, :name
+json.subforum_ids subforum_group.subforums.map(&:id)

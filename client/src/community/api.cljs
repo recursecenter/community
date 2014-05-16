@@ -1,7 +1,10 @@
 (ns community.api
-  (:require [cljs.core.async :as async]
+  (:require [community.models :as models]
+            [community.util :as util :refer-macros [<? p]]
+            [cljs.core.async :as async]
             [clojure.walk :refer [postwalk]]
-            [ajax.core :as ajax]))
+            [ajax.core :as ajax])
+  (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (def api-root "/api")
 
@@ -45,9 +48,35 @@
            on-possible-success (fn [res]
                                  (if (symbol? res) ; we expect edn
                                    (on-error res)
-                                   (async/put! out (format-keys res) #(async/close! out))))
+                                   (async/put! out res #(async/close! out))))
            default-opts {:handler on-possible-success
                          :error-handler on-error}]
        (ajax/GET (api-path resource)
                  (merge default-opts opts))
        out)))
+
+(defn current-user []
+  (let [out (async/chan 1)]
+    (go
+      (try
+        (let [res (<? (GET "/users/me"))]
+          (>! out (format-keys res))
+          (async/close! out))
+        (catch ExceptionInfo e
+          (if (== 403 (:status (ex-data e)))
+            (>! out ::no-current-user)
+            (>! out e)))))
+    out))
+
+(defn forum-index []
+  (let [out (async/chan 1)]
+    (go
+      (let [res (<? (GET "/pages/forum_index"))
+            subforums (get res "subforums")
+            subforum-groups (get res "subforum_groups")]
+        (>! out
+            {:subforum-groups (mapv models/subforum-group (format-keys subforum-groups))
+             :subforums (into {} (for [[id subforum] subforums]
+                                   [(int (name id)) (models/subforum (format-keys subforum))]))})
+        (async/close! out)))
+    out))

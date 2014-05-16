@@ -12,6 +12,10 @@ Rails.application.routes.draw do
     end
 
     resources :subforum_groups
+
+    scope '/pages' do
+      get 'forum_index' => 'pages#forum_index'
+    end
   end
 
   # WARNING: will catch all routes, so must be the last one declared

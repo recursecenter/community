@@ -1,8 +1,7 @@
 (ns community.core
   (:require [community.api :as api]
-            [community.util :as util :refer-macros [<?]]
+            [community.util :as util :refer-macros [<? p]]
             [community.util.routing :as r]
-            [community.models :as models]
             [om.core :as om]
             [om.dom :as dom]
             [cljs.core.async :as async])
@@ -53,7 +52,7 @@
 ;; Subforum groups and subforums
 ;;
 (defn *forum-view [{:as app
-                    :keys [current-user subforum-groups]}
+                    :keys [current-user subforum-groups subforums]}
                    owner]
   (reify
 
@@ -65,22 +64,19 @@
                  (for [group subforum-groups]
                    (dom/li nil
                            (dom/h2 nil (:name group))
-                           (when-not (empty? (:subforums group))
+                           (when-not (empty? (:subforum-ids group))
                              (apply dom/ol nil
-                                    (for [subforum (:subforums group)]
+                                    (for [subforum (map subforums (:subforum-ids group))]
                                       (dom/li nil (link-to (routes :subforum {:id (:id subforum)
                                                                               :slug (:slug subforum)})
                                                            (:name subforum))))))))))))
 
     om/IDidMount
     (did-mount [this]
-      ;; TODO: Fix?
       (go
-        (let [api-data (<? (api/GET "/subforum_groups"))
-              subforum-groups (mapv models/subforum-group api-data)
-              subforum-list (mapv models/subforum (mapcat :subforums api-data))
-              subforums (into {} (map vector (map :id subforum-list) subforum-list))]
-          (om/update! app :subforum-groups subforum-groups))))))
+        (let [{:keys [subforum-groups subforums]} (<? (api/forum-index))]
+          (om/update! app :subforum-groups subforum-groups)
+          (om/update! app :subforums subforums))))))
 
 
 ;; Subforum view, displays threads
@@ -118,13 +114,14 @@
     (did-mount [this]
       (go
         (try
-          (om/update! app :current-user (<? (api/GET "/users/me")))
+          (let [user (<? (api/current-user))]
+            (if (not= user :community.api/no-current-user)
+              (om/update! app :current-user user)
+              (set! (.-location js/document) "/login")))
 
           (catch ExceptionInfo e
-            (if (== 403 (:status (ex-data e)))
-              (set! (.-location js/document) "/login")
-              ;; TODO: display an error modal
-              (prn (ex-data e)))))))))
+            ;; TODO: display an error modal
+            (prn (ex-info e))))))))
 
 (defn init-app
   "Mounts the om application onto target element."

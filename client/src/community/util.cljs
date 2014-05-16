@@ -7,3 +7,8 @@
   (if (instance? js/Error value)
     (throw value)
     value))
+
+(defn map-vals
+  "Map a function over the values of a map."
+  [f m]
+  (into {} (for [[k v] m] [k (f v)])))
