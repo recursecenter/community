@@ -45,15 +45,14 @@
 (.addEventListener js/window "popstate" (partial set-route! app-state))
 
 
-;;; Views
+;;; Components
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-;; Subforum groups and subforums
-;;
-(defn *forum-view [{:as app
-                    :keys [current-user subforum-groups subforums]}
-                   owner]
+(defn forum-component
+  [{:as app
+    :keys [current-user subforum-groups subforums]}
+   owner]
   (reify
 
     om/IRender
@@ -79,11 +78,10 @@
           (om/update! app :subforums subforums))))))
 
 
-;; Subforum view, displays threads
-;;
-(defn *subforum-view [{:as app
-                       :keys []}
-                      owner]
+(defn subforum-component
+  [{:as app
+    :keys []}
+   owner]
   (reify
 
     om/IRender
@@ -91,11 +89,10 @@
       (dom/h1 nil "a subforum"))))
 
 
-;; Main app, responsible for login
-;;
-(defn *app-view [{:as app
-                  :keys [current-user route-data]}
-                 owner]
+(defn app-component
+  [{:as app
+    :keys [current-user route-data]}
+   owner]
   (reify
 
     om/IRender
@@ -107,8 +104,8 @@
             (dom/h1 nil (str "user: " (:first-name current-user)))
             ;; view dispatch
             (case (:route route-data)
-              :index (om/build *forum-view app)
-              :subforum (om/build *subforum-view app))))))
+              :index (om/build forum-component app)
+              :subforum (om/build subforum-component app))))))
 
     om/IDidMount
     (did-mount [this]
@@ -126,4 +123,4 @@
 (defn init-app
   "Mounts the om application onto target element."
   [target]
-  (om/root *app-view app-state {:target target}))
+  (om/root app-component app-state {:target target}))
