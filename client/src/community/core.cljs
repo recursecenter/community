@@ -58,11 +58,16 @@
           (dom/li nil (link-to (routes :subforum {:id id :slug slug})
                                (:name subforum))))))))
 
-(defn forum-component
-  [{:as app
-    :keys [current-user subforum-groups subforums]}
-   owner]
+(defn forum-component [{:as app :keys [current-user subforum-groups subforums]}
+                       owner]
   (reify
+    om/IDidMount
+    (did-mount [this]
+      (go
+        (let [{:keys [subforum-groups subforums]} (<? (api/forum-index))]
+          (om/update! app :subforum-groups subforum-groups)
+          (om/update! app :subforums subforums))))
+
     om/IRender
     (render [this]
       (dom/div nil
@@ -71,43 +76,20 @@
                  (for [group subforum-groups]
                    (subforum-group
                     (assoc group :subforums
-                           (map subforums (:subforum-ids group)))))))))
-
-    om/IDidMount
-    (did-mount [this]
-      (go
-        (let [{:keys [subforum-groups subforums]} (<? (api/forum-index))]
-          (om/update! app :subforum-groups subforum-groups)
-          (om/update! app :subforums subforums))))))
+                           (map subforums (:subforum-ids group)))))))))))
 
 
-(defn subforum-component
-  [{:as app
-    :keys []}
-   owner]
+(defn subforum-component [{:as app :keys []}
+                          owner]
   (reify
     om/IRender
     (render [this]
       (dom/h1 nil "a subforum"))))
 
 
-(defn app-component
-  [{:as app
-    :keys [current-user route-data]}
-   owner]
+(defn app-component [{:as app :keys [current-user route-data]}
+                     owner]
   (reify
-    om/IRender
-    (render [this]
-      (dom/div #js{:id "app"}
-        (if-not current-user
-          (dom/h1 nil "Logging in...")
-          (dom/div nil
-            (dom/h1 nil (str "user: " (:first-name current-user)))
-            ;; view dispatch
-            (case (:route route-data)
-              :index (om/build forum-component app)
-              :subforum (om/build subforum-component app))))))
-
     om/IDidMount
     (did-mount [this]
       (go
@@ -119,7 +101,19 @@
 
           (catch ExceptionInfo e
             ;; TODO: display an error modal
-            (prn (ex-data e))))))))
+            (prn (ex-data e))))))
+
+    om/IRender
+    (render [this]
+      (dom/div #js{:id "app"}
+        (if-not current-user
+          (dom/h1 nil "Logging in...")
+          (dom/div nil
+            (dom/h1 nil (str "user: " (:first-name current-user)))
+            ;; view dispatch
+            (case (:route route-data)
+              :index (om/build forum-component app)
+              :subforum (om/build subforum-component app))))))))
 
 (defn init-app
   "Mounts the om application onto target element."
