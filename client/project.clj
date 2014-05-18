@@ -10,8 +10,8 @@
   :cljsbuild {
     :builds [{:id "community-dev"
               :source-paths ["src"]
-              :compiler {:output-to "../app/assets/javascripts/client-dev.js"
-                         :output-dir "../app/assets/javascripts/client-dev"
+              :compiler {:output-to "../public/client/client-dev.js"
+                         :output-dir "../public/client/client-dev"
                          :optimizations :none
                          :pretty-print true
                          :source-map true}}

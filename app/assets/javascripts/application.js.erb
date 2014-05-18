@@ -14,10 +14,7 @@
 //= require jquery_ujs
 //= require react-0.9.0
 
+// The development version is in the layout to make source maps work
 <% if Rails.env.production? %>
     <% require_asset "client-prod" %>
-<% else %>
-    <% require_asset "client-dev/goog/base" %>
-    <% require_asset "client-dev" %>
-    <% require_asset "load-client" %>
 <% end %>
