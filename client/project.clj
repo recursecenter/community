@@ -7,16 +7,15 @@
 
   :plugins [[lein-cljsbuild "1.0.2"]]
 
-  :cljsbuild {
-    :builds [{:id "community-dev"
-              :source-paths ["src"]
-              :compiler {:output-to "../public/client/client-dev.js"
-                         :output-dir "../public/client/client-dev"
-                         :optimizations :none
-                         :pretty-print true
-                         :source-map true}}
-             {:id "community-prod"
-              :source-paths ["src"]
-              :compiler {:output-to "../app/assets/javascripts/client-prod.js"
-                         :optimizations :advanced
-                         :pretty-print false}}]})
+  :cljsbuild {:builds [{:id "community-dev"
+                        :source-paths ["src"]
+                        :compiler {:output-to "../public/client/client-dev.js"
+                                   :output-dir "../public/client/client-dev"
+                                   :optimizations :none
+                                   :pretty-print true
+                                   :source-map true}}
+                       {:id "community-prod"
+                        :source-paths ["src"]
+                        :compiler {:output-to "../app/assets/javascripts/client-prod.js"
+                                   :optimizations :advanced
+                                   :pretty-print false}}]})
