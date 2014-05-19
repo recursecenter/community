@@ -48,7 +48,7 @@
            on-possible-success (fn [res]
                                  (if (symbol? res) ; we expect edn
                                    (on-error res)
-                                   (async/put! out res #(async/close! out))))
+                                   (async/put! out (format-keys res) #(async/close! out))))
            default-opts {:handler on-possible-success
                          :error-handler on-error}]
        (ajax/GET (api-path resource)
@@ -73,13 +73,17 @@
     (go
       (let [res (<? (GET "/subforum_groups"))]
         (>! out
-          (mapv models/subforum-group (format-keys res)))
+          (mapv models/subforum-group res))
         (async/close! out)))
     out))
 
 (defn subforum [id]
   (let [out (async/chan 1)]
     (go
-      (>! out (ex-info "foo" {:status 404}))
+      (try
+        (let [res (<? (GET (str "/subforums/" id)))]
+          (>! out (models/subforum res)))
+        (catch ExceptionInfo e
+          (>! out e)))
       (async/close! out))
     out))

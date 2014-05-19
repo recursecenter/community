@@ -13,7 +13,8 @@
 (def app-state
   (atom {:route-data nil
          :current-user nil
-         :subforum-groups []}))
+         :subforum-groups []
+         :subforum nil}))
 
 (def routes
   (r/routes
@@ -57,7 +58,7 @@
       (go
         (try
           (let [subforum (<? (api/subforum (:id @route-data)))]
-            (println subforum))
+            (om/update! app :subforum subforum))
 
           (catch ExceptionInfo e
             ;; TODO: display an error modal
@@ -68,12 +69,13 @@
 
     om/IRender
     (render [this]
-      (if (and subforum (not (empty? (:threads subforum))))
-        (apply dom/ol nil
-               (for [thread (:threads subforum)]
-                 (dom/li nil (dom/h2 nil (:topic thread)))))
+      (if subforum
+        (dom/div nil
+                 (dom/h1 nil (:name subforum))
+                 (apply dom/ol nil
+                        (for [thread (:threads subforum)]
+                          (dom/li nil (dom/h2 nil (:topic thread))))))
         (dom/h2 nil "loading...")))))
-
 
 (defn subforum-group
   [{:keys [name subforums]}]

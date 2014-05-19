@@ -1,4 +1,5 @@
-(ns community.models)
+(ns community.models
+  (:require [community.util :as util :refer-macros [p]]))
 
 (defn slug
   "\"Dave's awesome subforum!\" => \"daves-awesome-subforum\""

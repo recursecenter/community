@@ -6,16 +6,21 @@ Rails.application.routes.draw do
   get 'logout' => 'sessions#destroy'
   get 'login/complete' => 'sessions#complete'
 
+  # client side routes
+  get '/f/*path' => 'pages#index'
+  get '/t/*path' => 'pages#index'
+
   namespace :api, format: false, defaults: {format: 'json'} do
     resources :users do
       get :me, on: :collection
     end
 
-    resources :subforum_groups
+    shallow do
+      resources :subforum_groups do
+        resources :subforums
+      end
+    end
   end
-
-  # WARNING: will catch all routes, so must be the last one declared
-  get '*path', to: 'pages#index'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
