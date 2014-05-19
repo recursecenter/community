@@ -29,6 +29,7 @@
 - title
 - posts
 - belongs to a subforum
+- created by/ belongs to a user
 - might be pinned (or it might just be "important" and subforums know
   to render them at the top)
   - pinned things might be ordered
