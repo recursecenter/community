@@ -13,8 +13,7 @@
 (def app-state
   (atom {:route-data nil
          :current-user nil
-         :subforum-groups []
-         :subforums {}}))
+         :subforum-groups []}))
 
 (def routes
   (r/routes
@@ -86,26 +85,20 @@
           (dom/li nil (link-to (routes :subforum {:id id :slug slug})
                                (:name subforum))))))))
 
-(defn forum-component [{:as app :keys [current-user subforum-groups subforums]}
+(defn forum-component [{:as app :keys [current-user subforum-groups]}
                        owner]
   (reify
     om/IDidMount
     (did-mount [this]
       (go
-        (let [{:keys [subforum-groups subforums]} (<? (api/subforum-groups))]
-          (om/update! app :subforum-groups subforum-groups)
-          (om/update! app :subforums subforums))))
+        (om/update! app :subforum-groups (<? (api/subforum-groups)))))
 
     om/IRender
     (render [this]
       (dom/div nil
         (when-not (empty? subforum-groups)
           (apply dom/ol #js {:id "subforum-groups"}
-                 (for [group subforum-groups]
-                   (subforum-group
-                    (assoc group :subforums
-                           (map subforums (:subforum-ids group)))))))))))
-
+                 (map subforum-group subforum-groups)))))))
 
 (defn page-not-found-component [app owner]
   (reify

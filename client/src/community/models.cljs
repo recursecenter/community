@@ -15,7 +15,8 @@
 
 (defn subforum-group [{:as api-data
                        :keys [subforums]}]
-  api-data)
+  (assoc api-data :subforums
+         (mapv subforum subforums)))
 
 
 
