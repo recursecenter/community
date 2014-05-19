@@ -139,7 +139,8 @@
               ;; this should just be the default case
               :page-not-found (om/build page-not-found-component app))))))))
 
-(defn init-app
+
+(defn ^:export init-app
   "Mounts the om application onto target element."
   [target]
   (om/root app-component app-state {:target target}))

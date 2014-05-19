@@ -18,4 +18,5 @@
                         :source-paths ["src"]
                         :compiler {:output-to "../app/assets/javascripts/client-prod.js"
                                    :optimizations :advanced
-                                   :pretty-print false}}]})
+                                   :pretty-print false
+                                   :externs ["react-externs.js"]}}]})
