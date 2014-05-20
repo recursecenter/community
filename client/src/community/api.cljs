@@ -87,3 +87,14 @@
           (>! out e)))
       (async/close! out))
     out))
+
+(defn thread [id]
+  (let [out (async/chan 1)]
+    (go
+      (try
+        (let [res (<? (GET (str "/threads/" id)))]
+          (>! out (models/thread res)))
+        (catch ExceptionInfo e
+          (>! out e)))
+      (async/close! out))
+    out))

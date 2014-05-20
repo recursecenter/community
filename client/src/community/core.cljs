@@ -14,12 +14,14 @@
   (atom {:route-data nil
          :current-user nil
          :subforum-groups []
-         :subforum nil}))
+         :subforum nil
+         :thread nil}))
 
 (def routes
   (r/routes
     (r/route :index [])
-    (r/route :subforum ["f" :slug :id])))
+    (r/route :subforum ["f" :slug :id])
+    (r/route :thread ["t" :slug :id])))
 
 (def *pushstate-enabled*
   (boolean (.-pushState js/history)))
@@ -50,6 +52,28 @@
 ;;; Components
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defn thread-component [{:keys [route-data thread] :as app} owner]
+  (reify
+    om/IDidMount
+    (did-mount [this]
+      (go
+        (try
+          (let [thread (<? (api/thread (:id @route-data)))]
+            (om/update! app :thread thread))
+
+          (catch ExceptionInfo e
+            ;; TODO: display an error modal
+            (if (== 404 (:status (ex-data e)))
+              (om/update! app [:route-data :route] :page-not-found)
+              ;; TODO: generic error component
+              (throw e))))))
+
+    om/IRender
+    (render [this]
+      (html
+        (if thread
+          [:h1 (:title thread)]
+          [:h1 "Loading..."])))))
 
 (defn subforum-component [{:keys [route-data subforum] :as app}
                           owner]
@@ -75,9 +99,11 @@
          [:div
           [:h1 (:name subforum)]
           [:ol
-           (for [thread (:threads subforum)]
-             [:li {:key (str "thread-" (:id thread))}
-              [:h2 (:title thread) " - " (:created-by thread)]])]]
+           (for [{:keys [id slug title created-by]} (:threads subforum)]
+             [:li {:key (str "thread-" id)}
+              [:h2 (link-to (routes :thread {:id id :slug slug}) title)
+               " - "
+               created-by]])]]
          [:h2 "loading..."])))))
 
 
@@ -92,7 +118,7 @@
           (link-to (routes :subforum {:id id :slug slug})
                    (:name subforum))])])]))
 
-(defn forum-component [{:as app :keys [current-user subforum-groups]}
+(defn index-component [{:as app :keys [current-user subforum-groups]}
                        owner]
   (reify
     om/IDidMount
@@ -141,8 +167,9 @@
            [:h1 (str "user: " (:first-name current-user))]
            ;; view dispatch
            (condp = (:route route-data)
-             :index (om/build forum-component app)
+             :index (om/build index-component app)
              :subforum (om/build subforum-component app)
+             :thread (om/build thread-component app)
              ;; this should just be the default case
              :page-not-found (om/build page-not-found-component app))])]))))
 

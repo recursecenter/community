@@ -9,10 +9,16 @@
       (.replace (js/RegExp. "[^a-zA-Z0-9- ]" "g") "")
       (.replace (js/RegExp. " " "g") "-")))
 
-(defn subforum [{:as api-data
-                 :keys [name]}]
+(defn thread [{:as api-data
+               :keys [title]}]
   (-> api-data
-      (assoc :slug (slug name))))
+      (assoc :slug (slug title))))
+
+(defn subforum [{:as api-data
+                 :keys [name threads]}]
+  (-> api-data
+      (assoc :slug (slug name))
+      (assoc :threads (mapv thread threads))))
 
 (defn subforum-group [{:as api-data
                        :keys [subforums]}]
