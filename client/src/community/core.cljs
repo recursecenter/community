@@ -74,7 +74,8 @@
                  (dom/h1 nil (:name subforum))
                  (apply dom/ol nil
                         (for [thread (:threads subforum)]
-                          (dom/li nil (dom/h2 nil (:topic thread))))))
+                          (dom/li nil (dom/h2 nil
+                                        (:title thread) " - " (:created-by thread))))))
         (dom/h2 nil "loading...")))))
 
 (defn subforum-group

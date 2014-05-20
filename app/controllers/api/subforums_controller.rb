@@ -1,5 +1,5 @@
 class Api::SubforumsController < Api::ApiController
   def show
-    @subforum = Subforum.find(params[:id])
+    @subforum = Subforum.includes(:threads).find(params[:id])
   end
 end
