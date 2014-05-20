@@ -25,13 +25,14 @@
   (boolean (.-pushState js/history)))
 
 (defn link-to [path & body]
-  [:a {:href path
-       :onClick (fn [e]
-                  (when *pushstate-enabled*
-                    (.preventDefault e)
-                    (.pushState js/history nil nil path)
-                    (.dispatchEvent js/window (js/Event. "popstate"))))}
-   body])
+  (html
+   [:a {:href path
+        :onClick (fn [e]
+                   (when *pushstate-enabled*
+                     (.preventDefault e)
+                     (.pushState js/history nil nil path)
+                     (.dispatchEvent js/window (js/Event. "popstate"))))}
+    body]))
 
 (defn set-route! [app]
   (let [route (routes (-> js/document .-location .-pathname))]
