@@ -72,7 +72,13 @@
     (render [this]
       (html
         (if thread
-          [:h1 (:title thread)]
+          [:div
+           [:h1 (:title thread)]
+           [:ol
+            (for [post (:posts thread)]
+              [:li {:key (str "post-" (:id post))}
+               [:div (:body post)]
+               [:div (:name (:author post))]])]]
           [:h1 "Loading..."])))))
 
 (defn subforum-component [{:keys [route-data subforum] :as app}
