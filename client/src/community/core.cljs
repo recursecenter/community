@@ -3,7 +3,7 @@
             [community.util :as util :refer-macros [<? p]]
             [community.util.routing :as r]
             [om.core :as om]
-            [om.dom :as dom]
+            [sablono.core :as html :refer-macros [html]]
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
@@ -24,14 +24,14 @@
 (def *pushstate-enabled*
   (boolean (.-pushState js/history)))
 
-(defn link-to [route & body]
-  (apply dom/a #js {:href route
-                    :onClick (fn [e]
-                               (when *pushstate-enabled*
-                                 (.preventDefault e)
-                                 (.pushState js/history nil nil route)
-                                 (.dispatchEvent js/window (js/Event. "popstate"))))}
-         body))
+(defn link-to [path & body]
+  [:a {:href path
+       :onClick (fn [e]
+                  (when *pushstate-enabled*
+                    (.preventDefault e)
+                    (.pushState js/history nil nil path)
+                    (.dispatchEvent js/window (js/Event. "popstate"))))}
+   body])
 
 (defn set-route! [app]
   (let [route (routes (-> js/document .-location .-pathname))]
@@ -69,24 +69,27 @@
 
     om/IRender
     (render [this]
-      (if subforum
-        (dom/div nil
-                 (dom/h1 nil (:name subforum))
-                 (apply dom/ol nil
-                        (for [thread (:threads subforum)]
-                          (dom/li nil (dom/h2 nil
-                                        (:title thread) " - " (:created-by thread))))))
-        (dom/h2 nil "loading...")))))
+      (html
+       (if subforum
+         [:div
+          [:h1 (:name subforum)]
+          [:ol
+           (for [thread (:threads subforum)]
+             [:li {:key (str "thread-" (:id thread))}
+              [:h2 (:title thread) " - " (:created-by thread)]])]]
+         [:h2 "loading..."])))))
 
-(defn subforum-group
-  [{:keys [name subforums]}]
-  (dom/li nil
-    (dom/h2 nil name)
-    (when-not (empty? subforums)
-      (apply dom/ol nil
-        (for [{:keys [id slug] :as subforum} subforums]
-          (dom/li nil (link-to (routes :subforum {:id id :slug slug})
-                               (:name subforum))))))))
+
+(defn subforum-group [{:keys [name subforums id]}]
+  (html
+   [:li {:key (str "subforum-group-" id)}
+    [:h2 name]
+    (if (not (empty? subforums))
+      [:ol
+       (for [{:keys [id slug] :as subforum} subforums]
+         [:li {:key (str "subforum-" id)}
+          (link-to (routes :subforum {:id id :slug slug})
+                   (:name subforum))])])]))
 
 (defn forum-component [{:as app :keys [current-user subforum-groups]}
                        owner]
@@ -98,16 +101,17 @@
 
     om/IRender
     (render [this]
-      (dom/div nil
-        (when-not (empty? subforum-groups)
-          (apply dom/ol #js {:id "subforum-groups"}
-                 (map subforum-group subforum-groups)))))))
+      (html
+       [:div
+        (when (not (empty? subforum-groups))
+          [:ol {:id "subforum-groups"}
+           (map subforum-group subforum-groups)])]))))
 
 (defn page-not-found-component [app owner]
   (reify
     om/IRender
     (render [this]
-      (dom/h1 nil "Page not found"))))
+      (html [:h1 "Page not found"]))))
 
 
 (defn app-component [{:as app :keys [current-user route-data]}
@@ -128,17 +132,18 @@
 
     om/IRender
     (render [this]
-      (dom/div #js{:id "app"}
-        (if-not current-user
-          (dom/h1 nil "Logging in...")
-          (dom/div nil
-            (dom/h1 nil (str "user: " (:first-name current-user)))
-            ;; view dispatch
-            (condp = (:route route-data)
-              :index (om/build forum-component app)
-              :subforum (om/build subforum-component app)
-              ;; this should just be the default case
-              :page-not-found (om/build page-not-found-component app))))))))
+      (html
+       [:div {:id "app"}
+        (if (not current-user)
+          [:h1 "Logging in..."]
+          [:div
+           [:h1 (str "user: " (:first-name current-user))]
+           ;; view dispatch
+           (condp = (:route route-data)
+             :index (om/build forum-component app)
+             :subforum (om/build subforum-component app)
+             ;; this should just be the default case
+             :page-not-found (om/build page-not-found-component app))])]))))
 
 
 (defn ^:export init-app
