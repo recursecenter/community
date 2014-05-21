@@ -31,14 +31,17 @@
 (def ^:private pushstate-enabled
   (boolean (.-pushState js/history)))
 
+(defn redirect-to [path]
+  (.pushState js/history nil nil path)
+  (.dispatchEvent js/window (js/Event. "popstate")))
+
 (defn link-to [path & body]
   (html
    [:a {:href path
         :onClick (fn [e]
                    (when pushstate-enabled
                      (.preventDefault e)
-                     (.pushState js/history nil nil path)
-                     (.dispatchEvent js/window (js/Event. "popstate"))))}
+                     (redirect-to path)))}
     body]))
 
 (defn set-route! [app]
