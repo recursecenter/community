@@ -34,26 +34,39 @@
                  :else x))
               m)))
 
-(defn GET
-  "Makes a GET to the Hacker School API with some default options,
-  returning a core.async channel containing either a response or an
-  ExceptionInfo error."
-  ([resource]
-     (GET resource {}))
-  ([resource opts]
+(defn request
+  "Makes an API request to the Hacker School API with some default
+  options, returning a core.async channel containing either a
+  response or an ExceptionInfo error."
+  ([request-fn resource]
+     (request request-fn resource {}))
+  ([request-fn resource opts]
      (let [out (async/chan 1)
+
+           ;; CSRF tokens won't be checked on GET or HEAD, but we'll
+           ;; send them every time regardless to make our lives easier
+           csrf-token (-> (.getElementsByName js/document "csrf-token")
+                          (aget 0)
+                          (.-content))
+
+           ;; default handlers
            on-error (fn [error-res]
-                      (let [err (ex-info (str "Failure to GET " resource) error-res)]
+                      (let [err (ex-info (str "Failed to access " resource) error-res)]
                         (async/put! out err #(async/close! out))))
            on-possible-success (fn [res]
                                  (if (symbol? res) ; we expect edn
                                    (on-error res)
                                    (async/put! out (format-keys res) #(async/close! out))))
+
            default-opts {:handler on-possible-success
-                         :error-handler on-error}]
-       (ajax/GET (api-path resource)
-                 (merge default-opts opts))
+                         :error-handler on-error
+                         :headers {"X-CSRF-Token" csrf-token}}]
+       (request-fn (api-path resource)
+                   (merge default-opts opts))
        out)))
+
+(def GET (partial request ajax/GET))
+(def POST (partial request ajax/POST))
 
 (defn current-user []
   (let [out (async/chan 1)]
@@ -94,6 +107,19 @@
       (try
         (let [res (<? (GET (str "/threads/" id)))]
           (>! out (models/thread res)))
+        (catch ExceptionInfo e
+          (>! out e)))
+      (async/close! out))
+    out))
+
+(defn new-post [thread-id draft]
+  (let [out (async/chan 1)]
+    (go
+      (try
+        (let [res (<? (POST (str "/threads/" thread-id "/posts")
+                            {:params draft :format :json}))]
+          (>! out (models/post res)))
+        (>! out {:id "123" :body (:body draft) :author {:id "456" :name "foo"}})
         (catch ExceptionInfo e
           (>! out e)))
       (async/close! out))

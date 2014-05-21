@@ -18,7 +18,9 @@ Rails.application.routes.draw do
     shallow do
       resources :subforum_groups do
         resources :subforums do
-          resources :threads
+          resources :threads do
+            resources :posts
+          end
         end
       end
     end

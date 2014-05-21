@@ -9,11 +9,18 @@
       (.replace (js/RegExp. "[^a-zA-Z0-9- ]" "g") "")
       (.replace (js/RegExp. " " "g") "-")))
 
+(defn empty-draft []
+  {:body ""})
+
+(defn post [api-data]
+  api-data)
+
 (defn thread [{:as api-data
-               :keys [title]}]
+               :keys [title posts]}]
   (-> api-data
       (assoc :slug (slug title))
-      (assoc :draft {:body ""})))
+      (assoc :draft (empty-draft))
+      (assoc :posts (mapv post posts))))
 
 (defn subforum [{:as api-data
                  :keys [name threads]}]

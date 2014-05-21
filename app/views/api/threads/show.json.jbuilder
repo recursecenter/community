@@ -1,7 +1,6 @@
 json.extract! @thread, :id, :title
 json.posts do
   json.array! @thread.posts do |post|
-    json.extract! post, :id, :body
-    json.author post.author, :id, :name
+    json.partial! 'api/posts/post', post: post
   end
 end

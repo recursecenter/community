@@ -1,11 +1,12 @@
 (ns community.core
   (:require [community.api :as api]
+            [community.models :as models]
             [community.util :as util :refer-macros [<? p]]
             [community.util.routing :as r]
             [om.core :as om]
             [sablono.core :as html :refer-macros [html]]
             [cljs.core.async :as async])
-  (:require-macros [cljs.core.async.macros :refer [go]]))
+  (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
 (enable-console-print!)
 
@@ -58,26 +59,44 @@
 
 (defn new-post-component [thread owner]
   (reify
-    om/IDidMount
-    (did-mount [this]
-      (go
-        ...))
+    om/IInitState
+    (init-state [this]
+      {:c-draft (async/chan 1)
+       :form-disabled? false})
+
+    om/IWillMount
+    (will-mount [this]
+      (let [{:keys [c-draft]} (om/get-state owner)]
+        (go-loop []
+          (when-let [draft (<! c-draft)]
+            (let [new-post (<? (api/new-post (:id @thread) draft))]
+              (om/set-state! owner :form-disabled? false)
+              (om/transact! thread :posts #(conj % new-post))
+              (om/update! thread :draft (models/empty-draft)))
+            (recur)))))
+
+    om/IWillUnmount
+    (will-unmount [this]
+      (async/close! (:c-draft (om/get-state owner))))
 
     om/IRender
     (render [this]
-      (html
-        [:form
-         [:label {:for "post-body"} "Body"]
-         [:textarea {:value (:draft (:body draft))
-                     :id "post-body"
-                     :name "post[body]"
-                     :onChange (fn [e]
-                                 (om/update! thread [:draft :body] (-> e .-target .-value)))}]
-         [:input {:type "submit"
-                  :value "Post"
-                  :onSubmit (fn [e]
-                              (.preventDefault e)
-                              (api/new-post))}]]))))
+      (let [{:keys [form-disabled? c-draft]} (om/get-state owner)]
+        (html
+         [:form {:onSubmit (fn [e]
+                             (.preventDefault e)
+                             (when-not form-disabled?
+                               (async/put! c-draft (:draft @thread))
+                               (om/set-state! owner :form-disabled? true)))}
+          [:label {:for "post-body"} "Body"]
+          [:textarea {:value (get-in thread [:draft :body])
+                      :id "post-body"
+                      :name "post[body]"
+                      :onChange (fn [e]
+                                  (om/update! thread [:draft :body] (-> e .-target .-value)))}]
+          [:input {:type "submit"
+                   :value "Post"
+                   :disabled form-disabled?}]])))))
 
 (defn thread-component [{:keys [route-data thread] :as app} owner]
   (reify
@@ -106,7 +125,7 @@
               [:li {:key (str "post-" (:id post))}
                [:div (:body post)]
                [:div (:name (:author post))]])]
-           (om/build new-post-component (:draft thread))]
+           (om/build new-post-component thread)]
           [:h1 "Loading..."])))))
 
 (defn subforum-component [{:keys [route-data subforum] :as app}
