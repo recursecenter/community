@@ -119,7 +119,18 @@
         (let [res (<? (POST (str "/threads/" thread-id "/posts")
                             {:params draft :format :json}))]
           (>! out (models/post res)))
-        (>! out {:id "123" :body (:body draft) :author {:id "456" :name "foo"}})
+        (catch ExceptionInfo e
+          (>! out e)))
+      (async/close! out))
+    out))
+
+(defn new-thread [subforum-id thread]
+  (let [out (async/chan 1)]
+    (go
+      (try
+        (let [res (<? (POST (str "/subforums/" subforum-id "/threads")
+                            {:params thread :format :json}))]
+          (>! out (models/thread res)))
         (catch ExceptionInfo e
           (>! out e)))
       (async/close! out))

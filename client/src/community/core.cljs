@@ -78,7 +78,7 @@
             (let [new-post (<? (api/new-post (:id @thread) draft))]
               (om/set-state! owner :form-disabled? false)
               (om/transact! thread :posts #(conj % new-post))
-              (om/update! thread :draft (models/empty-draft)))
+              (om/update! thread :draft (models/empty-post)))
             (recur)))))
 
     om/IWillUnmount
@@ -137,6 +137,55 @@
            (om/build new-post-component thread)]
           [:h1 "Loading..."])))))
 
+(defn new-thread-component [subforum owner]
+  (reify
+    om/IDisplayName
+    (display-name [_] "NewThread")
+
+    om/IInitState
+    (init-state [this]
+      {:c-draft (async/chan 1)
+       :form-disabled? false})
+
+    om/IWillMount
+    (will-mount [this]
+      (let [{:keys [c-draft]} (om/get-state owner)]
+        (go-loop []
+          (when-let [draft (<! c-draft)]
+            (let [new-thread (<? (api/new-thread (:id @subforum) draft))]
+              (redirect-to (routes :thread new-thread)))
+            ;; TODO: deal with failing validations (including re-enable the form)
+            (recur)))))
+
+    om/IWillUnmount
+    (will-unmount [this]
+      (async/close! (:c-draft (om/get-state owner))))
+
+    om/IRender
+    (render [this]
+      (let [{:keys [form-disabled? c-draft]} (om/get-state owner)]
+        (html
+         [:form {:onSubmit (fn [e]
+                             (.preventDefault e)
+                             (when-not form-disabled?
+                               (async/put! c-draft (:new-thread @subforum))
+                               (om/set-state! owner :form-disabled? true)))}
+          [:label {:for "thread-title"} "Title"]
+          [:input {:type "text"
+                   :id "thread-title"
+                   :name "thread[title]"
+                   :onChange (fn [e]
+                               (om/update! subforum [:new-thread :title] (-> e .-target .-value)))}]
+          [:label {:for "thread-body"} "Body"]
+          [:textarea {:value (get-in subforum [:new-thread :body])
+                      :id "thread-body"
+                      :name "thread[body]"
+                      :onChange (fn [e]
+                                  (om/update! subforum [:new-thread :body] (-> e .-target .-value)))}]
+          [:input {:type "submit"
+                   :value "Create thread"
+                   :disabled form-disabled?}]])))))
+
 (defn subforum-component [{:keys [route-data subforum] :as app}
                           owner]
   (reify
@@ -168,7 +217,8 @@
              [:li {:key (str "thread-" id)}
               [:h2 (link-to (routes :thread {:id id :slug slug}) title)
                " - "
-               created-by]])]]
+               created-by]])]
+          (om/build new-thread-component subforum)]
          [:h2 "loading..."])))))
 
 
