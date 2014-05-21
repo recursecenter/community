@@ -12,7 +12,8 @@
 (defn thread [{:as api-data
                :keys [title]}]
   (-> api-data
-      (assoc :slug (slug title))))
+      (assoc :slug (slug title))
+      (assoc :draft {:body ""})))
 
 (defn subforum [{:as api-data
                  :keys [name threads]}]

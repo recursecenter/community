@@ -17,6 +17,10 @@
          :subforum nil
          :thread nil}))
 
+(defn page-state-with-routes [app-state key]
+  {key (key app-state)
+   :route-data (:route-data app-state)})
+
 (def routes
   (r/routes
     (r/route :index [])
@@ -52,6 +56,29 @@
 ;;; Components
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defn new-post-component [thread owner]
+  (reify
+    om/IDidMount
+    (did-mount [this]
+      (go
+        ...))
+
+    om/IRender
+    (render [this]
+      (html
+        [:form
+         [:label {:for "post-body"} "Body"]
+         [:textarea {:value (:draft (:body draft))
+                     :id "post-body"
+                     :name "post[body]"
+                     :onChange (fn [e]
+                                 (om/update! thread [:draft :body] (-> e .-target .-value)))}]
+         [:input {:type "submit"
+                  :value "Post"
+                  :onSubmit (fn [e]
+                              (.preventDefault e)
+                              (api/new-post))}]]))))
+
 (defn thread-component [{:keys [route-data thread] :as app} owner]
   (reify
     om/IDidMount
@@ -78,7 +105,8 @@
             (for [post (:posts thread)]
               [:li {:key (str "post-" (:id post))}
                [:div (:body post)]
-               [:div (:name (:author post))]])]]
+               [:div (:name (:author post))]])]
+           (om/build new-post-component (:draft thread))]
           [:h1 "Loading..."])))))
 
 (defn subforum-component [{:keys [route-data subforum] :as app}
