@@ -62,6 +62,9 @@
 
 (defn new-post-component [thread owner]
   (reify
+    om/IDisplayName
+    (display-name [_] "NewPost")
+
     om/IInitState
     (init-state [this]
       {:c-draft (async/chan 1)
@@ -103,6 +106,9 @@
 
 (defn thread-component [{:keys [route-data thread] :as app} owner]
   (reify
+    om/IDisplayName
+    (display-name [_] "Thread")
+
     om/IDidMount
     (did-mount [this]
       (go
@@ -134,6 +140,9 @@
 (defn subforum-component [{:keys [route-data subforum] :as app}
                           owner]
   (reify
+    om/IDisplayName
+    (display-name [_] "Subforum")
+
     om/IDidMount
     (did-mount [this]
       (go
@@ -177,6 +186,9 @@
 (defn index-component [{:as app :keys [current-user subforum-groups]}
                        owner]
   (reify
+    om/IDisplayName
+    (display-name [_] "Index")
+
     om/IDidMount
     (did-mount [this]
       (go
@@ -192,6 +204,9 @@
 
 (defn page-not-found-component [app owner]
   (reify
+    om/IDisplayName
+    (display-name [_] "PageNotFound")
+
     om/IRender
     (render [this]
       (html [:h1 "Page not found"]))))
@@ -200,6 +215,9 @@
 (defn app-component [{:as app :keys [current-user route-data]}
                      owner]
   (reify
+    om/IDisplayName
+    (display-name [_] "App")
+
     om/IDidMount
     (did-mount [this]
       (go
