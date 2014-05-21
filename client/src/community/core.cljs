@@ -23,14 +23,14 @@
     (r/route :subforum ["f" :slug :id])
     (r/route :thread ["t" :slug :id])))
 
-(def *pushstate-enabled*
+(def ^:private pushstate-enabled
   (boolean (.-pushState js/history)))
 
 (defn link-to [path & body]
   (html
    [:a {:href path
         :onClick (fn [e]
-                   (when *pushstate-enabled*
+                   (when pushstate-enabled
                      (.preventDefault e)
                      (.pushState js/history nil nil path)
                      (.dispatchEvent js/window (js/Event. "popstate"))))}
