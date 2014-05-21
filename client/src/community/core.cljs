@@ -79,6 +79,7 @@
               (om/set-state! owner :form-disabled? false)
               (om/transact! thread :posts #(conj % new-post))
               (om/update! thread :draft (models/empty-post)))
+            ;; TODO: handle invalid posts
             (recur)))))
 
     om/IWillUnmount
