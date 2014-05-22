@@ -67,6 +67,8 @@
 
 (def GET (partial request ajax/GET))
 (def POST (partial request ajax/POST))
+(def PATCH (partial request (fn [uri opts]
+                              (ajax/ajax-request uri "PATCH" (ajax/transform-opts opts)))))
 
 (defn current-user []
   (let [out (async/chan 1)]
@@ -118,6 +120,18 @@
       (try
         (let [res (<? (POST (str "/threads/" (:thread-id post) "/posts")
                             {:params (dissoc post :thread-id) :format :json}))]
+          (>! out (models/post res)))
+        (catch ExceptionInfo e
+          (>! out e)))
+      (async/close! out))
+    out))
+
+(defn update-post [post]
+  (let [out (async/chan 1)]
+    (go
+      (try
+        (let [res (<? (PATCH (str "/posts/" (:id post))
+                            {:params (dissoc post :id) :format :json}))]
           (>! out (models/post res)))
         (catch ExceptionInfo e
           (>! out e)))

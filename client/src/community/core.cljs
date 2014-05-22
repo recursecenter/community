@@ -127,21 +127,23 @@
     om/IRenderState
     (render-state [this {:keys [editing?]}]
       (html
-       (if editing?
-         [:p "editing"]
-         #_(om/build post-form-component nil
-                   {:opts {:init-post (models/empty-post (:id thread))
-                           :on-persisted
-                           (fn [post]
-                             (om/transact! thread :posts #(conj % post)))}})
-         [:li {:key (str "post-" (:id post))}
-          [:div (:body post)]
-          [:div (:name (:author post))]
-          [:a {:href "#"
-               :onClick (fn [e]
-                          (.preventDefault e)
-                          (om/set-state! owner :editing? true))}
-           "Edit"]])))))
+        [:li {:key (:id post)}
+         (if editing?
+           (om/build post-form-component nil
+                     {:opts {:init-post (om/value post)
+                             :on-persisted
+                             (fn [new-post]
+                               (doseq [[k v] new-post]
+                                 (om/update! post k v))
+                               (om/set-state! owner :editing? false))}})
+           [:div
+            [:div (:body post)]
+            [:div (:name (:author post))]
+            [:a {:href "#"
+                 :onClick (fn [e]
+                            (.preventDefault e)
+                            (om/set-state! owner :editing? true))}
+             "Edit"]])]))))
 
 (defn thread-component [{:keys [route-data thread] :as app} owner]
   (reify
