@@ -66,50 +66,82 @@
 ;;; Components
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn new-post-component [thread owner]
+(defn post-form-component [_ owner {:keys [on-persisted init-post]}]
   (reify
     om/IDisplayName
-    (display-name [_] "NewPost")
+    (display-name [_] "PostForm")
 
     om/IInitState
     (init-state [this]
-      {:c-draft (async/chan 1)
+      {:post init-post
+       :c-post (async/chan 1)
        :form-disabled? false})
 
     om/IWillMount
     (will-mount [this]
-      (let [{:keys [c-draft]} (om/get-state owner)]
+      (let [{:keys [c-post post]} (om/get-state owner)]
         (go-loop []
-          (when-let [draft (<! c-draft)]
-            (let [new-post (<? (api/new-post (:id @thread) draft))]
+          (when-let [post (<! c-post)]
+            (let [new-post (<? (if (:persisted? post)
+                                 (api/update-post post)
+                                 (api/new-post post)))]
               (om/set-state! owner :form-disabled? false)
-              (om/transact! thread :posts #(conj % new-post))
-              (om/update! thread :draft (models/empty-post)))
+              (on-persisted new-post)
+              (om/set-state! owner :post (models/empty-post (:thread-id post))))
             ;; TODO: handle invalid posts
             (recur)))))
 
     om/IWillUnmount
     (will-unmount [this]
-      (async/close! (:c-draft (om/get-state owner))))
+      (async/close! (:c-post (om/get-state owner))))
 
     om/IRender
     (render [this]
-      (let [{:keys [form-disabled? c-draft]} (om/get-state owner)]
+      (let [{:keys [form-disabled? c-post post]} (om/get-state owner)]
         (html
          [:form {:onSubmit (fn [e]
                              (.preventDefault e)
                              (when-not form-disabled?
-                               (async/put! c-draft (:draft @thread))
+                               (async/put! c-post post)
                                (om/set-state! owner :form-disabled? true)))}
           [:label {:for "post-body"} "Body"]
-          [:textarea {:value (get-in thread [:draft :body])
+          [:textarea {:value (:body post)
                       :id "post-body"
                       :name "post[body]"
                       :onChange (fn [e]
-                                  (om/update! thread [:draft :body] (-> e .-target .-value)))}]
+                                  (om/set-state! owner [:post :body]
+                                                 (-> e .-target .-value)))}]
           [:input {:type "submit"
-                   :value "Post"
+                   :value (if (:persisted? post) "Update" "Post")
                    :disabled form-disabled?}]])))))
+
+(defn post-component [post owner]
+  (reify
+    om/IDisplayName
+    (display-name [_] "Post")
+
+    om/IInitState
+    (init-state [this]
+      {:editing? false})
+
+    om/IRenderState
+    (render-state [this {:keys [editing?]}]
+      (html
+       (if editing?
+         [:p "editing"]
+         #_(om/build post-form-component nil
+                   {:opts {:init-post (models/empty-post (:id thread))
+                           :on-persisted
+                           (fn [post]
+                             (om/transact! thread :posts #(conj % post)))}})
+         [:li {:key (str "post-" (:id post))}
+          [:div (:body post)]
+          [:div (:name (:author post))]
+          [:a {:href "#"
+               :onClick (fn [e]
+                          (.preventDefault e)
+                          (om/set-state! owner :editing? true))}
+           "Edit"]])))))
 
 (defn thread-component [{:keys [route-data thread] :as app} owner]
   (reify
@@ -136,12 +168,12 @@
         (if thread
           [:div
            [:h1 (:title thread)]
-           [:ol
-            (for [post (:posts thread)]
-              [:li {:key (str "post-" (:id post))}
-               [:div (:body post)]
-               [:div (:name (:author post))]])]
-           (om/build new-post-component thread)]
+           [:ol (om/build-all post-component (:posts thread) {:key :id})]
+           (om/build post-form-component nil
+                     {:opts {:init-post (models/empty-post (:id thread))
+                             :on-persisted
+                             (fn [post]
+                               (om/transact! thread :posts #(conj % post)))}})]
           [:h1 "Loading..."])))))
 
 (defn new-thread-component [subforum owner]
@@ -182,13 +214,15 @@
                    :id "thread-title"
                    :name "thread[title]"
                    :onChange (fn [e]
-                               (om/update! subforum [:new-thread :title] (-> e .-target .-value)))}]
+                               (om/update! subforum [:new-thread :title]
+                                           (-> e .-target .-value)))}]
           [:label {:for "thread-body"} "Body"]
           [:textarea {:value (get-in subforum [:new-thread :body])
                       :id "thread-body"
                       :name "thread[body]"
                       :onChange (fn [e]
-                                  (om/update! subforum [:new-thread :body] (-> e .-target .-value)))}]
+                                  (om/update! subforum [:new-thread :body]
+                                              (-> e .-target .-value)))}]
           [:input {:type "submit"
                    :value "Create thread"
                    :disabled form-disabled?}]])))))

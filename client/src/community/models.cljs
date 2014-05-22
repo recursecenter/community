@@ -9,21 +9,26 @@
       (.replace (js/RegExp. "[^a-zA-Z0-9- ]" "g") "")
       (.replace (js/RegExp. " " "g") "-")))
 
-(defn empty-post []
-  {:body ""})
+(defn empty-post [thread-id]
+  {:body ""
+   :thread-id thread-id
+   :persisted? false})
 
 (defn empty-thread []
   {:title ""
    :body ""})
 
+;; Assumption: these functions are only run on data that came from the
+;; server, so they must have been already persisted.
+
 (defn post [api-data]
-  api-data)
+  (-> api-data
+      (assoc :persisted? true)))
 
 (defn thread [{:as api-data
-               :keys [title posts]}]
+               :keys [title posts id]}]
   (-> api-data
       (assoc :slug (slug title))
-      (assoc :draft (empty-post))
       (assoc :posts (mapv post posts))))
 
 (defn subforum [{:as api-data

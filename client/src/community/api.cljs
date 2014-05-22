@@ -112,12 +112,12 @@
       (async/close! out))
     out))
 
-(defn new-post [thread-id draft]
+(defn new-post [post]
   (let [out (async/chan 1)]
     (go
       (try
-        (let [res (<? (POST (str "/threads/" thread-id "/posts")
-                            {:params draft :format :json}))]
+        (let [res (<? (POST (str "/threads/" (:thread-id post) "/posts")
+                            {:params (dissoc post :thread-id) :format :json}))]
           (>! out (models/post res)))
         (catch ExceptionInfo e
           (>! out e)))
