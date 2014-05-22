@@ -66,7 +66,7 @@
 ;;; Components
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn post-form-component [_ owner {:keys [on-persisted init-post]}]
+(defn post-form-component [_ owner {:keys [after-persisted init-post]}]
   (reify
     om/IDisplayName
     (display-name [_] "PostForm")
@@ -86,8 +86,8 @@
                                  (api/update-post post)
                                  (api/new-post post)))]
               (om/set-state! owner :form-disabled? false)
-              (on-persisted new-post)
-              (om/set-state! owner :post (models/empty-post (:thread-id post))))
+              (after-persisted new-post
+                               #(om/set-state! owner :post (models/empty-post (:thread-id new-post)))))
             ;; TODO: handle invalid posts
             (recur)))))
 
@@ -131,11 +131,16 @@
          (if editing?
            (om/build post-form-component nil
                      {:opts {:init-post (om/value post)
-                             :on-persisted
-                             (fn [new-post]
+                             :after-persisted
+                             (fn [new-post reset-form!]
+                               ;; TODO: this causes a React error for
+                               ;; forceUpdate of a unmounted
+                               ;; component. dnolen has a fix and is
+                               ;; pushing a new release of om with it
+                               ;; soon.
+                               (om/set-state! owner :editing? false)
                                (doseq [[k v] new-post]
-                                 (om/update! post k v))
-                               (om/set-state! owner :editing? false))}})
+                                 (om/update! post k v)))}})
            [:div
             [:div (:body post)]
             [:div (:name (:author post))]
@@ -173,8 +178,9 @@
            [:ol (om/build-all post-component (:posts thread) {:key :id})]
            (om/build post-form-component nil
                      {:opts {:init-post (models/empty-post (:id thread))
-                             :on-persisted
-                             (fn [post]
+                             :after-persisted
+                             (fn [post reset-form!]
+                               (reset-form!)
                                (om/transact! thread :posts #(conj % post)))}})]
           [:h1 "Loading..."])))))
 
