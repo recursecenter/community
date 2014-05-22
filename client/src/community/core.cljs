@@ -5,7 +5,8 @@
             [community.util.routing :as r]
             [om.core :as om]
             [sablono.core :as html :refer-macros [html]]
-            [cljs.core.async :as async])
+            [cljs.core.async :as async]
+            [goog.window :as window])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
 (enable-console-print!)
@@ -28,12 +29,15 @@
     (r/route :subforum ["f" :slug :id])
     (r/route :thread ["t" :slug :id])))
 
-(def ^:private pushstate-enabled
+(def pushstate-enabled
   (boolean (.-pushState js/history)))
 
 (defn redirect-to [path]
   (.pushState js/history nil nil path)
   (.dispatchEvent js/window (js/Event. "popstate")))
+
+(defn open-in-new-window? [click-e]
+  (or (.-metaKey click-e) (.-ctrlKey click-e)))
 
 (defn link-to [path & body]
   (html
@@ -41,7 +45,9 @@
         :onClick (fn [e]
                    (when pushstate-enabled
                      (.preventDefault e)
-                     (redirect-to path)))}
+                     (if (open-in-new-window? e)
+                       (window/open path)
+                       (redirect-to path))))}
     body]))
 
 (defn set-route! [app]
