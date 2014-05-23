@@ -5,7 +5,8 @@ class Api::ThreadsController < Api::ApiController
   end
 
   def create
-    if @thread.save!
+    @thread.transaction do
+      @thread.save!
       @thread.posts.create!(post_params)
     end
   end
