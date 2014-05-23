@@ -6,7 +6,7 @@ class Api::PostsController < Api::ApiController
   end
 
   def update
-    @post.update_attributes(update_params)
+    @post.update!(update_params)
   end
 
 private
