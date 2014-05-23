@@ -1,5 +1,5 @@
 class Api::PostsController < Api::ApiController
-  load_and_authorize_resource
+  load_and_authorize_resource :post
 
   def create
     @post.save!
