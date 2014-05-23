@@ -9,7 +9,6 @@ class Ability
     can :read, Subforum
 
     can [:create, :read], DiscussionThread
-    can :create, DiscussionThread
 
     can :create, Post
     can :update, Post, author: user
