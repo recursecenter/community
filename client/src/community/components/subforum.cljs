@@ -49,10 +49,10 @@
                    :onChange (fn [e]
                                (om/update! subforum [:new-thread :title]
                                            (-> e .-target .-value)))}]
-          [:label {:for "thread-body"} "Body"]
+          [:label {:for "post-body"} "Body"]
           [:textarea {:value (get-in subforum [:new-thread :body])
-                      :id "thread-body"
-                      :name "thread[body]"
+                      :id "post-body"
+                      :name "post[body]"
                       :onChange (fn [e]
                                   (om/update! subforum [:new-thread :body]
                                               (-> e .-target .-value)))}]

@@ -1,18 +1,23 @@
 class Api::PostsController < Api::ApiController
+  load_and_authorize_resource
+
   def create
-    thread = DiscussionThread.find(params[:thread_id])
-    @post = current_user.posts.create!(post_params.merge(thread: thread))
+    @post.save!
   end
 
   def update
-    # TODO: send back a :forbidden if we can't find the post.
-    @post = current_user.posts.find(params[:id])
-    @post.update!(post_params)
+    @post.update_attributes(update_params)
   end
 
 private
 
-  def post_params
+  def create_params
+    thread = DiscussionThread.find(params[:thread_id])
+    params.require(:post).permit(:body).
+      merge(thread: thread)
+  end
+
+  def update_params
     params.require(:post).permit(:body)
   end
 end

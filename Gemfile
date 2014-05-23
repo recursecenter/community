@@ -16,6 +16,7 @@ gem 'uglifier', '>= 1.3.0'
 gem 'rails_12factor'
 
 gem 'oauth2'
+gem 'cancancan', '~> 1.8'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'

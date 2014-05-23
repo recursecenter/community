@@ -1,17 +1,17 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  first_name: MyString
-  last_name: MyString
-  email: MyString
-  avatar_url: MyString
-  batch_name: MyString
+zach:
+  first_name: Zach
+  last_name: Allaun
+  email: zach@example.com
+  avatar_url: example.com/zach_avatar.jpg
+  batch_name: Summer 2012
   hacker_school_id: 1
 
-two:
-  first_name: MyString
-  last_name: MyString
-  email: MyString
-  avatar_url: MyString
-  batch_name: MyString
-  hacker_school_id: 1
+dave:
+  first_name: Dave
+  last_name: Balbert
+  email: dave@example.com
+  avatar_url: example.com/dave_avatar.jpg
+  batch_name: All the batches
+  hacker_school_id: 2

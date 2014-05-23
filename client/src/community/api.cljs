@@ -131,19 +131,20 @@
     (go
       (try
         (let [res (<? (PATCH (str "/posts/" (:id post))
-                            {:params (dissoc post :id) :format :json}))]
+                             {:params {:post (dissoc post :id)} :format :json}))]
           (>! out (models/post res)))
         (catch ExceptionInfo e
           (>! out e)))
       (async/close! out))
     out))
 
-(defn new-thread [subforum-id thread]
+(defn new-thread [subforum-id {:keys [title body]}]
   (let [out (async/chan 1)]
     (go
       (try
         (let [res (<? (POST (str "/subforums/" subforum-id "/threads")
-                            {:params thread :format :json}))]
+                            {:params {:thread {:title title} :post {:body body}}
+                             :format :json}))]
           (>! out (models/thread res)))
         (catch ExceptionInfo e
           (>! out e)))

@@ -20,7 +20,7 @@
 
     om/IWillMount
     (will-mount [this]
-      (let [{:keys [c-post post]} (om/get-state owner)]
+      (let [{:keys [c-post]} (om/get-state owner)]
         (go-loop []
           (when-let [post (<! c-post)]
             (let [new-post (<? (if (:persisted? post)

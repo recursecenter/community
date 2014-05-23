@@ -1,5 +1,7 @@
 class Api::SubforumGroupsController < Api::ApiController
+  load_and_authorize_resource
+
   def index
-    @subforum_groups = SubforumGroup.all.includes(:subforums)
+    @subforum_groups = @subforum_groups.includes(:subforums)
   end
 end

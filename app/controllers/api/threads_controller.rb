@@ -1,15 +1,23 @@
 class Api::ThreadsController < Api::ApiController
+  load_and_authorize_resource :thread, class: 'DiscussionThread'
+
   def show
-    @thread = DiscussionThread.includes(posts: [:author]).find(params[:id])
   end
 
   def create
-    subforum = Subforum.find(params[:subforum_id])
-    @thread = NewThread.create!(new_thread_params.merge(author: current_user, subforum: subforum))
+    if @thread.save!
+      @thread.posts.create!(post_params)
+    end
   end
 
 private
-  def new_thread_params
-    params.require(:thread).permit(:title, :body)
+  def create_params
+    subforum = Subforum.find(params[:subforum_id])
+    params.require(:thread).permit(:title).
+      merge(created_by: current_user, subforum: subforum)
+  end
+
+  def post_params
+    params.require(:post).permit(:body).merge(author: current_user)
   end
 end

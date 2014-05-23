@@ -29,6 +29,7 @@ GEM
       tzinfo (~> 1.1)
     arel (5.0.1.20140414130214)
     builder (3.2.2)
+    cancancan (1.8.0)
     coderay (1.1.0)
     erubis (2.7.0)
     execjs (2.0.2)
@@ -141,6 +142,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  cancancan (~> 1.8)
   jbuilder (~> 2.0)
   jquery-rails
   oauth2
