@@ -7,6 +7,18 @@
             [sablono.core :refer-macros [html]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
+(defn navbar-component [app owner]
+  (reify
+    om/IDisplayName
+    (display-name [_] "NavBar")
+
+    om/IRender
+    (render [this]
+      (html
+        [:nav.navbar.navbar-default {:role "navigation"}
+         [:div.container
+          [:a.navbar-brand {:href "#"} "Community"]]]))))
+
 (defn app-component [{:as app :keys [current-user route-data]}
                      owner]
   (reify
@@ -29,10 +41,12 @@
     om/IRender
     (render [this]
       (html
-       [:div {:id "app"}
-        (if (not current-user)
-          [:h1 "Logging in..."]
-          [:div
-           [:h1 (str "user: " (:first-name current-user))]
-           (let [component (routes/dispatch route-data)]
-             (om/build component app))])]))))
+        [:div
+         (om/build navbar-component app)
+         [:div.container
+          (if (not current-user)
+            [:h1 "Logging in..."]
+            [:div
+             [:h1 (str "user: " (:first-name current-user))]
+             (let [component (routes/dispatch route-data)]
+               (om/build component app))])]]))))
