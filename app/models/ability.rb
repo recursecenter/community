@@ -11,6 +11,7 @@ class Ability
     can [:create, :read], DiscussionThread
     can :create, DiscussionThread
 
-    can [:create, :update], Post, author: user
+    can :create, Post
+    can :update, Post, author: user
   end
 end

@@ -14,7 +14,7 @@ private
   def create_params
     thread = DiscussionThread.find(params[:thread_id])
     params.require(:post).permit(:body).
-      merge(thread: thread)
+      merge(thread: thread, author: current_user)
   end
 
   def update_params
