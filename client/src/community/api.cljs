@@ -75,7 +75,7 @@
     (go
       (try
         (let [res (<? (GET "/users/me"))]
-          (>! out (format-keys res))
+          (>! out (models/user (format-keys res)))
           (async/close! out))
         (catch ExceptionInfo e
           (if (== 403 (:status (ex-data e)))

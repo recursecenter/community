@@ -43,7 +43,9 @@
   (assoc api-data :subforums
          (mapv subforum subforums)))
 
-
+(defn user [{:as api-data
+             :keys [first-name last-name]}]
+  (assoc api-data :name (str first-name " " last-name)))
 
 
 

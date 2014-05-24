@@ -7,7 +7,7 @@
             [sablono.core :refer-macros [html]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
-(defn navbar-component [app owner]
+(defn navbar-component [{:keys [current-user]} owner]
   (reify
     om/IDisplayName
     (display-name [_] "NavBar")
@@ -17,7 +17,15 @@
       (html
         [:nav.navbar.navbar-default {:role "navigation"}
          [:div.container
-          [:a.navbar-brand {:href "#"} "Community"]]]))))
+          [:div.navbar-header
+           [:a.navbar-brand {:href "#"} "Community"]]
+          [:ul.nav.navbar-nav.navbar-right
+           (when current-user
+             [:li.dropdown
+              [:a.dropdown-toggle {:href "#" :data-toggle "dropdown"}
+               (:name current-user) [:b.caret]]
+              [:ul.dropdown-menu
+               [:li [:a {:href "/logout"} "Logout"]]]])]]]))))
 
 (defn app-component [{:as app :keys [current-user route-data]}
                      owner]
@@ -44,9 +52,7 @@
         [:div
          (om/build navbar-component app)
          [:div.container
-          (if (not current-user)
-            [:h1 "Logging in..."]
+          (if current-user
             [:div
-             [:h1 (str "user: " (:first-name current-user))]
              (let [component (routes/dispatch route-data)]
                (om/build component app))])]]))))

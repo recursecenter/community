@@ -37,28 +37,35 @@
     (render [this]
       (let [{:keys [form-disabled? c-draft]} (om/get-state owner)]
         (html
-         [:form {:onSubmit (fn [e]
-                             (.preventDefault e)
-                             (when-not form-disabled?
-                               (async/put! c-draft (:new-thread @subforum))
-                               (om/set-state! owner :form-disabled? true)))}
-          [:label {:for "thread-title"} "Title"]
-          [:input {:type "text"
-                   :id "thread-title"
-                   :name "thread[title]"
-                   :onChange (fn [e]
-                               (om/update! subforum [:new-thread :title]
-                                           (-> e .-target .-value)))}]
-          [:label {:for "post-body"} "Body"]
-          [:textarea {:value (get-in subforum [:new-thread :body])
-                      :id "post-body"
-                      :name "post[body]"
-                      :onChange (fn [e]
-                                  (om/update! subforum [:new-thread :body]
-                                              (-> e .-target .-value)))}]
-          [:input {:type "submit"
-                   :value "Create thread"
-                   :disabled form-disabled?}]])))))
+         [:div.panel.panel-default
+          [:div.panel-heading
+           [:h4 "New thread"]]
+          [:div.panel-body
+           [:form {:role "form"
+                   :onSubmit (fn [e]
+                               (.preventDefault e)
+                               (when-not form-disabled?
+                                 (async/put! c-draft (:new-thread @subforum))
+                                 (om/set-state! owner :form-disabled? true)))}
+            [:div.form-group
+             [:label {:for "thread-title"} "Title"]
+             [:input#thread-title.form-control
+              {:type "text"
+               :name "thread[title]"
+               :onChange (fn [e]
+                           (om/update! subforum [:new-thread :title]
+                                       (-> e .-target .-value)))}]]
+            [:div.form-group
+             [:label {:for "post-body"} "Body"]
+             [:textarea#post-body.form-control
+              {:value (get-in subforum [:new-thread :body])
+               :name "post[body]"
+               :onChange (fn [e]
+                           (om/update! subforum [:new-thread :body]
+                                       (-> e .-target .-value)))}]]
+            [:button.btn.btn-default {:type "submit"
+                                      :disabled form-disabled?}
+             "Create thread"]]]])))))
 
 (defn subforum-component [{:keys [route-data subforum] :as app}
                           owner]
