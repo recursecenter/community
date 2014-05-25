@@ -2,7 +2,7 @@
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.clojure/clojurescript "0.0-2173"]
                  [org.clojure/core.async "0.1.303.0-886421-alpha"]
-                 [om "0.6.2"]
+                 [om "0.6.3"]
                  [sablono "0.2.17"]
                  [cljs-ajax "0.2.4"]]
 

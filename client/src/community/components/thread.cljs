@@ -74,11 +74,6 @@
                      {:opts {:init-post (om/value post)
                              :after-persisted
                              (fn [new-post reset-form!]
-                               ;; TODO: this causes a React error for
-                               ;; forceUpdate of a unmounted
-                               ;; component. dnolen has a fix and is
-                               ;; pushing a new release of om with it
-                               ;; soon.
                                (om/set-state! owner :editing? false)
                                (doseq [[k v] new-post]
                                  (om/update! post k v)))}})
