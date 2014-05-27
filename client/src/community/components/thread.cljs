@@ -1,5 +1,5 @@
 (ns community.components.thread
-  (:require [community.util :refer-macros [<?]]
+  (:require [community.util :refer-macros [<? p]]
             [community.api :as api]
             [community.models :as models]
             [om.core :as om]
@@ -71,23 +71,34 @@
     om/IRenderState
     (render-state [this {:keys [editing?]}]
       (html
-        [:li {:key (:id post)}
-         (if editing?
-           (om/build post-form-component nil
-                     {:opts {:init-post (om/value post)
-                             :after-persisted
-                             (fn [new-post reset-form!]
-                               (om/set-state! owner :editing? false)
-                               (doseq [[k v] new-post]
-                                 (om/update! post k v)))}})
-           [:div
-            [:div (:body post)]
-            [:div (:name (:author post))]
-            [:a {:href "#"
-                 :onClick (fn [e]
-                            (.preventDefault e)
-                            (om/set-state! owner :editing? true))}
-             "Edit"]])]))))
+       [:li.post {:key (:id post)}
+        [:div.row
+         [:div.post-author
+          [:img.post-profile-image
+           {:src (-> post :author :avatar-url)
+            :width "50"       ;TODO: request different image sizes
+            }]
+          (-> post :author :name)]
+         [:div.post-body
+          (if editing?
+            (om/build post-form-component nil
+                      {:opts {:init-post (om/value post)
+                              :after-persisted
+                              (fn [new-post reset-form!]
+                                (om/set-state! owner :editing? false)
+                                (doseq [[k v] new-post]
+                                  (om/update! post k v)))}})
+
+            [:div
+             [:p (:body post)]])]]
+        [:div.row
+          [:div.post-controls
+           (when (and (:editable post) (not editing?))
+             [:a {:href "#"
+                  :onClick (fn [e]
+                             (.preventDefault e)
+                             (om/set-state! owner :editing? true))}
+              "Edit"])]]]))))
 
 (defn thread-component [{:keys [route-data thread] :as app} owner]
   (reify
@@ -114,7 +125,7 @@
         (if thread
           [:div
            [:h1 (:title thread)]
-           [:ol (om/build-all post-component (:posts thread) {:key :id})]
+           [:ol.list-unstyled (om/build-all post-component (:posts thread) {:key :id})]
            (om/build post-form-component nil
                      {:opts {:init-post (models/empty-post (:id thread))
                              :after-persisted

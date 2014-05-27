@@ -1,2 +1,4 @@
 json.extract! post, :id, :body, :thread_id
-json.author post.author, :id, :name
+json.editable can?(:edit, post)
+
+json.author post.author, :id, :name, :avatar_url

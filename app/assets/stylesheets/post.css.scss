@@ -1,0 +1,27 @@
+.post {
+  border-bottom: 1px solid $table-border-color;
+  padding: 10px 0;
+}
+
+.post:last-child {
+  border-bottom: none;
+}
+
+
+.post-author {
+  @include make-lg-column(1);
+  text-align: center;
+}
+
+img.post-profile-image {
+  @include center-block;
+}
+
+.post-body {
+  @include make-lg-column(6);
+}
+
+.post-controls {
+  @include make-lg-column-offset(1);
+  @include make-lg-column(6);
+}
