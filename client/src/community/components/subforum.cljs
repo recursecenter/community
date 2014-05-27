@@ -41,8 +41,7 @@
           [:div.panel-heading
            [:h4 "New thread"]]
           [:div.panel-body
-           [:form {:role "form"
-                   :onSubmit (fn [e]
+           [:form {:onSubmit (fn [e]
                                (.preventDefault e)
                                (when-not form-disabled?
                                  (async/put! c-draft (:new-thread @subforum))

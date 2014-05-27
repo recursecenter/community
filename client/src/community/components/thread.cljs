@@ -40,21 +40,24 @@
     (render [this]
       (let [{:keys [form-disabled? c-post post]} (om/get-state owner)]
         (html
-         [:form {:onSubmit (fn [e]
-                             (.preventDefault e)
-                             (when-not form-disabled?
-                               (async/put! c-post post)
-                               (om/set-state! owner :form-disabled? true)))}
-          [:label {:for "post-body"} "Body"]
-          [:textarea {:value (:body post)
-                      :id "post-body"
-                      :name "post[body]"
-                      :onChange (fn [e]
-                                  (om/set-state! owner [:post :body]
-                                                 (-> e .-target .-value)))}]
-          [:input {:type "submit"
-                   :value (if (:persisted? post) "Update" "Post")
-                   :disabled form-disabled?}]])))))
+          [:div.panel.panel-default
+           [:div.panel-body
+            [:form {:onSubmit (fn [e]
+                                (.preventDefault e)
+                                (when-not form-disabled?
+                                  (async/put! c-post post)
+                                  (om/set-state! owner :form-disabled? true)))}
+             [:div.form-group
+              [:label {:for "post-body"} "Body"]
+              [:textarea.form-control {:value (:body post)
+                                       :id "post-body"
+                                       :name "post[body]"
+                                       :onChange (fn [e]
+                                                   (om/set-state! owner [:post :body]
+                                                                  (-> e .-target .-value)))}]]
+             [:button.btn.btn-default {:type "submit"
+                                       :disabled form-disabled?}
+              (if (:persisted? post) "Update" "Post")]]]])))))
 
 (defn post-component [post owner]
   (reify
