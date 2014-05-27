@@ -92,11 +92,13 @@
        (if subforum
          [:div
           [:h1 (:name subforum)]
-          [:ol
-           (for [{:keys [id slug title created-by]} (:threads subforum)]
-             [:li {:key (str "thread-" id)}
-              [:h2 (link-to (routes :thread {:id id :slug slug}) title)
-               " - "
-               created-by]])]
+          [:table.table.table-striped
+           [:thead
+            [:tr [:th "Topic"] [:th "Created by"]]]
+           [:tbody
+            (for [{:keys [id slug title created-by] :as thread} (:threads subforum)]
+              [:tr {:key id}
+               [:td (link-to (routes :thread thread) title)]
+               [:td created-by]])]]
           (om/build new-thread-component subforum)]
          [:h2 "loading..."])))))
