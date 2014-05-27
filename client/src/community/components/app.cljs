@@ -2,7 +2,8 @@
   (:require [community.api :as api]
             [community.routes :as routes]
             [community.components.shared :as shared]
-            [community.util :refer-macros [<?]]
+            [community.util :refer-macros [<? p]]
+            [community.partials :as partials]
             [om.core :as om]
             [sablono.core :refer-macros [html]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
@@ -18,7 +19,7 @@
         [:nav.navbar.navbar-default {:role "navigation"}
          [:div.container
           [:div.navbar-header
-           [:a.navbar-brand {:href "#"} "Community"]]
+           (partials/link-to "/" {:class "navbar-brand"} "Community")]
           [:ul.nav.navbar-nav.navbar-right
            (when current-user
              [:li.dropdown
