@@ -25,7 +25,7 @@
 ;;; Exports
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(def ^:private print-builds? true)
+(def ^:private print-builds? false)
 
 (defn ^:export init-app
   "Mounts the om application onto target element."

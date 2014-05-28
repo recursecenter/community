@@ -5,6 +5,11 @@
      (prn res#)
      res#))
 
+(defmacro p-log [form]
+  `(let [res# ~form]
+     (.log js/console res#)
+     res#))
+
 (defmacro <?
   "Like cljs.core.async/<!, except that it throws js/Errors that
   arrive on the channel."

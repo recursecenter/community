@@ -4,7 +4,8 @@
                  [org.clojure/core.async "0.1.303.0-886421-alpha"]
                  [om "0.6.4"]
                  [sablono "0.2.17"]
-                 [cljs-ajax "0.2.4"]]
+                 [cljs-ajax "0.2.4"]
+                 [markdown-clj "0.9.44"]]
 
   :plugins [[lein-cljsbuild "1.0.2"]]
 

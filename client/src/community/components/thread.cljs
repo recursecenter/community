@@ -2,6 +2,7 @@
   (:require [community.util :refer-macros [<? p]]
             [community.api :as api]
             [community.models :as models]
+            [community.partials :as partials]
             [om.core :as om]
             [sablono.core :refer-macros [html]]
             [cljs.core.async :as async])
@@ -89,8 +90,7 @@
                                 (doseq [[k v] new-post]
                                   (om/update! post k v)))}})
 
-            [:div
-             [:p (:body post)]])]]
+            (partials/html-from-markdown (:body post)))]]
         [:div.row
           [:div.post-controls
            (when (and (:editable post) (not editing?))
