@@ -70,83 +70,53 @@
 (def PATCH (partial request (fn [uri opts]
                               (ajax/ajax-request uri "PATCH" (ajax/transform-opts opts)))))
 
-(defn current-user []
-  (let [out (async/chan 1)]
-    (go
-      (try
-        (let [res (<? (GET "/users/me"))]
-          (>! out (models/user (format-keys res)))
-          (async/close! out))
-        (catch ExceptionInfo e
-          (if (== 403 (:status (ex-data e)))
-            (>! out ::no-current-user)
-            (>! out e)))))
-    out))
+(defn make-api-fn
+  [req-fn & {:keys [res-transform err-transform]}]
+  (fn [& args]
+    (let [out (async/chan 1)]
+      (go
+        (try
+          (let [res (<? (apply req-fn args))]
+            (>! out ((or res-transform identity) res))
+            (async/close! out))
+          (catch ExceptionInfo e
+            (>! out ((or err-transform identity) e)))))
+      out)))
 
-(defn subforum-groups []
-  (let [out (async/chan 1)]
-    (go
-      (let [res (<? (GET "/subforum_groups"))]
-        (>! out
-          (mapv models/subforum-group res))
-        (async/close! out)))
-    out))
+(def current-user
+  (make-api-fn #(GET "/users/me")
+    :res-transform models/user
+    :err-transform #(if (== 403 (:status (ex-data %)))
+                      ::no-current-user
+                      %)))
 
-(defn subforum [id]
-  (let [out (async/chan 1)]
-    (go
-      (try
-        (let [res (<? (GET (str "/subforums/" id)))]
-          (>! out (models/subforum res)))
-        (catch ExceptionInfo e
-          (>! out e)))
-      (async/close! out))
-    out))
+(def subforum-groups
+  (make-api-fn #(GET "/subforum_groups")
+    :res-transform #(mapv models/subforum-group %)))
 
-(defn thread [id]
-  (let [out (async/chan 1)]
-    (go
-      (try
-        (let [res (<? (GET (str "/threads/" id)))]
-          (>! out (models/thread res)))
-        (catch ExceptionInfo e
-          (>! out e)))
-      (async/close! out))
-    out))
+(def subforum
+  (make-api-fn (fn [id] (GET (str "/subforums/" id)))
+    :res-transform models/subforum))
 
-(defn new-post [post]
-  (let [out (async/chan 1)]
-    (go
-      (try
-        (let [res (<? (POST (str "/threads/" (:thread-id post) "/posts")
-                            {:params (dissoc post :thread-id) :format :json}))]
-          (>! out (models/post res)))
-        (catch ExceptionInfo e
-          (>! out e)))
-      (async/close! out))
-    out))
+(def thread
+  (make-api-fn (fn [id] (GET (str "/threads/" id)))
+    :res-transform models/thread))
 
-(defn update-post [post]
-  (let [out (async/chan 1)]
-    (go
-      (try
-        (let [res (<? (PATCH (str "/posts/" (:id post))
-                             {:params {:post (dissoc post :id)} :format :json}))]
-          (>! out (models/post res)))
-        (catch ExceptionInfo e
-          (>! out e)))
-      (async/close! out))
-    out))
+(def new-post
+  (make-api-fn (fn [post]
+                 (POST (str "/threads/" (:thread-id post) "/posts")
+                       {:params (dissoc post :thread-id) :format :json}))
+    :res-transform models/post))
 
-(defn new-thread [subforum-id {:keys [title body]}]
-  (let [out (async/chan 1)]
-    (go
-      (try
-        (let [res (<? (POST (str "/subforums/" subforum-id "/threads")
-                            {:params {:thread {:title title} :post {:body body}}
-                             :format :json}))]
-          (>! out (models/thread res)))
-        (catch ExceptionInfo e
-          (>! out e)))
-      (async/close! out))
-    out))
+(def update-post
+  (make-api-fn (fn [post]
+                 (PATCH (str "/posts/" (:id post))
+                        {:params {:post (dissoc post :id)} :format :json}))
+    :res-transform models/post))
+
+(def new-thread
+  (make-api-fn (fn [subforum-id {:keys [title body]}]
+                 (POST (str "/subforums/" subforum-id "/threads")
+                       {:params {:thread {:title title} :post {:body body}}
+                        :format :json}))
+    :res-transform models/thread))
