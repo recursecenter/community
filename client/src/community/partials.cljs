@@ -1,7 +1,7 @@
 (ns community.partials
   (:require [community.location :as location]
+            [community.util :refer-macros [p]]
             [sablono.core :refer-macros [html]]
-            [markdown.core :as md]
             [om.dom :as dom]
             [goog.window :as window]
             [goog.string]))
@@ -20,7 +20,7 @@
                                       (location/redirect-to path))))})
        body])))
 
-;; TODO sanitize with goog.labs.html.Sanitizer
+;; TODO: externs for advanced compilation
 (defn html-from-markdown [md-string]
-  (let [safe-html-string (md/mdToHtml (goog.string/htmlEscape md-string))]
+  (let [safe-html-string (.toHTML js/markdown (goog.string/htmlEscape md-string))]
     (dom/div #js {:dangerouslySetInnerHTML #js {:__html safe-html-string}})))
