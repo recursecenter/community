@@ -100,6 +100,6 @@
               [:tr {:key id}
                [:td (link-to (routes :thread thread) title)]
                [:td created-by]
-               [:td (p (util/time-ago-in-words (:updated-at thread)))]])]]
+               [:td (util/time-ago-in-words (:updated-at thread))]])]]
           (om/build new-thread-component subforum)]
          [:h2 "loading..."])))))
