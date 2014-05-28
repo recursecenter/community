@@ -1,5 +1,5 @@
 (ns community.components.subforum
-  (:require [community.util :refer-macros [<?]]
+  (:require [community.util :as util :refer-macros [<? p]]
             [community.api :as api]
             [community.location :refer [redirect-to]]
             [community.partials :refer [link-to]]
@@ -94,11 +94,12 @@
           [:h1 (:name subforum)]
           [:table.table.table-striped
            [:thead
-            [:tr [:th "Topic"] [:th "Created by"]]]
+            [:tr [:th "Topic"] [:th "Created by"] [:th "Last updated"]]]
            [:tbody
             (for [{:keys [id slug title created-by] :as thread} (:threads subforum)]
               [:tr {:key id}
                [:td (link-to (routes :thread thread) title)]
-               [:td created-by]])]]
+               [:td created-by]
+               [:td (p (util/time-ago-in-words (:updated-at thread)))]])]]
           (om/build new-thread-component subforum)]
          [:h2 "loading..."])))))
