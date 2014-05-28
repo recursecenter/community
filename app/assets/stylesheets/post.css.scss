@@ -1,16 +1,12 @@
 .post {
-  border-bottom: 1px solid $table-border-color;
-  padding: 10px 0;
+  margin: 10px 0;
 }
-
-.post:last-child {
-  border-bottom: none;
-}
-
 
 .post-author {
   @include make-lg-column(1);
   text-align: center;
+  border-top: 1px solid $table-border-color;
+  padding-top: 10px;
 }
 
 img.post-profile-image {
@@ -19,6 +15,8 @@ img.post-profile-image {
 
 .post-body {
   @include make-lg-column(6);
+  border-top: 1px solid $table-border-color;
+  padding-top: 10px;
 }
 
 .post-controls {

@@ -3,6 +3,7 @@
             [community.api :as api]
             [community.models :as models]
             [community.partials :as partials]
+            [community.routes :as routes]
             [om.core :as om]
             [sablono.core :refer-macros [html]]
             [cljs.core.async :as async])
@@ -79,7 +80,8 @@
            {:src (-> post :author :avatar-url)
             :width "50"       ;TODO: request different image sizes
             }]
-          (-> post :author :name)]
+          [:a {:href (routes/hs-route :person (p (:author post)))}
+           (-> post :author :name)]]
          [:div.post-body
           (if editing?
             (om/build post-form-component nil
