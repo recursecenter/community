@@ -10,7 +10,7 @@
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
-(defn post-form-component [_ owner {:keys [after-persisted init-post]}]
+(defn post-form-component [_ owner {:keys [after-persisted init-post cancel-edit]}]
   (reify
     om/IDisplayName
     (display-name [_] "PostForm")
@@ -63,7 +63,11 @@
                                                      (-> e .-target .-value)))}}))]
              [:button.btn.btn-default {:type "submit"
                                        :disabled form-disabled?}
-              (if (:persisted? post) "Update" "Post")]]]])))))
+              (if (:persisted? post) "Update" "Post")]
+             (when (:persisted? post)
+               [:button.close {:type "button"
+                               :onClick cancel-edit}
+                "x"])]]])))))
 
 (defn post-component [post owner]
   (reify
@@ -90,11 +94,12 @@
           (if editing?
             (om/build post-form-component nil
                       {:opts {:init-post (om/value post)
-                              :after-persisted
-                              (fn [new-post reset-form!]
-                                (om/set-state! owner :editing? false)
-                                (doseq [[k v] new-post]
-                                  (om/update! post k v)))}})
+                              :after-persisted (fn [new-post reset-form!]
+                                                 (om/set-state! owner :editing? false)
+                                                 (doseq [[k v] new-post]
+                                                   (om/update! post k v)))
+                              :cancel-edit (fn []
+                                             (om/set-state! owner :editing? false))}})
 
             (partials/html-from-markdown (:body post)))]]
         [:div.row
