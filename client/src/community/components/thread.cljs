@@ -54,12 +54,14 @@
               (let [post-body-id (str "post-body-" (:id post))]
                 [:label {:for post-body-id} "Body"]
                 (om/build shared/resizing-textarea-component {:content (:body post)}
-                  {:opts {:id post-body-id
-                          :class "form-control"
-                          :name "post[body]"
-                          :onChange (fn [e]
-                                      (om/set-state! owner [:post :body]
-                                                     (-> e .-target .-value)))}}))]
+                  {:opts {:focus? (:persisted? post)
+                          :passthrough
+                          {:id post-body-id
+                           :class "form-control"
+                           :name "post[body]"
+                           :onChange (fn [e]
+                                       (om/set-state! owner [:post :body]
+                                                      (-> e .-target .-value)))}}}))]
              [:button.btn.btn-default {:type "submit"
                                        :disabled form-disabled?}
               (if (:persisted? post) "Update" "Post")]

@@ -12,7 +12,7 @@
     (render [this]
       (html [:h1 "Page not found"]))))
 
-(defn resizing-textarea-component [{:keys [content]} owner opts]
+(defn resizing-textarea-component [{:keys [content]} owner {:keys [passthrough focus?]}]
   (reify
     om/IDisplayName
     (display-name [_] "ResizingTextArea")
@@ -24,8 +24,10 @@
             height (if (> scroll-height 200)
                      200
                      scroll-height)]
-        (set! (.. textarea -style -height) (str height "px"))))
+        (set! (.. textarea -style -height) (str height "px"))
+        (when focus?
+          (.focus textarea))))
 
     om/IRender
     (render [this]
-      (html [:textarea (merge {:value content} opts)]))))
+      (html [:textarea (merge {:value content} passthrough)]))))
