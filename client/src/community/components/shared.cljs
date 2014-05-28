@@ -20,7 +20,6 @@
     om/IDidMount
     (did-mount [this]
       (let [textarea (om/get-node owner)
-            _ (.log js/console textarea)
             scroll-height (.-scrollHeight textarea)
             height (if (> scroll-height 200)
                      200
