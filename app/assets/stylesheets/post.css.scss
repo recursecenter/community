@@ -14,12 +14,12 @@ img.post-profile-image {
 }
 
 .post-body {
-  @include make-lg-column(6);
+  @include make-lg-column(7);
   border-top: 1px solid $table-border-color;
   padding-top: 10px;
 }
 
 .post-controls {
   @include make-lg-column-offset(1);
-  @include make-lg-column(6);
+  @include make-lg-column(7);
 }

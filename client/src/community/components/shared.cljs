@@ -11,3 +11,22 @@
     om/IRender
     (render [this]
       (html [:h1 "Page not found"]))))
+
+(defn resizing-textarea-component [_ owner opts]
+  (reify
+    om/IDisplayName
+    (display-name [_] "ResizingTextArea")
+
+    om/IDidMount
+    (did-mount [this]
+      (let [textarea (om/get-node owner)
+            _ (.log js/console textarea)
+            scroll-height (.-scrollHeight textarea)
+            height (if (> scroll-height 200)
+                     200
+                     scroll-height)]
+        (set! (.. textarea -style -height) (str height "px"))))
+
+    om/IRender
+    (render [this]
+      (html [:textarea opts]))))

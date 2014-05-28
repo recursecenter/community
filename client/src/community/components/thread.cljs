@@ -4,6 +4,7 @@
             [community.models :as models]
             [community.partials :as partials]
             [community.routes :as routes]
+            [community.components.shared :as shared]
             [om.core :as om]
             [sablono.core :refer-macros [html]]
             [cljs.core.async :as async])
@@ -50,13 +51,16 @@
                                   (async/put! c-post post)
                                   (om/set-state! owner :form-disabled? true)))}
              [:div.form-group
-              [:label {:for "post-body"} "Body"]
-              [:textarea.form-control {:value (:body post)
-                                       :id "post-body"
-                                       :name "post[body]"
-                                       :onChange (fn [e]
-                                                   (om/set-state! owner [:post :body]
-                                                                  (-> e .-target .-value)))}]]
+              (let [post-body-id (str "post-body-" (:id post))]
+                [:label {:for post-body-id} "Body"]
+                (om/build shared/resizing-textarea-component nil
+                  {:opts {:id post-body-id
+                          :class "form-control"
+                          :value (:body post)
+                          :name "post[body]"
+                          :onChange (fn [e]
+                                      (om/set-state! owner [:post :body]
+                                                     (-> e .-target .-value)))}}))]
              [:button.btn.btn-default {:type "submit"
                                        :disabled form-disabled?}
               (if (:persisted? post) "Update" "Post")]]]])))))
