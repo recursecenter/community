@@ -53,10 +53,9 @@
              [:div.form-group
               (let [post-body-id (str "post-body-" (:id post))]
                 [:label {:for post-body-id} "Body"]
-                (om/build shared/resizing-textarea-component nil
+                (om/build shared/resizing-textarea-component {:content (:body post)}
                   {:opts {:id post-body-id
                           :class "form-control"
-                          :value (:body post)
                           :name "post[body]"
                           :onChange (fn [e]
                                       (om/set-state! owner [:post :body]

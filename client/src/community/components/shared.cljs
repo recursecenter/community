@@ -12,7 +12,7 @@
     (render [this]
       (html [:h1 "Page not found"]))))
 
-(defn resizing-textarea-component [_ owner opts]
+(defn resizing-textarea-component [{:keys [content]} owner opts]
   (reify
     om/IDisplayName
     (display-name [_] "ResizingTextArea")
@@ -28,4 +28,4 @@
 
     om/IRender
     (render [this]
-      (html [:textarea opts]))))
+      (html [:textarea (merge {:value content} opts)]))))
