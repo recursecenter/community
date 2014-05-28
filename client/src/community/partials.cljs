@@ -20,7 +20,7 @@
                                       (location/redirect-to path))))})
        body])))
 
-;; TODO: externs for advanced compilation
+;; TODO: use google's caja html sanitizer instead
 (defn html-from-markdown [md-string]
   (let [safe-html-string (.toHTML js/markdown (goog.string/htmlEscape md-string))]
     (dom/div #js {:dangerouslySetInnerHTML #js {:__html safe-html-string}})))
