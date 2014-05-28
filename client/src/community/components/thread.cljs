@@ -80,7 +80,7 @@
            {:src (-> post :author :avatar-url)
             :width "50"       ;TODO: request different image sizes
             }]
-          [:a {:href (routes/hs-route :person (p (:author post)))}
+          [:a {:href (routes/hs-route :person (:author post))}
            (-> post :author :name)]]
          [:div.post-body
           (if editing?
