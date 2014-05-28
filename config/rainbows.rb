@@ -1,5 +1,4 @@
 worker_processes Integer(ENV["WEB_CONCURRENCY"] || 1)
-timeout 15
 preload_app true
 
 if ENV["RACK_ENV"] == "development"
@@ -25,4 +24,11 @@ after_fork do |server, worker|
 
   defined?(ActiveRecord::Base) and
     ActiveRecord::Base.establish_connection
+end
+
+Rainbows! do
+  use :EventMachine
+
+  # Heroku's max FD limit seems to be 10,000. Pick something under that.
+  worker_connections 9001 # It's over 9000!
 end

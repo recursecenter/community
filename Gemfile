@@ -7,6 +7,8 @@ gem 'rails', '4.1.1'
 # Use postgresql as the database for Active Record
 gem 'pg'
 
+gem 'redis'
+
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.3'
 gem 'bootstrap-sass', '~> 3.1.1'
@@ -37,4 +39,7 @@ group :development do
 end
 
 # Use unicorn as the app server
-gem 'unicorn'
+gem 'rainbows'
+gem 'eventmachine'
+
+gem 'faye-websocket'

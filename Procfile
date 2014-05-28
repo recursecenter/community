@@ -1,1 +1,1 @@
-web: bin/unicorn --no-default-middleware -c config/unicorn.rb --port $PORT
+web: bin/rainbows --no-default-middleware -c config/rainbows.rb --port $PORT
