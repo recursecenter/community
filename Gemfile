@@ -38,8 +38,8 @@ group :development do
   gem 'quiet_assets'
 end
 
-# Use unicorn as the app server
-gem 'rainbows'
-gem 'eventmachine'
-
+# Use puma as the app server
+gem 'puma'
 gem 'faye-websocket'
+
+gem 'thread_safe'

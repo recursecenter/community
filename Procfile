@@ -1,1 +1,1 @@
-web: bin/rainbows --no-default-middleware -c config/rainbows.rb --port $PORT
+web: bin/puma -C config/whatever.rb
