@@ -6,14 +6,12 @@ class PubSub
   end
 
   def register(user, ws)
-    ability = Ability.new(user)
-
     ws.on :message do |event|
       begin
         message = Message.new(event)
 
         if message.subscribe?
-          if ability.can? :read, message.topic
+          if ability(user).can? :read, message.topic
             @subscriptions[message.feed][ws] = true
           end
         elsif message.unsubscribe?
@@ -36,11 +34,16 @@ class PubSub
   end
 
 private
+  def ability(user)
+    Ability.new(user.reload)
+  end
+
   def run_publish_loop
     $redis.subscribe(:posts) do |on|
       on.message do |_, message|
         data = JSON.parse(message)
         feed = "thread-#{data["thread_id"]}"
+
         @subscriptions[feed].each do |ws, _|
           ws.send(JSON.dump({type: "publish", feed: feed, data: message}))
         end
