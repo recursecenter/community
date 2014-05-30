@@ -1,6 +1,6 @@
 class PubSub
   def initialize
-    @subscriptions = ThreadSafe::Hash.new { |h, k| h[k] = ThreadSafe::Array.new }
+    @subscriptions = ThreadSafe::Hash.new { |h, k| h[k] = ThreadSafe::Hash.new } # Using a ThreadSafe::Hash as a Set
 
     Thread.new do
       redis_run_loop
@@ -13,7 +13,7 @@ class PubSub
         message = Message.new(event)
 
         if message.subscribe?
-          @subscriptions[message.channel].push(ws)
+          @subscriptions[message.channel][ws] = true
         elsif message.unsubscribe?
           @subscriptions[message.channel].delete(ws)
         else
