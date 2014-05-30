@@ -2,7 +2,9 @@ class Api::PostsController < Api::ApiController
   load_and_authorize_resource :post
 
   def create
-    @post.save!
+    if @post.save!
+      PubSub.publish :created, :post, @post
+    end
   end
 
   def update

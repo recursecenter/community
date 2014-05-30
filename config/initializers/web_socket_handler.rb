@@ -4,19 +4,20 @@ class WebSocketHandler
   end
 
   def call(env)
-    if Faye::WebSocket.websocket?(env) && env["PATH_INFO"] == "/websocket"
-      session = Session.new(env)
+    session = Session.new(env)
 
-      verify_token!(Rack::Request.new(env), session)
+    if session.websocket?
+      unless session.authenticated?
+        raise ActionController::InvalidAuthenticityToken
+      end
       unless session.current_user
         return [403, {}, ["Not authorized."]]
       end
 
-      ws = Faye::WebSocket.new(env)
+      session.hijack!
+      pubsub.register(session)
 
-      pubsub.register(session.current_user, ws)
-
-      ws.rack_response
+      session.ws.rack_response
     else
       @app.call(env)
     end
@@ -29,20 +30,35 @@ private
     @pubsub ||= PubSub.new
   end
 
-  def verify_token!(req, session)
-    csrf_token = session["_csrf_token"]
-    unless csrf_token && csrf_token == req.params["csrf_token"]
-      raise ActionController::InvalidAuthenticityToken
-    end
-  end
-
   class Session
     def initialize(env)
       @env = env
+      @ws = nil
     end
 
     def [](k)
       @env["rack.session"][k]
+    end
+
+    def ws
+      unless @ws
+        raise "Cannot access Session#ws until after Session#hijack!"
+      end
+      @ws
+    end
+
+    def hijack!
+      @ws ||= Faye::WebSocket.new(@env)
+    end
+
+    def websocket?
+      Faye::WebSocket.websocket?(@env) && @env["PATH_INFO"] == "/websocket"
+    end
+
+    def authenticated?
+      @req ||= Rack::Request.new(@env)
+      csrf_token = self["_csrf_token"]
+      csrf_token && csrf_token == @req.params["csrf_token"]
     end
 
     def current_user
