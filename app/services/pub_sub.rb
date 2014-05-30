@@ -13,9 +13,9 @@ class PubSub
         message = Message.new(event)
 
         if message.subscribe?
-          @subscriptions[message.channel][ws] = true
+          @subscriptions[message.feed][ws] = true
         elsif message.unsubscribe?
-          @subscriptions[message.channel].delete(ws)
+          @subscriptions[message.feed].delete(ws)
         else
           Rails.logger.warn "Unknown message type #{message}"
         end
@@ -43,7 +43,7 @@ private
   class Message
     class MessageError < StandardError; end
 
-    attr_reader :channel, :type
+    attr_reader :feed, :type
 
     def initialize(event)
       begin
@@ -54,7 +54,7 @@ private
 
       missing_fields = []
 
-      @channel = data["channel"] || missing_fields << "channel"
+      @feed = data["feed"] || missing_fields << "feed"
       @type = data["type"] || missing_fields << "type"
 
       unless missing_fields.empty?
