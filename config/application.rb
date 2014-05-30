@@ -21,6 +21,8 @@ module Community
     # config.i18n.default_locale = :de
 
     config.middleware.use "WebSocketHandler"
-    config.middleware.use "Rack::Timeout"
+    if Rails.env.production?
+      config.middleware.use "Rack::Timeout"
+    end
   end
 end

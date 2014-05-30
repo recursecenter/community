@@ -116,6 +116,4 @@ module Rack
   end
 end
 
-if Rails.env.production?
-  Rack::Timeout.timeout = 30
-end
+Rack::Timeout.timeout = 30
