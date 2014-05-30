@@ -14,7 +14,7 @@ class WebSocketHandler
 
       ws = Faye::WebSocket.new(env)
 
-      pubsub.register(ws)
+      pubsub.register(session.current_user, ws)
 
       ws.rack_response
     else

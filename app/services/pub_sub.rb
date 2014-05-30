@@ -2,25 +2,27 @@ class PubSub
   def initialize
     @subscriptions = ThreadSafe::Hash.new { |h, k| h[k] = ThreadSafe::Hash.new } # Using a ThreadSafe::Hash as a Set
 
-    Thread.new do
-      redis_run_loop
-    end
+    Thread.new { run_publish_loop }
   end
 
-  def register(ws)
+  def register(user, ws)
+    ability = Ability.new(user)
+
     ws.on :message do |event|
       begin
         message = Message.new(event)
 
         if message.subscribe?
-          @subscriptions[message.feed][ws] = true
+          if ability.can? :read, message.topic
+            @subscriptions[message.feed][ws] = true
+          end
         elsif message.unsubscribe?
           @subscriptions[message.feed].delete(ws)
         else
           Rails.logger.warn "Unknown message type #{message}"
         end
       rescue Message::MessageError => e
-        Rails.logger.warn "MessageError: #{e.message}"
+        Rails.logger.warn "#{e.class.name}: #{e.message}"
       end
     end
 
@@ -34,11 +36,14 @@ class PubSub
   end
 
 private
-  def redis_run_loop
+  def run_publish_loop
     $redis.subscribe(:posts) do |on|
       on.message do |_, message|
         data = JSON.parse(message)
-        @subscriptions["thread-#{data["thread_id"]}"].each { |ws, _| ws.send(message) }
+        feed = "thread-#{data["thread_id"]}"
+        @subscriptions[feed].each do |ws, _|
+          ws.send(JSON.dump({type: "publish", feed: feed, data: message}))
+        end
       end
     end
   end
@@ -46,7 +51,11 @@ private
   class Message
     class MessageError < StandardError; end
 
-    attr_reader :feed, :type
+    MODELS = {
+      "thread" => DiscussionThread
+    }
+
+    attr_reader :feed, :type, :topic
 
     def initialize(event)
       begin
@@ -63,6 +72,12 @@ private
       unless missing_fields.empty?
         raise MessageError, "missing fields: #{missing_fields.join(", ")}"
       end
+
+      match = /(.*)-(.*)/.match(@feed) or raise MessageError, "invalid feed: #{@feed}"
+      model_name, model_id = match.captures
+      model = Message::MODELS[model_name] or raise MessageError, "invalid model: #{model_name}"
+
+      @topic = model.where(id: model_id).first or raise MessageError, "model '#{model_name}' with id '#{model_id}' does not exist"
     end
 
     def subscribe?
