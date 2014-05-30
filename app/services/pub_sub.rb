@@ -35,8 +35,11 @@ class PubSub
 
 private
   def redis_run_loop
-    loop do
-      sleep 2
+    $redis.subscribe(:posts) do |on|
+      on.message do |_, message|
+        data = JSON.parse(message)
+        @subscriptions["thread-#{data["thread_id"]}"].each { |ws, _| ws.send(message) }
+      end
     end
   end
 

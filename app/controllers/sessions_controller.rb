@@ -22,7 +22,7 @@ class SessionsController < ApplicationController
 
   def destroy
     logout
-    render text: "Logged out"
+    render layout: "application", html: "<p>Logged out.</p>".html_safe
   end
 
 private

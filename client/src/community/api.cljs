@@ -34,6 +34,13 @@
                  :else x))
               m)))
 
+(defn csrf-token []
+  ;; CSRF tokens won't be checked on GET or HEAD, but we'll
+  ;; send them every time regardless to make our lives easier
+  (-> (.getElementsByName js/document "csrf-token")
+      (aget 0)
+      (.-content)))
+
 (defn request
   "Makes an API request to the Hacker School API with some default
   options, returning a core.async channel containing either a
@@ -42,12 +49,6 @@
      (request request-fn resource {}))
   ([request-fn resource opts]
      (let [out (async/chan 1)
-
-           ;; CSRF tokens won't be checked on GET or HEAD, but we'll
-           ;; send them every time regardless to make our lives easier
-           csrf-token (-> (.getElementsByName js/document "csrf-token")
-                          (aget 0)
-                          (.-content))
 
            ;; default handlers
            on-error (fn [error-res]
@@ -60,7 +61,7 @@
 
            default-opts {:handler on-possible-success
                          :error-handler on-error
-                         :headers {"X-CSRF-Token" csrf-token}}]
+                         :headers {"X-CSRF-Token" (csrf-token)}}]
        (request-fn (api-path resource)
                    (merge default-opts opts))
        out)))
@@ -120,3 +121,14 @@
                        {:params {:thread {:title title} :post {:body body}}
                         :format :json}))
     :res-transform models/thread))
+
+(defn ws-connection []
+  (let [query-string (str "?csrf_token="
+                          (js/encodeURIComponent (csrf-token)))
+        l (.-location js/window)
+        protocol (if (= "https:" (.-protocol l))
+                     "wss://"
+                     "ws://")
+        ;; e.g. wss://localhost:5001/websocket?csrf_token=asdfasdf
+        url (str protocol (.-host l) "/websocket" query-string)]
+    (js/WebSocket. url)))
