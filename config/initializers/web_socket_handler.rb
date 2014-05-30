@@ -1,4 +1,4 @@
-class WebsocketHandler
+class WebSocketHandler
   def initialize(app)
     @app = app
   end
