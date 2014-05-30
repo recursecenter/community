@@ -41,5 +41,6 @@ end
 # Use puma as the app server
 gem 'puma'
 gem 'faye-websocket'
+gem 'eventmachine'
 
 gem 'thread_safe'

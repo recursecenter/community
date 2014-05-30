@@ -1,4 +1,45 @@
 class PubSub
+  def initialize
+    @subscriptions = ThreadSafe::Hash.new { |h, k| h[k] = ThreadSafe::Array.new }
+
+    Thread.new do
+      redis_run_loop
+    end
+  end
+
+  def register(ws)
+    ws.on :message do |event|
+      begin
+        message = Message.new(event)
+
+        if message.subscribe?
+          @subscriptions[message.channel].push(ws)
+        elsif message.unsubscribe?
+          @subscriptions[message.channel].delete(ws)
+        else
+          Rails.logger.warn "Unknown message type #{message}"
+        end
+      rescue Message::MessageError => e
+        Rails.logger.warn "MessageError: #{e.message}"
+      end
+    end
+
+    ws.on :close do |event|
+      @subscriptions.each do |_, web_sockets|
+        web_sockets.delete(ws)
+      end
+    end
+
+    ws
+  end
+
+private
+  def redis_run_loop
+    loop do
+      sleep 2
+    end
+  end
+
   class Message
     class MessageError < StandardError; end
 
@@ -27,62 +68,6 @@ class PubSub
 
     def unsubscribe?
       type == "unsubscribe"
-    end
-  end
-
-  def initialize
-    @subscriptions = ThreadSafe::Hash.new { |h, k| h[k] = ThreadSafe::Array.new }
-
-    @redis_thread = Thread.new(@subscriptions) do |subs|
-      redis_run_loop(subs)
-    end
-  end
-
-  def register(ws)
-    ws.on :message do |event|
-      begin
-        handle_message(event)
-      rescue Exception => e
-        puts e
-      end
-
-      p [@subscriptions.object_id, @subscriptions]
-    end
-
-=begin
-    ws.on :close do |event|
-      @lock.synchronize do
-        @subscriptions.each do |_, web_sockets|
-          web_sockets.delete(ws)
-        end
-      end
-    end
-=end
-
-    ws
-  end
-
-private
-  def handle_message(event)
-    begin
-      message = Message.new(event)
-
-      if message.subscribe?
-        @subscriptions[message.channel].push(message) # TODO! Change back to ws
-      elsif message.unsubscribe?
-        @subscriptions[message.channel].delete(ws)
-      else
-        Rails.logger.warn "Unknown message type #{message}"
-      end
-    rescue Message::MessageError => e
-      Rails.logger.warn "MessageError: #{e.message}"
-    end
-  end
-
-  def redis_run_loop(subs)
-    loop do
-      sleep 2
-      p [subs.object_id, subs]
     end
   end
 end
