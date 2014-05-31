@@ -112,6 +112,22 @@
                              (om/set-state! owner :editing? true))}
               "Edit"])]]]))))
 
+(defn reverse-find-index
+  [pred v]
+  (first (for [[i el] (map-indexed vector (rseq v))
+               :when (pred el)]
+           (- (count v) i 1))))
+
+(defn update-post!
+  "Assumes :created-at is always increasing."
+  [thread post]
+  (let [posts (:posts thread)
+        created-at (:created-at post)]
+    (if (or (empty? posts) (> created-at (:created-at (peek posts))))
+      (om/transact! thread :posts #(conj % post))
+      (let [i (reverse-find-index #(= (:id %) (:id post)) posts)]
+        (om/transact! thread :posts #(assoc % i post))))))
+
 (defn thread-component [{:keys [route-data thread] :as app} owner]
   (reify
     om/IDisplayName
@@ -119,6 +135,13 @@
 
     om/IDidMount
     (did-mount [this]
+      ; TODO: this stuff
+      (let [pubsub (:pubsub (om/shared-state owner))
+            thread-feed (<? (subscribe pubsub {:feed :thread :id (:id thread)}))]
+        (go-loop []
+          (update-post! thread (:data (<! thread-feed)))
+          (recur)))
+
       (go
         (try
           (let [thread (<? (api/thread (:id @route-data)))]
