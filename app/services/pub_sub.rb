@@ -6,7 +6,10 @@ class PubSub
   def initialize
     @subscriptions = ThreadSafe::Hash.new { |h, k| h[k] = ThreadSafe::Hash.new } # Using a ThreadSafe::Hash as a Set
 
-    Thread.new { run_pubsub_loop }
+    uri = URI.parse(ENV["REDIS_URL"])
+    @redis_sub = Redis.new(host: uri.host, port: uri.port, password: uri.password)
+
+    Thread.new { pubsub_loop }
   end
 
   def register(session)
@@ -42,22 +45,36 @@ private
     Ability.new(user.reload)
   end
 
-  def run_pubsub_loop
-    # TODO: This acquires a lock for the global $redis and never gives
-    # it up. This means that once this subscribe runs, nothing else
-    # can use $redis to publish. This means that each instance of
-    # PubSub needs its own personal redis connection.
-    $redis.subscribe(:pubsub) do |on|
+  def pubsub_loop
+    @redis_sub.subscribe(:pubsub) do |on|
       on.message do |_, data|
-        params = JSON.parse(data).with_indifferent_access
+        with_logged_exceptions do
+          params = JSON.parse(data).with_indifferent_access
 
-        @subscriptions[params[:feed]].each do |session, _|
-          emitter = params[:emitter].constantize.new(session, params)
-          emitter.emit_event(params[:event])
-          binding.remote_pry
+          @subscriptions[params[:feed]].each do |session, _|
+            emitter = params[:emitter].constantize.new(session, params)
+            emitter.emit_event(params[:event])
+
+            session.ws.send(emitter.response_body)
+          end
         end
       end
     end
+  end
+
+  def with_logged_exceptions
+    begin
+      yield
+    rescue Exception => e
+      log_exception(e)
+    end
+  end
+
+  def log_exception(exception)
+    message = "\n#{exception.class} (#{exception.message}):\n"
+    message << exception.annoted_source_code.to_s if exception.respond_to?(:annoted_source_code)
+    message << "  " << exception.backtrace.join("\n  ")
+    Rails.logger.fatal("#{message}\n\n")
   end
 
   class Message
@@ -111,11 +128,9 @@ private
     end
 
     def publish
-      json = JSON.dump(emitter: emitter, event: event, feed: feed, resource_id: resource.id)
+      json = JSON.dump(emitter: emitter, event: event, feed: feed, id: resource.id)
 
-      puts "BEFORE PUBLISH"
       $redis.publish :pubsub, json
-      puts "AFTER PUBLISH"
     end
 
     def feed

@@ -20,6 +20,10 @@ class PubSub
 
     def emit_event(event)
       send(event)
+
+      unless response_body
+        render event
+      end
     end
   end
 end

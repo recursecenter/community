@@ -14,5 +14,5 @@ on_worker_boot do
   end
 
   uri = URI.parse(ENV["REDIS_URL"])
-  $redis = Redis.new(host: uri.host, post: uri.port, password: uri.password)
+  $redis = Redis.new(host: uri.host, port: uri.port, password: uri.password)
 end
