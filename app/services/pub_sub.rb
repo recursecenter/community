@@ -55,11 +55,16 @@ private
             emitter = params[:emitter].constantize.new(session, params)
             emitter.emit_event(params[:event])
 
-            session.ws.send(emitter.response_body)
+            output = build_json_message(emitter.response_body, params)
+            session.ws.send(output)
           end
         end
       end
     end
+  end
+
+  def build_json_message(json_string, params)
+    %Q({"feed":"#{params[:feed]}","event":"#{params[:event]}","data":#{json_string}})
   end
 
   def with_logged_exceptions
