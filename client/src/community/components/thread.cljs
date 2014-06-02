@@ -120,13 +120,15 @@
 
 (defn update-post!
   "Assumes :created-at is always increasing."
-  [thread post]
-  (let [posts (:posts thread)
+  [app post]
+  (let [posts (-> @app :thread :posts)
         created-at (:created-at post)]
+    (prn post)
+    (prn (peek posts))
     (if (or (empty? posts) (> created-at (:created-at (peek posts))))
-      (om/transact! thread :posts #(conj % post))
+      (om/transact! app [:thread :posts] #(conj % post))
       (let [i (reverse-find-index #(= (:id %) (:id post)) posts)]
-        (om/transact! thread :posts #(assoc % i post))))))
+        (om/transact! app [:thread :posts] #(assoc % i post))))))
 
 (defn thread-component [{:keys [route-data thread] :as app} owner]
   (reify
@@ -135,12 +137,17 @@
 
     om/IDidMount
     (did-mount [this]
-      ; TODO: this stuff
-      (let [pubsub (:pubsub (om/shared-state owner))
-            thread-feed (<? (subscribe pubsub {:feed :thread :id (:id thread)}))]
-        (go-loop []
-          (update-post! thread (:data (<! thread-feed)))
-          (recur)))
+      ;; TODO: This breaks if I get messages from someone else and
+      ;; then try to post a message myself. Invariant Violation:
+      ;; flattenChildren(...): Encountered two children with the same
+      ;; key, `.$129`. Children keys must be unique.
+      (go
+        (let [[thread-feed unsubscribe!] (api/subscribe! {:feed :thread :id (:id @route-data)})]
+          (loop []
+            (when-let [message (<! thread-feed)]
+              (when (not= (-> message :data :author :id) (-> @app :current-user :id))
+                (update-post! app (models/post (:data message))))
+              (recur)))))
 
       (go
         (try

@@ -1,4 +1,5 @@
-(ns community.util.pubsub)
+(ns community.util.pubsub
+  (:require [cljs.core.async :as async]))
 
 (defprotocol ISubscribe
   (-subscribe! [this feed handler])

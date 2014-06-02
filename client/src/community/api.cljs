@@ -1,6 +1,7 @@
 (ns community.api
   (:require [community.models :as models]
             [community.util :as util :refer-macros [<? p]]
+            [community.util.pubsub :as pubsub]
             [cljs.core.async :as async]
             [clojure.walk :refer [postwalk]]
             [ajax.core :as ajax])
@@ -122,7 +123,13 @@
                         :format :json}))
     :res-transform models/thread))
 
-(defn ws-connection []
+;;; PubSub via WebSockets
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(def *pubsub* (pubsub/pubsub))
+(def !ws-connection (atom nil))
+
+(defn new-ws-connection []
   (let [query-string (str "?csrf_token="
                           (js/encodeURIComponent (csrf-token)))
         l (.-location js/window)
@@ -132,3 +139,57 @@
         ;; e.g. wss://localhost:5001/websocket?csrf_token=asdfasdf
         url (str protocol (.-host l) "/websocket" query-string)]
     (js/WebSocket. url)))
+
+(def ^:private !ws-send-queue (atom []))
+
+(defn send-when-ready! [ws message]
+  (if (= 0 (.-readyState ws)) ; still connecting
+    (do (when (empty? @!ws-send-queue) ; handler not yet set
+          (set! (.-onopen ws) #(doseq [message @!ws-send-queue]
+                                 (.send ws message))))
+        (swap! !ws-send-queue conj message))
+    (.send ws message)))
+
+(defn begin-publishing! [ws pubsub]
+  (let [onmessage (fn [e]
+                    (let [js-message (.parse js/JSON (.-data e))
+                          message (format-keys (js->clj js-message))]
+                      (pubsub/-publish! pubsub (:feed message) message)))]
+    (set! (.-onmessage ws) onmessage)))
+
+(def !ws-connection (atom nil))
+
+(defn ws-connection []
+  (or @!ws-connection
+      (let [ws (new-ws-connection)]
+        (begin-publishing! ws *pubsub*)
+        (reset! !ws-connection ws))))
+
+(defmulti feed-format :feed)
+
+(defmethod feed-format :thread [{id :id}]
+  (str "thread-" id))
+
+(defn subscribe!
+  "Subscribes to the Community WebSockets API, returning a
+  [message-chan unsubscribe!] pair."
+  ([to]
+     (subscribe! *pubsub* to))
+  ([pubsub to]
+     (let [feed (feed-format to)
+           subscription (.stringify js/JSON #js {:type "subscribe" :feed feed})
+           unsubscription (.stringify js/JSON #js {:type "unsubscribe" :feed feed})
+
+           message-chan (async/chan)
+           new-message-handler (fn [message]
+                                 (async/put! message-chan message))
+
+           unsubscribe! (fn []
+                          (pubsub/-unsubscribe! pubsub feed new-message-handler)
+                          (send-when-ready! (ws-connection) unsubscription)
+                          (async/close! message-chan))]
+       (pubsub/-subscribe! pubsub feed new-message-handler)
+       (send-when-ready! (ws-connection) subscription)
+       [message-chan unsubscribe!])))
+
+(def to-example {:feed "thread-8"})
