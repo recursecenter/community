@@ -4,7 +4,7 @@
             [community.util.pubsub :as pubsub]
             [cljs.core.async :as async]
             [clojure.walk :refer [postwalk]]
-            [ajax.core :as ajax])
+            [community.util.ajax :as ajax])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (def api-root "/api")
@@ -60,8 +60,8 @@
                                    (on-error res)
                                    (async/put! out (format-keys res) #(async/close! out))))
 
-           default-opts {:handler on-possible-success
-                         :error-handler on-error
+           default-opts {:on-success on-possible-success
+                         :on-error on-error
                          :headers {"X-CSRF-Token" (csrf-token)}}]
        (request-fn (api-path resource)
                    (merge default-opts opts))
@@ -69,8 +69,7 @@
 
 (def GET (partial request ajax/GET))
 (def POST (partial request ajax/POST))
-(def PATCH (partial request (fn [uri opts]
-                              (ajax/ajax-request uri "PATCH" (ajax/transform-opts opts)))))
+(def PATCH (partial request ajax/PATCH))
 
 (defn make-api-fn
   [req-fn & {:keys [res-transform err-transform]}]
