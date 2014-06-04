@@ -176,5 +176,5 @@
                              :after-persisted
                              (fn [post reset-form!]
                                (reset-form!)
-                               (om/transact! thread :posts #(conj % post)))}})]
+                               (update-post! app post))}})]
           [:h1 "Loading..."])))))
