@@ -50,17 +50,13 @@
      (request request-fn resource {}))
   ([request-fn resource opts]
      (let [out (async/chan 1)
-
-           ;; default handlers
            on-error (fn [error-res]
                       (let [err (ex-info (str "Failed to access " resource) error-res)]
                         (async/put! out err #(async/close! out))))
-           on-possible-success (fn [res]
-                                 (if (symbol? res) ; we expect edn
-                                   (on-error res)
-                                   (async/put! out (format-keys res) #(async/close! out))))
+           on-success (fn [data]
+                        (async/put! out (format-keys data) #(async/close! out)))
 
-           default-opts {:on-success on-possible-success
+           default-opts {:on-success on-success
                          :on-error on-error
                          :headers {"X-CSRF-Token" (csrf-token)}}]
        (request-fn (api-path resource)

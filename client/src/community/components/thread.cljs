@@ -10,7 +10,7 @@
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
-(defn post-form-component [_ owner {:keys [after-persisted init-post cancel-edit]}]
+(defn post-form-component [_ owner {:keys [before-persisted after-persisted init-post cancel-edit]}]
   (reify
     om/IDisplayName
     (display-name [_] "PostForm")
@@ -26,13 +26,17 @@
       (let [{:keys [c-post]} (om/get-state owner)]
         (go-loop []
           (when-let [post (<! c-post)]
-            (let [new-post (<? (if (:persisted? post)
-                                 (api/update-post post)
-                                 (api/new-post post)))]
-              (om/set-state! owner :form-disabled? false)
-              (after-persisted new-post
-                               #(om/set-state! owner :post (models/empty-post (:thread-id new-post)))))
-            ;; TODO: handle invalid posts
+            (when before-persisted
+              (before-persisted post))
+            (try
+              (let [new-post (<? (if (:persisted? post)
+                                   (api/update-post post)
+                                   (api/new-post post)))]
+                (om/set-state! owner :form-disabled? false)
+                (after-persisted new-post
+                                 #(om/set-state! owner :post (models/empty-post (:thread-id new-post)))))
+              (catch ExceptionInfo e
+                (prn (ex-data e))))
             (recur)))))
 
     om/IWillUnmount
@@ -145,8 +149,7 @@
         (let [[thread-feed unsubscribe!] (api/subscribe! {:feed :thread :id (:id @route-data)})]
           (loop []
             (when-let [message (<! thread-feed)]
-              (when (not= (-> message :data :author :id) (-> @app :current-user :id))
-                (update-post! app (models/post (:data message))))
+              (update-post! app (models/post (:data message)))
               (recur)))))
 
       (go
