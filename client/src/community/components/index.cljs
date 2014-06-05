@@ -17,7 +17,7 @@
         [:tr [:th "Subforum"]]]
        [:tbody
         (for [{:keys [id slug] :as subforum} subforums]
-          [:tr {:key id}
+          [:tr {:key id :className (if (:unread subforum) "unread")}
            [:td (link-to (routes :subforum {:id id :slug slug})
                          (:name subforum))]])]]) ]))
 

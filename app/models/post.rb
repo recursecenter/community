@@ -4,5 +4,8 @@ class Post < ActiveRecord::Base
 
   validates :body, :author, :thread, presence: {allow_blank: false}
 
-  after_create -> { thread.update_last_post(self) }
+  after_create -> do
+    thread.update_last_post(self)
+    thread.subforum.update_thread_last_posted_to(thread)
+  end
 end

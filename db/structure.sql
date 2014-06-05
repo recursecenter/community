@@ -146,7 +146,8 @@ CREATE TABLE subforums (
     name character varying(255),
     subforum_group_id integer,
     created_at timestamp without time zone,
-    updated_at timestamp without time zone
+    updated_at timestamp without time zone,
+    last_thread_posted_to timestamp without time zone
 );
 
 
@@ -182,6 +183,24 @@ CREATE TABLE visited_statuses (
     created_at timestamp without time zone,
     updated_at timestamp without time zone
 );
+
+
+--
+-- Name: subforums_with_visited_status; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW subforums_with_visited_status AS
+ SELECT subforums.id,
+    subforums.name,
+    subforums.subforum_group_id,
+    subforums.created_at,
+    subforums.updated_at,
+    subforums.last_thread_posted_to,
+    visited_statuses.last_visited,
+    visited_statuses.user_id
+   FROM (subforums
+   LEFT JOIN visited_statuses ON ((subforums.id = visited_statuses.visitable_id)))
+  WHERE (((visited_statuses.visitable_type)::text = 'Subforum'::text) OR (visited_statuses.visitable_type IS NULL));
 
 
 --
@@ -411,4 +430,8 @@ INSERT INTO schema_migrations (version) VALUES ('20140605200642');
 INSERT INTO schema_migrations (version) VALUES ('20140605202151');
 
 INSERT INTO schema_migrations (version) VALUES ('20140605212910');
+
+INSERT INTO schema_migrations (version) VALUES ('20140605223603');
+
+INSERT INTO schema_migrations (version) VALUES ('20140605224228');
 
