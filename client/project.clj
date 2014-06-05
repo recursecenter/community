@@ -3,8 +3,7 @@
                  [org.clojure/clojurescript "0.0-2173"]
                  [org.clojure/core.async "0.1.303.0-886421-alpha"]
                  [om "0.6.4"]
-                 [sablono "0.2.17"]
-                 [cljs-ajax "0.2.4"]]
+                 [sablono "0.2.17"]]
 
   :plugins [[lein-cljsbuild "1.0.2"]]
 

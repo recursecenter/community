@@ -2,13 +2,13 @@ class Api::PostsController < Api::ApiController
   load_and_authorize_resource :post
 
   def create
-    if @post.save!
-      PubSub.publish :created, :post, @post
-    end
+    @post.save!
+    PubSub.publish :created, :post, @post
   end
 
   def update
     @post.update!(update_params)
+    PubSub.publish :updated, :post, @post
   end
 
 private
