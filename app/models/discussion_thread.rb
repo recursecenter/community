@@ -1,8 +1,5 @@
 class DiscussionThread < ActiveRecord::Base
-  belongs_to :subforum
-  belongs_to :created_by, class_name: 'User'
-
-  has_many :posts, foreign_key: "thread_id"
+  include DiscussionThreadCommon
 
   has_many :visited_statuses, as: :visitable
 
@@ -15,15 +12,5 @@ class DiscussionThread < ActiveRecord::Base
   def mark_as_visited_for(user)
     status = visited_statuses.where(user_id: user.id).first_or_initialize
     status.update!(last_visited: DateTime.current)
-  end
-
-  def unread_for?(user)
-    status = visited_statuses.where(user_id: user.id).first
-
-    if status
-      last_posted_to > status.last_visited
-    else
-      true
-    end
   end
 end

@@ -1,1 +1,1 @@
-json.partial! 'subforum', subforum: @subforum
+json.partial! 'subforum', subforum: @subforum, threads: @threads

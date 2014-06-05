@@ -35,3 +35,7 @@ $ lein cljsbuild auto
 
 1. Go to https://www.hackerschool.com/settings and make a new app. The redirect
    url should be http://your-dev-server/login/complete.
+
+## Where is `db/schema.rb`?
+
+Look at `db/structure.sql` instead. We use this because it supports Postgres views.
