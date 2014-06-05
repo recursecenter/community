@@ -97,9 +97,9 @@
             [:tr [:th "Topic"] [:th "Created by"] [:th "Last updated"]]]
            [:tbody
             (for [{:keys [id slug title created-by] :as thread} (:threads subforum)]
-              [:tr {:key id}
+              [:tr {:key id :className (if (:unread thread) "unread")}
                [:td (link-to (routes :thread thread) title)]
                [:td created-by]
-               [:td (util/time-ago-in-words (:updated-at thread))]])]]
+               [:td (util/time-ago-in-words (:last-posted-to thread))]])]]
           (om/build new-thread-component subforum)]
          [:h2 "loading..."])))))

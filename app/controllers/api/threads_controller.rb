@@ -2,6 +2,7 @@ class Api::ThreadsController < Api::ApiController
   load_and_authorize_resource :thread, class: 'DiscussionThread'
 
   def show
+    @thread.mark_as_visited_for(current_user)
   end
 
   def create

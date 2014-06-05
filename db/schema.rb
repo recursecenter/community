@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140520201523) do
+ActiveRecord::Schema.define(version: 20140605202151) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(version: 20140520201523) do
     t.integer  "created_by_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "last_posted_to"
   end
 
   add_index "discussion_threads", ["created_by_id"], name: "index_discussion_threads_on_created_by_id", using: :btree
@@ -61,5 +62,17 @@ ActiveRecord::Schema.define(version: 20140520201523) do
   end
 
   add_index "users", ["hacker_school_id"], name: "index_users_on_hacker_school_id", using: :btree
+
+  create_table "visited_statuses", force: true do |t|
+    t.integer  "user_id"
+    t.datetime "last_visited"
+    t.integer  "visitable_id"
+    t.string   "visitable_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "visited_statuses", ["user_id"], name: "index_visited_statuses_on_user_id", using: :btree
+  add_index "visited_statuses", ["visitable_id", "visitable_type"], name: "index_visited_statuses_on_visitable_id_and_visitable_type", using: :btree
 
 end

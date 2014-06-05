@@ -4,5 +4,5 @@ class Post < ActiveRecord::Base
 
   validates :body, :author, :thread, presence: {allow_blank: false}
 
-  after_create -> { thread.touch }
+  after_create -> { thread.update_last_post(self) }
 end
