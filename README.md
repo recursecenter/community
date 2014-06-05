@@ -10,6 +10,7 @@ a sample `.env` file to get you started:
 PORT=5001
 RACK_ENV=development
 DATABASE_URL=postgres://localhost/community_development
+REDIS_URL=redis://localhost:6379
 
 HACKER_SCHOOL_CLIENT_ID=your_client_id
 HACKER_SCHOOL_CLIENT_SECRET=your_client_secret
@@ -34,38 +35,3 @@ $ lein cljsbuild auto
 
 1. Go to https://www.hackerschool.com/settings and make a new app. The redirect
    url should be http://your-dev-server/login/complete.
-
-## Needs
-
-- CSRF protection for API
-- use HS accounts (single sign-on)
-- subforums
-- editing
-- fine grained notification settings (per thread, per reply)
-- pinned threads
-- well integrated with HS.com
-  - no forum profiles
-  - no private messages
-- can see batch under name
-- @-mentions
-- unread message highlighting
-- revision history
-- markdown, syntax highlighting
-- @-mention autocomplete
-- no signatures
-
-## Wants
-
-- community posts (anyone can edit, kind of like Stack Overflow wikis)
-- keyboard shortcuts
-- search
-- Zulip integration (for pings)
-- real-time updates
-- infinite scroll
-- quoting
-
-## Maybe
-
-- likes, staring messages
-- emoji
-- timezones vs canonical forum time
