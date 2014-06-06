@@ -165,12 +165,16 @@
 (defmethod feed-format :thread [{id :id}]
   (str "thread-" id))
 
+(def subscriptions-enabled? (boolean (.-WebSocket js/window)))
+
 (defn subscribe!
   "Subscribes to the Community WebSockets API, returning a
   [message-chan unsubscribe!] pair."
   ([to]
      (subscribe! *pubsub* to))
   ([pubsub to]
+     (when-not subscriptions-enabled?
+       (throw (ex-info "Cannot call subscribe! when subscriptions aren't enabled.")))
      (let [feed (feed-format to)
            subscription (.stringify js/JSON #js {:type "subscribe" :feed feed})
            unsubscription (.stringify js/JSON #js {:type "unsubscribe" :feed feed})
@@ -186,5 +190,3 @@
        (pubsub/-subscribe! pubsub feed new-message-handler)
        (send-when-ready! (ws-connection) subscription)
        [message-chan unsubscribe!])))
-
-(def subscriptions-enabled? (boolean (.-WebSocket js/window)))
