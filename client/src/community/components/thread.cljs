@@ -19,7 +19,8 @@
     (init-state [this]
       {:post init-post
        :c-post (async/chan 1)
-       :form-disabled? false})
+       :form-disabled? false
+       :errors #{}})
 
     om/IWillMount
     (will-mount [this]
@@ -33,10 +34,18 @@
                                    (api/update-post post)
                                    (api/new-post post)))]
                 (om/set-state! owner :form-disabled? false)
+                (om/set-state! owner :errors #{})
                 (after-persisted new-post
                                  #(om/set-state! owner :post (models/empty-post (:thread-id new-post)))))
               (catch ExceptionInfo e
-                (prn (ex-data e))))
+                (om/set-state! owner :form-disabled? false)
+                (let [e-data (ex-data e)]
+                  (om/update-state! owner :errors
+                    (fn [errors]
+                      (conj errors
+                            (if (= 0 (:status e-data))
+                              "Could not reach the server."
+                              "Oops! Something went wrong.")))))))
             (recur)))))
 
     om/IWillUnmount
@@ -45,9 +54,11 @@
 
     om/IRender
     (render [this]
-      (let [{:keys [form-disabled? c-post post]} (om/get-state owner)]
+      (let [{:keys [form-disabled? c-post post errors]} (om/get-state owner)]
         (html
-          [:div.panel.panel-default
+          [:div.panel {:class (if (empty? errors) "panel-default" "panel-danger")}
+           (if (not (empty? errors))
+             [:div.panel-heading (map (fn [e] [:div e]) errors)])
            [:div.panel-body
             [:form {:onSubmit (fn [e]
                                 (.preventDefault e)
