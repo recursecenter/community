@@ -32,7 +32,7 @@ $ brew install redis
 # follow the printed instructions to have redis start automatically on boot
 ```
 
-## Development configuration:
+## Development configuration
 
 We use foreman which sets environment variables from a `.env` file. We don't
 check this into version control because it contains secret information. Here is
