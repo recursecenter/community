@@ -17,16 +17,23 @@
     om/IInitState
     (init-state [this]
       {:c-draft (async/chan 1)
-       :form-disabled? false})
+       :form-disabled? false
+       :errors #{}})
 
     om/IWillMount
     (will-mount [this]
       (let [{:keys [c-draft]} (om/get-state owner)]
         (go-loop []
           (when-let [draft (<! c-draft)]
-            (let [new-thread (<? (api/new-thread (:id @subforum) draft))]
-              (redirect-to (routes :thread new-thread)))
-            ;; TODO: deal with failing validations (including re-enable the form)
+            (try
+              (let [new-thread (<? (api/new-thread (:id @subforum) draft))]
+                (redirect-to (routes :thread new-thread)))
+
+              (catch ExceptionInfo e
+                (om/set-state! owner :form-disabled? false)
+                (let [e-data (ex-data e)]
+                  (om/update-state! owner :errors #(conj % (:message e-data))))))
+
             (recur)))))
 
     om/IWillUnmount
@@ -35,11 +42,13 @@
 
     om/IRender
     (render [this]
-      (let [{:keys [form-disabled? c-draft]} (om/get-state owner)]
+      (let [{:keys [form-disabled? c-draft errors]} (om/get-state owner)]
         (html
-         [:div.panel.panel-default
+         [:div.panel {:class (if (empty? errors) "panel-default" "panel-danger")}
           [:div.panel-heading
-           [:h4 "New thread"]]
+           [:h4 "New thread"]
+           (when (not (empty? errors))
+             (map (fn [e] [:div e]) errors))]
           [:div.panel-body
            [:form {:onSubmit (fn [e]
                                (.preventDefault e)
