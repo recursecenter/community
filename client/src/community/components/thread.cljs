@@ -160,14 +160,14 @@
       (go
         (try
           (let [thread (<? (api/thread (:id @route-data)))]
-            (om/update! app :thread thread))
+            (om/update! app :thread thread)
+            (om/update! app :errors #{}))
 
           (catch ExceptionInfo e
-            ;; TODO: display an error modal
-            (if (== 404 (:status (ex-data e)))
-              (om/update! app [:route-data :route] :page-not-found)
-              ;; TODO: generic error component
-              (throw e))))))
+            (let [e-data (ex-data e)]
+              (if (== 404 (:status e))
+                (om/update! app [:route-data :route] :page-not-found)
+                (om/transact! app :errors #(conj % (:message e-data)))))))))
 
     om/IRender
     (render [this]
@@ -182,4 +182,4 @@
                              (fn [post reset-form!]
                                (reset-form!)
                                (update-post! app post))}})]
-          [:h1 "Loading..."])))))
+          [:div])))))

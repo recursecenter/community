@@ -86,14 +86,14 @@
       (go
         (try
           (let [subforum (<? (api/subforum (:id @route-data)))]
-            (om/update! app :subforum subforum))
+            (om/update! app :subforum subforum)
+            (om/update! app :errors #{}))
 
           (catch ExceptionInfo e
-            ;; TODO: display an error modal
-            (if (== 404 (:status (ex-data e)))
-              (om/update! app [:route-data :route] :page-not-found)
-              ;; TODO: generic error component
-              (throw e))))))
+            (let [e-data (ex-data e)]
+              (if (== 404 (:status e-data))
+                (om/update! app [:route-data :route] :page-not-found)
+                (om/transact! app :errors #(conj % (:message e-data)))))))))
 
     om/IRender
     (render [this]
@@ -111,4 +111,4 @@
                [:td created-by]
                [:td (util/time-ago-in-words (:marked-unread-at thread))]])]]
           (om/build new-thread-component subforum)]
-         [:h2 "loading..."])))))
+         [:div])))))

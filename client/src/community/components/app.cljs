@@ -28,7 +28,7 @@
               [:ul.dropdown-menu
                [:li [:a {:href "/logout"} "Logout"]]]])]]]))))
 
-(defn app-component [{:as app :keys [current-user route-data]}
+(defn app-component [{:as app :keys [current-user route-data errors]}
                      owner]
   (reify
     om/IDisplayName
@@ -53,6 +53,10 @@
         [:div
          (om/build navbar-component app)
          [:div.container
+          (when (not (empty? errors))
+            [:div
+             (for [error errors]
+               [:div.alert.alert-danger error])])
           (if current-user
             [:div
              (let [component (routes/dispatch route-data)]

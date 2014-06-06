@@ -30,12 +30,19 @@
     om/IDidMount
     (did-mount [this]
       (go
-        (om/update! app :subforum-groups (<? (api/subforum-groups)))))
+        (try
+          (om/update! app :subforum-groups (<? (api/subforum-groups)))
+          (om/update! app :errors #{})
+
+          (catch ExceptionInfo e
+            (let [e-data (ex-data e)]
+              (om/transact! app :errors #(conj % (:message e-data))))))))
 
     om/IRender
     (render [this]
       (html
-       [:div
-        (when (not (empty? subforum-groups))
+       (if (not (empty? subforum-groups))
+         [:div
           [:ol.list-unstyled
-           (map subforum-group subforum-groups)])]))))
+           (map subforum-group subforum-groups)]]
+         [:div])))))

@@ -16,7 +16,9 @@
 
     :subforum nil
 
-    :thread nil}))
+    :thread nil
+
+    :errors #{}}))
 
 (defn page-state-with-routes [app-state key]
   {key (key app-state)
