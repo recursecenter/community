@@ -1,7 +1,16 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
 #
-# Examples:
+# {subforum_group_name => [subforum_name, ...], ...}
 #
-#   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
-#   Mayor.create(name: 'Emanuel', city: cities.first)
+subforum_groups = {
+  'General' => ['Announcements'],
+  'Attending Hacker School' => ['Welcome! Q&A', 'Housing'],
+  'Programming' => ['General interest', 'Ruby', 'Python', 'JavaScript', 'Clojure'],
+  'Social' => ['Meetups', 'Events', 'Off topic']
+}
+
+subforum_groups.each do |subforum_group_name, subforum_names|
+  group = SubforumGroup.create(name: subforum_group_name)
+  subforum_names.each do |subforum_name|
+    group.subforums.create(name: subforum_name)
+  end
+end
