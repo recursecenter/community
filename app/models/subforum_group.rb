@@ -10,4 +10,8 @@ class SubforumGroup < ActiveRecord::Base
   before_create do
     self.ordinal = self.class.count
   end
+
+  def subforums_for_user(user)
+    subforums_with_visited_status.for_user(user)
+  end
 end
