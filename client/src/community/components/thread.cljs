@@ -127,8 +127,6 @@
   [app post]
   (let [posts (-> @app :thread :posts)
         created-at (:created-at post)]
-    (prn post)
-    (prn (peek posts))
     (if (or (empty? posts) (> created-at (:created-at (peek posts))))
       (om/transact! app [:thread :posts] #(conj % post))
       (let [i (reverse-find-index #(= (:id %) (:id post)) posts)]
