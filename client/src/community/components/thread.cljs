@@ -145,12 +145,13 @@
       ;; then try to post a message myself. Invariant Violation:
       ;; flattenChildren(...): Encountered two children with the same
       ;; key, `.$129`. Children keys must be unique.
-      (go
-        (let [[thread-feed unsubscribe!] (api/subscribe! {:feed :thread :id (:id @route-data)})]
-          (loop []
-            (when-let [message (<! thread-feed)]
-              (update-post! app (models/post (:data message)))
-              (recur)))))
+      (when api/subscriptions-enabled?
+        (go
+          (let [[thread-feed unsubscribe!] (api/subscribe! {:feed :thread :id (:id @route-data)})]
+            (loop []
+              (when-let [message (<! thread-feed)]
+                (update-post! app (models/post (:data message)))
+                (recur))))))
 
       (go
         (try

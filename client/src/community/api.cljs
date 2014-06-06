@@ -187,4 +187,4 @@
        (send-when-ready! (ws-connection) subscription)
        [message-chan unsubscribe!])))
 
-(def to-example {:feed "thread-8"})
+(def subscriptions-enabled? (boolean (.-WebSocket js/window)))
