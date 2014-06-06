@@ -40,7 +40,7 @@ CREATE TABLE discussion_threads (
     created_by_id integer,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    last_posted_to timestamp without time zone
+    marked_unread_at timestamp without time zone
 );
 
 
@@ -147,7 +147,7 @@ CREATE TABLE subforums (
     subforum_group_id integer,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    last_thread_posted_to timestamp without time zone
+    marked_unread_at timestamp without time zone
 );
 
 
@@ -195,7 +195,7 @@ CREATE VIEW subforums_with_visited_status AS
     subforums.subforum_group_id,
     subforums.created_at,
     subforums.updated_at,
-    subforums.last_thread_posted_to,
+    subforums.marked_unread_at,
     visited_statuses.last_visited,
     visited_statuses.user_id
    FROM (subforums
@@ -214,7 +214,7 @@ CREATE VIEW threads_with_visited_status AS
     discussion_threads.created_by_id,
     discussion_threads.created_at,
     discussion_threads.updated_at,
-    discussion_threads.last_posted_to,
+    discussion_threads.marked_unread_at,
     visited_statuses.last_visited,
     visited_statuses.user_id
    FROM (discussion_threads
@@ -434,4 +434,6 @@ INSERT INTO schema_migrations (version) VALUES ('20140605212910');
 INSERT INTO schema_migrations (version) VALUES ('20140605223603');
 
 INSERT INTO schema_migrations (version) VALUES ('20140605224228');
+
+INSERT INTO schema_migrations (version) VALUES ('20140606154516');
 

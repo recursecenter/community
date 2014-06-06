@@ -7,6 +7,6 @@ class ThreadWithVisitedStatus < ActiveRecord::Base
   scope :for_user, ->(user) { where("user_id = ? OR user_id IS NULL", user.id) }
 
   def unread?
-    last_visited.nil? || last_posted_to > last_visited
+    last_visited.nil? || marked_unread_at > last_visited
   end
 end

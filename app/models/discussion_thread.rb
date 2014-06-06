@@ -5,8 +5,8 @@ class DiscussionThread < ActiveRecord::Base
 
   validates :title, :created_by, :subforum, presence: {allow_blank: false}
 
-  def update_last_post(post)
-    update!(last_posted_to: post.created_at)
+  def mark_unread_at(time)
+    update!(marked_unread_at: time)
   end
 
   def mark_as_visited_for(user)

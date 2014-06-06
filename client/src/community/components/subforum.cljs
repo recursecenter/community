@@ -100,6 +100,6 @@
               [:tr {:key id :className (if (:unread thread) "unread")}
                [:td (link-to (routes :thread thread) title)]
                [:td created-by]
-               [:td (util/time-ago-in-words (:last-posted-to thread))]])]]
+               [:td (util/time-ago-in-words (:marked-unread-at thread))]])]]
           (om/build new-thread-component subforum)]
          [:h2 "loading..."])))))

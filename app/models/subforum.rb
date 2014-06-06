@@ -11,8 +11,8 @@ class Subforum < ActiveRecord::Base
     threads_with_visited_status.for_user(user)
   end
 
-  def update_thread_last_posted_to(thread)
-    update!(last_thread_posted_to: thread.last_posted_to)
+  def mark_unread_at(time)
+    update!(marked_unread_at: time)
   end
 
   def mark_as_visited_for(user)
