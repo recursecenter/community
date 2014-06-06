@@ -45,7 +45,7 @@
 (defn error-message [error]
   (case (:status error)
     0 "Could not reach the server."
-    nil "Oops! Something went wrong."))
+    "Oops! Something went wrong."))
 
 (defn request
   "Makes an API request to the Hacker School API with some default
@@ -180,7 +180,7 @@
      (subscribe! *pubsub* to))
   ([pubsub to]
      (when-not subscriptions-enabled?
-       (throw (ex-info "Cannot call subscribe! when subscriptions aren't enabled.")))
+       (throw (ex-info "Cannot call subscribe! when subscriptions aren't enabled." {})))
      (let [feed (feed-format to)
            subscription (.stringify js/JSON #js {:type "subscribe" :feed feed})
            unsubscription (.stringify js/JSON #js {:type "unsubscribe" :feed feed})

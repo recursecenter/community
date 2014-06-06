@@ -106,7 +106,7 @@
             [:tr [:th "Topic"] [:th "Created by"] [:th "Last updated"]]]
            [:tbody
             (for [{:keys [id slug title created-by] :as thread} (:threads subforum)]
-              [:tr {:key id :className (if (:unread thread) "unread")}
+              [:tr {:key id :class (if (:unread thread) "unread")}
                [:td (link-to (routes :thread thread) title)]
                [:td created-by]
                [:td (util/time-ago-in-words (:marked-unread-at thread))]])]]
