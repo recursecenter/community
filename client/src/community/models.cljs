@@ -7,7 +7,7 @@
   (-> name
       (.toLowerCase)
       (.replace (js/RegExp. "[^a-zA-Z0-9- ]" "g") "")
-      (.replace (js/RegExp. " " "g") "-")))
+      (.replace (js/RegExp. "\\s+" "g") "-")))
 
 (defn empty-post [thread-id]
   {:body ""
