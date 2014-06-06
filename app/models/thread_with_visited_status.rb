@@ -1,8 +1,8 @@
 class ThreadWithVisitedStatus < ActiveRecord::Base
+  self.table_name = 'threads_with_visited_status'
+
   include PostgresView
   include DiscussionThreadCommon
-
-  self.table_name = 'threads_with_visited_status'
 
   scope :for_user, ->(user) { where("user_id = ? OR user_id IS NULL", user.id) }
 
