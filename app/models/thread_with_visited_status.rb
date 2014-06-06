@@ -3,10 +3,5 @@ class ThreadWithVisitedStatus < ActiveRecord::Base
 
   include PostgresView
   include DiscussionThreadCommon
-
-  scope :for_user, ->(user) { where("user_id = ? OR user_id IS NULL", user.id) }
-
-  def unread?
-    last_visited.nil? || marked_unread_at > last_visited
-  end
+  include UnreadForUser
 end
