@@ -42,6 +42,11 @@
       (aget 0)
       (.-content)))
 
+(defn error-message [error]
+  (case (:status error)
+    0 "Could not reach the server."
+    nil "Oops! Something went wrong."))
+
 (defn request
   "Makes an API request to the Hacker School API with some default
   options, returning a core.async channel containing either a
@@ -51,7 +56,8 @@
   ([request-fn resource opts]
      (let [out (async/chan 1)
            on-error (fn [error-res]
-                      (let [err (ex-info (str "Failed to access " resource) error-res)]
+                      (let [err (ex-info (str "Failed to access " resource)
+                                         (assoc error-res :message (error-message error-res)))]
                         (async/put! out err #(async/close! out))))
            on-success (fn [data]
                         (async/put! out (format-keys data) #(async/close! out)))

@@ -40,12 +40,7 @@
               (catch ExceptionInfo e
                 (om/set-state! owner :form-disabled? false)
                 (let [e-data (ex-data e)]
-                  (om/update-state! owner :errors
-                    (fn [errors]
-                      (conj errors
-                            (if (= 0 (:status e-data))
-                              "Could not reach the server."
-                              "Oops! Something went wrong.")))))))
+                  (om/update-state! owner :errors #(conj % (:message e-data))))))
             (recur)))))
 
     om/IWillUnmount
