@@ -74,16 +74,24 @@
 (def PATCH (partial request ajax/PATCH))
 
 (defn make-api-fn
-  [req-fn & {:keys [res-transform err-transform]}]
+  "`res-transform` transforms the response if the request is successful.
+  `err-transform` transforms the error-res if the request is
+  unsuccessful. `validate` validates the args passed to the api-fn,
+  returning an error message if there is an error, or nil if there is
+  not."
+  [req-fn & {:keys [res-transform err-transform validate]
+             :or {validate (constantly nil)}}]
   (fn [& args]
-    (let [out (async/chan 1)]
-      (go
-        (try
-          (let [res (<? (apply req-fn args))]
-            (>! out ((or res-transform identity) res))
-            (async/close! out))
-          (catch ExceptionInfo e
-            (>! out ((or err-transform identity) e)))))
+    (let [out (async/chan 1)
+          error-message (apply validate args)]
+      (if (nil? error-message)
+        (go
+          (try
+            (let [res (<? (apply req-fn args))]
+              (>! out ((or res-transform identity) res)))
+            (catch ExceptionInfo e
+              (>! out ((or err-transform identity) e)))))
+        (async/put! out (ex-info error-message {:message error-message})))
       out)))
 
 (def current-user
@@ -105,24 +113,41 @@
   (make-api-fn (fn [id] (GET (str "/threads/" id)))
     :res-transform models/thread))
 
+(defn validate-post [post]
+  (when (empty? (:body post))
+    "The body of a post cannot be empty."))
+
 (def new-post
   (make-api-fn (fn [post]
                  (POST (str "/threads/" (:thread-id post) "/posts")
                        {:params (dissoc post :thread-id) :format :json}))
-    :res-transform models/post))
+    :res-transform models/post
+    :validate validate-post))
 
 (def update-post
   (make-api-fn (fn [post]
                  (PATCH (str "/posts/" (:id post))
                         {:params {:post (dissoc post :id)} :format :json}))
-    :res-transform models/post))
+    :res-transform models/post
+    :validate validate-post))
+
+(defn validate-thread [_ {:keys [title body]}]
+  (cond (and (empty? title) (empty? body))
+        "A new thread must have a non-empty title and body."
+
+        (empty? title)
+        "A new thread must have a non-empty title."
+
+        (empty? body)
+        "A new thread must have a non-empty body."))
 
 (def new-thread
   (make-api-fn (fn [subforum-id {:keys [title body]}]
                  (POST (str "/subforums/" subforum-id "/threads")
                        {:params {:thread {:title title} :post {:body body}}
                         :format :json}))
-    :res-transform models/thread))
+    :res-transform models/thread
+    :validate validate-thread))
 
 ;;; PubSub via WebSockets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
