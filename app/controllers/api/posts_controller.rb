@@ -4,6 +4,8 @@ class Api::PostsController < Api::ApiController
   def create
     @post.save!
     PubSub.publish :created, :post, @post
+
+    @post.thread.mark_as_visited_for(current_user)
   end
 
   def update
