@@ -19,4 +19,4 @@
                         :compiler {:output-to "../app/assets/javascripts/client-prod.js"
                                    :optimizations :advanced
                                    :pretty-print false
-                                   :externs ["react-externs.js"]}}]})
+                                   :externs ["react-externs.js" "markdown-externs.js"]}}]})
