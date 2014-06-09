@@ -143,6 +143,10 @@
     om/IDisplayName
     (display-name [_] "Thread")
 
+    om/IInitState
+    (init-state [this]
+      {:ws-unsubscribe! nil})
+
     om/IDidMount
     (did-mount [this]
       ;; TODO: This breaks if I get messages from someone else and
@@ -152,6 +156,7 @@
       (when api/subscriptions-enabled?
         (go
           (let [[thread-feed unsubscribe!] (api/subscribe! {:feed :thread :id (:id @route-data)})]
+            (om/set-state! owner :ws-unsubscribe! unsubscribe!)
             (loop []
               (when-let [message (<! thread-feed)]
                 (update-post! app (models/post (:data message)))
@@ -168,6 +173,12 @@
               (if (== 404 (:status e))
                 (om/update! app [:route-data :route] :page-not-found)
                 (om/transact! app :errors #(conj % (:message e-data)))))))))
+
+    om/IWillUnmount
+    (will-unmount [this]
+      (let [{:keys [ws-unsubscribe!]} (om/get-state owner)]
+        (when ws-unsubscribe!
+          (ws-unsubscribe!))))
 
     om/IRender
     (render [this]

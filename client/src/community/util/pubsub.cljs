@@ -13,7 +13,7 @@
   (-subscribe! [_ feed handler]
     (swap! !subscriptions update-in [feed] (fnil conj #{}) handler))
   (-unsubscribe! [_ feed handler]
-    (swap! !subscriptions update-in [feed] dissoc handler))
+    (swap! !subscriptions update-in [feed] disj handler))
 
   IPublish
   (-publish! [_ feed message]

@@ -3,7 +3,11 @@ class PubSub
     Publisher.new(event, type, resource).publish
   end
 
+  attr_reader :logger
+
   def initialize
+    @logger = Rails.logger
+
     @subscriptions = ThreadSafe::Hash.new { |h, k| h[k] = ThreadSafe::Hash.new } # Using a ThreadSafe::Hash as a Set
 
     uri = URI.parse(ENV["REDIS_URL"])
@@ -18,16 +22,18 @@ class PubSub
         message = Message.new(event)
 
         if message.subscribe?
+          logger.info "PubSub subscribe: #{{user_id: session.current_user.id, feed: message.feed}}"
           if ability(session.current_user).can? :read, message.resource
             @subscriptions[message.feed][session] = true
           end
         elsif message.unsubscribe?
+          logger.info "PubSub unsubscribe: #{{user_id: session.current_user.id, feed: message.feed}}"
           @subscriptions[message.feed].delete(session)
         else
-          Rails.logger.warn "Unknown message type #{message}"
+          logger.warn "Unknown message type #{message}"
         end
       rescue Message::MessageError => e
-        Rails.logger.warn "#{e.class.name}: #{e.message}"
+        logger.warn "#{e.class.name}: #{e.message}"
       end
     end
 
@@ -48,6 +54,8 @@ private
   def pubsub_loop
     @redis_sub.subscribe(:pubsub) do |on|
       on.message do |_, data|
+        logger.info "PubSub publish: #{data}"
+
         with_logged_exceptions do
           params = JSON.parse(data).with_indifferent_access
 
@@ -79,7 +87,7 @@ private
     message = "\n#{exception.class} (#{exception.message}):\n"
     message << exception.annoted_source_code.to_s if exception.respond_to?(:annoted_source_code)
     message << "  " << exception.backtrace.join("\n  ")
-    Rails.logger.fatal("#{message}\n\n")
+    logger.fatal("#{message}\n\n")
   end
 
   class Message
