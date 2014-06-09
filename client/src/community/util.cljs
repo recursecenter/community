@@ -16,8 +16,7 @@
 (defn log [thing]
   (.log js/console thing))
 
-;; TODO externs advanced compilation?
-(defn time-ago-in-words [unix-time]
-  (->> (* unix-time 1000) ;; js Date expects millis, but unix timestamps are in seconds
-       (js/Date.)
-       (.timeago js/jQuery)))
+(defn human-format-time [unix-time]
+  (-> (* unix-time 1000)
+      (js/Date.)
+      (.toDateString)))

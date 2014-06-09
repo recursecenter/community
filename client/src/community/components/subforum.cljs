@@ -109,6 +109,6 @@
               [:tr {:key id :class (if (:unread thread) "unread")}
                [:td (link-to (routes :thread thread) title)]
                [:td created-by]
-               [:td (util/time-ago-in-words (:marked-unread-at thread))]])]]
+               [:td (util/human-format-time (:marked-unread-at thread))]])]]
           (om/build new-thread-component subforum)]
          [:div])))))
