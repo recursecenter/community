@@ -196,7 +196,7 @@
 (defmethod feed-format :thread [{id :id}]
   (str "thread-" id))
 
-(def subscriptions-enabled? (boolean (.-WebSocket js/window)))
+(def subscriptions-enabled? (boolean (aget js/window "WebSocket")))
 
 (defn subscribe!
   "Subscribes to the Community WebSockets API, returning a
