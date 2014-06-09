@@ -10,7 +10,6 @@
   <% unless Rails.env.production? %>
     <!-- Avoid asset pipeline for development cljs. It's a stupid hack to get
          sourcempas to work. -->
-    <script src="/client/client-dev/goog/base.js"></script>
     <script src="/client/client-dev.js"></script>
     <script>goog.require("community.core");</script>
   <% end %>
