@@ -6,14 +6,18 @@ class User < ActiveRecord::Base
     "#{first_name} #{last_name}"
   end
 
-  def self.create_or_update(user_data:, batch_data:)
-    user = where(hacker_school_id: user_data["id"]).first_or_create({
-      hacker_school_id: user_data["id"],
-      first_name: user_data["first_name"],
-      last_name: user_data["last_name"],
-      email: user_data["email"],
-      avatar_url: user_data["image"],
-      batch_name: batch_data["name"]
-    })
+  def self.create_or_update_from_api_data(user_data)
+    user = where(hacker_school_id: user_data["id"]).first_or_initialize
+
+    user.hacker_school_id = user_data["id"]
+    user.first_name = user_data["first_name"]
+    user.last_name = user_data["last_name"]
+    user.email = user_data["email"]
+    user.avatar_url = user_data["image"]
+    user.batch_name = user_data["batch"]["name"]
+
+    user.save!
+
+    user
   end
 end
