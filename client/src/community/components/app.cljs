@@ -29,29 +29,6 @@
               [:ul.dropdown-menu
                [:li [:a {:href "/logout"} "Logout"]]]])]]]))))
 
-(defn welcome-info-component [_ owner]
-  (reify
-    om/IDisplayName
-    (welcome-info [this] "WelcomeInfo")
-
-    om/IInitState
-    (init-state [this]
-      {:closed? false})
-
-    om/IRenderState
-    (render-state [this {:keys [closed?]}]
-      (html
-       (if closed?
-         [:div]
-         [:div.row
-          [:div.col-lg-12
-           [:div.alert.alert-info
-            [:strong "Welcome! "]
-            "As you can tell, Community is in very early stages. Expect things to change, threads and posts to be deleted, etc. Thanks for checking it out!"
-            [:button.close {:onClick #(om/set-state! owner :closed? true)}
-             "×"]]]])))))
-
-
 (defn app-component [{:as app :keys [current-user route-data errors]}
                      owner]
   (reify
@@ -77,11 +54,11 @@
         [:div
          (om/build navbar-component app)
          [:div.container
-          (om/build welcome-info-component nil)
+          (shared/alert :info
+            [:p [:strong "Welcome! "]
+             "As you can tell, Community is in very early stages. Expect things to change, threads and posts to be deleted, etc. Thanks for checking it out!"])
           (when (not (empty? errors))
-            [:div
-             (for [error errors]
-               [:div.alert.alert-danger error])])
+            [:div (map #(shared/alert :danger %) errors)])
           (if current-user
             [:div
              (let [component (routes/dispatch route-data)]
