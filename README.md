@@ -71,6 +71,6 @@ Look at `db/structure.sql` instead. We use this because it supports Postgres vie
 
 # License
 
-Copyright © 2014 5Blades, Inc. (DBA Hacker School)
+Copyright © 2014 Hacker School
 
 This software is licensed under the terms of the AGPL, Version 3. The complete license can be found at http://www.gnu.org/licenses/agpl-3.0.html.
