@@ -33,6 +33,7 @@ GEM
     builder (3.2.2)
     cancancan (1.8.0)
     coderay (1.1.0)
+    dalli (2.7.2)
     erubis (2.7.0)
     eventmachine (1.0.3)
     execjs (2.0.2)
@@ -55,6 +56,7 @@ GEM
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
+    memcachier (0.0.2)
     method_source (0.8.2)
     mime-types (1.25.1)
     minitest (5.3.3)
@@ -148,10 +150,12 @@ PLATFORMS
 DEPENDENCIES
   bootstrap-sass (~> 3.1.1)
   cancancan (~> 1.8)
+  dalli
   eventmachine
   faye-websocket
   jbuilder (~> 2.0)
   jquery-rails
+  memcachier
   oauth2
   pg
   pry-rails
