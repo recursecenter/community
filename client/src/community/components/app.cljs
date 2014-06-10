@@ -21,6 +21,7 @@
           [:div.navbar-header
            (partials/link-to "/" {:class "navbar-brand"} "Community")]
           [:ul.nav.navbar-nav.navbar-right
+           [:li [:a {:href "https://github.com/hackerschool/community"} "Source"]]
            (when current-user
              [:li.dropdown
               [:a.dropdown-toggle {:href "#" :data-toggle "dropdown"}
