@@ -8,6 +8,34 @@
             [sablono.core :refer-macros [html]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
+(defmulti notification-summary :type)
+
+(defmethod notification-summary "mention" [mention]
+  (let [{:keys [thread mentioned-by]} mention]
+    (partials/link-to (routes/routes :thread thread)
+                      {:class "list-group-item"}
+                      (html
+                        [:div
+                         [:strong (:name mentioned-by)]
+                         " mentioned you in "
+                         [:strong (:title thread)]]))))
+
+(defn notifications-component [app owner]
+  (reify
+    om/IDisplayName
+    (display-name [_] "Notifications")
+
+    om/IRender
+    (render [this]
+      (let [notifications (-> app :current-user :notifications)]
+        (html
+          [:div#notifications
+           [:h3 "Notifications"]
+           (if (empty? notifications)
+             [:div "No new notifications"]
+             [:div.list-group
+              (map notification-summary notifications)])])))))
+
 (defn navbar-component [{:keys [current-user]} owner]
   (reify
     om/IDisplayName
@@ -83,6 +111,9 @@
              (for [error errors]
                [:div.alert.alert-danger error])])
           (if current-user
-            [:div
-             (let [component (routes/dispatch route-data)]
-               (om/build component app))])]]))))
+            [:div.row
+             [:div#main-content
+              (let [component (routes/dispatch route-data)]
+                (om/build component app))]
+             [:div#sidebar
+              (om/build notifications-component app)]])]]))))

@@ -43,6 +43,14 @@
   (assoc api-data :subforums
          (mapv subforum subforums)))
 
+(defmulti notification :type)
+
+(defmethod notification "mention" [mention]
+  (-> mention
+      (update-in [:thread] thread)))
+
 (defn user [{:as api-data
-             :keys [first-name last-name]}]
-  (assoc api-data :name (str first-name " " last-name)))
+             :keys [first-name last-name notifications]}]
+  (assoc api-data
+         :name (str first-name " " last-name)
+         :notifications (mapv notification notifications)))

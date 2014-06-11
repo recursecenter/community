@@ -24,7 +24,10 @@ class PubSub
         if message.subscribe?
           logger.info "PubSub subscribe: #{{user_id: session.current_user.id, feed: message.feed}}"
           if ability(session.current_user).can? :read, message.resource
+            logger.info "  request approved"
             @subscriptions[message.feed][session] = true
+          else
+            logger.info "  request denied :("
           end
         elsif message.unsubscribe?
           logger.info "PubSub unsubscribe: #{{user_id: session.current_user.id, feed: message.feed}}"
@@ -54,10 +57,11 @@ private
   def pubsub_loop
     @redis_sub.subscribe(:pubsub) do |on|
       on.message do |_, data|
-        logger.info "PubSub publish: #{data}"
-
         with_logged_exceptions do
           params = JSON.parse(data).with_indifferent_access
+
+          logger.info "PubSub publish: #{data}"
+          logger.info "  publishing to #{@subscriptions[params[:feed]].size} subscribers"
 
           @subscriptions[params[:feed]].each do |session, _|
             emitter = params[:emitter].constantize.new(session, params)

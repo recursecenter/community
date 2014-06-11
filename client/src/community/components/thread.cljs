@@ -138,6 +138,34 @@
       (let [i (reverse-find-index #(= (:id %) (:id post)) posts)]
         (om/transact! app [:thread :posts] #(assoc % i post))))))
 
+(defn update-thread! [app]
+  (go
+    (try
+      (let [thread (<? (api/thread (:id (:route-data @app))))]
+        (om/update! app :thread thread)
+        (om/update! app :errors #{}))
+
+      (catch ExceptionInfo e
+        (let [e-data (ex-data e)]
+          (if (== 404 (:status e))
+            (om/update! app [:route-data :route] :page-not-found)
+            (om/transact! app :errors #(conj % (:message e-data)))))))))
+
+(defn start-thread-subscription! [thread-id app owner]
+  (when api/subscriptions-enabled?
+    (go
+      (let [[thread-feed unsubscribe!] (api/subscribe! {:feed :thread :id thread-id})]
+        (om/set-state! owner :ws-unsubscribe! unsubscribe!)
+        (loop []
+          (when-let [message (<! thread-feed)]
+            (update-post! app (models/post (:data message)))
+            (recur)))))))
+
+(defn stop-thread-subscription! [owner]
+  (let [{:keys [ws-unsubscribe!]} (om/get-state owner)]
+    (when ws-unsubscribe!
+      (ws-unsubscribe!))))
+
 (defn thread-component [{:keys [route-data thread] :as app} owner]
   (reify
     om/IDisplayName
@@ -149,36 +177,20 @@
 
     om/IDidMount
     (did-mount [this]
-      ;; TODO: This breaks if I get messages from someone else and
-      ;; then try to post a message myself. Invariant Violation:
-      ;; flattenChildren(...): Encountered two children with the same
-      ;; key, `.$129`. Children keys must be unique.
-      (when api/subscriptions-enabled?
-        (go
-          (let [[thread-feed unsubscribe!] (api/subscribe! {:feed :thread :id (:id @route-data)})]
-            (om/set-state! owner :ws-unsubscribe! unsubscribe!)
-            (loop []
-              (when-let [message (<! thread-feed)]
-                (update-post! app (models/post (:data message)))
-                (recur))))))
+      (update-thread! app)
+      (start-thread-subscription! (:id route-data) app owner))
 
-      (go
-        (try
-          (let [thread (<? (api/thread (:id @route-data)))]
-            (om/update! app :thread thread)
-            (om/update! app :errors #{}))
-
-          (catch ExceptionInfo e
-            (let [e-data (ex-data e)]
-              (if (== 404 (:status e))
-                (om/update! app [:route-data :route] :page-not-found)
-                (om/transact! app :errors #(conj % (:message e-data)))))))))
+    om/IWillUpdate
+    (will-update [this next-props next-state]
+      (let [last-props (om/get-props owner)]
+        (when (not= (:route-data next-props) (:route-data last-props))
+          (stop-thread-subscription! owner)
+          (update-thread! app)
+          (start-thread-subscription! (:id (:route-data next-props)) app owner))))
 
     om/IWillUnmount
     (will-unmount [this]
-      (let [{:keys [ws-unsubscribe!]} (om/get-state owner)]
-        (when ws-unsubscribe!
-          (ws-unsubscribe!))))
+      (stop-thread-subscription! owner))
 
     om/IRender
     (render [this]

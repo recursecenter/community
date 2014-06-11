@@ -100,6 +100,14 @@
       (html
        (if subforum
          [:div
+          [:a {:onClick (fn [e]
+                          (.preventDefault e)
+                          (om/update! app :route-data {:route :subforum :slug "whatever" :id 2}))}
+           "MOAR LINK"]
+          [:a {:onClick (fn [e]
+                          (.preventDefault e)
+                          (om/update! app :route-data {:route :thread :slug "whatever" :id 2}))}
+           "MOAR MOAR LINK"]
           [:h1 (:name subforum)]
           [:table.table.table-striped
            [:thead
