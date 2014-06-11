@@ -3,8 +3,6 @@ require 'json'
 
 class AccountImporter
   def import_all
-    puts "#{HackerSchool.site}/api/v1/people?secret_token=#{HackerSchool.secret_token}"
-
     f = open("#{HackerSchool.site}/api/v1/people?secret_token=#{HackerSchool.secret_token}")
 
     JSON.parse(f.read).each do |user_data|
