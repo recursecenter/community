@@ -11,7 +11,7 @@
                         :source-paths ["src"]
                         :compiler {:output-to "../public/client/client-dev.js"
                                    :output-dir "../public/client/client-dev"
-                                   :optimizations :simple
+                                   :optimizations :none
                                    :pretty-print true
                                    :source-map "../public/client/client-dev.js.map"}}
                        {:id "prod"
