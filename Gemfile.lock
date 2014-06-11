@@ -34,6 +34,16 @@ GEM
     cancancan (1.8.0)
     coderay (1.1.0)
     dalli (2.7.2)
+    delayed_job (4.0.1)
+      activesupport (>= 3.0, < 4.2)
+    delayed_job_active_record (4.0.1)
+      activerecord (>= 3.0, < 4.2)
+      delayed_job (>= 3.0, < 4.1)
+    dotenv (0.11.1)
+      dotenv-deployment (~> 0.0.2)
+    dotenv-deployment (0.0.2)
+    dotenv-rails (0.11.1)
+      dotenv (= 0.11.1)
     erubis (2.7.0)
     eventmachine (1.0.3)
     execjs (2.0.2)
@@ -152,6 +162,8 @@ DEPENDENCIES
   bootstrap-sass (~> 3.1.1)
   cancancan (~> 1.8)
   dalli
+  delayed_job_active_record
+  dotenv-rails
   eventmachine
   faye-websocket
   jbuilder (~> 2.0)

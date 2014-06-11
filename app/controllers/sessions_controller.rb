@@ -26,10 +26,6 @@ class SessionsController < ApplicationController
 
 private
   def client
-    client_id = ENV["HACKER_SCHOOL_CLIENT_ID"]
-    client_secret = ENV["HACKER_SCHOOL_CLIENT_SECRET"]
-    site = ENV["HACKER_SCHOOL_SITE"] || "https://www.hackerschool.com"
-
-    @client ||= OAuth2::Client.new(client_id, client_secret, site: site)
+    @client ||= HackerSchool.new.client
   end
 end
