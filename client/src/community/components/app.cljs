@@ -11,14 +11,11 @@
 (defmulti notification-summary :type)
 
 (defmethod notification-summary "mention" [mention]
-  (let [{:keys [thread mentioned-by]} mention]
-    (partials/link-to (routes/routes :thread thread)
-                      {:class "list-group-item"}
-                      (html
-                        [:div
-                         [:strong (:name mentioned-by)]
-                         " mentioned you in "
-                         [:strong (:title thread)]]))))
+  (html
+    [:div
+     [:strong (-> mention :mentioned-by :name)]
+     " mentioned you in "
+     [:strong (-> mention :thread :title)]]))
 
 (defn notifications-component [app owner]
   (reify
@@ -34,7 +31,10 @@
            (if (empty? notifications)
              [:div "No new notifications"]
              [:div.list-group
-              (map notification-summary notifications)])])))))
+              (for [n notifications]
+                (partials/link-to (routes/routes :thread (:thread n))
+                                  {:class "list-group-item"}
+                                  (notification-summary n)))])])))))
 
 (defn navbar-component [{:keys [current-user]} owner]
   (reify
