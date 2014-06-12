@@ -80,7 +80,9 @@
   returning an error message if there is an error, or nil if there is
   not."
   [req-fn & {:keys [res-transform err-transform validate]
-             :or {validate (constantly nil)}}]
+             :or {res-transform identity
+                  err-transform identity
+                  validate (constantly nil)}}]
   (fn [& args]
     (let [out (async/chan 1)
           error-message (apply validate args)]
@@ -88,9 +90,9 @@
         (go
           (try
             (let [res (<? (apply req-fn args))]
-              (>! out ((or res-transform identity) res)))
+              (>! out (res-transform res)))
             (catch ExceptionInfo e
-              (>! out ((or err-transform identity) e)))))
+              (>! out (err-transform e)))))
         (async/put! out (ex-info error-message {:message error-message})))
       out)))
 
@@ -148,6 +150,10 @@
                         :format :json}))
     :res-transform models/thread
     :validate validate-thread))
+
+(def mark-notification-as-read
+  (make-api-fn (fn [{id :id}]
+                 (POST (str "/notifications/" id "/read")))))
 
 ;;; PubSub via WebSockets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -23,9 +23,9 @@
 (defmethod notification-link-to "mention" [mention]
   (routes/routes :thread (:thread mention)))
 
-(defn mark-as-read-and-redirect! [notification]
+(defn mark-as-read! [notification]
   (om/update! notification :read true)
-  (location/redirect-to (notification-link-to notification)))
+  (api/mark-notification-as-read @notification))
 
 (defn notifications-component [app owner]
   (reify
@@ -43,11 +43,12 @@
              [:div.list-group
               (for [n notifications
                     :let [notification-url (notification-link-to n)]]
-                [:a.list-group-item {:href notification-url
-                                     :onClick (fn [e]
-                                                (.preventDefault e)
-                                                (om/update! n :read true)
-                                                (location/redirect-to notification-url))}
+                [:a.list-group-item
+                 {:href notification-url
+                  :onClick (fn [e]
+                             (.preventDefault e)
+                             (mark-as-read! n)
+                             (location/redirect-to notification-url))}
                  [:div {:class (if (:read n) "text-muted")}
                   (notification-summary n)]])])])))))
 

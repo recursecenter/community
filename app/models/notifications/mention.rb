@@ -6,7 +6,7 @@ class Notifications::Mention < Notification
 
   def to_builder
     Jbuilder.new do |json|
-      json.extract! self, :read
+      json.extract! self, :id, :read
 
       json.type "mention"
       json.created_at created_at.to_i

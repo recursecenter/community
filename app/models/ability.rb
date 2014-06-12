@@ -12,5 +12,8 @@ class Ability
 
     can :create, Post
     can :update, Post, author: user
+
+    alias_action :read, to: :update
+    can :update, Notification, user: user
   end
 end
