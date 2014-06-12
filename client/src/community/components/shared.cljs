@@ -40,12 +40,11 @@
           :else (recur (dec i)))))
 
 (defn starts-with [s substr]
-  (prn s)
-  (prn substr)
-  (p (zero? (.indexOf s substr))))
+  (zero? (.indexOf s substr)))
 
 (defn results-for-search-string [search-string autocomplete-list]
-  (take 4 (filter #(starts-with % search-string) autocomplete-list)))
+  (when search-string
+    (take 4 (filter #(starts-with (.toLowerCase %) (.toLowerCase search-string)) autocomplete-list))))
 
 (defn autocompleting-textarea-component [{:keys [value autocomplete-list]} owner {:keys [passthrough]}]
   (reify
@@ -55,16 +54,6 @@
     om/IInitState
     (init-state [_]
       {:autocomplete-results []})
-
-    om/IDidUpdate
-    (did-update [_ _ _]
-      (let [textarea (om/get-node owner "textarea")
-            cursor-position (.-selectionStart textarea)
-            search-string (get-search-string value cursor-position)]
-        (om/set-state!
-          owner
-          :autocomplete-results
-          (results-for-search-string search-string autocomplete-list))))
 
     om/IRenderState
     (render-state [_ {:keys [autocomplete-results]}]
@@ -78,4 +67,11 @@
 
          [:textarea (merge passthrough
                            {:value value
-                            :ref "textarea"})]]))))
+                            :onClick (fn [e]
+                                       (let [cursor-position (.-selectionStart (.-target e))
+                                             search-string (get-search-string value cursor-position)]
+                                             (om/set-state! owner :autocomplete-results (results-for-search-string search-string autocomplete-list))))
+                            :onKeyUp (fn [e]
+                                       (let [cursor-position (.-selectionStart (.-target e))
+                                             search-string (get-search-string value cursor-position)]
+                                             (om/set-state! owner :autocomplete-results (results-for-search-string search-string autocomplete-list))))})]]))))
