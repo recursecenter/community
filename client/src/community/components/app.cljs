@@ -1,6 +1,7 @@
 (ns community.components.app
   (:require [community.api :as api]
             [community.routes :as routes]
+            [community.location :as location]
             [community.components.shared :as shared]
             [community.util :refer-macros [<? p]]
             [community.partials :as partials]
@@ -17,6 +18,15 @@
      " mentioned you in "
      [:strong (-> mention :thread :title)]]))
 
+(defmulti notification-link-to :type)
+
+(defmethod notification-link-to "mention" [mention]
+  (routes/routes :thread (:thread mention)))
+
+(defn mark-as-read-and-redirect! [notification]
+  (om/update! notification :read true)
+  (location/redirect-to (notification-link-to notification)))
+
 (defn notifications-component [app owner]
   (reify
     om/IDisplayName
@@ -31,10 +41,15 @@
            (if (empty? notifications)
              [:div "No new notifications"]
              [:div.list-group
-              (for [n notifications]
-                (partials/link-to (routes/routes :thread (:thread n))
-                                  {:class "list-group-item"}
-                                  (notification-summary n)))])])))))
+              (for [n notifications
+                    :let [notification-url (notification-link-to n)]]
+                [:a.list-group-item {:href notification-url
+                                     :onClick (fn [e]
+                                                (.preventDefault e)
+                                                (om/update! n :read true)
+                                                (location/redirect-to notification-url))}
+                 [:div {:class (if (:read n) "text-muted")}
+                  (notification-summary n)]])])])))))
 
 (defn navbar-component [{:keys [current-user]} owner]
   (reify
