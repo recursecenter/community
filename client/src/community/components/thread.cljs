@@ -10,14 +10,15 @@
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
-(defn post-form-component [_ owner {:keys [before-persisted after-persisted init-post cancel-edit]}]
+(defn post-form-component [{:as props :keys [after-persisted cancel-edit]} owner]
   (reify
     om/IDisplayName
     (display-name [_] "PostForm")
 
     om/IInitState
     (init-state [this]
-      {:post init-post
+      {:init-post (:init-post props)
+       :post (:init-post props)
        :c-post (async/chan 1)
        :form-disabled? false
        :errors #{}})
@@ -27,8 +28,6 @@
       (let [{:keys [c-post]} (om/get-state owner)]
         (go-loop []
           (when-let [post (<! c-post)]
-            (when before-persisted
-              (before-persisted post))
             (try
               (let [new-post (<? (if (:persisted? post)
                                    (api/update-post post)
@@ -36,12 +35,18 @@
                 (om/set-state! owner :form-disabled? false)
                 (om/set-state! owner :errors #{})
                 (after-persisted new-post
-                                 #(om/set-state! owner :post (models/empty-post (:thread-id new-post)))))
+                                 #(om/set-state! owner :post (:init-post (om/get-state owner)))))
               (catch ExceptionInfo e
                 (om/set-state! owner :form-disabled? false)
                 (let [e-data (ex-data e)]
                   (om/update-state! owner :errors #(conj % (:message e-data))))))
             (recur)))))
+
+    om/IWillReceiveProps
+    (will-receive-props [this next-props]
+      (let [init-post (:init-post next-props)]
+        (om/set-state! owner :init-post init-post)
+        (om/update-state! owner :post #(assoc % :thread-id (:thread-id init-post)))))
 
     om/IWillUnmount
     (will-unmount [this]
@@ -103,14 +108,13 @@
            (-> post :author :name)]]
          [:div.post-body
           (if editing?
-            (om/build post-form-component nil
-                      {:opts {:init-post (om/value post)
-                              :after-persisted (fn [new-post reset-form!]
-                                                 (om/set-state! owner :editing? false)
-                                                 (doseq [[k v] new-post]
-                                                   (om/update! post k v)))
-                              :cancel-edit (fn []
-                                             (om/set-state! owner :editing? false))}})
+            (om/build post-form-component {:init-post (om/value post)
+                                           :after-persisted (fn [new-post reset-form!]
+                                                              (om/set-state! owner :editing? false)
+                                                              (doseq [[k v] new-post]
+                                                                (om/update! post k v)))
+                                           :cancel-edit (fn []
+                                                          (om/set-state! owner :editing? false))})
 
             (partials/html-from-markdown (:body post)))]]
         [:div.row
@@ -199,10 +203,8 @@
           [:div
            [:h1 (:title thread)]
            [:ol.list-unstyled (om/build-all post-component (:posts thread) {:key :id})]
-           (om/build post-form-component nil
-                     {:opts {:init-post (models/empty-post (:id thread))
-                             :after-persisted
-                             (fn [post reset-form!]
-                               (reset-form!)
-                               (update-post! app post))}})]
+           (om/build post-form-component {:init-post (models/empty-post (:id thread))
+                                          :after-persisted (fn [post reset-form!]
+                                                             (reset-form!)
+                                                             (update-post! app post))})]
           [:div])))))
