@@ -68,7 +68,9 @@
              (let [post-body-id (str "post-body-" (:id post))]
                [:div.form-group
                 [:label.hide {:for post-body-id} "Body"]
-                (om/build shared/resizing-textarea-component {:content (:body post)}
+                (om/build shared/autocompleting-textarea-component
+                          {:value (:body post)
+                           :autocomplete-list ["Zach" "Dave" "Zachary" "Davery"]}
                           {:opts {:focus? (:persisted? post)
                                   :passthrough
                                   {:id post-body-id
