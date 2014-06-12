@@ -75,6 +75,19 @@
                                       :disabled form-disabled?}
              "Create thread"]]]])))))
 
+(defn update-subforum! [app]
+  (go
+    (try
+      (let [subforum (<? (api/subforum (-> @app :route-data :id)))]
+        (om/update! app :subforum subforum)
+        (om/update! app :errors #{}))
+
+      (catch ExceptionInfo e
+        (let [e-data (ex-data e)]
+          (if (== 404 (:status e-data))
+            (om/update! app [:route-data :route] :page-not-found)
+            (om/transact! app :errors #(conj % (:message e-data)))))))))
+
 (defn subforum-component [{:keys [route-data subforum] :as app}
                           owner]
   (reify
@@ -82,32 +95,20 @@
     (display-name [_] "Subforum")
 
     om/IDidMount
-    (did-mount [this]
-      (go
-        (try
-          (let [subforum (<? (api/subforum (:id @route-data)))]
-            (om/update! app :subforum subforum)
-            (om/update! app :errors #{}))
+    (did-mount [_]
+      (update-subforum! app))
 
-          (catch ExceptionInfo e
-            (let [e-data (ex-data e)]
-              (if (== 404 (:status e-data))
-                (om/update! app [:route-data :route] :page-not-found)
-                (om/transact! app :errors #(conj % (:message e-data)))))))))
+    om/IWillReceiveProps
+    (will-receive-props [_ next-props]
+      (let [last-props (om/get-props owner)]
+        (when (not= (:route-data next-props) (:route-data last-props))
+          (update-subforum! app))))
 
     om/IRender
     (render [this]
       (html
        (if subforum
          [:div
-          [:a {:onClick (fn [e]
-                          (.preventDefault e)
-                          (om/update! app :route-data {:route :subforum :slug "whatever" :id 2}))}
-           "MOAR LINK"]
-          [:a {:onClick (fn [e]
-                          (.preventDefault e)
-                          (om/update! app :route-data {:route :thread :slug "whatever" :id 2}))}
-           "MOAR MOAR LINK"]
           [:h1 (:name subforum)]
           [:table.table.table-striped
            [:thead
