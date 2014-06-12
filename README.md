@@ -57,11 +57,16 @@ HACKER_SCHOOL_API_SECRET_TOKEN=hacker_school_api_secret
 
 To generate a Hacker School client id and secret, go to your [Hacker School settings page](https://www.hackerschool.com/settings) and make a new OAuth app. The redirect url should be `http://localhost:5001/login/complete` (or your development host name if you don't develop off of localhost).
 
-## Running the code
+## Getting set up
 
 ```sh
 $ bundle
-...snip...
+$ bin/rake db:setup
+```
+
+## Running the code
+
+```sh
 $ foreman start
 
 # In another terminal:
