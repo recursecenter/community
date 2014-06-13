@@ -44,7 +44,11 @@
 
 (defn results-for-search-string [search-string autocomplete-list]
   (when search-string
-    (take 4 (filter #(starts-with (.toLowerCase %) (.toLowerCase search-string)) autocomplete-list))))
+    (let [values (take 4 (filter #(starts-with (.toLowerCase %) (.toLowerCase search-string)) autocomplete-list))
+          maps (mapv (fn [v] {:value v :active? false}) values)]
+      (if (empty? maps)
+        maps
+        (assoc maps 0 (assoc (nth maps 0) :active? true))))))
 
 (defn autocompleting-textarea-component [{:keys [value autocomplete-list]} owner {:keys [passthrough]}]
   (reify
@@ -60,8 +64,8 @@
       (html
         [:div.dropdown {:class (if (not (empty? autocomplete-results)) "open")}
          [:ul.dropdown-menu
-          (for [value autocomplete-results]
-            [:li
+          (for [{:keys [value active?]} autocomplete-results]
+            [:li {:class (if active? "active")}
              [:a {:href "#"} value]])]
 
          [:textarea (merge passthrough
