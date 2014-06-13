@@ -86,7 +86,9 @@
      ;; too high
      (>= index c) (- index c))))
 
-(defn autocompleting-textarea-component [{:as state :keys [value autocomplete-list]} owner {:keys [passthrough]}]
+(defn autocompleting-textarea-component [{:as state :keys [value autocomplete-list]}
+                                         owner
+                                         {:keys [passthrough on-change]}]
   (reify
     om/IDisplayName
     (display-name [_] "AutocompletingTextArea")
@@ -94,7 +96,8 @@
     om/IInitState
     (init-state [_]
       {:autocomplete-results []
-       :focused? false})
+       :focused? false
+       :new-cursor-pos nil})
 
     om/IRenderState
     (render-state [_ {:keys [focused? autocomplete-results]}]
@@ -115,13 +118,16 @@
                   (let [active (first (filter :active? autocomplete-results))
                         pos (.-selectionStart (.-target e))
                         start (get-search-string-start value pos)
-                        insertion (str (:value active) " ")
+                        inserted-value (str (:value active) " ")
+                        new-cursor-pos (+ pos (count inserted-value))
                         new-value (str (.substring value 0 start)
-                                       insertion
+                                       inserted-value
                                        (.substring value pos))]
                     ;; set textarea value to be new-value
                     ;; move selectionStart to be pos + (count insertion)
-                    ))
+                    (on-change new-value)
+                    (om/set-state! owner :autocomplete-results [])
+                    (om/set-state! owner :new-cursor-pos new-cursor-pos)))
                 (handle-autocomplete-action [e]
                   (when menu-showing?
                     (when-let [key (control-keys (.-key e))]
@@ -137,8 +143,17 @@
                  [:a {:href "#"} value]])]
              [:textarea (merge passthrough
                                {:value value
+                                :ref "textarea"
                                 :onClick set-autocomplete-results
                                 :onKeyUp set-autocomplete-results
                                 :onKeyDown handle-autocomplete-action
                                 :onBlur #(om/set-state! owner :focused? false)
-                                :onFocus #(om/set-state! owner :focused? true)})]]))))))
+                                :onFocus #(om/set-state! owner :focused? true)
+                                :onChange (fn [e]
+                                            (on-change (.. e -target -value)))})]]))))
+
+    om/IDidUpdate
+    (did-update [_ _ _]
+      (when-let [new-cursor-pos (:new-cursor-pos (om/get-state owner))]
+        (.setSelectionRange (om/get-node owner "textarea") new-cursor-pos new-cursor-pos)
+        (om/set-state! owner :new-cursor-pos nil)))))

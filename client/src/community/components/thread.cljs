@@ -65,20 +65,18 @@
                                 (when-not form-disabled?
                                   (async/put! c-post post)
                                   (om/set-state! owner :form-disabled? true)))}
-             (let [post-body-id (str "post-body-" (:id post))]
+             (let [post-body-id (str "post-body-" (or (:id post) "new"))]
                [:div.form-group
                 [:label.hide {:for post-body-id} "Body"]
                 (om/build shared/autocompleting-textarea-component
                           {:value (:body post)
                            :autocomplete-list ["Zach" "Dave" "Zachary" "Davery"]}
                           {:opts {:focus? (:persisted? post)
+                                  :on-change #(om/set-state! owner [:post :body] %)
                                   :passthrough
                                   {:id post-body-id
                                    :class "form-control"
-                                   :name "post[body]"
-                                   :onChange (fn [e]
-                                               (om/set-state! owner [:post :body]
-                                                              (-> e .-target .-value)))}}})])
+                                   :name "post[body]"}}})])
              [:button.btn.btn-default {:type "submit"
                                        :disabled form-disabled?}
               (if (:persisted? post) "Update" "Post")]
