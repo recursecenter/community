@@ -61,20 +61,20 @@
 
     om/IRenderState
     (render-state [_ {:keys [autocomplete-results]}]
-      (html
-        [:div.dropdown {:class (if (not (empty? autocomplete-results)) "open")}
-         [:ul.dropdown-menu
-          (for [{:keys [value active?]} autocomplete-results]
-            [:li {:class (if active? "active")}
-             [:a {:href "#"} value]])]
+      (let [menu-showing? (not (empty? autocomplete-results))]
+        (html
+          [:div.dropdown {:class (if menu-showing? "open")}
+           [:ul.dropdown-menu
+            (for [{:keys [value active?]} autocomplete-results]
+              [:li {:class (if active? "active")}
+               [:a {:href "#"} value]])]
 
-         [:textarea (merge passthrough
-                           {:value value
-                            :onClick (fn [e]
-                                       (let [cursor-position (.-selectionStart (.-target e))
-                                             search-string (get-search-string value cursor-position)]
-                                             (om/set-state! owner :autocomplete-results (results-for-search-string search-string autocomplete-list))))
-                            :onKeyUp (fn [e]
-                                       (let [cursor-position (.-selectionStart (.-target e))
-                                             search-string (get-search-string value cursor-position)]
-                                             (om/set-state! owner :autocomplete-results (results-for-search-string search-string autocomplete-list))))})]]))))
+           (let [change-handler (fn [e]
+                                  (let [cursor-position (.-selectionStart (.-target e))
+                                        search-string (get-search-string value cursor-position)
+                                        autocomplete-results (results-for-search-string search-string autocomplete-list)]
+                                    (om/set-state! owner :autocomplete-results autocomplete-results)))]
+             [:textarea (merge passthrough
+                               {:value value
+                                :onClick change-handler
+                                :onKeyUp change-handler})])])))))
