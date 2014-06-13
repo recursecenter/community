@@ -125,8 +125,6 @@
                         new-value (str (.substring value 0 start)
                                        inserted-value
                                        (.substring value pos))]
-                    ;; set textarea value to be new-value
-                    ;; move selectionStart to be pos + (count insertion)
                     (on-change new-value)
                     (om/set-state! owner :autocomplete-results [])
                     (om/set-state! owner :new-cursor-pos new-cursor-pos)))
