@@ -33,15 +33,24 @@
     (render [this]
       (html [:textarea (merge {:value value} passthrough)]))))
 
-(defn get-search-string [s pos]
+(defn get-search-string-start [s pos]
   (loop [i (dec pos)]
     (cond (= i -1) nil
-          (= (.charAt s i) "@") (.substring s (inc i) pos)
+          (= (.charAt s i) "@") (inc i)
           :else (recur (dec i)))))
+
+(defn get-search-string [s pos]
+  (when-let [start (get-search-string-start s pos)]
+    (.substring s start pos)))
 
 (defn starts-with [s substr]
   (zero? (.indexOf s substr)))
 
+;; TODO: Right now we do a full scan of the search string on every
+;; keypress. If I'm editing a very long post, that could potentially
+;; be too expensive. We could pass in a third parameter which is the
+;; max length we'll scan backwards, and can be the length of the
+;; longest string in the autocomplete list.
 (defn results-for-search-string [search-string autocomplete-list]
   (when search-string
     (let [values (take 4 (filter #(starts-with (.toLowerCase %) (.toLowerCase search-string)) autocomplete-list))
@@ -50,31 +59,86 @@
         maps
         (assoc maps 0 (assoc (nth maps 0) :active? true))))))
 
-(defn autocompleting-textarea-component [{:keys [value autocomplete-list]} owner {:keys [passthrough]}]
+(defn get-autocomplete-results [e value autocomplete-list]
+  (let [cursor-position (.-selectionStart (.-target e))
+        search-string (get-search-string value cursor-position)]
+    (results-for-search-string search-string autocomplete-list)))
+
+(defn index-where [pred sequence]
+  (first (for [[i v] (map-indexed vector sequence)
+               :when (pred v)]
+           i)))
+
+(defn wrapped-index
+  "Given an index and a sequence, wrap the index as if the sequence were circular.
+    (wrapping-index 1  [0 1 2]) => 1
+    (wrapping-index 3  [0 1 2]) => 0
+    (wrapping-index -1 [0 1 2]) => 2
+    (wrapping-index -2 [0 1 2]) => 1
+    (wrapping-index 4 [0 1 2 3]) => "
+  [index sequence]
+  (let [c (count sequence)]
+    (cond
+     ;; within bounds
+     (< -1 index c) index
+     ;; too low
+     (< index 0) (- (dec c) (inc index))
+     ;; too high
+     (>= index c) (- index c))))
+
+(defn autocompleting-textarea-component [{:as state :keys [value autocomplete-list]} owner {:keys [passthrough]}]
   (reify
     om/IDisplayName
     (display-name [_] "AutocompletingTextArea")
 
     om/IInitState
     (init-state [_]
-      {:autocomplete-results []})
+      {:autocomplete-results []
+       :focused? false})
 
     om/IRenderState
-    (render-state [_ {:keys [autocomplete-results]}]
-      (let [menu-showing? (not (empty? autocomplete-results))]
-        (html
-          [:div.dropdown {:class (if menu-showing? "open")}
-           [:ul.dropdown-menu
-            (for [{:keys [value active?]} autocomplete-results]
-              [:li {:class (if active? "active")}
-               [:a {:href "#"} value]])]
-
-           (let [change-handler (fn [e]
-                                  (let [cursor-position (.-selectionStart (.-target e))
-                                        search-string (get-search-string value cursor-position)
-                                        autocomplete-results (results-for-search-string search-string autocomplete-list)]
-                                    (om/set-state! owner :autocomplete-results autocomplete-results)))]
+    (render-state [_ {:keys [focused? autocomplete-results]}]
+      (let [menu-showing? (and focused? (seq autocomplete-results))
+            control-keys #{"ArrowUp" "ArrowDown" "Enter" "Tab"}]
+        (letfn [(set-autocomplete-results [e]
+                  (when-not (and menu-showing? (= "keyup" (.-type e)) (control-keys (.-key e)))
+                    (om/set-state! owner :autocomplete-results
+                                   (get-autocomplete-results e value autocomplete-list))))
+                (scroll [direction]
+                  (let [active-index (index-where :active? autocomplete-results)
+                        next-index (+ active-index ({"ArrowDown" 1 "ArrowUp" -1} direction))
+                        new-results (-> autocomplete-results
+                                        (assoc-in [active-index :active?] false)
+                                        (assoc-in [(wrapped-index next-index autocomplete-results) :active?] true))]
+                    (om/set-state! owner :autocomplete-results new-results)))
+                (insert-active [e]
+                  (let [active (first (filter :active? autocomplete-results))
+                        pos (.-selectionStart (.-target e))
+                        start (get-search-string-start value pos)
+                        insertion (str (:value active) " ")
+                        new-value (str (.substring value 0 start)
+                                       insertion
+                                       (.substring value pos))]
+                    ;; set textarea value to be new-value
+                    ;; move selectionStart to be pos + (count insertion)
+                    ))
+                (handle-autocomplete-action [e]
+                  (when menu-showing?
+                    (when-let [key (control-keys (.-key e))]
+                      (.preventDefault e)
+                      (case key
+                        ("ArrowUp" "ArrowDown") (scroll key)
+                        ("Enter" "Tab") (insert-active e)))))]
+          (html
+            [:div.dropdown {:class (if menu-showing? "open")}
+             [:ul.dropdown-menu
+              (for [{:keys [value active?]} autocomplete-results]
+                [:li {:class (if active? "active")}
+                 [:a {:href "#"} value]])]
              [:textarea (merge passthrough
                                {:value value
-                                :onClick change-handler
-                                :onKeyUp change-handler})])])))))
+                                :onClick set-autocomplete-results
+                                :onKeyUp set-autocomplete-results
+                                :onKeyDown handle-autocomplete-action
+                                :onBlur #(om/set-state! owner :focused? false)
+                                :onFocus #(om/set-state! owner :focused? true)})]]))))))
