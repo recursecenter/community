@@ -119,7 +119,7 @@
                         pos (.-selectionStart (.-target e))
                         start (get-search-string-start value pos)
                         inserted-value (str (:value active) " ")
-                        new-cursor-pos (+ pos (count inserted-value))
+                        new-cursor-pos (+ start (count inserted-value))
                         new-value (str (.substring value 0 start)
                                        inserted-value
                                        (.substring value pos))]
