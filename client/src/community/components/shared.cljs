@@ -58,12 +58,11 @@
     om/IRenderState
     (render-state [_ {:keys [autocomplete-results]}]
       (html
-        [:div
-         (when (not (empty? autocomplete-results))
-           [:ul
-            (for [value autocomplete-results]
-              [:li
-               [:a {:href "#"} value]])])
+        [:div.dropdown {:class (if (not (empty? autocomplete-results)) "open")}
+         [:ul.dropdown-menu
+          (for [value autocomplete-results]
+            [:li
+             [:a {:href "#"} value]])]
 
          [:textarea (merge passthrough
                            {:value value
