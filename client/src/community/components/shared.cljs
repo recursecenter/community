@@ -2,7 +2,8 @@
   (:require [community.routes :as routes]
             [community.util :refer-macros [p]]
             [om.core :as om]
-            [sablono.core :refer-macros [html]]))
+            [sablono.core :refer-macros [html]]
+            [goog.style]))
 
 (defn page-not-found-component [app owner]
   (reify
@@ -97,10 +98,11 @@
     (init-state [_]
       {:autocomplete-results []
        :focused? false
-       :new-cursor-pos nil})
+       :new-cursor-pos nil
+       :should-drop-down? false})
 
     om/IRenderState
-    (render-state [_ {:keys [focused? autocomplete-results]}]
+    (render-state [_ {:keys [focused? autocomplete-results should-drop-down?]}]
       (let [menu-showing? (and focused? (seq autocomplete-results))
             control-keys #{"ArrowUp" "ArrowDown" "Enter" "Tab"}]
         (letfn [(set-autocomplete-results [e]
@@ -136,24 +138,30 @@
                         ("ArrowUp" "ArrowDown") (scroll key)
                         ("Enter" "Tab") (insert-active e)))))]
           (html
-            [:div.dropdown {:class (if menu-showing? "open")}
-             [:ul.dropdown-menu
-              (for [{:keys [value active?]} autocomplete-results]
-                [:li {:class (if active? "active")}
-                 [:a {:href "#"} value]])]
-             [:textarea (merge passthrough
-                               {:value value
-                                :ref "textarea"
-                                :onClick set-autocomplete-results
-                                :onKeyUp set-autocomplete-results
-                                :onKeyDown handle-autocomplete-action
-                                :onBlur #(om/set-state! owner :focused? false)
-                                :onFocus #(om/set-state! owner :focused? true)
-                                :onChange (fn [e]
-                                            (on-change (.. e -target -value)))})]]))))
+            [:div
+             [:div.btn-group.full-size {:class [(if menu-showing? "open")
+                                                (if should-drop-down? "dropdown" "dropup")]}
+              [:ul.dropdown-menu
+               (for [{:keys [value active?]} autocomplete-results]
+                 [:li {:class (if active? "active")}
+                  [:a {:href "#"} value]])]
+              [:textarea (merge passthrough
+                                {:value value
+                                 :ref "textarea"
+                                 :onClick set-autocomplete-results
+                                 :onKeyUp set-autocomplete-results
+                                 :onKeyDown handle-autocomplete-action
+                                 :onBlur #(om/set-state! owner :focused? false)
+                                 :onFocus #(om/set-state! owner :focused? true)
+                                 :onChange (fn [e]
+                                             (on-change (.. e -target -value)))})]]]))))
 
     om/IDidUpdate
     (did-update [_ _ _]
-      (when-let [new-cursor-pos (:new-cursor-pos (om/get-state owner))]
-        (.setSelectionRange (om/get-node owner "textarea") new-cursor-pos new-cursor-pos)
-        (om/set-state! owner :new-cursor-pos nil)))))
+      (let [textarea (om/get-node owner "textarea")]
+        (when-let [new-cursor-pos (:new-cursor-pos (om/get-state owner))]
+          (.setSelectionRange textarea new-cursor-pos new-cursor-pos)
+          (om/set-state! owner :new-cursor-pos nil))
+
+        (let [textarea-top (.-y (goog.style/getClientPosition textarea))]
+          (om/set-state! owner :should-drop-down? (< textarea-top 120)))))))
