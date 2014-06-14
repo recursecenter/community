@@ -106,6 +106,8 @@
       (let [menu-showing? (and focused? (seq autocomplete-results))
             control-keys #{"ArrowUp" "ArrowDown" "Enter" "Tab"}]
         (letfn [(set-autocomplete-results [e]
+                  ;; Don't set autocomplete results again when e.g. someone's
+                  ;; scrolling through the results they already see
                   (when-not (and menu-showing? (= "keyup" (.-type e)) (control-keys (.-key e)))
                     (om/set-state! owner :autocomplete-results
                                    (get-autocomplete-results e value autocomplete-list))))
