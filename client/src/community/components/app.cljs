@@ -49,6 +49,11 @@
                              (.preventDefault e)
                              (mark-as-read! n)
                              (location/redirect-to notification-url))}
+                 [:button.close.pull-right
+                  {:onClick (fn [e]
+                              (.preventDefault e)
+                              (.stopPropagation e))}
+                  "×"]
                  [:div {:class (if (:read n) "text-muted")}
                   (notification-summary n)]])])])))))
 
