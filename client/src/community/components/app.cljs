@@ -87,7 +87,7 @@
                 (om/build notification-component
                           {:notification n
                            :on-click #(do (mark-as-read! n)
-                                          (location/redirect-to (notification-link-to n)))
+                                          (location/redirect-to (notification-link-to @n)))
                            :on-remove #(do (mark-as-read! n)
                                            (delete-notification! user i))}))])])))))
 

@@ -163,7 +163,8 @@
     (try
       (let [thread (<? (api/thread (:id (:route-data @app))))]
         (om/update! app :thread thread)
-        (om/update! app :errors #{}))
+        (om/update! app :errors #{})
+        thread)
 
       (catch ExceptionInfo e
         (let [e-data (ex-data e)]
@@ -197,16 +198,18 @@
 
     om/IDidMount
     (did-mount [this]
-      (update-thread! app)
-      (start-thread-subscription! (:id route-data) app owner))
+      (go
+        (let [thread (<! (update-thread! app))]
+          (start-thread-subscription! (:id thread) app owner))))
 
     om/IWillUpdate
     (will-update [this next-props next-state]
       (let [last-props (om/get-props owner)]
         (when (not= (:route-data next-props) (:route-data last-props))
           (stop-thread-subscription! owner)
-          (update-thread! app)
-          (start-thread-subscription! (:id (:route-data next-props)) app owner))))
+          (go
+            (let [thread (<! (update-thread! app))]
+              (start-thread-subscription! (:id thread) app owner))))))
 
     om/IWillUnmount
     (will-unmount [this]
