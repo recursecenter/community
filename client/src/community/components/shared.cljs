@@ -54,7 +54,10 @@
 ;; longest string in the autocomplete list.
 (defn results-for-search-string [search-string autocomplete-list]
   (when search-string
-    (let [values (take 4 (filter #(starts-with (.toLowerCase %) (.toLowerCase search-string)) autocomplete-list))
+    (let [values (take 4 (filter #(starts-with
+                                    (.toLowerCase %)
+                                    (.toLowerCase search-string))
+                                 autocomplete-list))
           maps (mapv (fn [v] {:value v :active? false}) values)]
       (if (empty? maps)
         maps
@@ -76,7 +79,7 @@
     (wrapping-index 3  [0 1 2]) => 0
     (wrapping-index -1 [0 1 2]) => 2
     (wrapping-index -2 [0 1 2]) => 1
-    (wrapping-index 4 [0 1 2 3]) => "
+    (wrapping-index 4 [0 1 2 3]) => 0"
   [index sequence]
   (let [c (count sequence)]
     (cond

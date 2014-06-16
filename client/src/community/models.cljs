@@ -21,27 +21,7 @@
 ;; Assumption: these functions are only run on data that came from the
 ;; server, so they must have been already persisted.
 
-(defn post [api-data]
-  (-> api-data
-      (assoc :persisted? true)))
-
-(defn thread [{:as api-data
-               :keys [title posts id]}]
-  (-> api-data
-      (assoc :slug (slug title))
-      (assoc :posts (mapv post posts))))
-
-(defn subforum [{:as api-data
-                 :keys [name threads]}]
-  (-> api-data
-      (assoc :slug (slug name))
-      (assoc :new-thread (empty-thread))
-      (assoc :threads (mapv thread threads))))
-
-(defn subforum-group [{:as api-data
-                       :keys [subforums]}]
-  (assoc api-data :subforums
-         (mapv subforum subforums)))
+(declare notification thread post user subforum subforum-group)
 
 (defmulti notification :type)
 
@@ -54,3 +34,26 @@
   (assoc api-data
          :name (str first-name " " last-name)
          :notifications (mapv notification notifications)))
+
+(defn post [api-data]
+  (-> api-data
+      (assoc :persisted? true)))
+
+(defn thread [{:as api-data
+               :keys [title posts id autocomplete-users]}]
+  (-> api-data
+      (assoc :slug (slug title))
+      (assoc :posts (mapv post posts))
+      (assoc :autocomplete-users (mapv user autocomplete-users))))
+
+(defn subforum [{:as api-data
+                 :keys [name threads]}]
+  (-> api-data
+      (assoc :slug (slug name))
+      (assoc :new-thread (empty-thread))
+      (assoc :threads (mapv thread threads))))
+
+(defn subforum-group [{:as api-data
+                       :keys [subforums]}]
+  (assoc api-data :subforums
+         (mapv subforum subforums)))

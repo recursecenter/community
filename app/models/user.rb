@@ -3,6 +3,8 @@ class User < ActiveRecord::Base
   has_many :posts, foreign_key: 'author_id'
   has_many :notifications
 
+  scope :ordered_by_first_name, -> { order(first_name: :asc) }
+
   def name
     "#{first_name} #{last_name}"
   end

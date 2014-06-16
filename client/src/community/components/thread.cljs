@@ -10,7 +10,7 @@
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
-(defn post-form-component [{:as props :keys [after-persisted cancel-edit]} owner]
+(defn post-form-component [{:as props :keys [after-persisted cancel-edit autocomplete-list]} owner]
   (reify
     om/IDisplayName
     (display-name [_] "PostForm")
@@ -70,7 +70,7 @@
                 [:label.hide {:for post-body-id} "Body"]
                 (om/build shared/autocompleting-textarea-component
                           {:value (:body post)
-                           :autocomplete-list ["Zach" "Dave" "Zachary" "Davery"]}
+                           :autocomplete-list autocomplete-list}
                           {:opts {:focus? (:persisted? post)
                                   :on-change #(om/set-state! owner [:post :body] %)
                                   :passthrough
@@ -85,7 +85,7 @@
                                :onClick cancel-edit}
                 "x"])]]])))))
 
-(defn post-component [post owner]
+(defn post-component [{:keys [post autocomplete-list]} owner]
   (reify
     om/IDisplayName
     (display-name [_] "Post")
@@ -109,6 +109,7 @@
          [:div.post-body
           (if editing?
             (om/build post-form-component {:init-post (om/value post)
+                                           :autocomplete-list autocomplete-list
                                            :after-persisted (fn [new-post reset-form!]
                                                               (om/set-state! owner :editing? false)
                                                               (doseq [[k v] new-post]
@@ -198,13 +199,19 @@
 
     om/IRender
     (render [this]
-      (html
-        (if thread
-          [:div
-           [:h1 (:title thread)]
-           [:ol.list-unstyled (om/build-all post-component (:posts thread) {:key :id})]
-           (om/build post-form-component {:init-post (models/empty-post (:id thread))
-                                          :after-persisted (fn [post reset-form!]
-                                                             (reset-form!)
-                                                             (update-post! app post))})]
-          [:div])))))
+      (let [autocomplete-list (mapv :name (:autocomplete-users thread))]
+        (html
+          (if thread
+            [:div
+             [:h1 (:title thread)]
+             [:ol.list-unstyled
+              (for [post (:posts thread)]
+                (om/build post-component
+                          {:post post :autocomplete-list autocomplete-list}
+                          {:react-key (:id post)}))]
+             (om/build post-form-component {:init-post (models/empty-post (:id thread))
+                                            :autocomplete-list autocomplete-list
+                                            :after-persisted (fn [post reset-form!]
+                                                               (reset-form!)
+                                                               (update-post! app post))})]
+            [:div]))))))
