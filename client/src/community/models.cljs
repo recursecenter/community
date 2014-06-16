@@ -1,5 +1,6 @@
 (ns community.models
-  (:require [community.util :as util :refer-macros [p]]))
+  (:require [clojure.string :as str]
+            [community.util :as util :refer-macros [p]]))
 
 (defn slug
   "\"Dave's awesome subforum!\" => \"daves-awesome-subforum\""
@@ -47,13 +48,27 @@
       (assoc :autocomplete-users (mapv user autocomplete-users))))
 
 (defn subforum [{:as api-data
-                 :keys [name threads]}]
+                 :keys [name threads autocomplete-users]}]
   (-> api-data
       (assoc :slug (slug name))
       (assoc :new-thread (empty-thread))
-      (assoc :threads (mapv thread threads))))
+      (assoc :threads (mapv thread threads))
+      (assoc :autocomplete-users (mapv user autocomplete-users))))
 
 (defn subforum-group [{:as api-data
                        :keys [subforums]}]
   (assoc api-data :subforums
          (mapv subforum subforums)))
+
+(defn names->mention-regexp [names]
+  (let [names-with-pipes (str/join "|" (map #(str "(" % ")") names))]
+    (js/RegExp. (str "@(" names-with-pipes ")") "gi")))
+
+(defn parse-mentions [{:keys [body]} users]
+  (let [regexp (names->mention-regexp (map :name users))
+        downcased-name->user (into {} (for [user users] [(.toLowerCase (:name user)) user]))
+        downcased-names-mentioned (map #(.toLowerCase (.substring % 1)) (.match body regexp)) ]
+    (mapv downcased-name->user downcased-names-mentioned)))
+
+(defn with-mentions [post users]
+  (assoc post :mentions (parse-mentions post users)))

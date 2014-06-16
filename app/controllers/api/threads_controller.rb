@@ -1,6 +1,8 @@
 class Api::ThreadsController < Api::ApiController
   load_and_authorize_resource :thread, class: 'DiscussionThread'
 
+  include NotifyOfMentions
+
   def show
     @thread.mark_as_visited_for(current_user)
     @autocomplete_users = User.select(:id, :first_name, :last_name).ordered_by_first_name
@@ -9,9 +11,11 @@ class Api::ThreadsController < Api::ApiController
   def create
     @thread.transaction do
       @thread.save!
-      @thread.posts.create!(post_params)
+      @post = @thread.posts.create!(post_params)
     end
     @autocomplete_users = User.select(:id, :first_name, :last_name).ordered_by_first_name
+
+    notify_mentioned_users!(@post)
   end
 
 private

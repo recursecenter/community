@@ -11,19 +11,6 @@
             [clojure.string :as str])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
-(defn names->mention-regexp [names]
-  (let [names-with-pipes (str/join "|" (map #(str "(" % ")") names))]
-    (js/RegExp. (str "@(" names-with-pipes ")") "gi")))
-
-(defn parse-mentions [{:keys [body]} users]
-  (let [regexp (names->mention-regexp (map :name users))
-        downcased-name->user (into {} (for [user users] [(.toLowerCase (:name user)) user]))
-        downcased-names-mentioned (map #(.toLowerCase (.substring % 1)) (.match body regexp)) ]
-    (mapv downcased-name->user downcased-names-mentioned)))
-
-(defn with-mentions [post users]
-  (assoc post :mentions (parse-mentions post users)))
-
 (defn post-form-component [{:as props :keys [after-persisted cancel-edit autocomplete-users]} owner]
   (reify
     om/IDisplayName
@@ -43,7 +30,7 @@
         (go-loop []
           (when-let [post (<! c-post)]
             (try
-              (let [post-with-mentions (with-mentions post @autocomplete-users)
+              (let [post-with-mentions (models/with-mentions post @autocomplete-users)
                     new-post (<? (if (:persisted? post)
                                    (api/update-post post-with-mentions)
                                    (api/new-post post-with-mentions)))]

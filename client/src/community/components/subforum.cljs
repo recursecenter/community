@@ -1,9 +1,11 @@
 (ns community.components.subforum
   (:require [community.util :as util :refer-macros [<? p]]
             [community.api :as api]
+            [community.models :as models]
             [community.location :refer [redirect-to]]
             [community.partials :refer [link-to]]
             [community.routes :refer [routes]]
+            [community.components.shared :as shared]
             [om.core :as om]
             [sablono.core :as html :refer-macros [html]]
             [cljs.core.async :as async])
@@ -26,7 +28,8 @@
         (go-loop []
           (when-let [draft (<! c-draft)]
             (try
-              (let [new-thread (<? (api/new-thread (:id @subforum) draft))]
+              (let [{:keys [id autocomplete-users]} @subforum
+                    new-thread (<? (api/new-thread id (models/with-mentions draft autocomplete-users)))]
                 (redirect-to (routes :thread new-thread)))
 
               (catch ExceptionInfo e
@@ -65,12 +68,12 @@
                                        (-> e .-target .-value)))}]]
             [:div.form-group
              [:label {:for "post-body"} "Body"]
-             [:textarea#post-body.form-control
-              {:value (get-in subforum [:new-thread :body])
-               :name "post[body]"
-               :onChange (fn [e]
-                           (om/update! subforum [:new-thread :body]
-                                       (-> e .-target .-value)))}]]
+             (om/build shared/autocompleting-textarea-component
+                       {:value (get-in subforum [:new-thread :body])
+                        :autocomplete-list (mapv :name (:autocomplete-users subforum))}
+                       {:opts {:on-change #(om/update! subforum [:new-thread :body] %)
+                               :passthrough {:id "post-body"
+                                             :class "form-control"}}})]
             [:button.btn.btn-default {:type "submit"
                                       :disabled form-disabled?}
              "Create thread"]]]])))))
