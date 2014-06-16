@@ -2,6 +2,7 @@ class User < ActiveRecord::Base
   has_many :threads, foreign_key: 'created_by_id', class_name: 'DiscussionThread'
   has_many :posts, foreign_key: 'author_id'
   has_many :notifications
+  has_many :mentions, class_name: 'Notifications::Mention'
 
   scope :ordered_by_first_name, -> { order(first_name: :asc) }
 

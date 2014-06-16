@@ -7,10 +7,24 @@
             [community.components.shared :as shared]
             [om.core :as om]
             [sablono.core :refer-macros [html]]
-            [cljs.core.async :as async])
+            [cljs.core.async :as async]
+            [clojure.string :as str])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
-(defn post-form-component [{:as props :keys [after-persisted cancel-edit autocomplete-list]} owner]
+(defn names->mention-regexp [names]
+  (let [names-with-pipes (str/join "|" (map #(str "(" % ")") names))]
+    (js/RegExp. (str "@(" names-with-pipes ")") "gi")))
+
+(defn parse-mentions [{:keys [body]} users]
+  (let [regexp (names->mention-regexp (map :name users))
+        downcased-name->user (into {} (for [user users] [(.toLowerCase (:name user)) user]))
+        downcased-names-mentioned (map #(.toLowerCase (.substring % 1)) (.match body regexp)) ]
+    (mapv downcased-name->user downcased-names-mentioned)))
+
+(defn with-mentions [post users]
+  (assoc post :mentions (parse-mentions post users)))
+
+(defn post-form-component [{:as props :keys [after-persisted cancel-edit autocomplete-users]} owner]
   (reify
     om/IDisplayName
     (display-name [_] "PostForm")
@@ -29,9 +43,10 @@
         (go-loop []
           (when-let [post (<! c-post)]
             (try
-              (let [new-post (<? (if (:persisted? post)
-                                   (api/update-post post)
-                                   (api/new-post post)))]
+              (let [post-with-mentions (with-mentions post @autocomplete-users)
+                    new-post (<? (if (:persisted? post)
+                                   (api/update-post post-with-mentions)
+                                   (api/new-post post-with-mentions)))]
                 (om/set-state! owner :form-disabled? false)
                 (om/set-state! owner :errors #{})
                 (after-persisted new-post
@@ -70,7 +85,7 @@
                 [:label.hide {:for post-body-id} "Body"]
                 (om/build shared/autocompleting-textarea-component
                           {:value (:body post)
-                           :autocomplete-list autocomplete-list}
+                           :autocomplete-list (mapv :name autocomplete-users)}
                           {:opts {:focus? (:persisted? post)
                                   :on-change #(om/set-state! owner [:post :body] %)
                                   :passthrough
@@ -85,7 +100,7 @@
                                :onClick cancel-edit}
                 "x"])]]])))))
 
-(defn post-component [{:keys [post autocomplete-list]} owner]
+(defn post-component [{:keys [post autocomplete-users]} owner]
   (reify
     om/IDisplayName
     (display-name [_] "Post")
@@ -109,7 +124,7 @@
          [:div.post-body
           (if editing?
             (om/build post-form-component {:init-post (om/value post)
-                                           :autocomplete-list autocomplete-list
+                                           :autocomplete-users autocomplete-users
                                            :after-persisted (fn [new-post reset-form!]
                                                               (om/set-state! owner :editing? false)
                                                               (doseq [[k v] new-post]
@@ -199,7 +214,7 @@
 
     om/IRender
     (render [this]
-      (let [autocomplete-list (mapv :name (:autocomplete-users thread))]
+      (let [autocomplete-users (:autocomplete-users thread)]
         (html
           (if thread
             [:div
@@ -207,10 +222,10 @@
              [:ol.list-unstyled
               (for [post (:posts thread)]
                 (om/build post-component
-                          {:post post :autocomplete-list autocomplete-list}
+                          {:post post :autocomplete-users autocomplete-users}
                           {:react-key (:id post)}))]
              (om/build post-form-component {:init-post (models/empty-post (:id thread))
-                                            :autocomplete-list autocomplete-list
+                                            :autocomplete-users autocomplete-users
                                             :after-persisted (fn [post reset-form!]
                                                                (reset-form!)
                                                                (update-post! app post))})]

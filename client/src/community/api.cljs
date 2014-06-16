@@ -119,17 +119,22 @@
   (when (empty? (:body post))
     "The body of a post cannot be empty."))
 
+(defn post->api-data [post]
+  (let [mentions (map :id (:mentions post))]
+    {:post {:body (:body post)}
+     :mentions (if (empty? mentions) nil mentions)}))
+
 (def new-post
   (make-api-fn (fn [post]
                  (POST (str "/threads/" (:thread-id post) "/posts")
-                       {:params (dissoc post :thread-id) :format :json}))
+                       {:params (post->api-data (dissoc post :thread-id)) :format :json}))
     :res-transform models/post
     :validate validate-post))
 
 (def update-post
   (make-api-fn (fn [post]
                  (PATCH (str "/posts/" (:id post))
-                        {:params {:post (dissoc post :id)} :format :json}))
+                        {:params (post->api-data (dissoc post :id)) :format :json}))
     :res-transform models/post
     :validate validate-post))
 

@@ -3,9 +3,10 @@ class Api::PostsController < Api::ApiController
 
   def create
     @post.save!
+    @post.thread.mark_as_visited_for(current_user)
     PubSub.publish :created, :post, @post
 
-    @post.thread.mark_as_visited_for(current_user)
+    notify_mentioned_users!
   end
 
   def update
@@ -15,13 +16,32 @@ class Api::PostsController < Api::ApiController
 
 private
 
+  def notify_mentioned_users!
+    mentioned_users.each do |user|
+      if Ability.new(user).can? :read, @post
+        user.mentions.create(post: @post, mentioned_by: @post.author)
+      end
+    end
+  end
+
+  def mentioned_users
+    if params[:mentions].present?
+      User.where(id: params[:mentions])
+    else
+      []
+    end
+  end
+
   def create_params
     thread = DiscussionThread.find(params[:thread_id])
-    params.require(:post).permit(:body).
-      merge(thread: thread, author: current_user)
+    post_params.merge(thread: thread, author: current_user)
   end
 
   def update_params
+    post_params
+  end
+
+  def post_params
     params.require(:post).permit(:body)
   end
 end
