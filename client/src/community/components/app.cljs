@@ -27,35 +27,69 @@
   (om/update! notification :read true)
   (api/mark-notification-as-read @notification))
 
-(defn notifications-component [app owner]
+(defn delete-notification!
+  "Delete the i-th notification from the user's notifications."
+  [user i]
+  (let [notifications (:notifications @user)]
+    (om/update! user :notifications
+      (vec (concat (subvec notifications 0 i)
+                   (subvec notifications (inc i) (count notifications)))))))
+
+(defn notification-component [{:keys [notification on-click on-remove]} owner]
+  (reify
+    om/IDisplayName
+    (display-name [_] "Notification")
+
+    om/IDidMount
+    (did-mount [_]
+      (.tooltip (js/jQuery (om/get-node owner "remove-button"))))
+
+    om/IRender
+    (render [_]
+      (html
+        [:a.list-group-item
+         {:href (notification-link-to notification)
+          :onClick (fn [e]
+                     (.preventDefault e)
+                     (on-click e))}
+         [:button.close.pull-right
+          {:onClick (fn [e]
+                      (.preventDefault e)
+                      (on-remove e)
+                      false)
+           :data-toggle "tooltip"
+           :data-placement "top"
+           :title "Remove"
+           :ref "remove-button"}
+          "×"]
+         [:div {:class (if (:read notification) "text-muted")}
+          (notification-summary notification)]]))))
+
+(defn notifications-component [user owner]
   (reify
     om/IDisplayName
     (display-name [_] "Notifications")
 
+    om/IDidMount
+    (did-mount [_]
+      (.tooltip (js/jQuery (om/get-node owner))))
+
     om/IRender
-    (render [this]
-      (let [notifications (-> app :current-user :notifications)]
+    (render [_]
+      (let [notifications (:notifications user)]
         (html
           [:div#notifications
            [:h3 "Notifications"]
            (if (empty? notifications)
              [:div "No new notifications"]
              [:div.list-group
-              (for [n notifications
-                    :let [notification-url (notification-link-to n)]]
-                [:a.list-group-item
-                 {:href notification-url
-                  :onClick (fn [e]
-                             (.preventDefault e)
-                             (mark-as-read! n)
-                             (location/redirect-to notification-url))}
-                 [:button.close.pull-right
-                  {:onClick (fn [e]
-                              (.preventDefault e)
-                              (.stopPropagation e))}
-                  "×"]
-                 [:div {:class (if (:read n) "text-muted")}
-                  (notification-summary n)]])])])))))
+              (for [[i n] (map-indexed vector notifications)]
+                (om/build notification-component
+                          {:notification n
+                           :on-click #(do (mark-as-read! n)
+                                          (location/redirect-to (notification-link-to n)))
+                           :on-remove #(do (mark-as-read! n)
+                                           (delete-notification! user i))}))])])))))
 
 (defn navbar-component [{:keys [current-user]} owner]
   (reify
@@ -137,4 +171,4 @@
               (let [component (routes/dispatch route-data)]
                 (om/build component app))]
              [:div#sidebar
-              (om/build notifications-component app)]])]]))))
+              (om/build notifications-component (:current-user app))]])]]))))
