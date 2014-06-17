@@ -14,4 +14,4 @@
 
 (defn init-location! [app-state]
   (routes/set-route! app-state)
-  (.addEventListener js/window "popstate" (partial routes/set-route! app-state)))
+  (.addEventListener js/window "popstate" #(routes/set-route! app-state)))

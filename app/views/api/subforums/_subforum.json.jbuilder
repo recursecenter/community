@@ -7,3 +7,4 @@ json.threads do
     json.unread thread.unread?
   end
 end
+json.autocomplete_users @autocomplete_users, :id, :first_name, :last_name

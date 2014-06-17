@@ -10,7 +10,10 @@ class Ability
 
     can [:create, :read], DiscussionThread
 
-    can :create, Post
+    can [:create, :read], Post
     can :update, Post, author: user
+
+    alias_action :read, to: :update
+    can :update, Notification, user: user
   end
 end

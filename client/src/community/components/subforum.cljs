@@ -1,9 +1,11 @@
 (ns community.components.subforum
   (:require [community.util :as util :refer-macros [<? p]]
             [community.api :as api]
+            [community.models :as models]
             [community.location :refer [redirect-to]]
             [community.partials :refer [link-to]]
             [community.routes :refer [routes]]
+            [community.components.shared :as shared]
             [om.core :as om]
             [sablono.core :as html :refer-macros [html]]
             [cljs.core.async :as async])
@@ -26,7 +28,8 @@
         (go-loop []
           (when-let [draft (<! c-draft)]
             (try
-              (let [new-thread (<? (api/new-thread (:id @subforum) draft))]
+              (let [{:keys [id autocomplete-users]} @subforum
+                    new-thread (<? (api/new-thread id (models/with-mentions draft autocomplete-users)))]
                 (redirect-to (routes :thread new-thread)))
 
               (catch ExceptionInfo e
@@ -65,15 +68,28 @@
                                        (-> e .-target .-value)))}]]
             [:div.form-group
              [:label {:for "post-body"} "Body"]
-             [:textarea#post-body.form-control
-              {:value (get-in subforum [:new-thread :body])
-               :name "post[body]"
-               :onChange (fn [e]
-                           (om/update! subforum [:new-thread :body]
-                                       (-> e .-target .-value)))}]]
+             (om/build shared/autocompleting-textarea-component
+                       {:value (get-in subforum [:new-thread :body])
+                        :autocomplete-list (mapv :name (:autocomplete-users subforum))}
+                       {:opts {:on-change #(om/update! subforum [:new-thread :body] %)
+                               :passthrough {:id "post-body"
+                                             :class "form-control"}}})]
             [:button.btn.btn-default {:type "submit"
                                       :disabled form-disabled?}
              "Create thread"]]]])))))
+
+(defn update-subforum! [app]
+  (go
+    (try
+      (let [subforum (<? (api/subforum (-> @app :route-data :id)))]
+        (om/update! app :subforum subforum)
+        (om/update! app :errors #{}))
+
+      (catch ExceptionInfo e
+        (let [e-data (ex-data e)]
+          (if (== 404 (:status e-data))
+            (om/update! app [:route-data :route] :page-not-found)
+            (om/transact! app :errors #(conj % (:message e-data)))))))))
 
 (defn subforum-component [{:keys [route-data subforum] :as app}
                           owner]
@@ -82,18 +98,14 @@
     (display-name [_] "Subforum")
 
     om/IDidMount
-    (did-mount [this]
-      (go
-        (try
-          (let [subforum (<? (api/subforum (:id @route-data)))]
-            (om/update! app :subforum subforum)
-            (om/update! app :errors #{}))
+    (did-mount [_]
+      (update-subforum! app))
 
-          (catch ExceptionInfo e
-            (let [e-data (ex-data e)]
-              (if (== 404 (:status e-data))
-                (om/update! app [:route-data :route] :page-not-found)
-                (om/transact! app :errors #(conj % (:message e-data)))))))))
+    om/IWillReceiveProps
+    (will-receive-props [_ next-props]
+      (let [last-props (om/get-props owner)]
+        (when (not= (:route-data next-props) (:route-data last-props))
+          (update-subforum! app))))
 
     om/IRender
     (render [this]

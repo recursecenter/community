@@ -7,17 +7,19 @@
             [community.components.shared :as shared]
             [om.core :as om]
             [sablono.core :refer-macros [html]]
-            [cljs.core.async :as async])
+            [cljs.core.async :as async]
+            [clojure.string :as str])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
-(defn post-form-component [_ owner {:keys [before-persisted after-persisted init-post cancel-edit]}]
+(defn post-form-component [{:as props :keys [after-persisted cancel-edit autocomplete-users]} owner]
   (reify
     om/IDisplayName
     (display-name [_] "PostForm")
 
     om/IInitState
     (init-state [this]
-      {:post init-post
+      {:init-post (:init-post props)
+       :post (:init-post props)
        :c-post (async/chan 1)
        :form-disabled? false
        :errors #{}})
@@ -27,21 +29,26 @@
       (let [{:keys [c-post]} (om/get-state owner)]
         (go-loop []
           (when-let [post (<! c-post)]
-            (when before-persisted
-              (before-persisted post))
             (try
-              (let [new-post (<? (if (:persisted? post)
-                                   (api/update-post post)
-                                   (api/new-post post)))]
+              (let [post-with-mentions (models/with-mentions post @autocomplete-users)
+                    new-post (<? (if (:persisted? post)
+                                   (api/update-post post-with-mentions)
+                                   (api/new-post post-with-mentions)))]
                 (om/set-state! owner :form-disabled? false)
                 (om/set-state! owner :errors #{})
                 (after-persisted new-post
-                                 #(om/set-state! owner :post (models/empty-post (:thread-id new-post)))))
+                                 #(om/set-state! owner :post (:init-post (om/get-state owner)))))
               (catch ExceptionInfo e
                 (om/set-state! owner :form-disabled? false)
                 (let [e-data (ex-data e)]
                   (om/update-state! owner :errors #(conj % (:message e-data))))))
             (recur)))))
+
+    om/IWillReceiveProps
+    (will-receive-props [this next-props]
+      (let [init-post (:init-post next-props)]
+        (om/set-state! owner :init-post init-post)
+        (om/update-state! owner :post #(assoc % :thread-id (:thread-id init-post)))))
 
     om/IWillUnmount
     (will-unmount [this]
@@ -60,18 +67,18 @@
                                 (when-not form-disabled?
                                   (async/put! c-post post)
                                   (om/set-state! owner :form-disabled? true)))}
-             (let [post-body-id (str "post-body-" (:id post))]
+             (let [post-body-id (str "post-body-" (or (:id post) "new"))]
                [:div.form-group
                 [:label.hide {:for post-body-id} "Body"]
-                (om/build shared/resizing-textarea-component {:content (:body post)}
+                (om/build shared/autocompleting-textarea-component
+                          {:value (:body post)
+                           :autocomplete-list (mapv :name autocomplete-users)}
                           {:opts {:focus? (:persisted? post)
+                                  :on-change #(om/set-state! owner [:post :body] %)
                                   :passthrough
                                   {:id post-body-id
                                    :class "form-control"
-                                   :name "post[body]"
-                                   :onChange (fn [e]
-                                               (om/set-state! owner [:post :body]
-                                                              (-> e .-target .-value)))}}})])
+                                   :name "post[body]"}}})])
              [:button.btn.btn-default {:type "submit"
                                        :disabled form-disabled?}
               (if (:persisted? post) "Update" "Post")]
@@ -80,7 +87,7 @@
                                :onClick cancel-edit}
                 "x"])]]])))))
 
-(defn post-component [post owner]
+(defn post-component [{:keys [post autocomplete-users]} owner]
   (reify
     om/IDisplayName
     (display-name [_] "Post")
@@ -103,14 +110,14 @@
            (-> post :author :name)]]
          [:div.post-body
           (if editing?
-            (om/build post-form-component nil
-                      {:opts {:init-post (om/value post)
-                              :after-persisted (fn [new-post reset-form!]
-                                                 (om/set-state! owner :editing? false)
-                                                 (doseq [[k v] new-post]
-                                                   (om/update! post k v)))
-                              :cancel-edit (fn []
-                                             (om/set-state! owner :editing? false))}})
+            (om/build post-form-component {:init-post (om/value post)
+                                           :autocomplete-users autocomplete-users
+                                           :after-persisted (fn [new-post reset-form!]
+                                                              (om/set-state! owner :editing? false)
+                                                              (doseq [[k v] new-post]
+                                                                (om/update! post k v)))
+                                           :cancel-edit (fn []
+                                                          (om/set-state! owner :editing? false))})
 
             (partials/html-from-markdown (:body post)))]]
         [:div.row
@@ -138,6 +145,35 @@
       (let [i (reverse-find-index #(= (:id %) (:id post)) posts)]
         (om/transact! app [:thread :posts] #(assoc % i post))))))
 
+(defn update-thread! [app]
+  (go
+    (try
+      (let [thread (<? (api/thread (:id (:route-data @app))))]
+        (om/update! app :thread thread)
+        (om/update! app :errors #{})
+        thread)
+
+      (catch ExceptionInfo e
+        (let [e-data (ex-data e)]
+          (if (== 404 (:status e))
+            (om/update! app [:route-data :route] :page-not-found)
+            (om/transact! app :errors #(conj % (:message e-data)))))))))
+
+(defn start-thread-subscription! [thread-id app owner]
+  (when api/subscriptions-enabled?
+    (go
+      (let [[thread-feed unsubscribe!] (api/subscribe! {:feed :thread :id thread-id})]
+        (om/set-state! owner :ws-unsubscribe! unsubscribe!)
+        (loop []
+          (when-let [message (<! thread-feed)]
+            (update-post! app (models/post (:data message)))
+            (recur)))))))
+
+(defn stop-thread-subscription! [owner]
+  (let [{:keys [ws-unsubscribe!]} (om/get-state owner)]
+    (when ws-unsubscribe!
+      (ws-unsubscribe!))))
+
 (defn thread-component [{:keys [route-data thread] :as app} owner]
   (reify
     om/IDisplayName
@@ -149,48 +185,38 @@
 
     om/IDidMount
     (did-mount [this]
-      ;; TODO: This breaks if I get messages from someone else and
-      ;; then try to post a message myself. Invariant Violation:
-      ;; flattenChildren(...): Encountered two children with the same
-      ;; key, `.$129`. Children keys must be unique.
-      (when api/subscriptions-enabled?
-        (go
-          (let [[thread-feed unsubscribe!] (api/subscribe! {:feed :thread :id (:id @route-data)})]
-            (om/set-state! owner :ws-unsubscribe! unsubscribe!)
-            (loop []
-              (when-let [message (<! thread-feed)]
-                (update-post! app (models/post (:data message)))
-                (recur))))))
-
       (go
-        (try
-          (let [thread (<? (api/thread (:id @route-data)))]
-            (om/update! app :thread thread)
-            (om/update! app :errors #{}))
+        (let [thread (<! (update-thread! app))]
+          (start-thread-subscription! (:id thread) app owner))))
 
-          (catch ExceptionInfo e
-            (let [e-data (ex-data e)]
-              (if (== 404 (:status e))
-                (om/update! app [:route-data :route] :page-not-found)
-                (om/transact! app :errors #(conj % (:message e-data)))))))))
+    om/IWillUpdate
+    (will-update [this next-props next-state]
+      (let [last-props (om/get-props owner)]
+        (when (not= (:route-data next-props) (:route-data last-props))
+          (stop-thread-subscription! owner)
+          (go
+            (let [thread (<! (update-thread! app))]
+              (start-thread-subscription! (:id thread) app owner))))))
 
     om/IWillUnmount
     (will-unmount [this]
-      (let [{:keys [ws-unsubscribe!]} (om/get-state owner)]
-        (when ws-unsubscribe!
-          (ws-unsubscribe!))))
+      (stop-thread-subscription! owner))
 
     om/IRender
     (render [this]
-      (html
-        (if thread
-          [:div
-           [:h1 (:title thread)]
-           [:ol.list-unstyled (om/build-all post-component (:posts thread) {:key :id})]
-           (om/build post-form-component nil
-                     {:opts {:init-post (models/empty-post (:id thread))
-                             :after-persisted
-                             (fn [post reset-form!]
-                               (reset-form!)
-                               (update-post! app post))}})]
-          [:div])))))
+      (let [autocomplete-users (:autocomplete-users thread)]
+        (html
+          (if thread
+            [:div
+             [:h1 (:title thread)]
+             [:ol.list-unstyled
+              (for [post (:posts thread)]
+                (om/build post-component
+                          {:post post :autocomplete-users autocomplete-users}
+                          {:react-key (:id post)}))]
+             (om/build post-form-component {:init-post (models/empty-post (:id thread))
+                                            :autocomplete-users autocomplete-users
+                                            :after-persisted (fn [post reset-form!]
+                                                               (reset-form!)
+                                                               (update-post! app post))})]
+            [:div]))))))

@@ -1,12 +1,96 @@
 (ns community.components.app
   (:require [community.api :as api]
+            [community.models :as models]
             [community.routes :as routes]
+            [community.location :as location]
             [community.components.shared :as shared]
             [community.util :refer-macros [<? p]]
             [community.partials :as partials]
             [om.core :as om]
             [sablono.core :refer-macros [html]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
+
+(defmulti notification-summary :type)
+
+(defmethod notification-summary "mention" [mention]
+  (html
+    [:div
+     [:strong (-> mention :mentioned-by :name)]
+     " mentioned you in "
+     [:strong (-> mention :thread :title)]]))
+
+(defmulti notification-link-to :type)
+
+(defmethod notification-link-to "mention" [mention]
+  (routes/routes :thread (:thread mention)))
+
+(defn mark-as-read! [notification]
+  (om/update! notification :read true)
+  (api/mark-notification-as-read @notification))
+
+(defn delete-notification!
+  "Delete the i-th notification from the user's notifications."
+  [user i]
+  (let [notifications (:notifications @user)]
+    (om/update! user :notifications
+      (vec (concat (subvec notifications 0 i)
+                   (subvec notifications (inc i) (count notifications)))))))
+
+(defn notification-component [{:keys [notification on-click on-remove]} owner]
+  (reify
+    om/IDisplayName
+    (display-name [_] "Notification")
+
+    om/IDidMount
+    (did-mount [_]
+      (.tooltip (js/jQuery (om/get-node owner "remove-button"))))
+
+    om/IRender
+    (render [_]
+      (html
+        [:a.list-group-item
+         {:href (notification-link-to notification)
+          :onClick (fn [e]
+                     (.preventDefault e)
+                     (on-click e))}
+         [:button.close.pull-right
+          {:onClick (fn [e]
+                      (.preventDefault e)
+                      (on-remove e)
+                      false)
+           :data-toggle "tooltip"
+           :data-placement "top"
+           :title "Remove"
+           :ref "remove-button"}
+          "×"]
+         [:div {:class (if (:read notification) "text-muted")}
+          (notification-summary notification)]]))))
+
+(defn notifications-component [user owner]
+  (reify
+    om/IDisplayName
+    (display-name [_] "Notifications")
+
+    om/IDidMount
+    (did-mount [_]
+      (.tooltip (js/jQuery (om/get-node owner))))
+
+    om/IRender
+    (render [_]
+      (let [notifications (:notifications user)]
+        (html
+          [:div#notifications
+           [:h3 "Notifications"]
+           (if (empty? notifications)
+             [:div "No new notifications"]
+             [:div.list-group
+              (for [[i n] (map-indexed vector notifications)]
+                (om/build notification-component
+                          {:notification n
+                           :on-click #(do (mark-as-read! n)
+                                          (location/redirect-to (notification-link-to @n)))
+                           :on-remove #(do (mark-as-read! n)
+                                           (delete-notification! user i))}))])])))))
 
 (defn navbar-component [{:keys [current-user]} owner]
   (reify
@@ -51,6 +135,15 @@
             [:button.close {:onClick #(om/set-state! owner :closed? true)}
              "×"]]]])))))
 
+(defn start-notifications-subscription! [user-id app]
+  (when api/subscriptions-enabled?
+    (go
+      (let [[notifications-feed unsubscribe!] (api/subscribe! {:feed :notifications :id user-id})]
+        (loop []
+          (when-let [message (<! notifications-feed)]
+            (om/transact! app [:current-user :notifications]
+                          #(conj % (models/notification (:data message))))
+            (recur)))))))
 
 (defn app-component [{:as app :keys [current-user route-data errors]}
                      owner]
@@ -63,9 +156,10 @@
       (go
         (try
           (let [user (<? (api/current-user))]
-            (if (not= user :community.api/no-current-user)
-              (om/update! app :current-user user)
-              (set! (.-location js/document) "/login")))
+            (if (= user :community.api/no-current-user)
+              (set! (.-location js/document) "/login")
+              (do (om/update! app :current-user user)
+                  (start-notifications-subscription! (:id user) app))))
 
           (catch ExceptionInfo e
             ;; TODO: display an error modal
@@ -83,6 +177,9 @@
              (for [error errors]
                [:div.alert.alert-danger error])])
           (if current-user
-            [:div
-             (let [component (routes/dispatch route-data)]
-               (om/build component app))])]]))))
+            [:div.row
+             [:div#main-content
+              (let [component (routes/dispatch route-data)]
+                (om/build component app))]
+             [:div#sidebar
+              (om/build notifications-component (:current-user app))]])]]))))

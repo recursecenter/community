@@ -4,6 +4,7 @@ class PubSub
     include AbstractController::Helpers
     include AbstractController::AssetPaths
     include ActionView::Layouts
+    include ActionController::Renderers::All
 
     include CanCan::ControllerAdditions
 
@@ -12,6 +13,7 @@ class PubSub
     self.view_paths = "app/views"
 
     attr_reader :session, :params
+    attr_accessor :content_type
 
     def initialize(session, params)
       @session = session

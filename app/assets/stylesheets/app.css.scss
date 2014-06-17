@@ -1,0 +1,7 @@
+#main-content {
+  @include make-lg-column(9);
+}
+
+#sidebar {
+  @include make-lg-column(3);
+}

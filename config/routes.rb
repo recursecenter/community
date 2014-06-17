@@ -15,6 +15,10 @@ Rails.application.routes.draw do
       get :me, on: :collection
     end
 
+    resources :notifications do
+      post :read, on: :member
+    end
+
     shallow do
       resources :subforum_groups do
         resources :subforums do

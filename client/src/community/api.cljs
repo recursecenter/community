@@ -80,7 +80,9 @@
   returning an error message if there is an error, or nil if there is
   not."
   [req-fn & {:keys [res-transform err-transform validate]
-             :or {validate (constantly nil)}}]
+             :or {res-transform identity
+                  err-transform identity
+                  validate (constantly nil)}}]
   (fn [& args]
     (let [out (async/chan 1)
           error-message (apply validate args)]
@@ -88,9 +90,9 @@
         (go
           (try
             (let [res (<? (apply req-fn args))]
-              (>! out ((or res-transform identity) res)))
+              (>! out (res-transform res)))
             (catch ExceptionInfo e
-              (>! out ((or err-transform identity) e)))))
+              (>! out (err-transform e)))))
         (async/put! out (ex-info error-message {:message error-message})))
       out)))
 
@@ -117,17 +119,22 @@
   (when (empty? (:body post))
     "The body of a post cannot be empty."))
 
+(defn post->api-data [post]
+  (let [mentions (map :id (:mentions post))]
+    {:post {:body (:body post)}
+     :mentions (if (empty? mentions) nil mentions)}))
+
 (def new-post
   (make-api-fn (fn [post]
                  (POST (str "/threads/" (:thread-id post) "/posts")
-                       {:params (dissoc post :thread-id) :format :json}))
+                       {:params (post->api-data (dissoc post :thread-id)) :format :json}))
     :res-transform models/post
     :validate validate-post))
 
 (def update-post
   (make-api-fn (fn [post]
                  (PATCH (str "/posts/" (:id post))
-                        {:params {:post (dissoc post :id)} :format :json}))
+                        {:params (post->api-data (dissoc post :id)) :format :json}))
     :res-transform models/post
     :validate validate-post))
 
@@ -141,13 +148,23 @@
         (empty? body)
         "A new thread must have a non-empty body."))
 
+(defn thread->api-data [{:keys [title body mentions]}]
+  (let [mention-ids (map :id mentions)]
+    {:thread {:title title}
+     :post {:body body}
+     :mentions (if (empty? mention-ids) nil mention-ids)}))
+
 (def new-thread
-  (make-api-fn (fn [subforum-id {:keys [title body]}]
+  (make-api-fn (fn [subforum-id thread]
                  (POST (str "/subforums/" subforum-id "/threads")
-                       {:params {:thread {:title title} :post {:body body}}
+                       {:params (thread->api-data thread)
                         :format :json}))
     :res-transform models/thread
     :validate validate-thread))
+
+(def mark-notification-as-read
+  (make-api-fn (fn [{id :id}]
+                 (POST (str "/notifications/" id "/read")))))
 
 ;;; PubSub via WebSockets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -195,6 +212,9 @@
 
 (defmethod feed-format :thread [{id :id}]
   (str "thread-" id))
+
+(defmethod feed-format :notifications [{id :id}]
+  (str "notifications-" id))
 
 (def subscriptions-enabled? (boolean (aget js/window "WebSocket")))
 

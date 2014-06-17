@@ -103,6 +103,41 @@ ALTER SEQUENCE discussion_threads_id_seq OWNED BY discussion_threads.id;
 
 
 --
+-- Name: notifications; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE notifications (
+    id integer NOT NULL,
+    type character varying(255),
+    user_id integer,
+    mentioned_by_id integer,
+    post_id integer,
+    read boolean DEFAULT false,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
+-- Name: notifications_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE notifications_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: notifications_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE notifications_id_seq OWNED BY notifications.id;
+
+
+--
 -- Name: posts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -349,6 +384,13 @@ ALTER TABLE ONLY discussion_threads ALTER COLUMN id SET DEFAULT nextval('discuss
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY notifications ALTER COLUMN id SET DEFAULT nextval('notifications_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY posts ALTER COLUMN id SET DEFAULT nextval('posts_id_seq'::regclass);
 
 
@@ -394,6 +436,14 @@ ALTER TABLE ONLY delayed_jobs
 
 ALTER TABLE ONLY discussion_threads
     ADD CONSTRAINT discussion_threads_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: notifications_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY notifications
+    ADD CONSTRAINT notifications_pkey PRIMARY KEY (id);
 
 
 --
@@ -458,6 +508,27 @@ CREATE INDEX index_discussion_threads_on_subforum_id ON discussion_threads USING
 
 
 --
+-- Name: index_notifications_on_mentioned_by_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_notifications_on_mentioned_by_id ON notifications USING btree (mentioned_by_id);
+
+
+--
+-- Name: index_notifications_on_post_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_notifications_on_post_id ON notifications USING btree (post_id);
+
+
+--
+-- Name: index_notifications_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_notifications_on_user_id ON notifications USING btree (user_id);
+
+
+--
 -- Name: index_users_on_hacker_school_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -516,4 +587,6 @@ INSERT INTO schema_migrations (version) VALUES ('20140606154516');
 INSERT INTO schema_migrations (version) VALUES ('20140609195302');
 
 INSERT INTO schema_migrations (version) VALUES ('20140611152940');
+
+INSERT INTO schema_migrations (version) VALUES ('20140611180743');
 
