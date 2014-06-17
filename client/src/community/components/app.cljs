@@ -1,5 +1,6 @@
 (ns community.components.app
   (:require [community.api :as api]
+            [community.models :as models]
             [community.routes :as routes]
             [community.location :as location]
             [community.components.shared :as shared]
@@ -134,6 +135,15 @@
             [:button.close {:onClick #(om/set-state! owner :closed? true)}
              "×"]]]])))))
 
+(defn start-notifications-subscription! [user-id app]
+  (when api/subscriptions-enabled?
+    (go
+      (let [[notifications-feed unsubscribe!] (api/subscribe! {:feed :notifications :id user-id})]
+        (loop []
+          (when-let [message (<! notifications-feed)]
+            (om/transact! app [:current-user :notifications]
+                          #(conj % (models/notification (:data message))))
+            (recur)))))))
 
 (defn app-component [{:as app :keys [current-user route-data errors]}
                      owner]
@@ -146,9 +156,10 @@
       (go
         (try
           (let [user (<? (api/current-user))]
-            (if (not= user :community.api/no-current-user)
-              (om/update! app :current-user user)
-              (set! (.-location js/document) "/login")))
+            (if (= user :community.api/no-current-user)
+              (set! (.-location js/document) "/login")
+              (do (om/update! app :current-user user)
+                  (start-notifications-subscription! (:id user) app))))
 
           (catch ExceptionInfo e
             ;; TODO: display an error modal

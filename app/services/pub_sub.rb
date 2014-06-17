@@ -98,7 +98,8 @@ private
     class MessageError < StandardError; end
 
     MODELS = {
-      "thread" => DiscussionThread
+      "thread" => DiscussionThread,
+      "notifications" => Notification
     }
 
     attr_reader :feed, :type, :resource
@@ -154,6 +155,8 @@ private
       case type
       when :post
         "thread-#{resource.thread_id}"
+      when :notification
+        "notifications-#{resource.user_id}"
       end
     end
 

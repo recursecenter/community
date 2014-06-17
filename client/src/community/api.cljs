@@ -213,6 +213,9 @@
 (defmethod feed-format :thread [{id :id}]
   (str "thread-" id))
 
+(defmethod feed-format :notifications [{id :id}]
+  (str "notifications-" id))
+
 (def subscriptions-enabled? (boolean (aget js/window "WebSocket")))
 
 (defn subscribe!

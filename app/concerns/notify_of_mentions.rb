@@ -4,7 +4,8 @@ module NotifyOfMentions
   def notify_mentioned_users!(post)
     mentioned_users.each do |user|
       if Ability.new(user).can? :read, post
-        user.mentions.create(post: post, mentioned_by: post.author)
+        mention = user.mentions.create(post: post, mentioned_by: post.author)
+        PubSub.publish :created, :notification, mention
       end
     end
   end
