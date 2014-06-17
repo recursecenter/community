@@ -71,10 +71,6 @@
     om/IDisplayName
     (display-name [_] "Notifications")
 
-    om/IDidMount
-    (did-mount [_]
-      (.tooltip (js/jQuery (om/get-node owner))))
-
     om/IRender
     (render [_]
       (let [notifications (:notifications user)]
