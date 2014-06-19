@@ -3,17 +3,7 @@
             [community.autocomplete :as ac])
   (:require-macros [jasmine.core :refer [describe it]]))
 
-(defrecord FakeTextarea [value cursor-position]
-  ac/ICursorPosition
-  (-cursor-position [_] cursor-position)
-  ac/ISetCursorPosition
-  (-set-cursor-position [_ pos] (FakeTextarea. value pos))
-  ac/IValue
-  (-value [_] value)
-  ac/ISetValue
-  (-set-value [_ v] (FakeTextarea. v cursor-position)))
-
-(defn fake-textarea
+(defn mock-textarea
   "\"Hi there @Zach| foo bar\"
    =>
    (map->FakeTextarea {:value \"Hi there @Zach foo bar\"
@@ -21,15 +11,15 @@
   [s]
   (let [cursor-position (.indexOf s "|")]
     (assert (not= -1 cursor-position) "FakeTextarea must include a cursor position.")
-    (map->FakeTextarea {:value (str (.substring s 0 cursor-position)
-                                    (.substring s (inc cursor-position)))
-                        :cursor-position cursor-position})))
+    (ac/map->MockTextarea {:value (str (.substring s 0 cursor-position)
+                                       (.substring s (inc cursor-position)))
+                           :cursor-position cursor-position})))
 
 (describe "FakeTextarea"
 
-  (let [textarea-middle (fake-textarea "Foo|Bar")
-        textarea-front  (fake-textarea "|FooBar")
-        textarea-back   (fake-textarea "FooBar|")]
+  (let [textarea-middle (mock-textarea "Foo|Bar")
+        textarea-front  (mock-textarea "|FooBar")
+        textarea-back   (mock-textarea "FooBar|")]
 
     (it "has a value"
       (expect (ac/-value textarea-middle) (to-equal "FooBar"))
@@ -50,7 +40,7 @@
         (expect (ac/-cursor-position t) (to-equal 6)))))
 
   (it "requires a cursor position"
-    (expect #(fake-textarea "nope") to-throw)))
+    (expect #(mock-textarea "nope") to-throw)))
 
 (describe "community.autocomplete"
 
@@ -81,22 +71,22 @@
   (describe "extracting an autocomplete query substring"
 
     (it "can extract a query from a textarea given a marker"
-      (expect (ac/extract-query (fake-textarea "Hi there @Za|. How are you?")
+      (expect (ac/extract-query (mock-textarea "Hi there @Za|. How are you?")
                                 {:marker "@"})
               (to-equal "Za")))
 
     (it "extracts from the first marker before the cursor"
-      (expect (ac/extract-query (fake-textarea "Hi @Dave there @Za|.")
+      (expect (ac/extract-query (mock-textarea "Hi @Dave there @Za|.")
                                 {:marker "@"})
               (to-equal "Za")))
 
     (it "returns the empty string if the cursor is right after the marker"
-      (expect (ac/extract-query (fake-textarea "Hi @Dave there @|. How are you?")
+      (expect (ac/extract-query (mock-textarea "Hi @Dave there @|. How are you?")
                                 {:marker "@"})
               (to-equal "")))
 
     (it "returns nil if there are no markers before the cursor"
-      (expect (ac/extract-query (fake-textarea "Hi there | @Dave")
+      (expect (ac/extract-query (mock-textarea "Hi there | @Dave")
                                 {:marker "@"})
               (to-equal nil))))
 
@@ -105,31 +95,31 @@
     (let [ac-terms (for [name ["Dave" "David" "Zach" "Zachary"]]
                      {:name name})]
       (it "returns possibilities in order"
-        (expect (ac/possibilities (fake-textarea "Hi @Da| How are you?")
+        (expect (ac/possibilities (mock-textarea "Hi @Da| How are you?")
                                   ac-terms
                                   {:on :name :marker "@"})
                 (to-equal [{:name "Dave"} {:name "David"}])))
 
       (it "is case insensitive"
-        (expect (ac/possibilities (fake-textarea "Hi @da| How are you?")
+        (expect (ac/possibilities (mock-textarea "Hi @da| How are you?")
                                   ac-terms
                                   {:on :name :marker "@"})
                 (to-equal [{:name "Dave"} {:name "David"}])))
 
       (it "returns all possibilities if cursor position is right after the marker"
-        (expect (ac/possibilities (fake-textarea "Hi @| How are you?")
+        (expect (ac/possibilities (mock-textarea "Hi @| How are you?")
                                   ac-terms
                                   {:on :name :marker "@"})
                 (to-equal ac-terms)))
 
       (it "returns nil if there is no marker"
-        (expect (ac/possibilities (fake-textarea "Hi | How are you?")
+        (expect (ac/possibilities (mock-textarea "Hi | How are you?")
                                   ac-terms
                                   {:on :name :marker "@"})
                 (to-equal nil)))
 
       (it "returns an empty sequence if there are no possibilities"
-        (expect (ac/possibilities (fake-textarea "Hi @foobar| How are you?")
+        (expect (ac/possibilities (mock-textarea "Hi @foobar| How are you?")
                                   ac-terms
                                   {:on :name :marker "@"})
                 (to-equal [])))))
@@ -137,14 +127,14 @@
   (describe "inserting an autocomplete result into a textarea"
 
     (it "inserts the selection and moves the cursor position"
-      (expect (ac/insert (fake-textarea "Hi @Za|. How are you?")
+      (expect (ac/insert (mock-textarea "Hi @Za|. How are you?")
                          "Zach Allaun" {:marker "@"})
-              (to-equal (fake-textarea "Hi @Zach Allaun |. How are you?")))
+              (to-equal (mock-textarea "Hi @Zach Allaun |. How are you?")))
 
-      (expect (ac/insert (fake-textarea "Hi @Za|")
+      (expect (ac/insert (mock-textarea "Hi @Za|")
                          "Zach Allaun" {:marker "@"})
-              (to-equal (fake-textarea "Hi @Zach Allaun |")))
+              (to-equal (mock-textarea "Hi @Zach Allaun |")))
 
-      (expect (ac/insert (fake-textarea "Hi @Foo|")
+      (expect (ac/insert (mock-textarea "Hi @Foo|")
                          "Zach Allaun" {:marker "@"})
-              (to-equal (fake-textarea "Hi @Zach Allaun |"))))))
+              (to-equal (mock-textarea "Hi @Zach Allaun |"))))))

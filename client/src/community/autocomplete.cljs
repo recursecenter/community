@@ -29,6 +29,16 @@
     (set! (.-value textarea) value)
     textarea))
 
+(defrecord MockTextarea [value cursor-position]
+  ICursorPosition
+  (-cursor-position [_] cursor-position)
+  ISetCursorPosition
+  (-set-cursor-position [_ pos] (MockTextarea. value pos))
+  IValue
+  (-value [_] value)
+  ISetValue
+  (-set-value [_ v] (MockTextarea. v cursor-position)))
+
 (defn starts-with? [s substring]
   (zero? (.indexOf s substring)))
 
