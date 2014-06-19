@@ -19,8 +19,9 @@
   Keyword
   (parse [k req]
     (let [{[c & cs] :components} req]
-      ;;TODO: coercion/validation?
-      [{k c} (assoc-in req [:components] (vec cs))])))
+      (when c
+        ;;TODO: coercion/validation?
+        [{k c} (assoc-in req [:components] (vec cs))]))))
 
 (extend-protocol IUnparse
   string
@@ -89,14 +90,13 @@
   IUnparse
   (unparse [_ params]
     (when (= (:route params) name)
-      (loop [route-str ""
+      (loop [route-pieces []
              parsers parsers]
         (if (empty? parsers)
-          route-str
+          (str Separator (str/join Separator route-pieces))
           (let [[p & ps] parsers]
             (when-let [s (unparse p params)]
-              (recur (str route-str Separator s)
-                     ps)))))))
+              (recur (conj route-pieces s) ps)))))))
 
   IFn
   (-invoke

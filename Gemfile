@@ -46,6 +46,10 @@ group :development do
   gem 'dotenv-rails'
 end
 
+group :development, :test do
+  gem 'jasmine'
+end
+
 # Use puma as the app server
 gem 'puma'
 gem 'faye-websocket'

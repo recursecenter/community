@@ -54,6 +54,12 @@ GEM
       websocket-driver (>= 0.3.1)
     hike (1.2.3)
     i18n (0.6.9)
+    jasmine (2.0.2)
+      jasmine-core (~> 2.0.0)
+      phantomjs
+      rack (>= 1.2.1)
+      rake
+    jasmine-core (2.0.0)
     jbuilder (2.0.7)
       activesupport (>= 3.0.0, < 5)
       multi_json (~> 1.2)
@@ -81,6 +87,7 @@ GEM
       multi_xml (~> 0.5)
       rack (~> 1.2)
     pg (0.17.1)
+    phantomjs (1.9.7.1)
     polyglot (0.3.4)
     pry (0.9.12.6)
       coderay (~> 1.0)
@@ -166,6 +173,7 @@ DEPENDENCIES
   dotenv-rails
   eventmachine
   faye-websocket
+  jasmine
   jbuilder (~> 2.0)
   jquery-rails
   memcachier

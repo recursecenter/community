@@ -7,7 +7,13 @@
 
   :plugins [[lein-cljsbuild "1.0.2"]]
 
-  :cljsbuild {:builds [{:id "dev"
+  :cljsbuild {:builds [{:id "test"
+                        :source-paths ["src" "test"]
+                        :compiler {:output-to "../public/client/client-test.js"
+                                   :output-dir "../public/client/client-test"
+                                   :optimizations :whitespace
+                                   :pretty-print true}}
+                       {:id "dev"
                         :source-paths ["src"]
                         :compiler {:output-to "../public/client/client-dev.js"
                                    :output-dir "../public/client/client-dev"

@@ -78,6 +78,18 @@ $ lein cljsbuild auto
 
 Look at `db/structure.sql` instead. We use this because it supports Postgres views.
 
+## Client testing
+
+We use a small ClojureScript wrapper over [Jasmine](http://jasmine.github.io/2.0/introduction.html) for testing our client. If you're running `lein cljsbuild auto` (as above), the client tests will be built automatically.
+
+To run the client tests:
+
+```sh
+$ bin/rake jasmine
+# Navigate to localhost:8888 to run the tests.
+# Refresh the page to re-run the tests.
+```
+
 # License
 
 Copyright © 2014 Hacker School
