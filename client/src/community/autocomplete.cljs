@@ -13,7 +13,7 @@
 (defprotocol ISetValue
   (-set-value [this value]))
 
-(extend-type HTMLElement
+(extend-type js/HTMLElement
   ICursorPosition
   (-cursor-position [textarea]
     (.-selectionStart textarea))
