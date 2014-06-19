@@ -4,6 +4,8 @@
 (def jasmine-describe js/describe)
 (def jasmine-expect js/expect)
 
+(def pending js/pending)
+
 (defn to-equal-cljs []
   #js {:compare
        (fn [actual expected]
