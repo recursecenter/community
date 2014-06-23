@@ -54,8 +54,8 @@
     (render-state [_ {:keys [focused? ac-selections should-drop-down?]}]
       (let [menu-showing? (and focused? (seq ac-selections))
             control-keys #{"ArrowUp" "ArrowDown" "Enter" "Tab"}]
-        (letfn [(set-autocomplete-results [e]
-                  ;; Don't set autocomplete results again when e.g. someone's
+        (letfn [(set-ac-selections [e]
+                  ;; Don't set ac selections again when e.g. someone's
                   ;; scrolling through the results they already see
                   (when-not (and menu-showing? (= "keyup" (.-type e)) (control-keys (.-key e)))
                     (let [ac-textarea (ac/->MockTextarea value (.-selectionStart (.-target e)))]
@@ -92,8 +92,8 @@
               [:textarea (merge passthrough
                                 {:value value
                                  :ref "textarea"
-                                 :onClick set-autocomplete-results
-                                 :onKeyUp set-autocomplete-results
+                                 :onClick set-ac-selections
+                                 :onKeyUp set-ac-selections
                                  :onKeyDown handle-autocomplete-action
                                  :onBlur #(om/set-state! owner :focused? false)
                                  :onFocus #(om/set-state! owner :focused? true)
