@@ -3,15 +3,21 @@
 
 (defprotocol ICursorPosition
   (-cursor-position [this]))
-
 (defprotocol ISetCursorPosition
   (-set-cursor-position [this pos]))
-
 (defprotocol IValue
   (-value [this]))
-
 (defprotocol ISetValue
   (-set-value [this value]))
+
+(defn cursor-position [x]
+  (-cursor-position x))
+(defn set-cursor-position [x pos]
+  (-set-cursor-position x pos))
+(defn value [x]
+  (-value x))
+(defn set-value [x value]
+  (-set-value x value))
 
 (extend-type js/HTMLElement
   ICursorPosition
@@ -45,7 +51,7 @@
 (defn case-insensitive-matches [substring terms {:keys [on]}]
   (let [lower-case-substring (str/lower-case substring)]
     (filter (fn [term]
-              (-> (get term on)
+              (-> ((or on identity) term)
                   (str/lower-case)
                   (starts-with? lower-case-substring)))
             terms)))

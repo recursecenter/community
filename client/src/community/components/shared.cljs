@@ -1,6 +1,7 @@
 (ns community.components.shared
   (:require [community.routes :as routes]
             [community.util :refer-macros [p]]
+            [community.util.autocomplete :as ac]
             [community.util.selection-list :as selection-list]
             [om.core :as om]
             [sablono.core :refer-macros [html]]
@@ -35,36 +36,6 @@
     (render [this]
       (html [:textarea (merge {:value value} passthrough)]))))
 
-(defn get-search-string-start [s pos]
-  (loop [i (dec pos)]
-    (cond (= i -1) nil
-          (= (.charAt s i) "@") (inc i)
-          :else (recur (dec i)))))
-
-(defn get-search-string [s pos]
-  (when-let [start (get-search-string-start s pos)]
-    (.substring s start pos)))
-
-(defn starts-with [s substr]
-  (zero? (.indexOf s substr)))
-
-;; TODO: Right now we do a full scan of the search string on every
-;; keypress. If I'm editing a very long post, that could potentially
-;; be too expensive. We could pass in a third parameter which is the
-;; max length we'll scan backwards, and can be the length of the
-;; longest string in the autocomplete list.
-(defn results-for-search-string [search-string autocomplete-list]
-  (when search-string
-    (take 4 (filter #(starts-with
-                      (.toLowerCase %)
-                      (.toLowerCase search-string))
-                    autocomplete-list))))
-
-(defn get-autocomplete-results [e value autocomplete-list]
-  (let [cursor-position (.-selectionStart (.-target e))
-        search-string (get-search-string value cursor-position)]
-    (results-for-search-string search-string autocomplete-list)))
-
 (defn autocompleting-textarea-component [{:as state :keys [value autocomplete-list]}
                                          owner
                                          {:keys [passthrough on-change]}]
@@ -81,32 +52,28 @@
 
     om/IRenderState
     (render-state [_ {:keys [focused? ac-selections should-drop-down?]}]
-      (prn (seq ac-selections))
       (let [menu-showing? (and focused? (seq ac-selections))
             control-keys #{"ArrowUp" "ArrowDown" "Enter" "Tab"}]
         (letfn [(set-autocomplete-results [e]
                   ;; Don't set autocomplete results again when e.g. someone's
                   ;; scrolling through the results they already see
                   (when-not (and menu-showing? (= "keyup" (.-type e)) (control-keys (.-key e)))
-                    (om/set-state! owner :ac-selections
-                                   (selection-list/selection-list
-                                    (get-autocomplete-results e value autocomplete-list)))))
+                    (let [ac-textarea (ac/->MockTextarea value (.-selectionStart (.-target e)))]
+                      (->> (ac/possibilities ac-textarea autocomplete-list {:marker "@"})
+                           (take 4)
+                           (selection-list/selection-list)
+                           (om/set-state! owner :ac-selections)))))
                 (scroll [direction]
                   (let [next-or-prev (case direction "ArrowDown" :next "ArrowUp" :prev)]
                     (om/set-state! owner :ac-selections
                       (selection-list/select next-or-prev ac-selections))))
                 (insert-active [e]
                   (let [selected (selection-list/selected ac-selections)
-                        pos (.-selectionStart (.-target e))
-                        start (get-search-string-start value pos)
-                        inserted-value (str selected " ")
-                        new-cursor-pos (+ start (count inserted-value))
-                        new-value (str (.substring value 0 start)
-                                       inserted-value
-                                       (.substring value pos))]
-                    (on-change new-value)
+                        ac-textarea (-> (ac/->MockTextarea value (.-selectionStart (.-target e)))
+                                        (ac/insert selected {:marker "@"}))]
+                    (on-change (ac/value ac-textarea))
                     (om/set-state! owner :ac-selections [])
-                    (om/set-state! owner :new-cursor-pos new-cursor-pos)))
+                    (om/set-state! owner :new-cursor-pos (ac/cursor-position ac-textarea))))
                 (handle-autocomplete-action [e]
                   (when menu-showing?
                     (when-let [key (control-keys (.-key e))]
