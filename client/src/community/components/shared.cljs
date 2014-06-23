@@ -104,7 +104,7 @@
     (did-update [_ _ _]
       (let [textarea (om/get-node owner "textarea")]
         (when-let [new-cursor-pos (:new-cursor-pos (om/get-state owner))]
-          (.setSelectionRange textarea new-cursor-pos new-cursor-pos)
+          (ac/set-cursor-position textarea new-cursor-pos)
           (om/set-state! owner :new-cursor-pos nil))
 
         (let [textarea-top (.-y (goog.style/getClientPosition textarea))]
