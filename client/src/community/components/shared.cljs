@@ -67,7 +67,7 @@
                   (let [next-or-prev (case direction "ArrowDown" :next "ArrowUp" :prev)]
                     (om/set-state! owner :ac-selections
                       (selection-list/select next-or-prev ac-selections))))
-                (insert-active [e]
+                (insert-selected [e]
                   (let [selected (selection-list/selected ac-selections)
                         ac-textarea (-> (ac/->MockTextarea value (.-selectionStart (.-target e)))
                                         (ac/insert selected {:marker "@"}))]
@@ -80,7 +80,7 @@
                       (.preventDefault e)
                       (case key
                         ("ArrowUp" "ArrowDown") (scroll key)
-                        ("Enter" "Tab") (insert-active e)))))]
+                        ("Enter" "Tab") (insert-selected e)))))]
           (html
             [:div
              [:div.btn-group.full-size {:class [(if menu-showing? "open")
