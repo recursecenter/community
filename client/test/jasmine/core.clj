@@ -25,4 +25,4 @@
     `(jasmine.core/jasmine-it ~description
        (fn ~fn-binding
          (.addMatchers js/jasmine (cljs.core/js-obj "toEqualCljs" jasmine.core/to-equal-cljs))
-                                ~@expectations))))
+         ~@expectations))))
