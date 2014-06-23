@@ -1,4 +1,4 @@
-(ns community.autocomplete
+(ns community.util.autocomplete
   (:require [clojure.string :as str]))
 
 (defprotocol ICursorPosition

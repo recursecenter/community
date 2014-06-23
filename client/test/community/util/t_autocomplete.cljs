@@ -1,6 +1,6 @@
-(ns community.t-autocomplete
+(ns community.util.t-autocomplete
   (:require [jasmine.core :refer [pending expect to-equal not-to-equal to-throw]]
-            [community.autocomplete :as ac])
+            [community.util.autocomplete :as ac])
   (:require-macros [jasmine.core :refer [context test]]))
 
 (defn mock-textarea
@@ -42,7 +42,7 @@
   (test "requires a cursor position"
     (expect #(mock-textarea "nope") to-throw)))
 
-(context "community.autocomplete"
+(context "community.util.autocomplete"
 
   (context "starts-with?"
 
