@@ -5,6 +5,9 @@
 
 (context "community.util.selection-list"
 
+  (test "seq of an empty selection-list is nil"
+    (expect (seq (sl/selection-list [])) (to-equal nil)))
+
   (let [selection-list (sl/selection-list ["foo" "bar" "baz"])]
     (test "can seq-ify a selection-list"
       (expect (seq selection-list)
@@ -26,4 +29,8 @@
       (expect (seq (sl/select :next (sl/select :next (sl/select :next selection-list))))
               (to-equal [{:selected? true :value "foo"}
                          {:selected? false :value "bar"}
-                         {:selected? false :value "baz"}])))))
+                         {:selected? false :value "baz"}])))
+
+    (test "can get selected element"
+      (expect (sl/selected selection-list)
+              (to-equal "foo")))))

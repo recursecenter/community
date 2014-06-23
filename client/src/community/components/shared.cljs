@@ -1,6 +1,7 @@
 (ns community.components.shared
   (:require [community.routes :as routes]
             [community.util :refer-macros [p]]
+            [community.util.selection-list :as selection-list]
             [om.core :as om]
             [sablono.core :refer-macros [html]]
             [goog.style]))
@@ -54,41 +55,15 @@
 ;; longest string in the autocomplete list.
 (defn results-for-search-string [search-string autocomplete-list]
   (when search-string
-    (let [values (take 4 (filter #(starts-with
-                                    (.toLowerCase %)
-                                    (.toLowerCase search-string))
-                                 autocomplete-list))
-          maps (mapv (fn [v] {:value v :active? false}) values)]
-      (if (empty? maps)
-        maps
-        (assoc maps 0 (assoc (nth maps 0) :active? true))))))
+    (take 4 (filter #(starts-with
+                      (.toLowerCase %)
+                      (.toLowerCase search-string))
+                    autocomplete-list))))
 
 (defn get-autocomplete-results [e value autocomplete-list]
   (let [cursor-position (.-selectionStart (.-target e))
         search-string (get-search-string value cursor-position)]
     (results-for-search-string search-string autocomplete-list)))
-
-(defn index-where [pred sequence]
-  (first (for [[i v] (map-indexed vector sequence)
-               :when (pred v)]
-           i)))
-
-(defn wrapped-index
-  "Given an index and a sequence, wrap the index as if the sequence were circular.
-    (wrapping-index 1  [0 1 2]) => 1
-    (wrapping-index 3  [0 1 2]) => 0
-    (wrapping-index -1 [0 1 2]) => 2
-    (wrapping-index -2 [0 1 2]) => 1
-    (wrapping-index 4 [0 1 2 3]) => 0"
-  [index sequence]
-  (let [c (count sequence)]
-    (cond
-     ;; within bounds
-     (< -1 index c) index
-     ;; too low
-     (< index 0) (- (dec c) (inc index))
-     ;; too high
-     (>= index c) (- index c))))
 
 (defn autocompleting-textarea-component [{:as state :keys [value autocomplete-list]}
                                          owner
@@ -99,39 +74,38 @@
 
     om/IInitState
     (init-state [_]
-      {:autocomplete-results []
+      {:ac-selections []
        :focused? false
        :new-cursor-pos nil
        :should-drop-down? false})
 
     om/IRenderState
-    (render-state [_ {:keys [focused? autocomplete-results should-drop-down?]}]
-      (let [menu-showing? (and focused? (seq autocomplete-results))
+    (render-state [_ {:keys [focused? ac-selections should-drop-down?]}]
+      (prn (seq ac-selections))
+      (let [menu-showing? (and focused? (seq ac-selections))
             control-keys #{"ArrowUp" "ArrowDown" "Enter" "Tab"}]
         (letfn [(set-autocomplete-results [e]
                   ;; Don't set autocomplete results again when e.g. someone's
                   ;; scrolling through the results they already see
                   (when-not (and menu-showing? (= "keyup" (.-type e)) (control-keys (.-key e)))
-                    (om/set-state! owner :autocomplete-results
-                                   (get-autocomplete-results e value autocomplete-list))))
+                    (om/set-state! owner :ac-selections
+                                   (selection-list/selection-list
+                                    (get-autocomplete-results e value autocomplete-list)))))
                 (scroll [direction]
-                  (let [active-index (index-where :active? autocomplete-results)
-                        next-index (+ active-index ({"ArrowDown" 1 "ArrowUp" -1} direction))
-                        new-results (-> autocomplete-results
-                                        (assoc-in [active-index :active?] false)
-                                        (assoc-in [(wrapped-index next-index autocomplete-results) :active?] true))]
-                    (om/set-state! owner :autocomplete-results new-results)))
+                  (let [next-or-prev (case direction "ArrowDown" :next "ArrowUp" :prev)]
+                    (om/set-state! owner :ac-selections
+                      (selection-list/select next-or-prev ac-selections))))
                 (insert-active [e]
-                  (let [active (first (filter :active? autocomplete-results))
+                  (let [selected (selection-list/selected ac-selections)
                         pos (.-selectionStart (.-target e))
                         start (get-search-string-start value pos)
-                        inserted-value (str (:value active) " ")
+                        inserted-value (str selected " ")
                         new-cursor-pos (+ start (count inserted-value))
                         new-value (str (.substring value 0 start)
                                        inserted-value
                                        (.substring value pos))]
                     (on-change new-value)
-                    (om/set-state! owner :autocomplete-results [])
+                    (om/set-state! owner :ac-selections [])
                     (om/set-state! owner :new-cursor-pos new-cursor-pos)))
                 (handle-autocomplete-action [e]
                   (when menu-showing?
@@ -145,8 +119,8 @@
              [:div.btn-group.full-size {:class [(if menu-showing? "open")
                                                 (if should-drop-down? "dropdown" "dropup")]}
               [:ul.dropdown-menu
-               (for [{:keys [value active?]} autocomplete-results]
-                 [:li {:class (if active? "active")}
+               (for [{:keys [value selected?]} ac-selections]
+                 [:li {:class (if selected? "active")}
                   [:a {:href "#"} value]])]
               [:textarea (merge passthrough
                                 {:value value
