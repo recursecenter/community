@@ -41,7 +41,7 @@
         (expect (r :user {:id 10}) (to-equal "/users/10"))
         (expect #(r :user {}) to-throw))))
 
-  (context "a suteste of routes"
+  (context "a suite of routes"
     (let [r (routing/routes
              (routing/route :users ["users"])
              (routing/route :user ["users" :id])
