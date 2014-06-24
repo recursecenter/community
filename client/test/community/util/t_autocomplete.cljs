@@ -1,7 +1,6 @@
 (ns community.util.t-autocomplete
-  (:require [jasmine.core :refer [pending expect to-equal not-to-equal to-throw]]
-            [community.util.autocomplete :as ac])
-  (:require-macros [jasmine.core :refer [context test]]))
+  (:require [community.util.autocomplete :as ac])
+  (:require-macros [jasmine.core :refer [context test is all-are throws]]))
 
 (defn mock-textarea
   "\"Hi there @Zach| foo bar\"
@@ -22,119 +21,118 @@
         textarea-back   (mock-textarea "FooBar|")]
 
     (test "has a value"
-      (expect (ac/-value textarea-middle) (to-equal "FooBar"))
-      (expect (ac/-value textarea-front)  (to-equal "FooBar"))
-      (expect (ac/-value textarea-back)   (to-equal "FooBar")))
+      (all-are =
+        (ac/-value textarea-middle) "FooBar"
+        (ac/-value textarea-front)  "FooBar"
+        (ac/-value textarea-back)   "FooBar"))
 
     (test "can set a value"
       (let [t (ac/-set-value textarea-front "BazQux")]
-        (expect (ac/-value t) (to-equal "BazQux"))))
+        (is = (ac/-value t) "BazQux")))
 
     (test "has a cursor position"
-      (expect (ac/-cursor-position textarea-middle) (to-equal 3))
-      (expect (ac/-cursor-position textarea-front)  (to-equal 0))
-      (expect (ac/-cursor-position textarea-back)   (to-equal 6)))
+      (all-are =
+        (ac/-cursor-position textarea-middle) 3
+        (ac/-cursor-position textarea-front)  0
+        (ac/-cursor-position textarea-back)   6))
 
     (test "can set a cursor position"
       (let [t (ac/-set-cursor-position textarea-front 6)]
-        (expect (ac/-cursor-position t) (to-equal 6)))))
+        (is = (ac/-cursor-position t) 6))))
 
   (test "requires a cursor position"
-    (expect #(mock-textarea "nope") to-throw)))
+    (throws (mock-textarea "nope"))))
 
 (context "community.util.autocomplete"
 
   (context "starts-with?"
 
     (test "returns true only if the given string starts with the substring"
-      (expect (ac/starts-with? "" "") (to-equal true))
-      (expect (ac/starts-with? "foo" "f") (to-equal true))
-      (expect (ac/starts-with? "ofoo" "f") (to-equal false))
-      (expect (ac/starts-with? "foo" "fooo") (to-equal false))))
+      (all-are =
+        (ac/starts-with? "" "")        true
+        (ac/starts-with? "foo" "f")    true
+        (ac/starts-with? "ofoo" "f")   false
+        (ac/starts-with? "foo" "fooo") false)))
 
   (context "case-insensitive matches with a leading substring"
 
     (let [ac-terms (for [name ["Dave" "David" "Zach" "Zachary"]]
                      {:name name})]
       (test "returns matches in order"
-        (expect (ac/case-insensitive-matches "Da" ac-terms {:on :name})
-                (to-equal [{:name "Dave"} {:name "David"}])))
+        (is = (ac/case-insensitive-matches "Da" ac-terms {:on :name})
+              [{:name "Dave"} {:name "David"}]))
 
       (test "returns an empty sequence if nothing matches"
-        (expect (ac/case-insensitive-matches "Foo" ac-terms {:on :name})
-                (to-equal [])))
+        (is = (ac/case-insensitive-matches "Foo" ac-terms {:on :name}) []))
 
       (test "is case-insensitive"
-        (expect (ac/case-insensitive-matches "da" ac-terms {:on :name})
-                (to-equal [{:name "Dave"} {:name "David"}])))))
+        (is = (ac/case-insensitive-matches "da" ac-terms {:on :name})
+              [{:name "Dave"} {:name "David"}]))))
 
   (context "extracting an autocomplete query substring"
 
     (test "can extract a query from a textarea given a marker"
-      (expect (ac/extract-query (mock-textarea "Hi there @Za|. How are you?")
-                                {:marker "@"})
-              (to-equal "Za")))
+      (is = (ac/extract-query (mock-textarea "Hi there @Za|. How are you?") {:marker "@"})
+            "Za"))
 
     (test "extracts from the first marker before the cursor"
-      (expect (ac/extract-query (mock-textarea "Hi @Dave there @Za|.")
-                                {:marker "@"})
-              (to-equal "Za")))
+      (is = (ac/extract-query (mock-textarea "Hi @Dave there @Za|.") {:marker "@"})
+            "Za"))
 
     (test "returns the empty string if the cursor is right after the marker"
-      (expect (ac/extract-query (mock-textarea "Hi @Dave there @|. How are you?")
-                                {:marker "@"})
-              (to-equal "")))
+      (is = (ac/extract-query (mock-textarea "Hi @Dave there @|. How are you?") {:marker "@"})
+            ""))
 
     (test "returns nil if there are no markers before the cursor"
-      (expect (ac/extract-query (mock-textarea "Hi there | @Dave")
-                                {:marker "@"})
-              (to-equal nil))))
+      (is = (ac/extract-query (mock-textarea "Hi there | @Dave") {:marker "@"})
+            nil)))
 
   (context "autocomplete possibilities from a textarea and a set of terms"
 
     (let [ac-terms (for [name ["Dave" "David" "Zach" "Zachary"]]
                      {:name name})]
       (test "returns possibilities in order"
-        (expect (ac/possibilities (mock-textarea "Hi @Da| How are you?")
-                                  ac-terms
-                                  {:on :name :marker "@"})
-                (to-equal [{:name "Dave"} {:name "David"}])))
+        (is = (ac/possibilities (mock-textarea "Hi @Da| How are you?")
+                                ac-terms
+                                {:on :name :marker "@"})
+              [{:name "Dave"} {:name "David"}]))
 
       (test "is case insensitive"
-        (expect (ac/possibilities (mock-textarea "Hi @da| How are you?")
-                                  ac-terms
-                                  {:on :name :marker "@"})
-                (to-equal [{:name "Dave"} {:name "David"}])))
+        (is = (ac/possibilities (mock-textarea "Hi @da| How are you?")
+                                ac-terms
+                                {:on :name :marker "@"})
+              [{:name "Dave"} {:name "David"}]))
 
       (test "returns all possibilities if cursor position is right after the marker"
-        (expect (ac/possibilities (mock-textarea "Hi @| How are you?")
-                                  ac-terms
-                                  {:on :name :marker "@"})
-                (to-equal ac-terms)))
+        (is = (ac/possibilities (mock-textarea "Hi @| How are you?")
+                                ac-terms
+                                {:on :name :marker "@"})
+              ac-terms))
 
       (test "returns nil if there is no marker"
-        (expect (ac/possibilities (mock-textarea "Hi | How are you?")
-                                  ac-terms
-                                  {:on :name :marker "@"})
-                (to-equal nil)))
+        (is = (ac/possibilities (mock-textarea "Hi | How are you?")
+                                ac-terms
+                                {:on :name :marker "@"})
+              nil))
 
       (test "returns an empty sequence if there are no possibilities"
-        (expect (ac/possibilities (mock-textarea "Hi @foobar| How are you?")
-                                  ac-terms
-                                  {:on :name :marker "@"})
-                (to-equal [])))))
+        (is = (ac/possibilities (mock-textarea "Hi @foobar| How are you?")
+                                ac-terms
+                                {:on :name :marker "@"})
+              []))))
 
   (context "inserting an autocomplete result into a textarea"
 
     (test "inserts the selection and moves the cursor position"
-      (expect (ac/insert (mock-textarea "Hi @Za|. How are you?")
-                         "Zach Allaun" {:marker "@"})
-              (to-equal (mock-textarea "Hi @Zach Allaun |. How are you?")))
+      (all-are =
+        (ac/insert (mock-textarea "Hi @Za|. How are you?")
+                   "Zach Allaun" {:marker "@"})
+        (mock-textarea "Hi @Zach Allaun |. How are you?")
 
-      (expect (ac/insert (mock-textarea "Hi @Za|")
-                         "Zach Allaun" {:marker "@"})
-              (to-equal (mock-textarea "Hi @Zach Allaun |")))
+        (ac/insert (mock-textarea "Hi @Za|")
+                   "Zach Allaun" {:marker "@"})
+        (mock-textarea "Hi @Zach Allaun |")
 
-      (expect (ac/insert (mock-textarea "Hi @Foo|")
-                         "Zach Allaun" {:marker "@"})
-              (to-equal (mock-textarea "Hi @Zach Allaun |"))))))
+        (ac/insert (mock-textarea "Hi @Foo|")
+                   "Zach Allaun" {:marker "@"})
+        (mock-textarea "Hi @Zach Allaun |")))))
