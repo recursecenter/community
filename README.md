@@ -47,6 +47,8 @@ REDIS_URL=redis://localhost:6379
 HACKER_SCHOOL_CLIENT_ID=your_client_id
 HACKER_SCHOOL_CLIENT_SECRET=your_client_secret
 
+JASMINE_CONFIG_PATH=test/javascripts/support/jasmine.yml
+
 # If you want to develop against a local copy of the Hacker School API, add:
 HACKER_SCHOOL_SITE=http://localhost:5000
 
