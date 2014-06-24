@@ -13,16 +13,12 @@
                            (str "Expected " (prn-str actual) " not to be equal to " (prn-str expected))
                            (str "Expected " (prn-str actual) " to be equal to " (prn-str expected)))}))})
 
-(defn to-equal [value]
-  (fn [expectation]
-    (.toEqualCljs expectation value)))
+(defn to-pass-cljs-pred []
+  #js {:compare
+       (fn [actual pred-str pred expected]
+         (let [pass (pred actual expected)]
+           #js {:pass pass
+                :message (str "Expected " (pr-str actual) " to be " pred-str " " (pr-str expected))}))})
 
-(defn not-to-equal [value]
-  (fn [expectation]
-    (-> expectation .-not (.toEqualCljs value))))
-
-(defn to-throw [expectation]
-  (.toThrow expectation))
-
-(defn expect [value condition]
-  (condition (jasmine-expect value)))
+(defn check [pred-str pred actual expected]
+  (-> (jasmine-expect actual) (.toPassCljsPred pred-str pred expected)))
