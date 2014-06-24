@@ -14,7 +14,7 @@
                                        (.substring s (inc cursor-position)))
                            :cursor-position cursor-position})))
 
-(context "FakeTextarea"
+(context "mock textareas"
 
   (let [textarea-middle (mock-textarea "Foo|Bar")
         textarea-front  (mock-textarea "|FooBar")
