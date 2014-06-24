@@ -1,60 +1,63 @@
 (ns community.util.t-routing
-  (:require [community.util.routing :as routing]
-            [jasmine.core :refer [expect to-equal not-to-equal to-throw]])
-  (:require-macros [jasmine.core :refer [context test]]))
+  (:require [community.util.routing :as routing])
+  (:require-macros [jasmine.core :refer [context test is all-are throws]]))
 
 (context "community.util.routing"
 
   (context "routing to the root"
     (let [r (routing/route [])]
       (test "can parse the root"
-        (expect (r "/") (to-equal {:route []}))
-        (expect (r "")  (to-equal {:route []})))
+        (all-are =
+          (r "/") {:route []}
+          (r "")  {:route []}))
       (test "can unparse the root"
-        (expect (r []) (to-equal "/")))))
+        (is = (r []) "/"))))
 
   (context "an unnamed route"
     (let [a-b-c ["a" "b" "c"]
           r (routing/route a-b-c)]
       (test "can parse"
-        (expect (r "a/b/c") (to-equal {:route a-b-c}))
-        (expect (r "/a/b/c") (to-equal {:route a-b-c}))
-        (expect (r "/a/b/c/") (to-equal {:route a-b-c}))
-        (expect (r "/a/b/c/d") (to-equal nil)))
+        (all-are =
+          (r "a/b/c")    {:route a-b-c}
+          (r "/a/b/c")   {:route a-b-c}
+          (r "/a/b/c/")  {:route a-b-c}
+          (r "/a/b/c/d") nil))
       (test "can unparse"
-        (expect (r a-b-c) (to-equal "/a/b/c")))))
+        (is = (r a-b-c) "/a/b/c"))))
 
   (context "a named route"
     (let [r (routing/route :abc ["a" "b" "c"])]
       (test "can parse"
-        (expect (r "/a/b/c") (to-equal {:route :abc})))
+        (is = (r "/a/b/c") {:route :abc}))
       (test "can unparse"
-        (expect (r :abc) (to-equal "/a/b/c")))))
+        (is = (r :abc) "/a/b/c"))))
 
-  (context "a route wtesth wildcards"
+  (context "a route with wildcards"
     (let [r (routing/route :user ["users" :id])]
       (test "can parse"
-        (expect (r "/users/10") (to-equal {:route :user :id "10"}))
-        (expect (r "/users") (to-equal nil))
-        (expect (r "/users/10/foo") (to-equal nil)))
+        (is = (r "/users/10") {:route :user :id "10"})
+        (is = (r "/users") nil)
+        (is = (r "/users/10/foo") nil))
       (test "can unparse"
-        (expect (r :user {:id 10}) (to-equal "/users/10"))
-        (expect #(r :user {}) to-throw))))
+        (is = (r :user {:id 10}) "/users/10")
+        (throws (r :user {})))))
 
-  (context "a suteste of routes"
+  (context "a suite of routes"
     (let [r (routing/routes
              (routing/route :users ["users"])
              (routing/route :user ["users" :id])
              (routing/route :thread ["thread" :id])
              (routing/route :foobarbaz ["foo" "bar" "baz"]))]
       (test "can parse"
-        (expect (r "/foo/bar/baz") (to-equal {:route :foobarbaz}))
-        (expect (r "/users/10") (to-equal {:route :user :id "10"}))
-        (expect (r "/users") (to-equal {:route :users}))
-        (expect (r "/thread/whatever") (to-equal {:route :thread :id "whatever"}))
-        (expect (r "/does/not/exist") (to-equal nil)))
+        (all-are =
+          (r "/foo/bar/baz") {:route :foobarbaz}
+          (r "/users/10") {:route :user :id "10"}
+          (r "/users") {:route :users}
+          (r "/thread/whatever") {:route :thread :id "whatever"}
+          (r "/does/not/exist") nil))
       (test "can unparse"
-        (expect (r :user {:id 10}) (to-equal "/users/10"))
-        (expect (r :users) (to-equal "/users"))
-        (expect (r :foobarbaz) (to-equal "/foo/bar/baz"))
-        (expect (r :does-not-exist) (to-equal nil))))))
+        (all-are =
+          (r :user {:id 10}) "/users/10"
+          (r :users) "/users"
+          (r :foobarbaz) "/foo/bar/baz"
+          (r :does-not-exist) nil)))))

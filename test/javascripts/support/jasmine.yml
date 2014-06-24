@@ -11,6 +11,9 @@
 #   - dist/**/*.js
 #
 src_files:
+  # phantomjs doesn't ship with Function.prototype.bind (wat?!), so a
+  # shim needs to be included before any javascript that might use it
+  - test/javascripts/helpers/phantomjs-shim.js
   - assets/application.js
 
 # stylesheets
@@ -38,7 +41,6 @@ stylesheets:
 #   - helpers/**/*.js
 #
 helpers:
-  - 'helpers/**/*.js'
 
 # spec_files
 #
@@ -85,7 +87,7 @@ spec_dir: public
 #
 # spec_helper: spec/javascripts/support/jasmine_helper.rb
 #
-spec_helper: spec/javascripts/support/jasmine_helper.rb
+spec_helper: test/javascripts/support/jasmine_helper.rb
 
 # boot_dir
 #

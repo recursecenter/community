@@ -43,11 +43,11 @@ gem 'pry-rails'
 group :development do
   gem 'pry-remote'
   gem 'quiet_assets'
-  gem 'dotenv-rails'
 end
 
 group :development, :test do
   gem 'jasmine'
+  gem 'dotenv-rails'
 end
 
 # Use puma as the app server

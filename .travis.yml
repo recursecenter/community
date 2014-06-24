@@ -2,5 +2,12 @@ language: ruby
 cache: bundler
 rvm:
   - "2.1.2"
+before_install:
+  - sudo curl -o ./lein https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
+  - sudo chmod +x ./lein
 before_script:
   - bin/rake db:create
+  - cd client && ../lein cljsbuild once test && cd ..
+script:
+  - ./bin/rake test
+  - JASMINE_CONFIG_PATH=test/javascripts/support/jasmine.yml ./bin/rake jasmine:ci
