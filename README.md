@@ -1,6 +1,6 @@
 # community.hackerschool.com
 
-## Development dependencies
+## Dependencies
 
 - Ruby 2.1.2
   - bundler
@@ -32,7 +32,7 @@ $ brew install redis
 # follow the printed instructions to have redis start automatically on boot
 ```
 
-## Development configuration
+## Configuration
 
 We use foreman which sets environment variables from a `.env` file. We don't
 check this into version control because it contains secret information. Here is
@@ -59,14 +59,16 @@ HACKER_SCHOOL_API_SECRET_TOKEN=hacker_school_api_secret
 
 To generate a Hacker School client id and secret, go to your [Hacker School settings page](https://www.hackerschool.com/settings) and make a new OAuth app. The redirect url should be `http://localhost:5001/login/complete` (or your development host name if you don't develop off of localhost).
 
-## Getting set up
+## Running the code
+
+The first time you run the code, install necessary gems and set up your database.
 
 ```sh
 $ bundle
 $ bin/rake db:setup
 ```
 
-## Running the code
+After that, start your development server and start building the client JS.
 
 ```sh
 $ foreman start
@@ -98,6 +100,26 @@ To run the client tests:
 $ bin/rake jasmine
 # Navigate to localhost:8888 to run the tests.
 # Refresh the page to re-run the tests.
+```
+
+## Getting a ClojureScript REPL up and running
+
+Community supports a ClojureScript REPL so long as you're running the development build. To connect, start an nREPL server and connect to it using your preferred client. If you're using Emacs, that probably means [cider](https://github.com/clojure-emacs/cider). If you're using Vim, that probably means [vim-fireplace](https://github.com/tpope/vim-fireplace). Otherwise, `cd` into `client` and run `lein repl`.
+
+Once in the REPL:
+
+```clj
+user=> (browser-repl)
+<< started Weasel server on ws://127.0.0.1:9001 >>
+Type `:cljs/quit` to stop the ClojureScript REPL
+nil
+cljs.user=>
+```
+
+Then refresh your browser (or point it to your development server), and try the following:
+
+```clj
+cljs.user=> (js/alert "hello, browser!")
 ```
 
 # License
