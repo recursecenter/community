@@ -3,8 +3,8 @@ cache: bundler
 rvm:
   - "2.1.2"
 before_install:
-  - sudo curl -o ./lein https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
-  - sudo chmod +x ./lein
+  - curl -o ./lein https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
+  - chmod +x ./lein
 before_script:
   - bin/rake db:create
   - cd client && ../lein cljsbuild once test && cd ..
