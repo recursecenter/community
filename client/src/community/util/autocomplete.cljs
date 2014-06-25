@@ -26,24 +26,19 @@
   ISetCursorPosition
   (-set-cursor-position [textarea pos]
     (.setSelectionRange textarea pos pos)
-    textarea)
-  IValue
-  (-value [textarea]
-    (.-value textarea))
-  ISetValue
-  (-set-value [textarea value]
-    (set! (.-value textarea) value)
     textarea))
 
-(defrecord MockTextarea [value cursor-position]
+(defrecord Autocompleter [value cursor-position]
   ICursorPosition
   (-cursor-position [_] cursor-position)
   ISetCursorPosition
-  (-set-cursor-position [_ pos] (MockTextarea. value pos))
+  (-set-cursor-position [_ pos] (Autocompleter. value pos))
   IValue
   (-value [_] value)
   ISetValue
-  (-set-value [_ v] (MockTextarea. v cursor-position)))
+  (-set-value [_ v] (Autocompleter. v cursor-position)))
+
+(def autocompleter ->Autocompleter)
 
 (defn starts-with? [s substring]
   (zero? (.indexOf s substring)))

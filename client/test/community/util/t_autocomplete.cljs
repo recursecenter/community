@@ -2,23 +2,22 @@
   (:require [community.util.autocomplete :as ac])
   (:require-macros [jasmine.core :refer [context test is all-are throws]]))
 
-(defn mock-textarea
+(defn autocompleter
   "\"Hi there @Zach| foo bar\"
    =>
-   (map->MockTextarea {:value \"Hi there @Zach foo bar\"
-                       :cursor-position 14})"
+   (ac/autocompleter \"Hi there @Zach foo bar\" 14)"
   [s]
   (let [cursor-position (.indexOf s "|")]
-    (assert (not= -1 cursor-position) "MockTextarea must include a cursor position.")
-    (ac/map->MockTextarea {:value (str (.substring s 0 cursor-position)
-                                       (.substring s (inc cursor-position)))
-                           :cursor-position cursor-position})))
+    (assert (not= -1 cursor-position) "Autocompleter must include a cursor position.")
+    (ac/autocompleter (str (.substring s 0 cursor-position)
+                           (.substring s (inc cursor-position)))
+                      cursor-position)))
 
-(context "mock textareas"
+(context "autocompleter test helper"
 
-  (let [textarea-middle (mock-textarea "Foo|Bar")
-        textarea-front  (mock-textarea "|FooBar")
-        textarea-back   (mock-textarea "FooBar|")]
+  (let [textarea-middle (autocompleter "Foo|Bar")
+        textarea-front  (autocompleter "|FooBar")
+        textarea-back   (autocompleter "FooBar|")]
 
     (test "has a value"
       (all-are =
@@ -41,7 +40,7 @@
         (is = (ac/-cursor-position t) 6))))
 
   (test "requires a cursor position"
-    (throws (mock-textarea "nope"))))
+    (throws (autocompleter "nope"))))
 
 (context "community.util.autocomplete"
 
@@ -72,19 +71,19 @@
   (context "extracting an autocomplete query substring"
 
     (test "can extract a query from a textarea given a marker"
-      (is = (ac/extract-query (mock-textarea "Hi there @Za|. How are you?") {:marker "@"})
+      (is = (ac/extract-query (autocompleter "Hi there @Za|. How are you?") {:marker "@"})
             "Za"))
 
     (test "extracts from the first marker before the cursor"
-      (is = (ac/extract-query (mock-textarea "Hi @Dave there @Za|.") {:marker "@"})
+      (is = (ac/extract-query (autocompleter "Hi @Dave there @Za|.") {:marker "@"})
             "Za"))
 
     (test "returns the empty string if the cursor is right after the marker"
-      (is = (ac/extract-query (mock-textarea "Hi @Dave there @|. How are you?") {:marker "@"})
+      (is = (ac/extract-query (autocompleter "Hi @Dave there @|. How are you?") {:marker "@"})
             ""))
 
     (test "returns nil if there are no markers before the cursor"
-      (is = (ac/extract-query (mock-textarea "Hi there | @Dave") {:marker "@"})
+      (is = (ac/extract-query (autocompleter "Hi there | @Dave") {:marker "@"})
             nil)))
 
   (context "autocomplete possibilities from a textarea and a set of terms"
@@ -92,31 +91,31 @@
     (let [ac-terms (for [name ["Dave" "David" "Zach" "Zachary"]]
                      {:name name})]
       (test "returns possibilities in order"
-        (is = (ac/possibilities (mock-textarea "Hi @Da| How are you?")
+        (is = (ac/possibilities (autocompleter "Hi @Da| How are you?")
                                 ac-terms
                                 {:on :name :marker "@"})
               [{:name "Dave"} {:name "David"}]))
 
       (test "is case insensitive"
-        (is = (ac/possibilities (mock-textarea "Hi @da| How are you?")
+        (is = (ac/possibilities (autocompleter "Hi @da| How are you?")
                                 ac-terms
                                 {:on :name :marker "@"})
               [{:name "Dave"} {:name "David"}]))
 
       (test "returns all possibilities if cursor position is right after the marker"
-        (is = (ac/possibilities (mock-textarea "Hi @| How are you?")
+        (is = (ac/possibilities (autocompleter "Hi @| How are you?")
                                 ac-terms
                                 {:on :name :marker "@"})
               ac-terms))
 
       (test "returns nil if there is no marker"
-        (is = (ac/possibilities (mock-textarea "Hi | How are you?")
+        (is = (ac/possibilities (autocompleter "Hi | How are you?")
                                 ac-terms
                                 {:on :name :marker "@"})
               nil))
 
       (test "returns an empty sequence if there are no possibilities"
-        (is = (ac/possibilities (mock-textarea "Hi @foobar| How are you?")
+        (is = (ac/possibilities (autocompleter "Hi @foobar| How are you?")
                                 ac-terms
                                 {:on :name :marker "@"})
               []))))
@@ -125,14 +124,14 @@
 
     (test "inserts the selection and moves the cursor position"
       (all-are =
-        (ac/insert (mock-textarea "Hi @Za|. How are you?")
+        (ac/insert (autocompleter "Hi @Za|. How are you?")
                    "Zach Allaun" {:marker "@"})
-        (mock-textarea "Hi @Zach Allaun |. How are you?")
+        (autocompleter "Hi @Zach Allaun |. How are you?")
 
-        (ac/insert (mock-textarea "Hi @Za|")
+        (ac/insert (autocompleter "Hi @Za|")
                    "Zach Allaun" {:marker "@"})
-        (mock-textarea "Hi @Zach Allaun |")
+        (autocompleter "Hi @Zach Allaun |")
 
-        (ac/insert (mock-textarea "Hi @Foo|")
+        (ac/insert (autocompleter "Hi @Foo|")
                    "Zach Allaun" {:marker "@"})
-        (mock-textarea "Hi @Zach Allaun |")))))
+        (autocompleter "Hi @Zach Allaun |")))))

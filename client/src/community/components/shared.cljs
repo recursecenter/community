@@ -58,8 +58,8 @@
                   ;; Don't set ac selections again when e.g. someone's
                   ;; scrolling through the results they already see
                   (when-not (and menu-showing? (= "keyup" (.-type e)) (control-keys (.-key e)))
-                    (let [ac-textarea (ac/->MockTextarea value (.-selectionStart (.-target e)))]
-                      (->> (ac/possibilities ac-textarea autocomplete-list {:marker "@"})
+                    (let [ac (ac/autocompleter value (.-selectionStart (.-target e)))]
+                      (->> (ac/possibilities ac autocomplete-list {:marker "@"})
                            (take 4)
                            (selection-list/selection-list)
                            (om/set-state! owner :ac-selections)))))
@@ -69,11 +69,11 @@
                       (selection-list/select next-or-prev ac-selections))))
                 (insert-selected [e]
                   (let [selected (selection-list/selected ac-selections)
-                        ac-textarea (-> (ac/->MockTextarea value (.-selectionStart (.-target e)))
-                                        (ac/insert selected {:marker "@"}))]
-                    (on-change (ac/value ac-textarea))
+                        ac (-> (ac/autocompleter value (.-selectionStart (.-target e)))
+                               (ac/insert selected {:marker "@"}))]
+                    (on-change (ac/value ac))
                     (om/set-state! owner :ac-selections [])
-                    (om/set-state! owner :new-cursor-pos (ac/cursor-position ac-textarea))))
+                    (om/set-state! owner :new-cursor-pos (ac/cursor-position ac))))
                 (handle-autocomplete-action [e]
                   (when menu-showing?
                     (when-let [key (control-keys (.-key e))]
