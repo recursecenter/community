@@ -58,7 +58,7 @@
                   ;; Don't set ac selections again when e.g. someone's
                   ;; scrolling through the results they already see
                   (when-not (and menu-showing? (= "keyup" (.-type e)) (control-keys (.-key e)))
-                    (let [ac (ac/autocompleter value (.-selectionStart (.-target e)))]
+                    (let [ac (ac/autocompleter value (ac/cursor-position (.-target e)))]
                       (->> (ac/possibilities ac autocomplete-list {:marker "@"})
                            (take 4)
                            (selection-list/selection-list)
@@ -69,7 +69,7 @@
                       (selection-list/select next-or-prev ac-selections))))
                 (insert-selected [e]
                   (let [selected (selection-list/selected ac-selections)
-                        ac (-> (ac/autocompleter value (.-selectionStart (.-target e)))
+                        ac (-> (ac/autocompleter value (ac/cursor-position (.-target e)))
                                (ac/insert selected {:marker "@"}))]
                     (on-change (ac/value ac))
                     (om/set-state! owner :ac-selections [])
