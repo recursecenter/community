@@ -128,9 +128,9 @@
                    "Zach Allaun" {:marker "@"})
         (autocompleter "Hi @Zach Allaun |. How are you?")
 
-        (ac/insert (autocompleter "Hi @Za|")
-                   "Zach Allaun" {:marker "@"})
-        (autocompleter "Hi @Zach Allaun |")
+        (ac/insert (autocompleter "Hi :oc|")
+                   "octopus:" {:marker ":"})
+        (autocompleter "Hi :octopus: |")
 
         (ac/insert (autocompleter "Hi @Foo|")
                    "Zach Allaun" {:marker "@"})

@@ -51,26 +51,30 @@
                   (starts-with? lower-case-substring)))
             terms)))
 
-(defn query-start-index [s pos]
+(defn query-start-index [s pos marker]
   (loop [i (dec pos)]
     (cond (= i -1) nil
-          (= (.charAt s i) "@") (inc i)
+          (= (.charAt s i) marker) (inc i)
           :else (recur (dec i)))))
 
 (defn extract-query [textarea {:keys [marker]}]
+  (assert marker)
   (when-let [start (query-start-index (-value textarea)
-                                      (-cursor-position textarea))]
+                                      (-cursor-position textarea)
+                                      marker)]
     (.substring (-value textarea) start (-cursor-position textarea))))
 
 (defn possibilities [textarea terms {:keys [on marker]}]
+  (assert marker)
   (when-let [query (extract-query textarea {:marker marker})]
     (case-insensitive-matches query terms {:on on})))
 
 (defn insert [textarea selection {:keys [marker]}]
+  (assert marker)
   (let [selection (str selection " ")
         pos (-cursor-position textarea)
         val (-value textarea)
-        start (query-start-index val pos)]
+        start (query-start-index val pos marker)]
     (-> textarea
         (-set-value (str (.substring val 0 start)
                          selection
