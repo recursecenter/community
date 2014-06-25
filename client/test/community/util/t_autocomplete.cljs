@@ -5,11 +5,11 @@
 (defn mock-textarea
   "\"Hi there @Zach| foo bar\"
    =>
-   (map->FakeTextarea {:value \"Hi there @Zach foo bar\"
+   (map->MockTextarea {:value \"Hi there @Zach foo bar\"
                        :cursor-position 14})"
   [s]
   (let [cursor-position (.indexOf s "|")]
-    (assert (not= -1 cursor-position) "FakeTextarea must include a cursor position.")
+    (assert (not= -1 cursor-position) "MockTextarea must include a cursor position.")
     (ac/map->MockTextarea {:value (str (.substring s 0 cursor-position)
                                        (.substring s (inc cursor-position)))
                            :cursor-position cursor-position})))
