@@ -3,17 +3,18 @@
                  [org.clojure/clojurescript "0.0-2234"]
                  [org.clojure/core.async "0.1.303.0-886421-alpha"]
                  [om "0.6.4"]
-                 [sablono "0.2.17"]]
+                 [sablono "0.2.17"]
+                 [com.cemerick/piggieback "0.1.3"]
+                 [weasel "0.2.0"]]
 
   :plugins [[lein-cljsbuild "1.0.3"]]
 
-  :profiles {:dev {:dependencies [[com.cemerick/piggieback "0.1.3"]
-                                  [weasel "0.2.0"]]
-                   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
-                   :injections [(require 'cemerick.piggieback 'weasel.repl.websocket)
-                                (defn browser-repl []
-                                  (cemerick.piggieback/cljs-repl
-                                   :repl-env (weasel.repl.websocket/repl-env :port 9001)))]}}
+  :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
+
+  :injections [(require 'cemerick.piggieback 'weasel.repl.websocket)
+               (defn browser-repl []
+                 (cemerick.piggieback/cljs-repl
+                  :repl-env (weasel.repl.websocket/repl-env :port 9001)))]
 
   :cljsbuild {:builds [{:id "test"
                         :source-paths ["src" "test"]
