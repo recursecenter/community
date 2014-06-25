@@ -19,6 +19,6 @@
 //= require bootstrap/tooltip
 
 // The development version is in the layout to make source maps work
-<% if Rails.env.production? %>
+<% if Community.client_env.production? %>
     <% require_asset "client-prod" %>
 <% end %>

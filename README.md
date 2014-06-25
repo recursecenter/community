@@ -76,6 +76,14 @@ $ cd client
 $ lein cljsbuild auto
 ```
 
+### Running the production ClojureScript
+
+The production client code will sometimes function differently than the development code. This can happen when you forget to add externs for a library you are calling, or if `lein cljsbuild auto` randomly makes a bad client. Because of this, we should test the production client before deploying. To do that, you can set `CLIENT_ENV` to production and run Foreman. If you don't set CLIENT_ENV, it defaults to the Rails environment.
+
+```sh
+$ CLIENT_ENV=production foreman start
+```
+
 ## Where is `db/schema.rb`?
 
 Look at `db/structure.sql` instead. We use this because it supports Postgres views.
