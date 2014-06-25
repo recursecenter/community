@@ -97,9 +97,9 @@ private
   class Message
     class MessageError < StandardError; end
 
-    MODELS = {
-      "thread" => DiscussionThread,
-      "notifications" => Notification
+    RESOURCE_QUERIES = {
+      "thread" => ->(id) { DiscussionThread.where(id: id).first },
+      "notifications" => ->(id) { User.where(id: id).first.try(:notifications).try(:build) }
     }
 
     attr_reader :feed, :type, :resource
@@ -120,11 +120,11 @@ private
         raise MessageError, "missing fields: #{missing_fields.join(", ")}"
       end
 
-      match = /(.*)-(.*)/.match(@feed) or raise MessageError, "invalid feed: #{@feed}"
-      model_name, model_id = match.captures
-      model = Message::MODELS[model_name] or raise MessageError, "invalid model: #{model_name}"
+      match = /\A([^-]+)-([^-]+)\z/.match(@feed) or raise MessageError, "invalid feed syntax: #{@feed}"
+      feed_type, resource_id = match.captures
+      resource_query = Message::RESOURCE_QUERIES[feed_type] or raise MessageError, "invalid feed type: #{feed_type}"
 
-      @resource = model.where(id: model_id).first or raise MessageError, "model '#{model_name}' with id '#{model_id}' does not exist"
+      @resource = resource_query.call(resource_id) or raise MessageError, "#{@feed} does not exist"
     end
 
     def subscribe?
