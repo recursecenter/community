@@ -116,7 +116,14 @@ nil
 cljs.user=>
 ```
 
-Then refresh your browser (or point it to your development server), and try the following:
+Open your dev site (or refresh your browser) and run the following in the JS console:
+
+```js
+community.dev.repl_connect()
+// if successful, you'll see "Opened Websocket REPL connection" printed
+```
+
+Back in your ClojureScript REPL:
 
 ```clj
 cljs.user=> (js/alert "hello, browser!")
