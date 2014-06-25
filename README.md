@@ -116,7 +116,7 @@ nil
 cljs.user=>
 ```
 
-Open your dev site (or refresh your browser) and run the following in the JS console:
+Open your dev site and run the following in the JS console:
 
 ```js
 community.dev.repl_connect()
