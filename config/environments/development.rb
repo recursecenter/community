@@ -9,6 +9,12 @@ Rails.application.configure do
   # Do not eager load code on boot.
   config.eager_load = false
 
+  # Don't cache assets in development. This is a fix required to make
+  # CLIENT_ENV work correctly.
+  config.assets.configure do |env|
+    env.cache = ActiveSupport::Cache.lookup_store(:null_store)
+  end
+
   # Show full error reports and disable caching.
   config.consider_all_requests_local       = true
   config.action_controller.perform_caching = false
