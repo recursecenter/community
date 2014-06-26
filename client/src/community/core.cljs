@@ -25,14 +25,9 @@
 ;;; Exports
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(def ^:private print-builds? false)
-
 (defn ^:export init-app
   "Mounts the om application onto target element."
   [target]
   (om/root app/app
            app-state
-           {:target target
-            :instrument (fn [component _ _]
-                          (when print-builds? (println "Building" (.-name component)))
-                          ::om/pass)}))
+           {:target target}))
