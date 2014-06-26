@@ -19,7 +19,3 @@
     :thread nil
 
     :errors #{}}))
-
-(defn page-state-with-routes [app-state key]
-  {key (key app-state)
-   :route-data (:route-data app-state)})
