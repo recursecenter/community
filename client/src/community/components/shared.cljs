@@ -8,12 +8,12 @@
             [sablono.core :refer-macros [html]]
             [goog.style]))
 
-(defcomponent page-not-found-component [app owner]
+(defcomponent page-not-found [app owner]
   (display-name [_] "PageNotFound")
   (render [this]
     (html [:h1 "Page not found"])))
 
-(defcomponent resizing-textarea-component [{:keys [value]}
+(defcomponent resizing-textarea [{:keys [value]}
                                            owner
                                            {:keys [passthrough focus?]}]
   (display-name [_] "ResizingTextArea")
@@ -31,9 +31,9 @@
   (render [this]
     (html [:textarea (merge {:value value} passthrough)])))
 
-(defcomponent autocompleting-textarea-component [{:as state :keys [value autocomplete-list]}
-                                                 owner
-                                                 {:keys [passthrough on-change]}]
+(defcomponent autocompleting-textarea [{:as state :keys [value autocomplete-list]}
+                                       owner
+                                       {:keys [passthrough on-change]}]
   (display-name [_] "AutocompletingTextArea")
 
   (init-state [_]

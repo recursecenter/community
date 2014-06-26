@@ -22,8 +22,8 @@
            [:td (link-to (routes :subforum {:id id :slug slug})
                          (:name subforum))]])]]) ]))
 
-(defcomponent index-component [{:as app :keys [current-user subforum-groups]}
-                               owner]
+(defcomponent index [{:as app :keys [current-user subforum-groups]}
+                     owner]
   (display-name [_] "Index")
 
   (did-mount [this]

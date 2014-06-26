@@ -14,11 +14,11 @@
 ;;; Route dispatch and browser location config
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defmethod routes/dispatch :index          [_] index/index-component)
-(defmethod routes/dispatch :subforum       [_] subforum/subforum-component)
-(defmethod routes/dispatch :thread         [_] thread/thread-component)
-(defmethod routes/dispatch :page-not-found [_] shared/page-not-found-component)
-(defmethod routes/dispatch :default        [_] shared/page-not-found-component)
+(defmethod routes/dispatch :index          [_] index/index)
+(defmethod routes/dispatch :subforum       [_] subforum/subforum)
+(defmethod routes/dispatch :thread         [_] thread/thread)
+(defmethod routes/dispatch :page-not-found [_] shared/page-not-found)
+(defmethod routes/dispatch :default        [_] shared/page-not-found)
 
 (location/init-location! app-state)
 
@@ -30,7 +30,7 @@
 (defn ^:export init-app
   "Mounts the om application onto target element."
   [target]
-  (om/root app/app-component
+  (om/root app/app
            app-state
            {:target target
             :instrument (fn [component _ _]

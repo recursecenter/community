@@ -12,9 +12,9 @@
             [clojure.string :as str])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
-(defcomponent post-form-component [{:as props
-                                    :keys [after-persisted cancel-edit autocomplete-users]}
-                                   owner]
+(defcomponent post-form [{:as props
+                          :keys [after-persisted cancel-edit autocomplete-users]}
+                         owner]
   (display-name [_] "PostForm")
 
   (init-state [this]
@@ -66,15 +66,15 @@
            (let [post-body-id (str "post-body-" (or (:id post) "new"))]
              [:div.form-group
               [:label.hide {:for post-body-id} "Body"]
-              (om/build shared/autocompleting-textarea-component
-                        {:value (:body post)
-                         :autocomplete-list (mapv :name autocomplete-users)}
-                        {:opts {:focus? (:persisted? post)
-                                :on-change #(om/set-state! owner [:post :body] %)
-                                :passthrough
-                                {:id post-body-id
-                                 :class "form-control"
-                                 :name "post[body]"}}})])
+              (shared/->autocompleting-textarea
+               {:value (:body post)
+                :autocomplete-list (mapv :name autocomplete-users)}
+               {:opts {:focus? (:persisted? post)
+                       :on-change #(om/set-state! owner [:post :body] %)
+                       :passthrough
+                       {:id post-body-id
+                        :class "form-control"
+                        :name "post[body]"}}})])
            [:button.btn.btn-default {:type "submit"
                                      :disabled form-disabled?}
             (if (:persisted? post) "Update" "Post")]
@@ -83,7 +83,7 @@
                              :onClick cancel-edit}
               "x"])]]]))))
 
-(defcomponent post-component [{:keys [post autocomplete-users]} owner]
+(defcomponent post [{:keys [post autocomplete-users]} owner]
   (display-name [_] "Post")
 
   (init-state [this]
@@ -102,14 +102,14 @@
           (-> post :author :name)]]
         [:div.post-body
          (if editing?
-           (om/build post-form-component {:init-post (om/value post)
-                                          :autocomplete-users autocomplete-users
-                                          :after-persisted (fn [new-post reset-form!]
-                                                             (om/set-state! owner :editing? false)
-                                                             (doseq [[k v] new-post]
-                                                               (om/update! post k v)))
-                                          :cancel-edit (fn []
-                                                         (om/set-state! owner :editing? false))})
+           (->post-form {:init-post (om/value post)
+                         :autocomplete-users autocomplete-users
+                         :after-persisted (fn [new-post reset-form!]
+                                            (om/set-state! owner :editing? false)
+                                            (doseq [[k v] new-post]
+                                              (om/update! post k v)))
+                         :cancel-edit (fn []
+                                        (om/set-state! owner :editing? false))})
 
            (partials/html-from-markdown (:body post)))]]
        [:div.row
@@ -166,7 +166,7 @@
     (when ws-unsubscribe!
       (ws-unsubscribe!))))
 
-(defcomponent thread-component [{:keys [route-data thread] :as app} owner]
+(defcomponent thread [{:keys [route-data thread] :as app} owner]
   (display-name [_] "Thread")
 
   (init-state [this]
@@ -196,12 +196,11 @@
            [:h1 (:title thread)]
            [:ol.list-unstyled
             (for [post (:posts thread)]
-              (om/build post-component
-                        {:post post :autocomplete-users autocomplete-users}
-                        {:react-key (:id post)}))]
-           (om/build post-form-component {:init-post (models/empty-post (:id thread))
-                                          :autocomplete-users autocomplete-users
-                                          :after-persisted (fn [post reset-form!]
-                                                             (reset-form!)
-                                                             (update-post! app post))})]
+              (->post {:post post :autocomplete-users autocomplete-users}
+                      {:react-key (:id post)}))]
+           (->post-form {:init-post (models/empty-post (:id thread))
+                         :autocomplete-users autocomplete-users
+                         :after-persisted (fn [post reset-form!]
+                                            (reset-form!)
+                                            (update-post! app post))})]
           [:div])))))

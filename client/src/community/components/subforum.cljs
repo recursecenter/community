@@ -12,7 +12,7 @@
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
-(defcomponent new-thread-component [subforum owner]
+(defcomponent new-thread [subforum owner]
   (display-name [_] "NewThread")
 
   (init-state [this]
@@ -63,12 +63,12 @@
                                       (-> e .-target .-value)))}]]
            [:div.form-group
             [:label {:for "post-body"} "Body"]
-            (om/build shared/autocompleting-textarea-component
-                      {:value (get-in subforum [:new-thread :body])
-                       :autocomplete-list (mapv :name (:autocomplete-users subforum))}
-                      {:opts {:on-change #(om/update! subforum [:new-thread :body] %)
-                              :passthrough {:id "post-body"
-                                            :class "form-control"}}})]
+            (shared/->autocompleting-textarea
+             {:value (get-in subforum [:new-thread :body])
+              :autocomplete-list (mapv :name (:autocomplete-users subforum))}
+             {:opts {:on-change #(om/update! subforum [:new-thread :body] %)
+                     :passthrough {:id "post-body"
+                                   :class "form-control"}}})]
            [:button.btn.btn-default {:type "submit"
                                      :disabled form-disabled?}
             "Create thread"]]]]))))
@@ -86,8 +86,8 @@
             (om/update! app [:route-data :route] :page-not-found)
             (om/transact! app :errors #(conj % (:message e-data)))))))))
 
-(defcomponent subforum-component [{:keys [route-data subforum] :as app}
-                                  owner]
+(defcomponent subforum [{:keys [route-data subforum] :as app}
+                        owner]
   (display-name [_] "Subforum")
 
   (did-mount [_]
@@ -112,5 +112,5 @@
               [:td (link-to (routes :thread thread) title)]
               [:td created-by]
               [:td (util/human-format-time (:marked-unread-at thread))]])]]
-         (om/build new-thread-component subforum)]
+         (->new-thread subforum)]
         [:div]))))

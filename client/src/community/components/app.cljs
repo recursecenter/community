@@ -37,7 +37,7 @@
       (vec (concat (subvec notifications 0 i)
                    (subvec notifications (inc i) (count notifications)))))))
 
-(defcomponent notification-component [{:keys [notification on-click on-remove]} owner]
+(defcomponent notification [{:keys [notification on-click on-remove]} owner]
   (display-name [_]
     "Notification")
 
@@ -64,7 +64,7 @@
        [:div {:class (if (:read notification) "text-muted")}
         (notification-summary notification)]])))
 
-(defcomponent notifications-component [user owner]
+(defcomponent notifications [user owner]
   (display-name [_] "Notifications")
 
   (render [_]
@@ -76,14 +76,13 @@
            [:div "No new notifications"]
            [:div.list-group
             (for [[i n] (map-indexed vector notifications)]
-              (om/build notification-component
-                        {:notification n
-                         :on-click #(do (mark-as-read! n)
-                                        (location/redirect-to (notification-link-to @n)))
-                         :on-remove #(do (mark-as-read! n)
-                                         (delete-notification! user i))}))])]))))
+              (->notification {:notification n
+                               :on-click #(do (mark-as-read! n)
+                                              (location/redirect-to (notification-link-to @n)))
+                               :on-remove #(do (mark-as-read! n)
+                                               (delete-notification! user i))}))])]))))
 
-(defcomponent navbar-component [{:keys [current-user]} owner]
+(defcomponent navbar [{:keys [current-user]} owner]
   (display-name [_] "NavBar")
 
   (render [this]
@@ -101,7 +100,7 @@
             [:ul.dropdown-menu
              [:li [:a {:href "/logout"} "Logout"]]]])]]])))
 
-(defcomponent welcome-info-component [_ owner]
+(defcomponent welcome-info [_ owner]
   (welcome-info [this] "WelcomeInfo")
 
   (init-state [this]
@@ -129,8 +128,8 @@
                           #(conj % (models/notification (:data message))))
             (recur)))))))
 
-(defcomponent app-component [{:as app :keys [current-user route-data errors]}
-                             owner]
+(defcomponent app [{:as app :keys [current-user route-data errors]}
+                   owner]
   (display-name [_] "App")
 
   (did-mount [this]
@@ -149,9 +148,9 @@
   (render [this]
     (html
       [:div
-       (om/build navbar-component app)
+       (->navbar app)
        [:div.container
-        (om/build welcome-info-component nil)
+        (->welcome-info nil)
         (when (not (empty? errors))
           [:div
            (for [error errors]
@@ -162,4 +161,4 @@
             (let [component (routes/dispatch route-data)]
               (om/build component app))]
            [:div#sidebar
-            (om/build notifications-component (:current-user app))]])]])))
+            (->notifications (:current-user app))]])]])))
