@@ -4,6 +4,8 @@
                  [org.clojure/core.async "0.1.303.0-886421-alpha"]
                  [om "0.6.4"]
                  [sablono "0.2.17"]
+                 [prismatic/om-tools "0.2.2"]
+                 [prismatic/schema "0.2.4"]
                  [com.cemerick/piggieback "0.1.3"]
                  [weasel "0.2.0"]]
 
