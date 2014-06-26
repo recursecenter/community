@@ -52,10 +52,11 @@
             terms)))
 
 (defn query-start-index [s pos marker]
-  (loop [i (dec pos)]
-    (cond (= i -1) nil
-          (= (.charAt s i) marker) (inc i)
-          :else (recur (dec i)))))
+  (let [end-search (max (- pos 100) -1)]
+    (loop [i (dec pos)]
+      (cond (= i end-search) nil
+            (= (.charAt s i) marker) (inc i)
+            :else (recur (dec i))))))
 
 (defn extract-query [textarea {:keys [marker]}]
   (assert marker)

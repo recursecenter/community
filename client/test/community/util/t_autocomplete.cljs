@@ -53,6 +53,13 @@
         (ac/starts-with? "ofoo" "f")   false
         (ac/starts-with? "foo" "fooo") false)))
 
+  (context "query-start-index"
+
+    (test "searches a fixed number of characters"
+      (is = (ac/query-start-index (apply str "@" (repeat 100 "A")) 5 "@") 1)
+      (is = (ac/query-start-index (apply str "@" (repeat 100 "A")) 99 "@") 1)
+      (is = (ac/query-start-index (apply str "@" (repeat 100 "A")) 100 "@") nil)))
+
   (context "case-insensitive matches with a leading substring"
 
     (let [ac-terms (for [name ["Dave" "David" "Zach" "Zachary"]]
