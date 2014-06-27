@@ -68,6 +68,7 @@
   (display-name [_] "Notifications")
 
   (render [_]
+    (prn user)
     (let [notifications (:notifications user)]
       (html
         [:div#notifications
@@ -125,7 +126,7 @@
         (loop []
           (when-let [message (<! notifications-feed)]
             (om/transact! app [:current-user :notifications]
-                          #(conj % (models/notification (:data message))))
+                          #(conj % (models/api->model :notification (:data message))))
             (recur)))))))
 
 (defcomponent app [{:as app :keys [current-user route-data errors]}

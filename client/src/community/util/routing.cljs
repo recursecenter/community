@@ -33,7 +33,7 @@
     (if (and (contains? params k)
              (k params))
       (k params)
-      (throw (js/Error. (str "Missing route parameter " k))))))
+      (throw (js/Error. (str "Missing route parameter " k " from " (pr-str params)))))))
 
 (defrecord Routes
   [routes]

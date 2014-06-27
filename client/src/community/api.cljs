@@ -98,22 +98,22 @@
 
 (def current-user
   (make-api-fn #(GET "/users/me")
-    :res-transform models/user
+    :res-transform (partial models/api->model :user)
     :err-transform #(if (== 403 (:status (ex-data %)))
                       ::no-current-user
                       %)))
 
 (def subforum-groups
   (make-api-fn #(GET "/subforum_groups")
-    :res-transform #(mapv models/subforum-group %)))
+    :res-transform #(mapv (partial models/api->model :subforum-group) %)))
 
 (def subforum
   (make-api-fn (fn [id] (GET (str "/subforums/" id)))
-    :res-transform models/subforum))
+    :res-transform (partial models/api->model :subforum)))
 
 (def thread
   (make-api-fn (fn [id] (GET (str "/threads/" id)))
-    :res-transform models/thread))
+    :res-transform (partial models/api->model :thread)))
 
 (defn validate-post [post]
   (when (empty? (:body post))
@@ -128,14 +128,14 @@
   (make-api-fn (fn [post]
                  (POST (str "/threads/" (:thread-id post) "/posts")
                        {:params (post->api-data (dissoc post :thread-id)) :format :json}))
-    :res-transform models/post
+    :res-transform (partial models/api->model :post)
     :validate validate-post))
 
 (def update-post
   (make-api-fn (fn [post]
                  (PATCH (str "/posts/" (:id post))
                         {:params (post->api-data (dissoc post :id)) :format :json}))
-    :res-transform models/post
+    :res-transform (partial models/api->model :post)
     :validate validate-post))
 
 (defn validate-thread [_ {:keys [title body]}]
@@ -159,7 +159,7 @@
                  (POST (str "/subforums/" subforum-id "/threads")
                        {:params (thread->api-data thread)
                         :format :json}))
-    :res-transform models/thread
+    :res-transform (partial models/api->model :thread)
     :validate validate-thread))
 
 (def mark-notification-as-read

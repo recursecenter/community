@@ -20,17 +20,18 @@
       (is = (t/transform {:x {:y 1}} {:x #(assoc % :z :zzz) :y inc})
             {:x {:z :zzz :y 2}})))
 
-  (context "example data transformers"
+  #_(context "example data transformers"
 
     (test "can define data transformers and add transforms"
       (deftransformer example)
 
       (is = (example {:x 1 :y 1}) {:x 1 :y 1})
 
-      (deftransform example :x x
-        (inc x))
+      ;; (deftransform example {:single :x :many :xs} x
+      ;;   (inc x))
 
-      (is = (example {:x 1 :y 1}) {:x 2 :y 1})
+      ;; (is = (example {:x 1 :y 1}) {:x 2 :y 1})
+      ;; (is = (example {:xs [1 2 3] :y 1}) {:xs [2 3 4] :y 1})
 
       (deftransform example :y y
         (str y))
@@ -50,9 +51,6 @@
 
       (deftransform api->model :notification notification
         (update-in notification [:type] keyword))
-
-      (deftransform api->model :mentioned-by user
-        (api->model :user user))
 
       (deftransform api->model :thread {:as thread :keys [id]}
         (assoc thread

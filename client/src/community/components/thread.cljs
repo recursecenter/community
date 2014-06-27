@@ -158,7 +158,7 @@
         (om/set-state! owner :ws-unsubscribe! unsubscribe!)
         (loop []
           (when-let [message (<! thread-feed)]
-            (update-post! app (models/post (:data message)))
+            (update-post! app (models/api->model :post (:data message)))
             (recur)))))))
 
 (defn stop-thread-subscription! [owner]
