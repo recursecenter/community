@@ -30,10 +30,12 @@
   (assoc user
     :name (or (:name user) (str first-name " " last-name))))
 
-(deftransform api->model {:single :post :many :posts} post
+(deftransform api->model {:single :post :many :posts}
+  post
   (assoc post :persisted? true))
 
-(deftransform api->model {:single :thread :many :threads} {:as thread :keys [title]}
+(deftransform api->model {:single :thread :many :threads}
+  {:as thread :keys [title]}
   (assoc thread :slug (slug title)))
 
 (deftransform api->model {:single :subforum :many :subforums}
