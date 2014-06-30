@@ -18,11 +18,8 @@
         key-spec-map (-> key-spec-map
                          (update-in [:single] wrap-vec)
                          (update-in [:many] wrap-vec))]
-    (let [single-key (first (:single key-spec-map))]
-      (vec (concat (for [k (:single key-spec-map)]
-                     {:key k})
-                   (for [k (:many key-spec-map)]
-                     {:key k :single-key single-key :many? true}))))))
+    (concat (for [k (:single key-spec-map)] {:key k})
+            (for [k (:many key-spec-map)]   {:key k :many? true}))))
 
 (defmacro deftransform
   "Define a new transform for a given transformer. `key-spec` can have any
@@ -46,9 +43,9 @@
       => {:x 6 :ys [3]}"
   [name key-spec param-binding & body]
   `(let [handler# (fn [~param-binding] ~@body)]
-     ~@(for [{:keys [many? key single-key]} (normalize-key-specs key-spec)]
+     ~@(for [{:keys [many? key]} (normalize-key-specs key-spec)]
         (if many?
           `(community.util.transform/-add-transform!
-            ~name ~key (fn [param#] (mapv #(~name ~single-key %) param#)))
+            ~name ~key (fn [vec#] (mapv (fn [~param-binding] ~@body) vec#)))
           `(community.util.transform/-add-transform!
             ~name ~key (fn [~param-binding] ~@body))))))
