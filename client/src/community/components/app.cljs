@@ -68,7 +68,6 @@
   (display-name [_] "Notifications")
 
   (render [_]
-    (prn user)
     (let [notifications (:notifications user)]
       (html
         [:div#notifications

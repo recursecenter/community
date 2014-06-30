@@ -1,4 +1,5 @@
-(ns community.util.transform)
+(ns community.util.transform
+  (:require [community.util :refer [p]]))
 
 (defmacro deftransformer [name]
   `(def ~name (community.util.transform/transformer)))
@@ -23,7 +24,7 @@
 
 (defmacro deftransform [name key-spec param-binding & body]
   `(let [handler# (fn [~param-binding] ~@body)]
-     ~(for [{:keys [many? key single-key]} (normalize-key-specs key-spec)]
+     ~@(for [{:keys [many? key single-key]} (normalize-key-specs key-spec)]
         (if many?
           `(community.util.transform/-add-transform
             ~name ~key (fn [param#] (mapv #(~name ~single-key %) param#)))

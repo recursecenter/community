@@ -12,7 +12,7 @@ class Notifications::Mention < Notification
       json.created_at created_at.to_i
 
       json.mentioned_by do
-        json.extract! mentioned_by, :name
+        json.extract! mentioned_by, :first_name, :last_name
       end
 
       json.thread do

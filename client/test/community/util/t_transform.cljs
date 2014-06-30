@@ -18,20 +18,28 @@
       (is = (t/transform {:x {:y 1}} {:y inc}) {:x {:y 2}})
       (is = (t/transform {:x {:y 1}} {:x (constantly :foo)}) {:x :foo})
       (is = (t/transform {:x {:y 1}} {:x #(assoc % :z :zzz) :y inc})
-            {:x {:z :zzz :y 2}})))
+            {:x {:z :zzz :y 2}}))
 
-  #_(context "example data transformers"
+    (test "will walk vectors"
+      (is = (t/transform [{:x 1} {:x 2} {:x 3}] {:x str})
+            [{:x "1"} {:x "2"} {:x "3"}])
+      (is = (t/transform {:xs [{:x 1} {:x 2} {:x 3}]} {:x str})
+            {:xs [{:x "1"} {:x "2"} {:x "3"}]})
+      (is = (t/transform {:xs [{:x 1} {:x 2} {:x 3}]} {:xs #(conj % {:x 4}) :x str})
+            {:xs [{:x "1"} {:x "2"} {:x "3"} {:x "4"}]})))
+
+  (context "example data transformers"
 
     (test "can define data transformers and add transforms"
       (deftransformer example)
 
       (is = (example {:x 1 :y 1}) {:x 1 :y 1})
 
-      ;; (deftransform example {:single :x :many :xs} x
-      ;;   (inc x))
+      (deftransform example {:single :x :many :xs} x
+        (inc x))
 
-      ;; (is = (example {:x 1 :y 1}) {:x 2 :y 1})
-      ;; (is = (example {:xs [1 2 3] :y 1}) {:xs [2 3 4] :y 1})
+      (is = (example {:x 1 :y 1}) {:x 2 :y 1})
+      (is = (example {:xs [1 2 3] :y 1}) {:xs [2 3 4] :y 1})
 
       (deftransform example :y y
         (str y))
@@ -41,15 +49,14 @@
     (test "nested transform"
       (deftransformer api->model)
 
-      (deftransform api->model :user {:as user :keys [id first-name last-name]}
+      (deftransform api->model [:user :mentioned-by]
+        {:as user :keys [id first-name last-name]}
         (assoc user
           :id (js/parseInt id)
           :name (str first-name " " last-name)))
 
-      (deftransform api->model :notifications notifications
-        (mapv #(api->model :notification %) notifications))
-
-      (deftransform api->model :notification notification
+      (deftransform api->model {:single :notification, :many :notifications}
+        notification
         (update-in notification [:type] keyword))
 
       (deftransform api->model :thread {:as thread :keys [id]}

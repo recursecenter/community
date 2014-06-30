@@ -25,32 +25,19 @@
 
 (deftransformer api->model)
 
-(deftransform api->model :notifications notifications
-  (mapv #(api->model :notification %) notifications))
-
-(deftransform api->model :user {:as user :keys [first-name last-name]}
+(deftransform api->model {:single [:user :mentioned-by] :many :autocomplete-users}
+  {:as user :keys [first-name last-name]}
   (assoc user
-    :name (str first-name " " last-name)))
+    :name (or (:name user) (str first-name " " last-name))))
 
-(deftransform api->model :posts posts
-  (mapv #(api->model :post %) posts))
-
-(deftransform api->model :post post
+(deftransform api->model {:single :post :many :posts} post
   (assoc post :persisted? true))
 
-(deftransform api->model :threads threads
-  (mapv #(api->model :thread %) threads))
-
-(deftransform api->model :thread {:as thread :keys [title]}
+(deftransform api->model {:single :thread :many :threads} {:as thread :keys [title]}
   (assoc thread :slug (slug title)))
 
-(deftransform api->model :autocomplete-users users
-  (mapv #(api->model :user %) users))
-
-(deftransform api->model :subforums subforums
-  (mapv #(api->model :subforum %) subforums))
-
-(deftransform api->model :subforum {:as subforum :keys [name threads]}
+(deftransform api->model {:single :subforum :many :subforums}
+  {:as subforum :keys [name threads]}
   (assoc subforum
     :slug (slug name)
     :new-thread (empty-thread)))
