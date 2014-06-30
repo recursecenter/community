@@ -23,6 +23,8 @@
 (deftype Transformer [!transforms]
   ITransformer
   (-add-transform! [_ key transform]
+    (when (contains? @!transforms key)
+      (.warn js/console "Redefining transformer key" (str key)))
     (swap! !transforms assoc key transform))
 
   ILookup
