@@ -6,15 +6,6 @@
 
 (def pending js/pending)
 
-(defn to-equal-cljs []
-  #js {:compare
-       (fn [actual expected]
-         (let [pass (= actual expected)]
-           #js {:pass pass
-                :message (if pass
-                           (str "Expected " (prn-str actual) " not to be equal to " (prn-str expected))
-                           (str "Expected " (prn-str actual) " to be equal to " (prn-str expected)))}))})
-
 (defn to-pass-cljs-pred []
   #js {:compare
        (fn [actual pred-str pred expected]
