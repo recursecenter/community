@@ -48,7 +48,7 @@
   `(let [handler# (fn [~param-binding] ~@body)]
      ~@(for [{:keys [many? key single-key]} (normalize-key-specs key-spec)]
         (if many?
-          `(community.util.transform/-add-transform
+          `(community.util.transform/-add-transform!
             ~name ~key (fn [param#] (mapv #(~name ~single-key %) param#)))
-          `(community.util.transform/-add-transform
+          `(community.util.transform/-add-transform!
             ~name ~key (fn [~param-binding] ~@body))))))

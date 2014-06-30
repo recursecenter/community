@@ -18,11 +18,11 @@
         :else data))
 
 (defprotocol ITransformer
-  (-add-transform [_ key transform]))
+  (-add-transform! [_ key transform]))
 
 (deftype Transformer [!transforms]
   ITransformer
-  (-add-transform [_ key transform]
+  (-add-transform! [_ key transform]
     (swap! !transforms assoc key transform))
 
   ILookup
