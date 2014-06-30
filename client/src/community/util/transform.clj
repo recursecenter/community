@@ -1,5 +1,4 @@
-(ns community.util.transform
-  (:require [community.util :refer [p]]))
+(ns community.util.transform)
 
 (defmacro deftransformer
   "Defines a top-level transformer called `name`. If you want a
