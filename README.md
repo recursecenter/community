@@ -1,5 +1,7 @@
 # community.hackerschool.com
 
+![Travis Build Status](https://travis-ci.org/hackerschool/community.svg?branch=master)
+
 ## Dependencies
 
 - Ruby 2.1.2
