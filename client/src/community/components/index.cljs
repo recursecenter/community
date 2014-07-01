@@ -1,5 +1,6 @@
 (ns community.components.index
-  (:require [community.util :refer-macros [<?]]
+  (:require [community.state :as state]
+            [community.util :refer-macros [<?]]
             [community.api :as api]
             [community.partials :refer [link-to]]
             [community.routes :refer [routes]]
@@ -30,11 +31,11 @@
     (go
       (try
         (om/update! app :subforum-groups (<? (api/subforum-groups)))
-        (om/transact! app :errors #(reduce disj % (vals (:ajax api/errors))))
+        (state/remove-errors! :ajax)
 
         (catch ExceptionInfo e
           (let [e-data (ex-data e)]
-            (om/transact! app :errors #(conj % (:message e-data))))))))
+            (state/add-error! (:error-info e-data)))))))
 
   (render [this]
     (html

@@ -1,19 +1,12 @@
 (ns community.api
-  (:require [community.models :as models]
+  (:require [community.state :as state]
+            [community.models :as models]
             [community.util :as util :refer-macros [<? p]]
             [community.util.pubsub :as pubsub]
             [cljs.core.async :as async]
             [clojure.walk :refer [postwalk]]
             [community.util.ajax :as ajax])
   (:require-macros [cljs.core.async.macros :refer [go]]))
-
-(def errors
-  {:ajax
-   {0 "Could not reach server."
-    :default "Oops! Something went wrong."}
-   :websocket
-   {:onclose "The WebSocket connection to the server closed. Please refresh your browser to re-establish the connection."
-    :onerror "The WebSocket connection errored unexpectedly. Please refresh your browser to re-establish the connection."}})
 
 (def api-root "/api")
 
@@ -50,8 +43,10 @@
       (aget 0)
       (.-content)))
 
-(defn error-message [error]
-  (get (:ajax errors) (:status error) (:default (:ajax error))))
+(defn error-info [error]
+  (case (:status error)
+    0 [:ajax :cant-reach-server]
+    [:ajax :generic]))
 
 (defn request
   "Makes an API request to the Hacker School API with some default
@@ -63,7 +58,7 @@
      (let [out (async/chan 1)
            on-error (fn [error-res]
                       (let [err (ex-info (str "Failed to access " resource)
-                                         (assoc error-res :message (error-message error-res)))]
+                                         (assoc error-res :error-info (error-info error-res)))]
                         (async/put! out err #(async/close! out))))
            on-success (fn [data]
                         (async/put! out (format-keys data) #(async/close! out)))
@@ -213,13 +208,11 @@
   "error-state should be an atom with an :errors key. An error will be
   added if the WebSocket connection closes or errors."
   [error-state]
-  (let [make-error-fn (fn [message]
-                        (fn [] (swap! error-state update-in [:errors] conj message)))
-        ws (new-ws-connection)]
+  (let [ws (new-ws-connection)]
     (reset! !ws-connection ws)
     (begin-publishing! ws *pubsub*)
-    (set! (.-onclose ws) (make-error-fn (:onclose (:websocket errors))))
-    (set! (.-onerror ws) (make-error-fn (:onerror (:websocket errors)))))
+    (set! (.-onclose ws) #(state/add-error! [:websocket :closed]))
+    (set! (.-onerror ws) #(state/add-error! [:websocket :errored])))
   nil)
 
 (defmulti feed-format :feed)

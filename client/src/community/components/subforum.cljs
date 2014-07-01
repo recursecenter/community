@@ -1,5 +1,6 @@
 (ns community.components.subforum
-  (:require [community.util :as util :refer-macros [<? p]]
+  (:require [community.state :as state]
+            [community.util :as util :refer-macros [<? p]]
             [community.api :as api]
             [community.models :as models]
             [community.location :refer [redirect-to]]
@@ -32,7 +33,7 @@
             (catch ExceptionInfo e
               (om/set-state! owner :form-disabled? false)
               (let [e-data (ex-data e)]
-                (om/update-state! owner :errors #(conj % (:message e-data))))))
+                (om/update-state! owner :errors #(conj % (state/error-message e-data))))))
 
           (recur)))))
 
@@ -78,13 +79,13 @@
     (try
       (let [subforum (<? (api/subforum (-> @app :route-data :id)))]
         (om/update! app :subforum subforum)
-        (om/transact! app :errors #(reduce disj % (vals (:ajax api/errors)))))
+        (state/remove-errors! :ajax))
 
       (catch ExceptionInfo e
         (let [e-data (ex-data e)]
           (if (== 404 (:status e-data))
             (om/update! app [:route-data :route] :page-not-found)
-            (om/transact! app :errors #(conj % (:message e-data)))))))))
+            (state/add-error! (:error-info e-data))))))))
 
 (defcomponent subforum [{:keys [route-data subforum] :as app}
                         owner]

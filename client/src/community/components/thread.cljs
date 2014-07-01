@@ -1,5 +1,6 @@
 (ns community.components.thread
-  (:require [community.util :refer-macros [<? p]]
+  (:require [community.state :as state]
+            [community.util :refer-macros [<? p]]
             [community.api :as api]
             [community.models :as models]
             [community.partials :as partials]
@@ -40,7 +41,7 @@
             (catch ExceptionInfo e
               (om/set-state! owner :form-disabled? false)
               (let [e-data (ex-data e)]
-                (om/update-state! owner :errors #(conj % (:message e-data))))))
+                (om/update-state! owner :errors #(conj % (state/error-message e-data))))))
           (recur)))))
 
   (will-receive-props [this next-props]
@@ -142,14 +143,14 @@
     (try
       (let [thread (<? (api/thread (:id (:route-data @app))))]
         (om/update! app :thread thread)
-        (om/transact! app :errors #(reduce disj % (vals (:ajax api/errors))))
+        (state/remove-errors! :ajax)
         thread)
 
       (catch ExceptionInfo e
         (let [e-data (ex-data e)]
           (if (== 404 (:status e))
             (om/update! app [:route-data :route] :page-not-found)
-            (om/transact! app :errors #(conj % (:message e-data)))))))))
+            (state/add-error! (:error-info e-data))))))))
 
 (defn start-thread-subscription! [thread-id app owner]
   (when api/subscriptions-enabled?
