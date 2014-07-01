@@ -30,7 +30,7 @@
     (go
       (try
         (om/update! app :subforum-groups (<? (api/subforum-groups)))
-        (om/update! app :errors #{})
+        (om/transact! app :errors #(reduce disj % (vals (:ajax api/errors))))
 
         (catch ExceptionInfo e
           (let [e-data (ex-data e)]

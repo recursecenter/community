@@ -78,7 +78,7 @@
     (try
       (let [subforum (<? (api/subforum (-> @app :route-data :id)))]
         (om/update! app :subforum subforum)
-        (om/update! app :errors #{}))
+        (om/transact! app :errors #(reduce disj % (vals (:ajax api/errors)))))
 
       (catch ExceptionInfo e
         (let [e-data (ex-data e)]

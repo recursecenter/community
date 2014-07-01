@@ -1,6 +1,7 @@
 (ns community.core
   (:require [community.state :refer [app-state]]
             [community.routes :as routes]
+            [community.api :as api]
             [community.location :as location :refer [redirect-to]]
             [community.components.app :as app]
             [community.components.index :as index]
@@ -11,7 +12,7 @@
 
 (enable-console-print!)
 
-;;; Route dispatch and browser location config
+;;; Route dispatch, browser location, API config
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defmethod routes/dispatch :index          [_] index/index)
@@ -21,6 +22,9 @@
 (defmethod routes/dispatch :default        [_] shared/page-not-found)
 
 (location/init-location! app-state)
+
+(set! (.-onload js/window)
+  #(api/init-ws-connection! app-state))
 
 ;;; Exports
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -142,7 +142,7 @@
     (try
       (let [thread (<? (api/thread (:id (:route-data @app))))]
         (om/update! app :thread thread)
-        (om/update! app :errors #{})
+        (om/transact! app :errors #(reduce disj % (vals (:ajax api/errors))))
         thread)
 
       (catch ExceptionInfo e

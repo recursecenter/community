@@ -7,6 +7,14 @@
             [community.util.ajax :as ajax])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
+(def errors
+  {:ajax
+   {0 "Could not reach server."
+    :default "Oops! Something went wrong."}
+   :websocket
+   {:onclose "The WebSocket connection to the server closed. Please refresh your browser to re-establish the connection."
+    :onerror "The WebSocket connection errored unexpectedly. Please refresh your browser to re-establish the connection."}})
+
 (def api-root "/api")
 
 (defn api-path [path]
@@ -43,9 +51,7 @@
       (.-content)))
 
 (defn error-message [error]
-  (case (:status error)
-    0 "Could not reach the server."
-    "Oops! Something went wrong."))
+  (get (:ajax errors) (:status error) (:default (:ajax error))))
 
 (defn request
   "Makes an API request to the Hacker School API with some default
@@ -191,7 +197,8 @@
           (set! (.-onopen ws) #(doseq [message @!ws-send-queue]
                                  (.send ws message))))
         (swap! !ws-send-queue conj message))
-    (.send ws message)))
+    (when (= 1 (.-readyState ws)) ; open
+      (.send ws message))))
 
 (defn begin-publishing! [ws pubsub]
   (let [onmessage (fn [e]
@@ -202,11 +209,18 @@
 
 (def !ws-connection (atom nil))
 
-(defn ws-connection []
-  (or @!ws-connection
-      (let [ws (new-ws-connection)]
-        (begin-publishing! ws *pubsub*)
-        (reset! !ws-connection ws))))
+(defn init-ws-connection!
+  "error-state should be an atom with an :errors key. An error will be
+  added if the WebSocket connection closes or errors."
+  [error-state]
+  (let [make-error-fn (fn [message]
+                        (fn [] (swap! error-state update-in [:errors] conj message)))
+        ws (new-ws-connection)]
+    (reset! !ws-connection ws)
+    (begin-publishing! ws *pubsub*)
+    (set! (.-onclose ws) (make-error-fn (:onclose (:websocket errors))))
+    (set! (.-onerror ws) (make-error-fn (:onerror (:websocket errors)))))
+  nil)
 
 (defmulti feed-format :feed)
 
@@ -236,8 +250,8 @@
 
            unsubscribe! (fn []
                           (pubsub/-unsubscribe! pubsub feed new-message-handler)
-                          (send-when-ready! (ws-connection) unsubscription)
+                          (send-when-ready! @!ws-connection unsubscription)
                           (async/close! message-chan))]
        (pubsub/-subscribe! pubsub feed new-message-handler)
-       (send-when-ready! (ws-connection) subscription)
+       (send-when-ready! @!ws-connection subscription)
        [message-chan unsubscribe!])))
