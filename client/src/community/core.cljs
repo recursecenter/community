@@ -23,15 +23,13 @@
 
 (location/init-location! app-state)
 
-(set! (.-onload js/window)
-  #(api/init-ws-connection! app-state))
-
 ;;; Exports
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn ^:export init-app
   "Mounts the om application onto target element."
   [target]
+  (api/init-ws-connection! app-state)
   (om/root app/app
            app-state
            {:target target}))
