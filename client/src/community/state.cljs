@@ -41,5 +41,5 @@
 
 (defn remove-errors! [category]
   (if-let [errors (get errors category)]
-    (swap! app-state update-in [:errors] #(reduce disj % (vals errors)))
+    (swap! app-state update-in [:errors] clojure.set/difference (vals errors))
     (throw (str "Invalid error category " category))))
