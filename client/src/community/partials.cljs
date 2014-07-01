@@ -27,5 +27,8 @@
 
 ;; TODO: use google's caja html sanitizer instead
 (defn html-from-markdown [md-string]
-  (let [safe-html-string (goog.string.html.htmlSanitize (js/marked md-string))]
+  ;; htmlSanitize accepts a "url policy" as the optional second
+  ;; argument; a function to be applied to every URL attribute value,
+  ;; e.g. src and href. We simply allow all URLs.
+  (let [safe-html-string (goog.string.html.htmlSanitize (js/marked md-string) identity)]
     (dom/div #js {:dangerouslySetInnerHTML #js {:__html safe-html-string}})))
