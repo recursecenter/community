@@ -4,7 +4,7 @@
             [sablono.core :refer-macros [html]]
             [om.dom :as dom]
             [goog.window :as window]
-            [goog.string]))
+            [goog.string.html.htmlSanitize]))
 
 (defn link-to [path & args]
   (let [[opts body] (if (map? (first args))
@@ -20,7 +20,12 @@
                                       (location/redirect-to path))))})
        body])))
 
+;;; Marked configuration (Markdown parsing/rendering)
+(.setOptions js/marked
+  #js {:highlight (fn [code]
+                    (.. js/hljs (highlightAuto code) -value))})
+
 ;; TODO: use google's caja html sanitizer instead
 (defn html-from-markdown [md-string]
-  (let [safe-html-string (.toHTML js/markdown (goog.string/htmlEscape md-string))]
+  (let [safe-html-string (goog.string.html.htmlSanitize (js/marked md-string))]
     (dom/div #js {:dangerouslySetInnerHTML #js {:__html safe-html-string}})))

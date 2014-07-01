@@ -35,4 +35,4 @@
                         :compiler {:output-to "../app/assets/javascripts/client-prod.js"
                                    :optimizations :advanced
                                    :pretty-print false
-                                   :externs ["react-externs.js" "markdown-externs.js" "bootstrap-tooltip-externs.js"]}}]})
+                                   :externs ["react-externs.js" "marked-externs.js" "highlight-externs.js" "bootstrap-tooltip-externs.js"]}}]})
