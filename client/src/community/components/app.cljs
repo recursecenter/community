@@ -98,6 +98,7 @@
             [:a.dropdown-toggle {:href "#" :data-toggle "dropdown"}
              (:name current-user) [:b.caret]]
             [:ul.dropdown-menu
+             [:li (partials/link-to (routes/routes :settings) "Settings")]
              [:li [:a {:href "/logout"} "Logout"]]]])]]])))
 
 (defcomponent welcome-info [_ owner]

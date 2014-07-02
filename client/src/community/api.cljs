@@ -16,24 +16,26 @@
 (def ^:private re-global-underscore
   (js/RegExp. "_" "g"))
 
-(defn format-key
+(def ^:private re-global-dash
+  (js/RegExp. "-" "g"))
+
+(defn string-with-underscore->keyword-with-dash
   "'foo_bar' => :foo-bar"
   [s]
   (keyword (.replace s re-global-underscore "-")))
 
+(defn keyword-with-dash->string-with-underscore
+  ":foo-bar => 'foo_bar'"
+  [kw]
+  (.replace (name kw) re-global-dash "_"))
+
 (defn format-keys
-  "Recursively transforms all map keys from strings to formatted
-  keywords using format-key."
-  [m]
-  (let [f (fn [[k v]]
-            (if (string? k)
-              [(format-key k) v]
-              [k v]))]
+  [m format-key]
+  (let [f (fn [[k v]] [(format-key k) v])]
     (postwalk (fn [x]
-                (cond
-                 (map? x) (into {} (map f x))
-                 (vector? x) (into [] (map format-keys x))
-                 :else x))
+                (if (map? x)
+                  (into {} (map f x))
+                  x))
               m)))
 
 (defn csrf-token []
@@ -61,13 +63,14 @@
                                          (assoc error-res :error-info (error-info error-res)))]
                         (async/put! out err #(async/close! out))))
            on-success (fn [data]
-                        (async/put! out (format-keys data) #(async/close! out)))
+                        (async/put! out (format-keys data string-with-underscore->keyword-with-dash) #(async/close! out)))
 
            default-opts {:on-success on-success
                          :on-error on-error
-                         :headers {"X-CSRF-Token" (csrf-token)}}]
+                         :headers {"X-CSRF-Token" (csrf-token)}}
+           formatted-opts (update-in opts [:params] format-keys keyword-with-dash->string-with-underscore)]
        (request-fn (api-path resource)
-                   (merge default-opts opts))
+                   (merge default-opts formatted-opts))
        out)))
 
 (def GET (partial request ajax/GET))
@@ -103,6 +106,12 @@
     :err-transform #(if (== 403 (:status (ex-data %)))
                       ::no-current-user
                       %)))
+
+(def update-settings
+  (make-api-fn (fn [settings-to-update]
+                 (PATCH "/settings"
+                        {:params {:settings settings-to-update}
+                         :format :json}))))
 
 (def subforum-groups
   (make-api-fn #(GET "/subforum_groups")
@@ -198,7 +207,7 @@
 (defn begin-publishing! [ws pubsub]
   (let [onmessage (fn [e]
                     (let [js-message (.parse js/JSON (.-data e))
-                          message (format-keys (js->clj js-message))]
+                          message (format-keys (js->clj js-message) string-with-underscore->keyword-with-dash)]
                       (pubsub/-publish! pubsub (:feed message) message)))]
     (set! (.-onmessage ws) onmessage)))
 

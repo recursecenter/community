@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   get 'login/complete' => 'sessions#complete'
 
   # client side routes
+  get '/settings' => 'pages#index'
   get '/f/*path' => 'pages#index'
   get '/t/*path' => 'pages#index'
 
@@ -18,6 +19,8 @@ Rails.application.routes.draw do
     resources :notifications do
       post :read, on: :member
     end
+
+    resource :settings
 
     shallow do
       resources :subforum_groups do

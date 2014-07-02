@@ -6,6 +6,7 @@
 (def routes
   (r/routes
     (r/route :index [])
+    (r/route :settings ["settings"])
     (r/route :subforum ["f" :slug :id])
     (r/route :thread ["t" :slug :id])))
 

@@ -8,6 +8,7 @@
             [community.components.subforum :as subforum]
             [community.components.thread :as thread]
             [community.components.shared :as shared]
+            [community.components.settings :as settings]
             [om.core :as om]))
 
 (enable-console-print!)
@@ -16,6 +17,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defmethod routes/dispatch :index          [_] index/index)
+(defmethod routes/dispatch :settings       [_] settings/settings)
 (defmethod routes/dispatch :subforum       [_] subforum/subforum)
 (defmethod routes/dispatch :thread         [_] thread/thread)
 (defmethod routes/dispatch :page-not-found [_] shared/page-not-found)

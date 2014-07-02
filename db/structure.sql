@@ -257,7 +257,8 @@ CREATE TABLE users (
     batch_name character varying(255),
     hacker_school_id integer,
     created_at timestamp without time zone,
-    updated_at timestamp without time zone
+    updated_at timestamp without time zone,
+    email_on_mention boolean DEFAULT true
 );
 
 
@@ -589,4 +590,6 @@ INSERT INTO schema_migrations (version) VALUES ('20140609195302');
 INSERT INTO schema_migrations (version) VALUES ('20140611152940');
 
 INSERT INTO schema_migrations (version) VALUES ('20140611180743');
+
+INSERT INTO schema_migrations (version) VALUES ('20140702171957');
 
