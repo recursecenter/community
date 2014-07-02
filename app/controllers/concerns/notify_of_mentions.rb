@@ -6,6 +6,10 @@ module NotifyOfMentions
       if Ability.new(user).can? :read, post
         mention = user.mentions.create(post: post, mentioned_by: post.author)
         PubSub.publish :created, :notification, mention
+
+        if user.email_on_mention?
+          NotificationMailer.delay.user_mentioned_email(mention)
+        end
       end
     end
   end

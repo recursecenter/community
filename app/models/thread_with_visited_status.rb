@@ -4,4 +4,8 @@ class ThreadWithVisitedStatus < ActiveRecord::Base
   include PostgresView
   include DiscussionThreadCommon
   include UnreadForUser
+
+  include Slug
+
+  has_slug_for :title
 end

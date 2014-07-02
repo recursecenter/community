@@ -3,14 +3,6 @@
             [community.util :as util :refer-macros [p]]
             [community.util.transform :refer-macros [deftransformer deftransform]]))
 
-(defn slug
-  "\"Dave's awesome subforum!\" => \"daves-awesome-subforum\""
-  [name]
-  (-> name
-      (.toLowerCase)
-      (.replace (js/RegExp. "[^a-zA-Z0-9- ]" "g") "")
-      (.replace (js/RegExp. "\\s+" "g") "-")))
-
 (defn empty-post [thread-id]
   {:body ""
    :thread-id thread-id
@@ -34,14 +26,9 @@
   post
   (assoc post :persisted? true))
 
-(deftransform api->model {:single :thread :many :threads}
-  {:as thread :keys [title]}
-  (assoc thread :slug (slug title)))
-
 (deftransform api->model {:single :subforum :many :subforums}
   {:as subforum :keys [name threads]}
   (assoc subforum
-    :slug (slug name)
     :new-thread (empty-thread)))
 
 (defn names->mention-regexp [names]

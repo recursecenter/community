@@ -3,4 +3,8 @@ class SubforumWithVisitedStatus < ActiveRecord::Base
 
   include PostgresView
   include UnreadForUser
+
+  include Slug
+
+  has_slug_for :name
 end

@@ -7,3 +7,5 @@ module Community
     end
   end
 end
+
+Rails.logger.info "Community client environment: #{Community.client_env}"
