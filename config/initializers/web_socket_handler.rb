@@ -48,7 +48,7 @@ private
     end
 
     def hijack!
-      @ws ||= Faye::WebSocket.new(@env, ping: 10)
+      @ws ||= Faye::WebSocket.new(@env, nil, ping: 45)
     end
 
     def websocket?

@@ -202,9 +202,7 @@
                       (pubsub/-publish! pubsub (:feed message) message)))]
     (set! (.-onmessage ws) onmessage)))
 
-;; TODO: unexport. This is just exported while we debug websocket
-;; timeouts in production
-(def ^:export !ws-connection (atom nil))
+(def !ws-connection (atom nil))
 
 (defn init-ws-connection!
   "error-state should be an atom with an :errors key. An error will be
