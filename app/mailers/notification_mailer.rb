@@ -1,7 +1,7 @@
 class NotificationMailer < ActionMailer::Base
   add_template_helper ApplicationHelper
 
-  default from: "bot@community.hackerschool.com"
+  default from: "bot@mail.community.hackerschool.com"
 
   def user_mentioned_email(mention)
     @post = mention.post
