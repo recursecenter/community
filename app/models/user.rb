@@ -3,6 +3,7 @@ class User < ActiveRecord::Base
   has_many :posts, foreign_key: 'author_id'
   has_many :notifications
   has_many :mentions, class_name: 'Notifications::Mention'
+  has_and_belongs_to_many :groups
 
   scope :ordered_by_first_name, -> { order(first_name: :asc) }
 
@@ -19,6 +20,7 @@ class User < ActiveRecord::Base
     user.email = user_data["email"]
     user.avatar_url = user_data["image"]
     user.batch_name = user_data["batch"]["name"]
+    user.groups = [Group.everyone, Group.for_batch_api_data(user_data["batch"])]
 
     user.save!
 

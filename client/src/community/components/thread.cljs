@@ -13,14 +13,13 @@
             [clojure.string :as str])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
-(defcomponent post-form [{:as props
-                          :keys [after-persisted cancel-edit autocomplete-users]}
+(defcomponent post-form [{:as data :keys [autocomplete-users announce-groups after-persisted cancel-edit]}
                          owner]
   (display-name [_] "PostForm")
 
   (init-state [this]
-    {:init-post (:init-post props)
-     :post (:init-post props)
+    {:init-post (:init-post data)
+     :post (:init-post data)
      :c-post (async/chan 1)
      :form-disabled? false
      :errors #{}})
@@ -66,7 +65,7 @@
                                 (om/set-state! owner :form-disabled? true)))}
            (let [post-body-id (str "post-body-" (or (:id post) "new"))]
              [:div.form-group
-              (for [[id name] (map-indexed vector ["Batch 1" "Batch 2" "Batch 3" "Batch 4"])]
+              (for [{:keys [id name]} announce-groups]
                 [:div.checkbox
                  [:label
                   [:input {:type "checkbox"
@@ -209,6 +208,7 @@
               (->post {:post post :autocomplete-users autocomplete-users}
                       {:react-key (:id post)}))]
            (->post-form {:init-post (models/empty-post (:id thread))
+                         :announce-groups (:announce-groups thread)
                          :autocomplete-users autocomplete-users
                          :after-persisted (fn [post reset-form!]
                                             (reset-form!)
