@@ -6,7 +6,7 @@
                  [sablono "0.2.17"]
                  [prismatic/om-tools "0.2.2"]
                  [com.cemerick/piggieback "0.1.3"]
-                 [weasel "0.2.0"]]
+                 [weasel "0.3.0"]]
 
   :plugins [[lein-cljsbuild "1.0.3"]]
 
