@@ -131,7 +131,8 @@
 
 (defn post->api-data [post]
   (let [mentions (map :id (:mentions post))]
-    {:post {:body (:body post)}
+    {:post {:body (:body post)
+            :announce-to (:announce-to post)}
      :mentions (if (empty? mentions) nil mentions)}))
 
 (def new-post

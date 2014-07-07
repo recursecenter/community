@@ -6,11 +6,17 @@
 (defn empty-post [thread-id]
   {:body ""
    :thread-id thread-id
-   :persisted? false})
+   :persisted? false
+   :announce-to #{}})
 
 (defn empty-thread []
   {:title ""
    :body ""})
+
+(defn toggle-announce-to [announce-to id]
+  (if (contains? announce-to id)
+    (disj announce-to id)
+    (conj announce-to id)))
 
 ;; Assumption: these functions are only run on data that came from the
 ;; server, so they must have been already persisted.

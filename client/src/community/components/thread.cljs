@@ -66,6 +66,15 @@
                                 (om/set-state! owner :form-disabled? true)))}
            (let [post-body-id (str "post-body-" (or (:id post) "new"))]
              [:div.form-group
+              (for [[id name] (map-indexed vector ["Batch 1" "Batch 2" "Batch 3" "Batch 4"])]
+                [:div.checkbox
+                 [:label
+                  [:input {:type "checkbox"
+                           :checked (contains? (:announce-to post) id)
+                           :onChange (fn []
+                                       (om/update-state! owner [:post :announce-to]
+                                         #(models/toggle-announce-to % id)))}
+                   name]]])
               [:label.hide {:for post-body-id} "Body"]
               (shared/->autocompleting-textarea
                {:value (:body post)
