@@ -12,10 +12,7 @@
 
   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
 
-  :injections [(require 'cemerick.piggieback 'weasel.repl.websocket)
-               (defn browser-repl []
-                 (cemerick.piggieback/cljs-repl
-                  :repl-env (weasel.repl.websocket/repl-env :port 9001)))]
+  :profiles {:dev {:source-paths ["src" "dev"]}}
 
   :cljsbuild {:builds [{:id "test"
                         :source-paths ["src" "test"]
