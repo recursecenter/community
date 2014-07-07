@@ -1,7 +1,7 @@
 class Api::PostsController < Api::ApiController
   load_and_authorize_resource :post
 
-  include NotifyOfMentions
+  include NotifyMentionedUsers
 
   def create
     @post.save!

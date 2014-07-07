@@ -1,4 +1,4 @@
-module NotifyOfMentions
+module NotifyMentionedUsers
   extend ActiveSupport::Concern
 
   def notify_mentioned_users!(post)
