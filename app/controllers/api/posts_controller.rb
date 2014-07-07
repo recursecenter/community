@@ -2,12 +2,13 @@ class Api::PostsController < Api::ApiController
   load_and_authorize_resource :post
 
   include NotifyMentionedUsers
+  include NotifyAnnounceGroups
 
   def create
     @post.save!
     @post.thread.mark_as_visited_for(current_user)
     PubSub.publish :created, :post, @post
-
+    notify_announce_groups!(@post)
     notify_mentioned_users!(@post)
   end
 

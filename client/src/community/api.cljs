@@ -129,11 +129,11 @@
   (when (empty? (:body post))
     "The body of a post cannot be empty."))
 
-(defn post->api-data [post]
+(defn post->api-data [{:as post :keys [announce-to]}]
   (let [mentions (map :id (:mentions post))]
-    {:post {:body (:body post)
-            :announce-to (:announce-to post)}
-     :mentions (if (empty? mentions) nil mentions)}))
+    {:post {:body (:body post)}
+     :mentions (if (empty? mentions) nil mentions)
+     :announce-to (if (empty? announce-to) nil announce-to)}))
 
 (def new-post
   (make-api-fn (fn [post]

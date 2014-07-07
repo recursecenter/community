@@ -3,7 +3,8 @@ class User < ActiveRecord::Base
   has_many :posts, foreign_key: 'author_id'
   has_many :notifications
   has_many :mentions, class_name: 'Notifications::Mention'
-  has_and_belongs_to_many :groups
+  has_many :group_memberships
+  has_many :groups, through: :group_memberships
 
   scope :ordered_by_first_name, -> { order(first_name: :asc) }
 
