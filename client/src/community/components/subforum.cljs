@@ -55,13 +55,13 @@
                                 (async/put! c-draft (:new-thread @subforum))
                                 (om/set-state! owner :form-disabled? true)))}
            [:div.form-group
-            (shared/->broadcast-group-picker
-             {:broadcast-groups (mapv #(assoc % :selected? (contains? (:broadcast-to (:new-thread subforum))
-                                                                     (:id %)))
-                                      broadcast-groups)}
-             {:opts {:on-toggle (fn [id]
-                                  (om/transact! subforum [:new-thread :broadcast-to]
-                                                #(models/toggle-broadcast-to % id)))}})]
+            (let [broadcast-to (:broadcast-to (:new-thread subforum))]
+              (shared/->broadcast-group-picker
+               {:broadcast-groups (mapv #(assoc % :selected? (contains? broadcast-to (:id %)))
+                                        broadcast-groups)}
+               {:opts {:on-toggle (fn [id]
+                                    (om/transact! subforum [:new-thread :broadcast-to]
+                                                  #(models/toggle-broadcast-to % id)))}}))]
            [:div.form-group
             [:label {:for "thread-title"} "Title"]
             [:input#thread-title.form-control
