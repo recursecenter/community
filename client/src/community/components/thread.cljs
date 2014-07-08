@@ -18,14 +18,24 @@
 
   (render [_]
     (html
-      [:div
-       (for [{:keys [id name checked?]} announce-groups]
-         [:div.checkbox
-          [:label
-           [:input {:type "checkbox"
-                    :checked checked?
-                    :onChange #(on-toggle id)}
-            name]]])])))
+      (let [toggle (fn [id e]
+                     (.preventDefault e)
+                     (on-toggle id))]
+        [:div.btn-group.dropup
+         [:div.dropdown
+          [:button.btn.btn-default.dropdown-toggle {:type "button" :data-toggle "dropdown"}
+           [:span.glyphicon.glyphicon-plus.small] " announce"]
+          [:ul.dropdown-menu
+           (for [{:keys [name id checked?]} announce-groups
+                 :when (not checked?)]
+             [:li [:a {:href "#"
+                       :onClick (partial toggle id)}
+                   name]])]
+          (for [{:keys [name id]} (filter :checked? announce-groups)]
+            [:span.label.label-default {:onClick (partial toggle id)
+                                        :style {:cursor "pointer"
+                                                :margin-left "6px"}}
+             "× " name])]]))))
 
 (defcomponent post-form [{:as data :keys [autocomplete-users announce-groups after-persisted cancel-edit]}
                          owner]
@@ -77,7 +87,7 @@
                               (when-not form-disabled?
                                 (async/put! c-post post)
                                 (om/set-state! owner :form-disabled? true)))}
-           (let [post-body-id (str "post-body-" (or (:id post) "new"))]
+           (when (not (:persisted? post))
              [:div.form-group
               (->announce-group-picker
                {:post post
@@ -85,7 +95,9 @@
                                        announce-groups)}
                {:opts {:on-toggle (fn [id]
                                     (om/update-state! owner [:post :announce-to]
-                                                      #(models/toggle-announce-to % id)))}})
+                                                      #(models/toggle-announce-to % id)))}})])
+           (let [post-body-id (str "post-body-" (or (:id post) "new"))]
+             [:div.form-group
               [:label.hide {:for post-body-id} "Body"]
               (shared/->autocompleting-textarea
                {:value (:body post)
