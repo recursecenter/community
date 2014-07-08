@@ -110,7 +110,7 @@
                      (on-toggle id))]
         [:div.btn-group.dropup
          [:div.dropdown
-          [:button.btn.btn-default.dropdown-toggle {:type "button" :data-toggle "dropdown"}
+          [:button.btn.btn-default.btn-xs.dropdown-toggle {:type "button" :data-toggle "dropdown"}
            [:span.glyphicon.glyphicon-plus.small] " broadcast"]
           [:ul.dropdown-menu
            (for [{:keys [name id checked?]} broadcast-groups
