@@ -13,6 +13,20 @@
             [clojure.string :as str])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
+(defcomponent announce-group-picker [{:keys [announce-groups]} owner {:keys [on-toggle]}]
+  (display-name [_] "AnnounceGroupPicker")
+
+  (render [_]
+    (html
+      [:div
+       (for [{:keys [id name checked?]} announce-groups]
+         [:div.checkbox
+          [:label
+           [:input {:type "checkbox"
+                    :checked checked?
+                    :onChange #(on-toggle id)}
+            name]]])])))
+
 (defcomponent post-form [{:as data :keys [autocomplete-users announce-groups after-persisted cancel-edit]}
                          owner]
   (display-name [_] "PostForm")
@@ -65,15 +79,13 @@
                                 (om/set-state! owner :form-disabled? true)))}
            (let [post-body-id (str "post-body-" (or (:id post) "new"))]
              [:div.form-group
-              (for [{:keys [id name]} announce-groups]
-                [:div.checkbox
-                 [:label
-                  [:input {:type "checkbox"
-                           :checked (contains? (:announce-to post) id)
-                           :onChange (fn []
-                                       (om/update-state! owner [:post :announce-to]
-                                         #(models/toggle-announce-to % id)))}
-                   name]]])
+              (->announce-group-picker
+               {:post post
+                :announce-groups (mapv #(assoc % :checked? (contains? (:announce-to post) (:id %)))
+                                       announce-groups)}
+               {:opts {:on-toggle (fn [id]
+                                    (om/update-state! owner [:post :announce-to]
+                                                      #(models/toggle-announce-to % id)))}})
               [:label.hide {:for post-body-id} "Body"]
               (shared/->autocompleting-textarea
                {:value (:body post)
