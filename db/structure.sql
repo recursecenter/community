@@ -167,6 +167,16 @@ ALTER SEQUENCE groups_id_seq OWNED BY groups.id;
 
 
 --
+-- Name: groups_posts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE groups_posts (
+    group_id integer,
+    post_id integer
+);
+
+
+--
 -- Name: notifications; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -688,4 +698,6 @@ INSERT INTO schema_migrations (version) VALUES ('20140611180743');
 INSERT INTO schema_migrations (version) VALUES ('20140702171957');
 
 INSERT INTO schema_migrations (version) VALUES ('20140707203027');
+
+INSERT INTO schema_migrations (version) VALUES ('20140708205925');
 

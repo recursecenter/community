@@ -28,6 +28,8 @@ private
   end
 
   def post_params
-    params.require(:post).permit(:body).merge(author: current_user)
+    params.require(:post).permit(:body).
+      merge(author: current_user,
+            broadcast_groups: Group.where(id: params.permit(broadcast_to: [])[:broadcast_to]))
   end
 end

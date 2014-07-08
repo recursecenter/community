@@ -1,6 +1,7 @@
 class Post < ActiveRecord::Base
   belongs_to :thread, class_name: "DiscussionThread"
   belongs_to :author, class_name: "User"
+  has_and_belongs_to_many :broadcast_groups, class_name: "Group"
 
   validates :body, :author, :thread, presence: {allow_blank: false}
 

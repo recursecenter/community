@@ -28,6 +28,7 @@ private
   end
 
   def post_params
-    params.require(:post).permit(:body)
+    params.require(:post).permit(:body).
+      merge(broadcast_groups: Group.where(id: params.permit(broadcast_to: [])))
   end
 end
