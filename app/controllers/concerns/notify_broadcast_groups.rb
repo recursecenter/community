@@ -22,7 +22,7 @@ private
 
     def perform
       broadcast_users.each do |user|
-        NotificationMailer.broadcast_email(user, post, groups)
+        NotificationMailer.broadcast_email(user, post, groups).deliver
       end
     end
 
