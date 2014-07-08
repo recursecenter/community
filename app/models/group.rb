@@ -10,5 +10,6 @@ class Group < ActiveRecord::Base
     group = where(hacker_school_batch_id: batch_data["id"]).first_or_initialize
     group.name = batch_data["name"]
     group.save!
+    group
   end
 end
