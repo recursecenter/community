@@ -23,6 +23,14 @@ class User < ActiveRecord::Base
     user.batch_name = user_data["batch"]["name"]
     user.groups = [Group.everyone, Group.for_batch_api_data(user_data["batch"])]
 
+    if user_data["currently_at_hacker_school"]
+      user.groups += [Group.current_hacker_schoolers]
+    end
+
+    if user_data["is_faculty"]
+      user.groups += [Group.faculty]
+    end
+
     user.save!
 
     user
