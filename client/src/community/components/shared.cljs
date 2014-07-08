@@ -99,3 +99,27 @@
 
       (let [textarea-top (.-y (goog.style/getClientPosition textarea))]
         (om/set-state! owner :should-drop-down? (< textarea-top 120))))))
+
+(defcomponent broadcast-group-picker [{:keys [broadcast-groups]} owner {:keys [on-toggle]}]
+  (display-name [_] "BroadcastGroupPicker")
+
+  (render [_]
+    (html
+      (let [toggle (fn [id e]
+                     (.preventDefault e)
+                     (on-toggle id))]
+        [:div.btn-group.dropup
+         [:div.dropdown
+          [:button.btn.btn-default.dropdown-toggle {:type "button" :data-toggle "dropdown"}
+           [:span.glyphicon.glyphicon-plus.small] " broadcast"]
+          [:ul.dropdown-menu
+           (for [{:keys [name id checked?]} broadcast-groups
+                 :when (not checked?)]
+             [:li [:a {:href "#"
+                       :onClick (partial toggle id)}
+                   name]])]
+          (for [{:keys [name id]} (filter :checked? broadcast-groups)]
+            [:span.label.label-default {:onClick (partial toggle id)
+                                        :style {:cursor "pointer"
+                                                :margin-left "6px"}}
+             "× " name])]]))))

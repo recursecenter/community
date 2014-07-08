@@ -11,7 +11,8 @@
 
 (defn empty-thread []
   {:title ""
-   :body ""})
+   :body ""
+   :broadcast-to #{}})
 
 (defn toggle-broadcast-to [broadcast-to id]
   (if (contains? broadcast-to id)

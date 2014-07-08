@@ -8,3 +8,4 @@ json.threads do
   end
 end
 json.autocomplete_users @autocomplete_users, :id, :first_name, :last_name
+json.broadcast_groups Group.all, :id, :name

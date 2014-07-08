@@ -159,11 +159,12 @@
         (empty? body)
         "A new thread must have a non-empty body."))
 
-(defn thread->api-data [{:keys [title body mentions]}]
+(defn thread->api-data [{:keys [title body mentions broadcast-to]}]
   (let [mention-ids (map :id mentions)]
     {:thread {:title title}
      :post {:body body}
-     :mentions (if (empty? mention-ids) nil mention-ids)}))
+     :mentions (if (empty? mention-ids) nil mention-ids)
+     :broadcast-to (if (empty? broadcast-to) nil broadcast-to)}))
 
 (def new-thread
   (make-api-fn (fn [subforum-id thread]

@@ -13,7 +13,7 @@
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
-(defcomponent new-thread [subforum owner]
+(defcomponent new-thread [{:as subforum :keys [broadcast-groups]} owner]
   (display-name [_] "NewThread")
 
   (init-state [this]
@@ -54,6 +54,14 @@
                               (when-not form-disabled?
                                 (async/put! c-draft (:new-thread @subforum))
                                 (om/set-state! owner :form-disabled? true)))}
+           [:div.form-group
+            (shared/->broadcast-group-picker
+             {:broadcast-groups (mapv #(assoc % :checked? (contains? (:broadcast-to (:new-thread subforum))
+                                                                     (:id %)))
+                                      broadcast-groups)}
+             {:opts {:on-toggle (fn [id]
+                                  (om/transact! subforum [:new-thread :broadcast-to]
+                                                #(models/toggle-broadcast-to % id)))}})]
            [:div.form-group
             [:label {:for "thread-title"} "Title"]
             [:input#thread-title.form-control
