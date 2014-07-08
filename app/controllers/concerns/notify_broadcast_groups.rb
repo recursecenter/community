@@ -1,18 +1,18 @@
-module NotifyAnnounceGroups
+module NotifyBroadcastGroups
   extend ActiveSupport::Concern
 
-  def notify_announce_groups!(post)
-    if announce_params[:announce_to].present?
-      Delayed::Job.enqueue(Announcement.new(post.id, announce_params[:announce_to]))
+  def notify_broadcast_groups!(post)
+    if broadcast_params[:broadcast_to].present?
+      Delayed::Job.enqueue(Broadcast.new(post.id, broadcast_params[:broadcast_to]))
     end
   end
 
 private
-  def announce_params
-    params.permit(announce_to: [])
+  def broadcast_params
+    params.permit(broadcast_to: [])
   end
 
-  class Announcement
+  class Broadcast
     attr_reader :post_id, :group_ids
 
     def initialize(post_id, group_ids)
@@ -21,13 +21,13 @@ private
     end
 
     def perform
-      announce_users.each do |user|
-        NotificationMailer.delay.announcement_email(user, post, groups)
+      broadcast_users.each do |user|
+        NotificationMailer.delay.broadcast_email(user, post, groups)
       end
     end
 
     private
-    def announce_users
+    def broadcast_users
       GroupMembership.where(group_id: group_ids).
         distinct_by_user_id.
         includes(:user).

@@ -13,8 +13,8 @@
             [clojure.string :as str])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
-(defcomponent announce-group-picker [{:keys [announce-groups]} owner {:keys [on-toggle]}]
-  (display-name [_] "AnnounceGroupPicker")
+(defcomponent broadcast-group-picker [{:keys [broadcast-groups]} owner {:keys [on-toggle]}]
+  (display-name [_] "BroadcastGroupPicker")
 
   (render [_]
     (html
@@ -24,20 +24,20 @@
         [:div.btn-group.dropup
          [:div.dropdown
           [:button.btn.btn-default.dropdown-toggle {:type "button" :data-toggle "dropdown"}
-           [:span.glyphicon.glyphicon-plus.small] " announce"]
+           [:span.glyphicon.glyphicon-plus.small] " broadcast"]
           [:ul.dropdown-menu
-           (for [{:keys [name id checked?]} announce-groups
+           (for [{:keys [name id checked?]} broadcast-groups
                  :when (not checked?)]
              [:li [:a {:href "#"
                        :onClick (partial toggle id)}
                    name]])]
-          (for [{:keys [name id]} (filter :checked? announce-groups)]
+          (for [{:keys [name id]} (filter :checked? broadcast-groups)]
             [:span.label.label-default {:onClick (partial toggle id)
                                         :style {:cursor "pointer"
                                                 :margin-left "6px"}}
              "× " name])]]))))
 
-(defcomponent post-form [{:as data :keys [autocomplete-users announce-groups after-persisted cancel-edit]}
+(defcomponent post-form [{:as data :keys [autocomplete-users broadcast-groups after-persisted cancel-edit]}
                          owner]
   (display-name [_] "PostForm")
 
@@ -89,13 +89,13 @@
                                 (om/set-state! owner :form-disabled? true)))}
            (when (not (:persisted? post))
              [:div.form-group
-              (->announce-group-picker
+              (->broadcast-group-picker
                {:post post
-                :announce-groups (mapv #(assoc % :checked? (contains? (:announce-to post) (:id %)))
-                                       announce-groups)}
+                :broadcast-groups (mapv #(assoc % :checked? (contains? (:broadcast-to post) (:id %)))
+                                       broadcast-groups)}
                {:opts {:on-toggle (fn [id]
-                                    (om/update-state! owner [:post :announce-to]
-                                                      #(models/toggle-announce-to % id)))}})])
+                                    (om/update-state! owner [:post :broadcast-to]
+                                                      #(models/toggle-broadcast-to % id)))}})])
            (let [post-body-id (str "post-body-" (or (:id post) "new"))]
              [:div.form-group
               [:label.hide {:for post-body-id} "Body"]
@@ -232,7 +232,7 @@
               (->post {:post post :autocomplete-users autocomplete-users}
                       {:react-key (:id post)}))]
            (->post-form {:init-post (models/empty-post (:id thread))
-                         :announce-groups (:announce-groups thread)
+                         :broadcast-groups (:broadcast-groups thread)
                          :autocomplete-users autocomplete-users
                          :after-persisted (fn [post reset-form!]
                                             (reset-form!)

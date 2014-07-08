@@ -19,7 +19,7 @@ class NotificationMailer < ActionMailer::Base
          subject: %{#{@mentioned_by.name} mentioned you in "#{@post.thread.title}"})
   end
 
-  def announcement_email(user, post, groups)
+  def broadcast_email(user, post, groups)
     @user = user
     @post = post
 

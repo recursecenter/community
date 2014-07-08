@@ -5,4 +5,4 @@ json.posts do
   end
 end
 json.autocomplete_users @autocomplete_users, :id, :first_name, :last_name
-json.announce_groups Group.all, :id, :name
+json.broadcast_groups Group.all, :id, :name
