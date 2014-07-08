@@ -1,7 +1,11 @@
+require 'base64'
+require 'json'
+
 class NotificationMailer < ActionMailer::Base
   add_template_helper ApplicationHelper
+  DEFAULT_FROM = "bot@mail.community.hackerschool.com"
 
-  default from: "bot@mail.community.hackerschool.com"
+  default from: DEFAULT_FROM
 
   def user_mentioned_email(mention)
     @post = mention.post
@@ -19,14 +23,11 @@ class NotificationMailer < ActionMailer::Base
          subject: %{#{@mentioned_by.name} mentioned you in "#{@post.thread.title}"})
   end
 
-  def broadcast_email(user, post, groups)
-    @user = user
+  def broadcast_email(users, post, groups)
     @post = post
-
-    @quoted_post_body = quoted_post_body(@post)
     @group_names = groups.map(&:name)
 
-    mail(to: @user.email,
+    mail(to: users.map(&:email),
          subject: "Community broadcast: #{@post.thread.title}")
   end
 
