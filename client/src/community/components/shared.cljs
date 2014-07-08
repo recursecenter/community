@@ -113,12 +113,12 @@
           [:button.btn.btn-default.btn-xs.dropdown-toggle {:type "button" :data-toggle "dropdown"}
            [:span.glyphicon.glyphicon-plus.small] " broadcast"]
           [:ul.dropdown-menu
-           (for [{:keys [name id checked?]} broadcast-groups
-                 :when (not checked?)]
+           (for [{:keys [name id selected?]} broadcast-groups
+                 :when (not selected?)]
              [:li [:a {:href "#"
                        :onClick (partial toggle id)}
                    name]])]
-          (for [{:keys [name id]} (filter :checked? broadcast-groups)]
+          (for [{:keys [name id]} (filter :selected? broadcast-groups)]
             [:span.label.label-default {:onClick (partial toggle id)
                                         :style {:cursor "pointer"
                                                 :margin-left "6px"}}

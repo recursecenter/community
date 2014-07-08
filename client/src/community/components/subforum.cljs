@@ -56,7 +56,7 @@
                                 (om/set-state! owner :form-disabled? true)))}
            [:div.form-group
             (shared/->broadcast-group-picker
-             {:broadcast-groups (mapv #(assoc % :checked? (contains? (:broadcast-to (:new-thread subforum))
+             {:broadcast-groups (mapv #(assoc % :selected? (contains? (:broadcast-to (:new-thread subforum))
                                                                      (:id %)))
                                       broadcast-groups)}
              {:opts {:on-toggle (fn [id]

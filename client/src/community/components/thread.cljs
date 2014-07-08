@@ -66,7 +66,7 @@
            (when (not (:persisted? post))
              [:div.form-group
               (shared/->broadcast-group-picker
-               {:broadcast-groups (mapv #(assoc % :checked? (contains? (:broadcast-to post) (:id %)))
+               {:broadcast-groups (mapv #(assoc % :selected? (contains? (:broadcast-to post) (:id %)))
                                        broadcast-groups)}
                {:opts {:on-toggle (fn [id]
                                     (om/update-state! owner [:post :broadcast-to]
