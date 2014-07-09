@@ -1,8 +1,8 @@
 module NotifyMentionedUsers
   extend ActiveSupport::Concern
 
-  def notify_mentioned_users!(post)
-    mentioned_users.each do |user|
+  def notify_newly_mentioned_users!(post)
+    (mentioned_users - post.mentions.map(&:user)).each do |user|
       if Ability.new(user).can? :read, post
         mention = user.mentions.create(post: post, mentioned_by: post.author)
         PubSub.publish :created, :notification, mention
