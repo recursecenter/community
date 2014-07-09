@@ -1,11 +1,7 @@
-require 'base64'
-require 'json'
-
 class NotificationMailer < ActionMailer::Base
   add_template_helper ApplicationHelper
-  DEFAULT_FROM = "bot@mail.community.hackerschool.com"
 
-  default from: DEFAULT_FROM
+  default from: "bot@mail.community.hackerschool.com"
 
   def user_mentioned_email(mention)
     @post = mention.post
