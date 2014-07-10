@@ -81,7 +81,7 @@
                        :on-change #(om/set-state! owner [:post :body] %)
                        :passthrough
                        {:id post-body-id
-                        :class "form-control"
+                        :class ["form-control" "post-textarea"]
                         :name "post[body]"}}})])
            [:button.btn.btn-default {:type "submit"
                                      :disabled form-disabled?}

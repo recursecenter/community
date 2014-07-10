@@ -23,3 +23,8 @@ img.post-profile-image {
   @include make-lg-column-offset(1);
   @include make-lg-column(10);
 }
+
+.post-textarea {
+  min-height: 150px;
+  max-width: 100%;
+}
