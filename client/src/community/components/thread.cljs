@@ -89,7 +89,7 @@
            (when (:persisted? post)
              [:button.close {:type "button"
                              :onClick cancel-edit}
-              "x"])]]]))))
+              "×"])]]]))))
 
 (defcomponent post [{:keys [post autocomplete-users]} owner]
   (display-name [_] "Post")
