@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
   has_many :mentions, class_name: 'Notifications::Mention'
   has_many :group_memberships
   has_many :groups, through: :group_memberships
+  has_many :subscriptions
 
   scope :ordered_by_first_name, -> { order(first_name: :asc) }
 

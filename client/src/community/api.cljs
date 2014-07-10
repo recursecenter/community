@@ -176,3 +176,5 @@
   (make-api-fn (fn [{id :id}]
                  (POST (str "/notifications/" id "/read")))))
 
+
+(def subscribe [{:keys [subscribable-id resource-name]}])
