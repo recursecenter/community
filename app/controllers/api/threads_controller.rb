@@ -20,6 +20,18 @@ class Api::ThreadsController < Api::ApiController
     notify_broadcast_groups!(@post)
   end
 
+  def subscribe
+    @subscription = @thread.subscription_for(current_user)
+    authorize! :update, @subscription
+    @subscription.subscribe
+  end
+
+  def unsubscribe
+    @subscription = @thread.subscription_for(current_user)
+    authorize! :update, @subscription
+    @subscription.unsubscribe
+  end
+
 private
   def create_params
     subforum = Subforum.find(params[:subforum_id])

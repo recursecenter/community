@@ -179,18 +179,23 @@
   (display-name [_] "SubscriptionInfo")
 
   (render [_]
-          (letfn [(toggle-subscription-status [e]
-                    (if subscribed
-                      (api/unsubscribe @subscription)
-                      (api/subscribe @subscription)))]
-            (html
-              [:div.subscription-info
-               [:button.btn.btn-default.btn-small {:onClick toggle-subscription-status}
-                (if subscribed
-                  [:span [:span.glyphicon.glyphicon-volume-off] " Unsubscribe"]
-                  [:span [:span.gliphicon.gliphicon-volume-up] " Subscribe"])]
-
-               [:p.small.text-muted reason]]))))
+    (letfn [(toggle-subscription-status [e]
+              (go
+                (try
+                  (let [res (<? (if subscribed
+                                  (api/unsubscribe @subscription)
+                                  (api/subscribe @subscription)))]
+                    (om/transact! subscription [] #(merge % res)))
+                  (state/remove-errors! :ajax)
+                  (catch ExceptionInfo e
+                    (state/add-error! [:ajax :generic])))))]
+      (html
+        [:div.subscription-info
+         [:button.btn.btn-default.btn-small {:onClick toggle-subscription-status}
+          (if subscribed
+            [:span [:span.glyphicon.glyphicon-volume-off] " Unsubscribe"]
+            [:span [:span.glyphicon.glyphicon-volume-up] " Subscribe"])]
+         [:p.small.text-muted reason]]))))
 
 (defcomponent thread [{:keys [route-data thread] :as app} owner]
   (display-name [_] "Thread")

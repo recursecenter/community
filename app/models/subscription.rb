@@ -4,6 +4,18 @@ class Subscription < ActiveRecord::Base
 
   validate :unique_for_subscribable_and_user, on: :create
 
+  def subscribe
+    self.subscribed = true
+    self.reason = "You are receiving emails because you are subscribed."
+    save!
+  end
+
+  def unsubscribe
+    self.subscribed = false
+    self.reason = "You are not receiving emails because you have unsubscribed."
+    save!
+  end
+
   def resource_name
     if subscribable.respond_to?(:resource_name)
       subscribable.resource_name

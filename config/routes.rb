@@ -29,6 +29,8 @@ Rails.application.routes.draw do
       resources :subforum_groups do
         resources :subforums do
           resources :threads do
+            post :subscribe, on: :member
+            post :unsubscribe, on: :member
             resources :posts
           end
         end
