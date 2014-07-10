@@ -2,6 +2,7 @@
   (:require [community.state :as state]
             [community.util :refer-macros [<? p]]
             [community.api :as api]
+            [community.api.push :as push-api]
             [community.models :as models]
             [community.partials :as partials :refer [link-to]]
             [community.routes :as routes]
@@ -160,9 +161,9 @@
             (state/add-error! (:error-info e-data))))))))
 
 (defn start-thread-subscription! [thread-id app owner]
-  (when api/subscriptions-enabled?
+  (when push-api/subscriptions-enabled?
     (go
-      (let [[thread-feed unsubscribe!] (api/subscribe! {:feed :thread :id thread-id})]
+      (let [[thread-feed unsubscribe!] (push-api/subscribe! {:feed :thread :id thread-id})]
         (om/set-state! owner :ws-unsubscribe! unsubscribe!)
         (loop []
           (when-let [message (<! thread-feed)]
