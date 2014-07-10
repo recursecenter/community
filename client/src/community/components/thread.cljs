@@ -3,7 +3,7 @@
             [community.util :refer-macros [<? p]]
             [community.api :as api]
             [community.models :as models]
-            [community.partials :as partials]
+            [community.partials :as partials :refer [link-to]]
             [community.routes :as routes]
             [community.components.shared :as shared]
             [om.core :as om]
@@ -201,6 +201,9 @@
       (html
         (if thread
           [:div
+           (link-to (routes/routes :subforum (:subforum thread))
+             [:span [:span.glyphicon.glyphicon-chevron-left.small]
+              " " (-> thread :subforum :name)])
            [:h1 (:title thread)]
            [:ol.list-unstyled
             (for [post (:posts thread)]

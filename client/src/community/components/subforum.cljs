@@ -111,6 +111,9 @@
     (html
       (if subforum
         [:div
+         (link-to (routes :index)
+           [:span [:span.glyphicon.glyphicon-chevron-left.small]
+            " Community Index"])
          [:h1 (:name subforum)]
          [:table.table.table-striped
           [:thead
