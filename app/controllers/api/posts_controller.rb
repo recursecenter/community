@@ -9,10 +9,11 @@ class Api::PostsController < Api::ApiController
     @post.thread.mark_as_visited_for(current_user)
     PubSub.publish :created, :post, @post
     notify_broadcast_groups!(@post)
-    notify_mentioned_users!(@post)
+    notify_newly_mentioned_users!(@post)
   end
 
   def update
+    notify_newly_mentioned_users!(@post)
     @post.update!(update_params)
     PubSub.publish :updated, :post, @post
   end

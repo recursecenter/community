@@ -16,7 +16,7 @@ class Api::ThreadsController < Api::ApiController
     end
     @autocomplete_users = User.select(:id, :first_name, :last_name).ordered_by_first_name
 
-    notify_mentioned_users!(@post)
+    notify_newly_mentioned_users!(@post)
     notify_broadcast_groups!(@post)
   end
 
