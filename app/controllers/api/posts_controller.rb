@@ -1,19 +1,20 @@
 class Api::PostsController < Api::ApiController
   load_and_authorize_resource :post
 
-  include NotifyMentionedUsers
-  include NotifyBroadcastGroups
-
   def create
     @post.save!
     @post.thread.mark_as_visited_for(current_user)
     PubSub.publish :created, :post, @post
-    notify_broadcast_groups!(@post)
-    notify_newly_mentioned_users!(@post)
+
+    NotificationCoordinator.new(
+      MentionNotifier.new(@post, mentioned_users),
+      BroadcastNotifier.new(@post)
+    ).notify
   end
 
   def update
-    notify_newly_mentioned_users!(@post)
+    MentionNotifier.new(@post, mentioned_users).notify(mentioned_users)
+
     @post.update!(update_params)
     PubSub.publish :updated, :post, @post
   end
@@ -31,5 +32,17 @@ private
   def post_params
     params.require(:post).permit(:body).
       merge(broadcast_groups: Group.where(id: params.permit(broadcast_to: [])[:broadcast_to]))
+  end
+
+  def mentioned_users
+    if mention_params[:mentions].present?
+      User.where(id: mention_params[:mentions])
+    else
+      []
+    end
+  end
+
+  def mention_params
+    params.permit(mentions: [])
   end
 end

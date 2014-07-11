@@ -19,9 +19,9 @@ class NotificationMailer < ActionMailer::Base
          subject: %{#{@mentioned_by.name} mentioned you in "#{@post.thread.title}"})
   end
 
-  def broadcast_email(users, post, groups)
+  def broadcast_email(users, post)
     @post = post
-    @group_names = groups.map(&:name)
+    @group_names = post.broadcast_groups.map(&:name)
 
     mail(to: users.map(&:email),
          subject: "Community broadcast: #{@post.thread.title}")

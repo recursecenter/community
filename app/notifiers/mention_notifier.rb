@@ -1,3 +1,5 @@
+require 'set'
+
 class MentionNotifier < Notifier
   attr_reader :post, :mentioned_users
 
@@ -6,7 +8,7 @@ class MentionNotifier < Notifier
     @mentioned_users = mentioned_users
   end
 
-  def notify(post, email_recipients)
+  def notify(email_recipients)
     possible_recipients.each do |user|
       mention = user.mentions.create(post: post, mentioned_by: post.author)
       PubSub.publish :created, :notification, mention
@@ -18,11 +20,13 @@ class MentionNotifier < Notifier
   end
 
   def should_email?(u)
-    u.email_on_mention?
+    Ability.new(u).can?(:read, post) && u.email_on_mention?
   end
 
   def possible_recipients
-    @possible_recipients ||= (mentioned_users - post.mentions.map(&:user)).to_set
+    @possible_recipients ||= (
+      mentioned_users.select { |u| Ability.new(u).can? :read, post } -
+        post.mentions.map(&:user)
+    ).to_set
   end
 end
-

@@ -1,7 +1,5 @@
 require 'set'
 
-# each notifier's initializer needs to take the subject
-#   remove Ability.new from the coordinator and add it to the notifiers (possibly in the superclass)
 # implement the missing mailer methods
 # use
 
@@ -13,10 +11,8 @@ class NotificationCoordinator
     @email_recipients = Hash.new { |h, k| h[k] = [] }
   end
 
-  def notify(subject)
+  def notify
     users.each do |u|
-      next if Ability.new(u).cannot? :read, subject
-
       notifiers.each do |n|
         if n.possible_recipient?(u) && n.should_email?(u)
           email_recipients[n] << u
@@ -26,7 +22,7 @@ class NotificationCoordinator
     end
 
     notifiers.each do |n|
-      n.notify(subject, email_recipients[n])
+      n.notify(email_recipients[n])
     end
   end
 
