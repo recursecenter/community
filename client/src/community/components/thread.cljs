@@ -175,28 +175,6 @@
     (when ws-unsubscribe!
       (ws-unsubscribe!))))
 
-(defcomponent subscription-info [{:keys [subscribed reason] :as subscription} owner]
-  (display-name [_] "SubscriptionInfo")
-
-  (render [_]
-    (letfn [(toggle-subscription-status [e]
-              (go
-                (try
-                  (let [res (<? (if subscribed
-                                  (api/unsubscribe @subscription)
-                                  (api/subscribe @subscription)))]
-                    (om/transact! subscription [] #(merge % res)))
-                  (state/remove-errors! :ajax)
-                  (catch ExceptionInfo e
-                    (state/add-error! [:ajax :generic])))))]
-      (html
-        [:div.subscription-info
-         [:button.btn.btn-default.btn-small {:onClick toggle-subscription-status}
-          (if subscribed
-            [:span [:span.glyphicon.glyphicon-volume-off] " Unsubscribe"]
-            [:span [:span.glyphicon.glyphicon-volume-up] " Subscribe"])]
-         [:p.small.text-muted reason]]))))
-
 (defcomponent thread [{:keys [route-data thread] :as app} owner]
   (display-name [_] "Thread")
 
@@ -227,7 +205,7 @@
            (link-to (routes/routes :subforum (:subforum thread))
              [:span [:span.glyphicon.glyphicon-chevron-left.small]
               " " (-> thread :subforum :name)])
-           (->subscription-info (:subscription thread))
+           (shared/->subscription-info (:subscription thread))
            [:h1 (:title thread)]
            [:ol.list-unstyled
             (for [post (:posts thread)]

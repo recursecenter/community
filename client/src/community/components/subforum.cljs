@@ -114,6 +114,7 @@
          (link-to (routes :index)
            [:span [:span.glyphicon.glyphicon-chevron-left.small]
             " Community Index"])
+         (shared/->subscription-info (:subscription subforum))
          [:h1 (:name subforum)]
          [:table.table.table-striped
           [:thead

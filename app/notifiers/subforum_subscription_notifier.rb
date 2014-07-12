@@ -15,6 +15,6 @@ class SubforumSubscriptionNotifier < Notifier
   end
 
   def possible_recipients
-    @possible_recipients ||= subforum.subscribed_users.select { |u| Ability.new(u).can? :read, thread}.to_set
+    @possible_recipients ||= thread.subforum.subscribers.select { |u| Ability.new(u).can? :read, thread}.to_set
   end
 end

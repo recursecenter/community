@@ -2,6 +2,9 @@ class Api::ThreadsController < Api::ApiController
   load_and_authorize_resource :thread, class: 'DiscussionThread'
 
   include MentionedUsers
+  include SubscriptionActions
+
+  has_subscribable :thread
 
   def show
     @thread.mark_as_visited_for(current_user)
@@ -17,20 +20,9 @@ class Api::ThreadsController < Api::ApiController
 
     NotificationCoordinator.new(
       MentionNotifier.new(@post, mentioned_users),
+      SubforumSubscriptionNotifier.new(@post.thread),
       BroadcastNotifier.new(@post)
     ).notify
-  end
-
-  def subscribe
-    @subscription = @thread.subscription_for(current_user)
-    authorize! :update, @subscription
-    @subscription.subscribe
-  end
-
-  def unsubscribe
-    @subscription = @thread.subscription_for(current_user)
-    authorize! :update, @subscription
-    @subscription.unsubscribe
   end
 
 private

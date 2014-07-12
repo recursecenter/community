@@ -36,6 +36,15 @@ class NotificationMailer < ActionMailer::Base
          subject: %{New post in "#{post.thread.title}"})
   end
 
+  def new_thread_in_subscribed_subforum_email(users, thread)
+    @thread = thread
+
+    @quoted_post_body = quoted_post_body(@thread.posts.first)
+
+    mail(to: users.map(&:email),
+         subject: %{New thread posted in "#{thread.subforum.name}"})
+  end
+
 private
   def quoted_post_body(post)
     post.body.split("\n").map do |line|

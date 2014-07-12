@@ -28,6 +28,9 @@ Rails.application.routes.draw do
     shallow do
       resources :subforum_groups do
         resources :subforums do
+          post :subscribe, on: :member
+          post :unsubscribe, on: :member
+
           resources :threads do
             post :subscribe, on: :member
             post :unsubscribe, on: :member
