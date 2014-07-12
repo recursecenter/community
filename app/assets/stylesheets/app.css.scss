@@ -5,3 +5,21 @@
 #sidebar {
   @include make-lg-column(3);
 }
+
+.navbar {
+  border-top: 5px solid #77D102;
+  height: 45px;
+  margin-bottom: 1.25em;
+  background-color: #000;
+
+  .fi-comments {
+    color: #fff;
+    font-size: 1.25em;
+  }
+
+  a {
+    color: #fff;
+  }
+}
+
+

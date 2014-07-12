@@ -93,6 +93,7 @@
          (partials/link-to "/" {:class "navbar-brand"} "Community")]
         [:ul.nav.navbar-nav.navbar-right
          [:li [:a {:href "https://github.com/hackerschool/community"} "Source"]]
+         [:li [:a {:href "https://github.com/hackerschool/community"} [:i.fi-comments]]]
          (when current-user
            [:li.dropdown
             [:a.dropdown-toggle {:href "#" :data-toggle "dropdown"}
