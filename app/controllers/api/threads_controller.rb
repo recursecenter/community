@@ -23,6 +23,10 @@ class Api::ThreadsController < Api::ApiController
       SubforumSubscriptionNotifier.new(@post.thread),
       BroadcastNotifier.new(@post)
     ).notify
+
+    if @thread.created_by.subscribe_on_create
+      @thread.created_by.subscribe_to(@thread, "You are receiving emails because you created this thread.")
+    end
   end
 
 private
