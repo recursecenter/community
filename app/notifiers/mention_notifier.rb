@@ -31,7 +31,7 @@ class MentionNotifier < Notifier
   def possible_recipients
     @possible_recipients ||= (
       mentioned_users.select { |u| Ability.new(u).can? :read, post } -
-        post.mentions.map(&:user)
+        post.mentions.includes(:user).map(&:user)
     ).to_set
   end
 end
