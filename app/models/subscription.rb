@@ -6,7 +6,7 @@ class Subscription < ActiveRecord::Base
 
   def subscribe
     self.subscribed = true
-    self.reason = "You are receiving emails because you are subscribed."
+    self.reason = "You are receiving emails because you subscribed to this #{resource_name}."
     save!
   end
 
