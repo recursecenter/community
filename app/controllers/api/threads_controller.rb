@@ -1,8 +1,7 @@
 class Api::ThreadsController < Api::ApiController
   load_and_authorize_resource :thread, class: 'DiscussionThread'
 
-  include NotifyMentionedUsers
-  include NotifyBroadcastGroups
+  include MentionedUsers
 
   def show
     @thread.mark_as_visited_for(current_user)
@@ -16,8 +15,10 @@ class Api::ThreadsController < Api::ApiController
     end
     @autocomplete_users = User.select(:id, :first_name, :last_name).ordered_by_first_name
 
-    notify_newly_mentioned_users!(@post)
-    notify_broadcast_groups!(@post)
+    NotificationCoordinator.new(
+      MentionNotifier.new(@post, mentioned_users),
+      BroadcastNotifier.new(@post)
+    ).notify
   end
 
   def subscribe

@@ -8,13 +8,14 @@ class MentionNotifier < Notifier
     @mentioned_users = mentioned_users
   end
 
-  def notify(email_recipients)
+  def notify(email_recipients=possible_recipients)
     possible_recipients.each do |user|
-      mention = user.mentions.create(post: post, mentioned_by: post.author)
+      mention = user.mention_for_post(post)
       PubSub.publish :created, :notification, mention
     end
 
     email_recipients.each do |user|
+      mention = user.mention_for_post(post)
       NotificationMailer.delay.user_mentioned_email(mention)
     end
   end

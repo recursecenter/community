@@ -8,8 +8,10 @@ class SubforumSubscriptionNotifier < Notifier
   end
 
   def notify(email_recipients)
-    mail = NotificationMailer.new_thread_in_subscribed_subforum_email(email_recipients, thread)
-    BatchMailSender.new(mail).delay.deliver
+    unless email_recipients.empty?
+      mail = NotificationMailer.new_thread_in_subscribed_subforum_email(email_recipients, thread)
+      BatchMailSender.new(mail).delay.deliver
+    end
   end
 
   def possible_recipients

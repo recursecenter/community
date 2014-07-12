@@ -1,6 +1,8 @@
 class Api::PostsController < Api::ApiController
   load_and_authorize_resource :post
 
+  include MentionedUsers
+
   def create
     @post.save!
     @post.thread.mark_as_visited_for(current_user)
@@ -13,7 +15,7 @@ class Api::PostsController < Api::ApiController
   end
 
   def update
-    MentionNotifier.new(@post, mentioned_users).notify(mentioned_users)
+    MentionNotifier.new(@post, mentioned_users).notify
 
     @post.update!(update_params)
     PubSub.publish :updated, :post, @post
@@ -32,17 +34,5 @@ private
   def post_params
     params.require(:post).permit(:body).
       merge(broadcast_groups: Group.where(id: params.permit(broadcast_to: [])[:broadcast_to]))
-  end
-
-  def mentioned_users
-    if mention_params[:mentions].present?
-      User.where(id: mention_params[:mentions])
-    else
-      []
-    end
-  end
-
-  def mention_params
-    params.permit(mentions: [])
   end
 end

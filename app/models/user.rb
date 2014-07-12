@@ -9,10 +9,6 @@ class User < ActiveRecord::Base
 
   scope :ordered_by_first_name, -> { order(first_name: :asc) }
 
-  def name
-    "#{first_name} #{last_name}"
-  end
-
   def self.create_or_update_from_api_data(user_data)
     user = where(hacker_school_id: user_data["id"]).first_or_initialize
 
@@ -35,5 +31,13 @@ class User < ActiveRecord::Base
     user.save!
 
     user
+  end
+
+  def name
+    "#{first_name} #{last_name}"
+  end
+
+  def mention_for_post(post)
+    mentions.where(post: post, mentioned_by: post.author).first_or_create
   end
 end

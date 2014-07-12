@@ -7,4 +7,3 @@ class Notifier
     possible_recipients.include?(u)
   end
 end
-

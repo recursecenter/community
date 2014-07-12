@@ -8,8 +8,10 @@ class BroadcastNotifier < Notifier
   end
 
   def notify(email_recipients)
-    mail = NotificationMailer.broadcast_email(email_recipients, post)
-    BatchMailSender.new(mail).delay.deliver
+    unless email_recipients.empty?
+      mail = NotificationMailer.broadcast_email(email_recipients, post)
+      BatchMailSender.new(mail).delay.deliver
+    end
   end
 
   def possible_recipients
