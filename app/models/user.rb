@@ -40,4 +40,11 @@ class User < ActiveRecord::Base
   def mention_for_post(post)
     mentions.where(post: post, mentioned_by: post.author).first_or_create
   end
+
+  def subscribe_to(subscribable, reason)
+    subscription = subscribable.subscription_for(self)
+    subscription.subscribed = true
+    subscription.reason = reason
+    subscription.save!
+  end
 end

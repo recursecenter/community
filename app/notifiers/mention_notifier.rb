@@ -15,6 +15,10 @@ class MentionNotifier < Notifier
     end
 
     email_recipients.each do |user|
+      if user.subscribe_when_mentioned?
+        user.subscribe_to(post.thread, "You are receiving emails because you were @mentioned in this thread.")
+      end
+
       mention = user.mention_for_post(post)
       NotificationMailer.delay.user_mentioned_email(mention)
     end
