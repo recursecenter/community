@@ -1,8 +1,5 @@
 require 'set'
 
-# implement the missing mailer methods
-# use
-
 class NotificationCoordinator
   attr_reader :notifiers, :email_recipients
 
