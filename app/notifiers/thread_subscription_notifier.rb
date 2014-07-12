@@ -15,6 +15,6 @@ class ThreadSubscriptionNotifier < Notifier
   end
 
   def possible_recipients
-    @possible_recipients ||= post.thread.subscribed_users.select { |u| Ability.new(u).can? :read, post }.to_set
+    @possible_recipients ||= post.thread.subscribers.select { |u| Ability.new(u).can? :read, post }.to_set
   end
 end

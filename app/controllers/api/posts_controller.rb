@@ -10,6 +10,7 @@ class Api::PostsController < Api::ApiController
 
     NotificationCoordinator.new(
       MentionNotifier.new(@post, mentioned_users),
+      ThreadSubscriptionNotifier.new(@post),
       BroadcastNotifier.new(@post)
     ).notify
   end

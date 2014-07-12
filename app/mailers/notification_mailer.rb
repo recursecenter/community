@@ -27,6 +27,15 @@ class NotificationMailer < ActionMailer::Base
          subject: "Community broadcast: #{@post.thread.title}")
   end
 
+  def new_post_in_subscribed_thread_email(users, post)
+    @post = post
+
+    @quoted_post_body = quoted_post_body(@post)
+
+    mail(to: users.map(&:email),
+         subject: %{New post in "#{post.thread.title}"})
+  end
+
 private
   def quoted_post_body(post)
     post.body.split("\n").map do |line|
