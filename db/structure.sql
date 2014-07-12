@@ -332,7 +332,9 @@ CREATE TABLE users (
     hacker_school_id integer,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    email_on_mention boolean DEFAULT true
+    email_on_mention boolean DEFAULT true,
+    subscribe_on_create boolean DEFAULT true,
+    subscribe_when_mentioned boolean DEFAULT true
 );
 
 
@@ -759,4 +761,6 @@ INSERT INTO schema_migrations (version) VALUES ('20140707203027');
 INSERT INTO schema_migrations (version) VALUES ('20140708205925');
 
 INSERT INTO schema_migrations (version) VALUES ('20140710163204');
+
+INSERT INTO schema_migrations (version) VALUES ('20140712031258');
 

@@ -56,9 +56,20 @@
          [:div.row
           [:div.settings-container
            [:div.panel.panel-default
-            [:div.panel-heading [:strong "Notifications"]]
+            [:div.panel-heading [:strong "Email notifications"]]
             [:div.panel-body
              (->live-checkbox settings
                {:opts {:submit submit-setting
                        :key :email-on-mention
-                       :label [:span "Email me when I get " [:strong "@mentioned"] "."]}})]]]]]))))
+                       :label [:span "Email me when I get " [:strong "@mentioned"] "."]}})]]
+           [:div.panel.panel-default
+            [:div.panel-heading [:strong "Subscriptions"]]
+            [:div.panel-body
+             (->live-checkbox settings
+               {:opts {:submit submit-setting
+                       :key :subscribe-on-create
+                       :label [:span "Subscribe me to threads I create."]}})
+             (->live-checkbox settings
+               {:opts {:submit submit-setting
+                       :key :subscribe-when-mentioned
+                       :label [:span "Subscribe me to threads I am " [:strong "@mentioned"] " in."]}})]]]]]))))
