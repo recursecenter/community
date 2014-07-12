@@ -1,7 +1,8 @@
 .post {
-  margin: 10px 0;
+  margin: .5em 0;
+  padding: .5em 0;
   border-top: 1px dotted #bbb;
-  padding: 1em 0em;
+
   a {
     color: #77D102;
   }
@@ -10,23 +11,22 @@
 .post-author {
   @include make-sm-column(1);
   text-align: center;
-  padding-top: 10px;
+  font-size: .875em;
+  padding-top: .5em;
 }
 
 img.post-profile-image {
   @include center-block;
+  margin-bottom: .5em
 }
 
 .post-body {
-  @include make-lg-column(8);
-  border-top: 1px solid $table-border-color;
-  padding-top: 10px;
-  line-height: 1.5em;
+  @include make-lg-column(10);
 }
 
 .post-controls {
   @include make-lg-column-offset(1);
-  @include make-lg-column(8);
+  @include make-lg-column(10);
 }
 
 .post-textarea {
