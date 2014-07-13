@@ -10,6 +10,7 @@ class DiscussionThread < ActiveRecord::Base
   validates :title, :created_by, :subforum, presence: {allow_blank: false}
 
   has_many :subscriptions, as: :subscribable
+  has_many :subscribers, through: :subscriptions, source: 'user'
 
   def resource_name
     "thread"
