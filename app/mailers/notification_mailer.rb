@@ -42,7 +42,7 @@ class NotificationMailer < ActionMailer::Base
     @quoted_post_body = quoted_post_body(@thread.posts.first)
 
     mail(to: users.map(&:email),
-         subject: %{New thread posted in "#{thread.subforum.name}"})
+         subject: %{New thread "#{thread.title}" in #{thread.subforum.name}})
   end
 
 private
