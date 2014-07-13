@@ -14,6 +14,6 @@ class SubforumSubscriptionNotifier < Notifier
   end
 
   def possible_recipients
-    @possible_recipients ||= thread.subforum.subscribers.select { |u| Ability.new(u).can? :read, thread }.to_set
+    @possible_recipients ||= thread.subforum.subscribers.where.not(id: thread.created_by).select { |u| Ability.new(u).can? :read, thread }.to_set
   end
 end
