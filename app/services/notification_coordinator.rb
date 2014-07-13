@@ -25,8 +25,6 @@ class NotificationCoordinator
 
 private
   def users
-    @users ||= notifiers.map do |n|
-      n.possible_recipients
-    end.inject(Set.new) { |s1, s2| s1 | s2 }
+    @users ||= notifiers.map(&:possible_recipients).inject(Set.new, &:union)
   end
 end
