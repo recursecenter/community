@@ -83,7 +83,8 @@
                         :passthrough
                         {:id post-body-id
                          :class ["form-control" "post-textarea"]
-                         :name "post[body]"}}})])]
+                         :name "post[body]"
+                         :placeholder "Compose your post..."}}})])]
            [:div.post-form-controls
             [:button.btn.btn-default.btn-sm {:type "submit"
                                              :disabled form-disabled?}
@@ -210,10 +211,12 @@
             (for [post (:posts thread)]
               (->post {:post post :autocomplete-users autocomplete-users}
                       {:react-key (:id post)}))]
-           (->post-form {:init-post (models/empty-post (:id thread))
-                         :broadcast-groups (:broadcast-groups thread)
-                         :autocomplete-users autocomplete-users
-                         :after-persisted (fn [post reset-form!]
-                                            (reset-form!)
-                                            (update-post! app post))})]
+           [:div.new-post.panel.panel-default
+            [:div.panel-body
+             (->post-form {:init-post (models/empty-post (:id thread))
+                           :broadcast-groups (:broadcast-groups thread)
+                           :autocomplete-users autocomplete-users
+                           :after-persisted (fn [post reset-form!]
+                                              (reset-form!)
+                                              (update-post! app post))})]]]
           [:div])))))

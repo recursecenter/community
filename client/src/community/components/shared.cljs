@@ -110,8 +110,8 @@
                      (on-toggle id))]
         [:div.btn-group.dropup
          [:div.dropdown
-          [:button.btn.btn-default.btn-xs.dropdown-toggle {:type "button" :data-toggle "dropdown"}
-           [:span.glyphicon.glyphicon-plus.small] " broadcast"]
+          [:button.btn.btn-link.btn-xs.dropdown-toggle {:type "button" :data-toggle "dropdown"}
+           "Add broadcast group"]
           [:ul.dropdown-menu
            (for [{:keys [name id]} (filter (complement :selected?) broadcast-groups)]
              [:li [:a {:href "#" :onClick (partial toggle id)}

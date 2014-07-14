@@ -30,9 +30,14 @@
   .post-controls, .post-form-controls {
     @include make-sm-column(2);
   }
+}
 
-  .post-textarea {
-    min-height: 150px;
-    max-width: 100%;
-  }
+.new-post {
+  margin-top: 2em;
+  padding: 0 1.5em;
+}
+
+.post-textarea {
+  min-height: 150px;
+  max-width: 100%;
 }
