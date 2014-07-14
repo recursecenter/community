@@ -56,7 +56,7 @@
       (html
         [:div
          (if (not (empty? errors))
-           [:div (map (fn [e] [:div e]) errors)])
+           [:div (map (fn [e] [:p.text-danger e]) errors)])
          [:div.row
           [:form {:onSubmit (fn [e]
                               (.preventDefault e)
