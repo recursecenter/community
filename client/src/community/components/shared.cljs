@@ -117,5 +117,5 @@
              [:li [:a {:href "#" :onClick (partial toggle id)}
                    name]])]
           (for [{:keys [name id]} (filter :selected? broadcast-groups)]
-            [:span.label.label-default.broadcast-label {:onClick (partial toggle id)}
+            [:span.label.label-info.broadcast-label {:onClick (partial toggle id)}
              "× " name])]]))))
