@@ -161,6 +161,4 @@
           [:div.row
            [:div#main-content
             (let [component (routes/dispatch route-data)]
-              (om/build component app))]
-           [:div#sidebar
-            (->notifications (:current-user app))]])]])))
+              (om/build component app))]])]])))
