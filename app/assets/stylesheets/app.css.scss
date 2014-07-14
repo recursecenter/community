@@ -1,5 +1,6 @@
 #main-content {
-  @include make-lg-column(9);
+  @include make-lg-column-offset(1);
+  @include make-lg-column(10);
 }
 
 #sidebar {
@@ -21,5 +22,3 @@
 .navbar-header {
   font-size: 1.25em;
 }
-
-
