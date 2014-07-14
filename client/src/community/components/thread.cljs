@@ -201,9 +201,10 @@
       (html
         (if thread
           [:div
-           (link-to (routes/routes :subforum (:subforum thread))
-             [:span [:span.glyphicon.glyphicon-chevron-left.small]
-              " " (-> thread :subforum :name)])
+           [:ol.breadcrumb
+            [:li (link-to (routes/routes :index) "Community")]
+            [:li (link-to (routes/routes :subforum (:subforum thread)) (-> thread :subforum :name))]
+            [:li.active (:title thread)]]
            [:h1 (:title thread)]
            [:ol.list-unstyled
             (for [post (:posts thread)]
