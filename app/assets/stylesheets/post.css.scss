@@ -21,12 +21,11 @@ img.post-profile-image {
 }
 
 .post-body {
-  @include make-lg-column(10);
+  @include make-sm-column(9);
 }
 
 .post-controls {
-  @include make-lg-column-offset(1);
-  @include make-lg-column(10);
+  @include make-sm-column(2);
 }
 
 .post-textarea {

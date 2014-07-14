@@ -119,14 +119,14 @@
                          :cancel-edit (fn []
                                         (om/set-state! owner :editing? false))})
 
-           (partials/html-from-markdown (:body post)))]]
-
-       (when (and (:editable post) (not editing?))
-         [:a {:href "#"
-              :onClick (fn [e]
-                         (.preventDefault e)
-                         (om/set-state! owner :editing? true))}
-          "Edit"])])))
+           (partials/html-from-markdown (:body post)))]
+        [:div.post-controls
+         (when (and (:editable post) (not editing?))
+           [:a {:href "#"
+                :onClick (fn [e]
+                           (.preventDefault e)
+                           (om/set-state! owner :editing? true))}
+            "Edit"])]]])))
 
 (defn reverse-find-index
   [pred v]
