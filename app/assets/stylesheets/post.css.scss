@@ -7,20 +7,17 @@
     color: #77D102;
   }
 
-  .post-author {
+  .post-author-image {
     @include make-sm-column(1);
-    text-align: center;
-    font-size: .875em;
-    padding-top: .5em;
   }
 
-  img.post-profile-image {
-    @include center-block;
-    margin-bottom: .5em
+  .post-metadata {
+    @include make-sm-column(2);
+    font-size: .875em;
   }
 
   .post-content {
-    @include make-sm-column(11);
+    @include make-sm-column(9);
   }
 
   .post-body, .post-form-body {

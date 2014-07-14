@@ -1,6 +1,6 @@
 (ns community.components.thread
   (:require [community.state :as state]
-            [community.util :refer-macros [<? p]]
+            [community.util :as util :refer-macros [<? p]]
             [community.api :as api]
             [community.models :as models]
             [community.partials :as partials :refer [link-to]]
@@ -102,13 +102,16 @@
     (html
       [:li.post {:key (:id post)}
        [:div.row
-        [:div.post-author
-         [:img.post-profile-image
+        [:div.post-author-image
+         [:img
           {:src (-> post :author :avatar-url)
            :width "50"       ;TODO: request different image sizes
-           }]
+           }]]
+        [:div.post-metadata
          [:a {:href (routes/hs-route :person (:author post))}
-          (-> post :author :name)]]
+          (-> post :author :name)]
+         [:div (-> post :author :batch-name)]
+         [:div (util/human-format-time (:created-at post))]]
         [:div.post-content
          (if editing?
            (->post-form {:init-post (om/value post)
