@@ -54,42 +54,42 @@
   (render [this]
     (let [{:keys [form-disabled? c-post post errors]} (om/get-state owner)]
       (html
-        [:div.panel {:class (if (empty? errors) "panel-default" "panel-danger")}
+        [:div
          (if (not (empty? errors))
-           [:div.panel-heading (map (fn [e] [:div e]) errors)])
-         [:div.panel-body
+           [:div (map (fn [e] [:div e]) errors)])
+         [:div.row
           [:form {:onSubmit (fn [e]
                               (.preventDefault e)
                               (when-not form-disabled?
                                 (async/put! c-post post)
                                 (om/set-state! owner :form-disabled? true)))}
-           (when (not (:persisted? post))
-             [:div.form-group
-              (shared/->broadcast-group-picker
-               {:broadcast-groups (mapv #(assoc % :selected? (contains? (:broadcast-to post) (:id %)))
-                                       broadcast-groups)}
-               {:opts {:on-toggle (fn [id]
-                                    (om/update-state! owner [:post :broadcast-to]
-                                                      #(models/toggle-broadcast-to % id)))}})])
-           (let [post-body-id (str "post-body-" (or (:id post) "new"))]
-             [:div.form-group
-              [:label.hide {:for post-body-id} "Body"]
-              (shared/->autocompleting-textarea
-               {:value (:body post)
-                :autocomplete-list (mapv :name autocomplete-users)}
-               {:opts {:focus? (:persisted? post)
-                       :on-change #(om/set-state! owner [:post :body] %)
-                       :passthrough
-                       {:id post-body-id
-                        :class ["form-control" "post-textarea"]
-                        :name "post[body]"}}})])
-           [:button.btn.btn-default {:type "submit"
-                                     :disabled form-disabled?}
-            (if (:persisted? post) "Update" "Post")]
-           (when (:persisted? post)
-             [:button.close {:type "button"
-                             :onClick cancel-edit}
-              "×"])]]]))))
+           [:div.post-form-body
+            (when (not (:persisted? post))
+              [:div.form-group
+               (shared/->broadcast-group-picker
+                {:broadcast-groups (mapv #(assoc % :selected? (contains? (:broadcast-to post) (:id %)))
+                                         broadcast-groups)}
+                {:opts {:on-toggle (fn [id]
+                                     (om/update-state! owner [:post :broadcast-to]
+                                                       #(models/toggle-broadcast-to % id)))}})])
+            (let [post-body-id (str "post-body-" (or (:id post) "new"))]
+              [:div.form-group
+               [:label.hide {:for post-body-id} "Body"]
+               (shared/->autocompleting-textarea
+                {:value (:body post)
+                 :autocomplete-list (mapv :name autocomplete-users)}
+                {:opts {:focus? (:persisted? post)
+                        :on-change #(om/set-state! owner [:post :body] %)
+                        :passthrough
+                        {:id post-body-id
+                         :class ["form-control" "post-textarea"]
+                         :name "post[body]"}}})])]
+           [:div.post-form-controls
+            [:button.btn.btn-default.btn-sm {:type "submit"
+                                             :disabled form-disabled?}
+             (if (:persisted? post) "Update" "Post")]
+            (when (:persisted? post)
+              [:button.btn.btn-link.btn-sm {:onClick cancel-edit} "Cancel"])]]]]))))
 
 (defcomponent post [{:keys [post autocomplete-users]} owner]
   (display-name [_] "Post")
@@ -108,7 +108,7 @@
            }]
          [:a {:href (routes/hs-route :person (:author post))}
           (-> post :author :name)]]
-        [:div.post-body
+        [:div.post-content
          (if editing?
            (->post-form {:init-post (om/value post)
                          :autocomplete-users autocomplete-users
@@ -118,15 +118,16 @@
                                               (om/update! post k v)))
                          :cancel-edit (fn []
                                         (om/set-state! owner :editing? false))})
-
-           (partials/html-from-markdown (:body post)))]
-        [:div.post-controls
-         (when (and (:editable post) (not editing?))
-           [:a {:href "#"
-                :onClick (fn [e]
-                           (.preventDefault e)
-                           (om/set-state! owner :editing? true))}
-            "Edit"])]]])))
+           [:div.row
+            [:div.post-body
+             (partials/html-from-markdown (:body post))]
+            [:div.post-controls
+             (when (and (:editable post) (not editing?))
+               [:button.btn.btn-default.btn-sm
+                {:onClick (fn [e]
+                            (.preventDefault e)
+                            (om/set-state! owner :editing? true))}
+                "Edit"])]])]]])))
 
 (defn reverse-find-index
   [pred v]

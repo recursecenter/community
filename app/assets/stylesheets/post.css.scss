@@ -6,33 +6,33 @@
   a {
     color: #77D102;
   }
-}
 
-.post-author {
-  @include make-sm-column(1);
-  text-align: center;
-  font-size: .875em;
-  padding-top: .5em;
-}
+  .post-author {
+    @include make-sm-column(1);
+    text-align: center;
+    font-size: .875em;
+    padding-top: .5em;
+  }
 
-img.post-profile-image {
-  @include center-block;
-  margin-bottom: .5em
-}
+  img.post-profile-image {
+    @include center-block;
+    margin-bottom: .5em
+  }
 
-.post-body {
-  @include make-sm-column(9);
-}
+  .post-content {
+    @include make-sm-column(11);
+  }
 
-.post-controls {
-  @include make-sm-column(2);
-}
+  .post-body, .post-form-body {
+    @include make-sm-column(10);
+  }
 
-.post-textarea {
-  min-height: 150px;
-  max-width: 100%;
-}
+  .post-controls, .post-form-controls {
+    @include make-sm-column(2);
+  }
 
-.btn-default {
-  border-color: #77D102;
+  .post-textarea {
+    min-height: 150px;
+    max-width: 100%;
+  }
 }
