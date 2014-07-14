@@ -92,7 +92,6 @@
         [:div.navbar-header
          (partials/link-to "/" {:class "navbar-brand"} "Community")]
         [:ul.nav.navbar-nav.navbar-right
-         [:li [:a {:href "https://github.com/hackerschool/community"} "Source"]]
          [:li [:a {:href "https://github.com/hackerschool/community"} [:i.fa.fa-comments]]]
          (when current-user
            [:li.dropdown
@@ -161,4 +160,7 @@
           [:div.row
            [:div#main-content
             (let [component (routes/dispatch route-data)]
-              (om/build component app))]])]])))
+              (om/build component app))]])
+        [:footer
+         [:ul.list-inline
+          [:li [:a {:href "https://github.com/hackerschool/community"} [:i.fa.fa-code-fork] " Source"]]]]]])))
