@@ -6,8 +6,6 @@ class Subforum < ActiveRecord::Base
   has_slug_for :name
 
   has_many :threads, class_name: 'DiscussionThread'
-  has_many :subscriptions, as: :subscribable
-  has_many :subscribers, through: :subscriptions, source: 'user'
 
   # we need to specify class_name because we want "thread" to be pluralized,
   # not "status".
