@@ -4,10 +4,21 @@ body {
   font-family: 'Source Sans Pro', sans-serif;
 }
 
+a {
+  color: #77D102;
+}
+
 .btn-default {
   border-color: #77D102;
 }
 
 .text-danger {
   font-style: italic;
+}
+
+.breadcrumb {
+  background-color: #fff;
+  padding-left: 0;
+  border-bottom: #ccc dotted 1px;
+  border-radius: 0;
 }
