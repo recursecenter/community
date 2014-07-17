@@ -8,6 +8,7 @@
 }
 
 .navbar {
+  border-radius: 0;
   border-top: 5px solid #77D102;
   height: 45px;
   margin-bottom: 1.25em;
@@ -17,8 +18,4 @@
     color: #fff;
     font-size: 1.25em;
   }
-}
-
-.navbar-header {
-  font-size: 1.25em;
 }
