@@ -15,7 +15,7 @@
 
 (defmethod notification-summary "mention" [mention]
   (html
-    [:div
+    [:div {:class (if (:read mention) "text-muted")}
      [:strong (-> mention :mentioned-by :name)]
      " mentioned you in "
      [:strong (-> mention :thread :title)]]))
@@ -46,12 +46,12 @@
 
   (render [_]
     (html
-      [:a.list-group-item
+      [:a.list-group-item.notification-item
        {:href (notification-link-to notification)
         :onClick (fn [e]
                    (.preventDefault e)
                    (on-click e))}
-       [:button.close.pull-right
+       [:button.close.pull-right.notification-close
         {:onClick (fn [e]
                     (.preventDefault e)
                     (on-remove e)
@@ -61,8 +61,7 @@
          :title "Remove"
          :ref "remove-button"}
         "×"]
-       [:div {:class (if (:read notification) "text-muted")}
-        (notification-summary notification)]])))
+       (notification-summary notification)])))
 
 (defcomponent notifications [user owner]
   (display-name [_] "Notifications")

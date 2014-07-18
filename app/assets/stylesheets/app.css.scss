@@ -34,4 +34,15 @@
   margin-bottom: 0;
   max-height: 250px;
   overflow: auto;
+  width: 300px;
+
+  .notification-item {
+    white-space: normal;
+    border: none;
+  }
+
+  .notification-close {
+    position: relative;
+    left: 10px;
+  }
 }
