@@ -42,7 +42,8 @@
     "Notification")
 
   (did-mount [_]
-    (.tooltip (js/jQuery (om/get-node owner "remove-button"))))
+    (.tooltip (js/jQuery (om/get-node owner "remove-button"))
+              #js {:container "body"}))
 
   (render [_]
     (html
