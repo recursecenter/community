@@ -15,7 +15,7 @@
 
 (defmethod notification-summary "mention" [mention]
   (html
-    [:div
+    [:div {:class (if (:read mention) "text-muted")}
      [:strong (-> mention :mentioned-by :name)]
      " mentioned you in "
      [:strong (-> mention :thread :title)]]))
@@ -46,12 +46,12 @@
 
   (render [_]
     (html
-      [:a.list-group-item
+      [:a.list-group-item.notification-item
        {:href (notification-link-to notification)
         :onClick (fn [e]
                    (.preventDefault e)
                    (on-click e))}
-       [:button.close.pull-right
+       [:button.close.pull-right.notification-close
         {:onClick (fn [e]
                     (.preventDefault e)
                     (on-remove e)
@@ -61,8 +61,7 @@
          :title "Remove"
          :ref "remove-button"}
         "×"]
-       [:div {:class (if (:read notification) "text-muted")}
-        (notification-summary notification)]])))
+       (notification-summary notification)])))
 
 (defcomponent notifications [user owner]
   (display-name [_] "Notifications")
@@ -70,29 +69,73 @@
   (render [_]
     (let [notifications (:notifications user)]
       (html
-        [:div#notifications
-         [:h3 "Notifications"]
-         (if (empty? notifications)
-           [:div "No new notifications"]
-           [:div.list-group
+        [:ul#notifications.dropdown-menu
+         [:li.list-group.notification-group
+          (if (empty? notifications)
+            [:span.list-group-item "No new notifications"]
             (for [[i n] (map-indexed vector notifications)]
               (->notification {:notification n
                                :on-click #(do (mark-as-read! n)
                                               (location/redirect-to (notification-link-to @n)))
                                :on-remove #(do (mark-as-read! n)
-                                               (delete-notification! user i))}))])]))))
+                                               (delete-notification! user i))})))]]))))
 
-(defcomponent navbar [{:keys [current-user]} owner]
+(defn toggle! [owner attr]
+  (om/set-state! owner attr (not (om/get-state owner attr))))
+
+(defn transitioned? [owner attr from to]
+  (and (= from (om/get-render-state owner attr))
+       (= to (om/get-state owner attr))))
+
+(defn child-of? [child parent]
+  (cond (not (.-parentNode child))
+        false
+
+        (identical? (.-parentNode child) parent)
+        true
+
+        :else
+        (recur (.-parentNode child) parent)))
+
+(defcomponent notifications-dropdown [user owner]
+  (init-state [_]
+    {:open? false
+     :on-click-cb (fn [e]
+                    (when-not (child-of? (.-target e) (om/get-node owner))
+                      (om/set-state! owner :open? false)))})
+
+  (will-update [_ next-props next-state]
+    (cond (transitioned? owner :open? false true)
+          (.addEventListener js/document.body "click" (om/get-state owner :on-click-cb) false)
+
+          (transitioned? owner :open? true false)
+          (.removeEventListener js/document.body "click" (om/get-state owner :on-click-cb))))
+
+  (render-state [_ {:keys [open?]}]
+    (let [unread-count (count (filter (complement :read) (:notifications user)))]
+      (html
+        [:li.dropdown {:ref "dropdown" :class (if open? "open")}
+         (if-not (zero? unread-count)
+           [:span.badge.unread-count unread-count])
+         [:a.dropdown-toggle {:href "#"
+                              :onClick (fn [e]
+                                         (.preventDefault e)
+                                         (toggle! owner :open?))}
+          [:i.fa.fa-comments]]
+         (->notifications user)]))))
+
+(defcomponent navbar [{:as data :keys [current-user foos]} owner]
   (display-name [_] "NavBar")
 
-  (render [this]
+  (render [_]
     (html
       [:nav.navbar.navbar-default {:role "navigation"}
        [:div.container
         [:div.navbar-header
          (partials/link-to "/" {:class "navbar-brand"} "Community")]
         [:ul.nav.navbar-nav.navbar-right
-         [:li [:a {:href "https://github.com/hackerschool/community"} [:i.fa.fa-comments]]]
+         (when current-user
+           (->notifications-dropdown current-user))
          (when current-user
            [:li.dropdown
             [:a.dropdown-toggle {:href "#" :data-toggle "dropdown"}
