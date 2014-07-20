@@ -1,6 +1,7 @@
 /* We have to use !important to override bootstrap's table-striped styles */
 .unread {
   td {
-    background-color: lightyellow !important;
+    /*background-color: lightyellow !important;*/
+    font-weight: bold;
   }
 }

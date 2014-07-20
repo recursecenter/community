@@ -1,10 +1,14 @@
 #main-content {
-  @include make-lg-column-offset(1);
-  @include make-lg-column(10);
+  @include make-sm-column-offset(1);
+  @include make-sm-column(10);
 }
 
 #sidebar {
-  @include make-lg-column(3);
+  @include make-sm-column(3);
+}
+
+.index-grid {
+  @include make-sm-column(3);
 }
 
 .navbar {
@@ -19,3 +23,5 @@
     font-size: 1.25em;
   }
 }
+
+
