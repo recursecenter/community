@@ -87,7 +87,8 @@
                                 :on-click #(do (mark-as-read! n)
                                                (location/redirect-to (notification-link-to @n)))
                                 :on-remove #(do (mark-as-read! n)
-                                                (delete-notification! user i))}))))]]))))
+                                                (delete-notification! user i))}
+                               {:react-key (:id n)}))))]]))))
 
 (defn toggle! [owner attr]
   (om/set-state! owner attr (not (om/get-state owner attr))))
