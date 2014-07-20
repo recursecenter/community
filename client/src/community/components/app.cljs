@@ -63,6 +63,11 @@
         "×"]
        (notification-summary notification)])))
 
+(defn clear-all-notifications [user]
+  (let [notifications (:notifications @user)]
+    (om/update! user :notifications [])
+    (api/mark-notifications-as-read notifications)))
+
 (defcomponent notifications [user owner]
   (display-name [_] "Notifications")
 
@@ -73,12 +78,15 @@
          [:li.list-group.notification-group
           (if (empty? notifications)
             [:span.list-group-item "No new notifications"]
-            (for [[i n] (map-indexed vector notifications)]
-              (->notification {:notification n
-                               :on-click #(do (mark-as-read! n)
-                                              (location/redirect-to (notification-link-to @n)))
-                               :on-remove #(do (mark-as-read! n)
-                                               (delete-notification! user i))})))]]))))
+            (cons
+             [:button.btn.btn-link.btn-xs.pull-right {:onClick #(clear-all-notifications user)}
+              "Clear all"]
+             (for [[i n] (map-indexed vector notifications)]
+               (->notification {:notification n
+                                :on-click #(do (mark-as-read! n)
+                                               (location/redirect-to (notification-link-to @n)))
+                                :on-remove #(do (mark-as-read! n)
+                                                (delete-notification! user i))}))))]]))))
 
 (defn toggle! [owner attr]
   (om/set-state! owner attr (not (om/get-state owner attr))))

@@ -7,6 +7,10 @@
   @include make-sm-column(3);
 }
 
+#notifications {
+  padding: 0;
+}
+
 .index-grid {
   @include make-sm-column(3);
 }
@@ -43,6 +47,7 @@
   .notification-item {
     white-space: normal;
     border: none;
+    border-top: 1px solid #ccc;
   }
 
   .notification-close {

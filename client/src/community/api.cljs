@@ -178,6 +178,13 @@
   (make-api-fn (fn [{id :id}]
                  (POST (str "/notifications/" id "/read")))))
 
+(def mark-notifications-as-read
+  (make-api-fn (fn [notifications]
+                 (let [ids (mapv :id notifications)]
+                   (POST "/notifications/read"
+                         {:params {:ids ids}
+                          :format :json})))))
+
 ;;; PubSub via WebSockets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

@@ -20,6 +20,7 @@ Rails.application.routes.draw do
     end
 
     resources :notifications do
+      post :read, on: :collection, to: :read_all
       post :read, on: :member
     end
 
