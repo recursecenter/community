@@ -28,7 +28,7 @@
   }
 }
 
-.unread-count {
+.unread-count-icon {
   z-index: 1000;
   position: absolute;
   top: 8px;
@@ -36,6 +36,15 @@
   padding: 0.2em 0.4em;
   font-size: 10px;
   background-color: red;
+}
+
+.unread-count-container {
+  padding: 5px 0;
+  border-bottom: 1px solid #ccc;
+}
+
+.unread-count {
+  padding: 3px 20px;
 }
 
 .notification-group {

@@ -4,7 +4,7 @@
             [community.routes :as routes]
             [community.location :as location]
             [community.components.shared :as shared]
-            [community.util :refer-macros [<? p]]
+            [community.util :as util :refer-macros [<? p]]
             [community.partials :as partials]
             [om.core :as om]
             [om-tools.core :refer-macros [defcomponent]]
@@ -73,22 +73,23 @@
   (display-name [_] "Notifications")
 
   (render [_]
-    (let [notifications (:notifications user)]
+    (let [notifications (:notifications user)
+          unread-count (count (filter (complement :read) notifications))]
       (html
         [:ul#notifications.dropdown-menu
+         [:div.unread-count-container
+          [:span.unread-count (util/pluralize unread-count "unread notification")]
+          [:button.btn.btn-link.btn-xs.pull-right {:onClick #(clear-all-notifications user)}
+           "Clear all"]]
          [:li.list-group.notification-group
-          (if (empty? notifications)
-            [:span.list-group-item "No new notifications"]
-            (cons
-             [:button.btn.btn-link.btn-xs.pull-right {:onClick #(clear-all-notifications user)}
-              "Clear all"]
-             (for [[i n] (map-indexed vector notifications)]
-               (->notification {:notification n
-                                :on-click #(do (mark-as-read! n)
-                                               (location/redirect-to (notification-link-to @n)))
-                                :on-remove #(do (mark-as-read! n)
-                                                (delete-notification! user i))}
-                               {:react-key (:id n)}))))]]))))
+          (when (not (empty? notifications))
+            (for [[i n] (map-indexed vector notifications)]
+              (->notification {:notification n
+                               :on-click #(do (mark-as-read! n)
+                                              (location/redirect-to (notification-link-to @n)))
+                               :on-remove #(do (mark-as-read! n)
+                                               (delete-notification! user i))}
+                              {:react-key (:id n)})))]]))))
 
 (defn toggle! [owner attr]
   (om/set-state! owner attr (not (om/get-state owner attr))))
@@ -130,7 +131,7 @@
                                          (.preventDefault e)
                                          (toggle! owner :open?))}
           (if-not (zero? unread-count)
-            [:span.badge.unread-count unread-count])
+            [:span.badge.unread-count-icon unread-count])
           [:i.fa.fa-comments]]
          (->notifications user)]))))
 

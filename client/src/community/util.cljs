@@ -20,3 +20,8 @@
   (-> (* unix-time 1000)
       (js/Date.)
       (.toDateString)))
+
+(defn pluralize [n s]
+  (if (= 1 n)
+    (str n " " s)
+    (str n " " s "s")))
