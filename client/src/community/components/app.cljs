@@ -125,12 +125,12 @@
     (let [unread-count (count (filter (complement :read) (:notifications user)))]
       (html
         [:li.dropdown {:ref "dropdown" :class (if open? "open")}
-         (if-not (zero? unread-count)
-           [:span.badge.unread-count unread-count])
          [:a.dropdown-toggle {:href "#"
                               :onClick (fn [e]
                                          (.preventDefault e)
                                          (toggle! owner :open?))}
+          (if-not (zero? unread-count)
+            [:span.badge.unread-count unread-count])
           [:i.fa.fa-comments]]
          (->notifications user)]))))
 
