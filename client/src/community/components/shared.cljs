@@ -49,6 +49,7 @@
     (let [menu-showing? (and focused? (seq ac-selections))
           control-keys #{"ArrowUp" "ArrowDown" "Enter" "Tab"}]
       (letfn [(set-ac-selections [e]
+                (on-change (.. e -target -value))
                 ;; Don't set ac selections again when e.g. someone's
                 ;; scrolling through the results they already see
                 (when-not (and menu-showing? (= "keyup" (.-type e)) (control-keys (.-key e)))
@@ -69,6 +70,7 @@
                   (om/set-state! owner :ac-selections [])
                   (om/set-state! owner :new-cursor-pos (ac/cursor-position ac))))
               (handle-autocomplete-action [e]
+                (on-change (.. e -target -value))
                 (when menu-showing?
                   (when-let [key (control-keys (.-key e))]
                     (.preventDefault e)
