@@ -225,5 +225,6 @@
             (let [component (routes/dispatch route-data)]
               (om/build component app))]])
         [:footer
-         [:ul.list-inline
-          [:li [:a {:href "https://github.com/hackerschool/community"} [:i.fa.fa-code-fork] " Source"]]]]]])))
+         [:ul.footer-links
+          [:li [:a {:href "https://github.com/hackerschool/community"} [:i.fa.fa-code-fork] " Source"]]
+          [:li "Made with " [:i.fa.fa-heart {:style {:color "red"}}] " at " [:a {:href "https://www.hackerschool.com"} "Hacker School"]]]]]])))

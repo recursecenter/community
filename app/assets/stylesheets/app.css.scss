@@ -169,3 +169,26 @@
   border-right: 8px solid transparent;
   border-bottom: 8px solid white;
 }
+
+
+footer {
+  border-top: 1px solid $gray-lighter;
+  margin-top: 1em;
+
+  ul.footer-links {
+    text-align: center;
+    margin-top: 1em;
+
+    li {
+      font-size: 12px;
+      padding: 3px 8px;
+      display: inline;
+      list-style: none;
+      border-right: 1px dotted #ccc;
+    }
+
+    li:last-child {
+      border-right: none;
+    }
+  }
+}
