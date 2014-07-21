@@ -109,7 +109,7 @@
 
   (render [this]
     (html
-      (if subforum
+      (if (= (str (:id subforum)) (:id route-data))
         [:div
          [:ol.breadcrumb
             [:li (link-to (routes :index) "Community")]

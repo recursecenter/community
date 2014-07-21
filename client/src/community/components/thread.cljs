@@ -203,7 +203,7 @@
   (render [this]
     (let [autocomplete-users (:autocomplete-users thread)]
       (html
-        (if thread
+        (if (= (str (:id thread)) (:id route-data))
           [:div
            [:ol.breadcrumb
             [:li (link-to (routes/routes :index) "Community")]
