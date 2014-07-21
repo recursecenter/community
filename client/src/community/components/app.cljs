@@ -16,9 +16,9 @@
 (defmethod notification-summary "mention" [mention]
   (html
     [:div {:class (if (:read mention) "text-muted")}
-     [:strong (-> mention :mentioned-by :name)]
+     [:span.notification-item-name (-> mention :mentioned-by :name)]
      " mentioned you in "
-     [:strong (-> mention :thread :title)]]))
+     [:span.notification-item-topic (-> mention :thread :title)]]))
 
 (defmulti notification-link-to :type)
 
@@ -52,7 +52,7 @@
         :onClick (fn [e]
                    (.preventDefault e)
                    (on-click e))}
-       [:button.close.pull-right.notification-close
+       [:button.close.notification-close
         {:onClick (fn [e]
                     (.preventDefault e)
                     (on-remove e)
@@ -77,8 +77,9 @@
           unread-count (count (filter (complement :read) notifications))]
       (html
         [:ul#notifications.dropdown-menu
+         [:div.arrow-up]
          [:div.unread-count-container
-          [:span.unread-count.small (util/pluralize unread-count "unread notification")]
+          [:span.unread-count (util/pluralize unread-count "unread notification")]
           [:button.btn.btn-link.btn-xs.pull-right {:onClick #(clear-all-notifications user)}
            "Clear all"]]
          [:li.list-group.notification-group
@@ -157,8 +158,9 @@
           (when current-user
             [:li.dropdown
              [:a.dropdown-toggle {:href "#" :data-toggle "dropdown"}
-              (:name current-user) [:b.caret]]
+              (:name current-user) " " [:i.fa.fa-cog]]
              [:ul.dropdown-menu
+              [:div.arrow-up]
               [:li (partials/link-to (routes :settings) "Settings")]
               [:li [:a {:href "/logout"} "Logout"]]]])]]]])))
 

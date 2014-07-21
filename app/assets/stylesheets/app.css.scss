@@ -9,6 +9,7 @@
 
 #notifications {
   padding: 0;
+  border-radius: 0;
 }
 
 .index-grid {
@@ -50,15 +51,66 @@
     color: $brand-primary;
   }
 
-  .navbar-nav > li > a {
+  .navbar-nav a {
     color: #ccc;
+    padding: 13px 15px 12px 15px;
   }
 
-  .navbar-nav > li > a:hover,
+  .nav .open > a,
   .nav .open > a:focus,
-  .nav .open > a {
-    color: $gray-dark;
+  .nav .open > a:hover,
+  .nav > li > a:focus,
+  .nav > li > a:hover {
+    background-color: rgba(0,0,0,0);
+    color: $brand-primary;
   }
+
+  .dropdown.open, .dropdown:hover, .dropdown:focus {
+    height: 44px;
+  }
+
+  .dropdown-menu {
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .dropdown-menu > li > a {
+    color: black;
+    padding: 5px 10px;
+  }
+
+  .notification-group {
+    margin-bottom: 0;
+    max-height: 250px;
+    overflow: auto;
+    width: 300px;
+
+    .notification-item {
+      white-space: normal;
+      font-size: 12px;
+      border: none;
+      border-top: 1px solid #ccc;
+      border-radius: 0;
+      padding-right: 15px;
+    }
+
+    .notification-item-name {
+      font-weight: bold;
+      color: #555;
+    }
+
+    .notification-item-topic {
+      font-style: italic;
+    }
+
+    .notification-close {
+      position: relative;
+      left: 10px;
+      bottom: 2px;
+    }
+  }
+
 }
 
 @media (max-width: $screen-sm-min) {
@@ -87,27 +139,22 @@
 
 .unread-count-container {
   padding: 5px 0;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px dotted #ccc;
 }
 
 .unread-count {
-  padding: 3px 20px;
+  font-size: 12px;
+  padding-left: 10px;
 }
 
-.notification-group {
-  margin-bottom: 0;
-  max-height: 250px;
-  overflow: auto;
-  width: 300px;
-
-  .notification-item {
-    white-space: normal;
-    border: none;
-    border-top: 1px solid #ccc;
-  }
-
-  .notification-close {
-    position: relative;
-    left: 10px;
-  }
+.arrow-up {
+  float: right;
+  position: relative;
+  bottom: 8px;
+  right: 13px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid white;
 }
