@@ -164,24 +164,6 @@
               [:li (partials/link-to (routes :settings) "Settings")]
               [:li [:a {:href "/logout"} "Logout"]]]])]]]])))
 
-(defcomponent welcome-info [_ owner]
-  (welcome-info [this] "WelcomeInfo")
-
-  (init-state [this]
-    {:closed? false})
-
-  (render-state [this {:keys [closed?]}]
-    (html
-      (if closed?
-        [:div]
-        [:div.row
-         [:div.col-lg-12
-          [:div.alert.alert-info
-           [:strong "Welcome! "]
-           "As you can tell, Community is in very early stages. Expect things to change, threads and posts to be deleted, etc. Thanks for checking it out!"
-           [:button.close {:onClick #(om/set-state! owner :closed? true)}
-            "×"]]]]))))
-
 (defn start-notifications-subscription! [user-id app]
   (when api/subscriptions-enabled?
     (go
@@ -214,7 +196,6 @@
       [:div
        (->navbar app)
        [:div.container
-        (->welcome-info nil)
         (when (not (empty? errors))
           [:div
            (for [error errors]
