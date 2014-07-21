@@ -1,0 +1,15 @@
+table.threads-view {
+
+  tbody tr {
+    background-color: #F9F9F9;
+  }
+
+  tr.unread {
+    background-color: white;
+
+    td {
+      font-weight: bold;
+    }
+  }
+
+}

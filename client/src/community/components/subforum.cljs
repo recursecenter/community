@@ -119,14 +119,16 @@
          (partials/title (:name subforum) "New thread")
          (if (empty? (:threads subforum))
            [:div.alert.alert-info "There are no threads - create the first one!"]
-           [:table.table.table-striped
-            [:thead
-             [:tr [:th "Topic"] [:th "Created by"] [:th "Last updated"]]]
+           [:table.table.threads-view
             [:tbody
+             [:tr {:key id :class "unread"}
+              [:td "Nicholas Bergson-Shilcock"]
+              [:td "A thread about something really awesome that I talked about once with a number of people and want to revisit immediately."]
+              [:td "4:52pm"]]
              (for [{:keys [id slug title created-by] :as thread} (:threads subforum)]
                [:tr {:key id :class (if (:unread thread) "unread")}
-                [:td (link-to (routes :thread thread) title)]
                 [:td created-by]
+                [:td (link-to (routes :thread thread) title)]
                 [:td (util/human-format-time (:marked-unread-at thread))]])]])
          (->new-thread subforum)]
         [:div.push-down]))))

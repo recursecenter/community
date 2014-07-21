@@ -1,11 +1,3 @@
-/* We have to use !important to override bootstrap's table-striped styles */
-.unread {
-  td {
-    /*background-color: lightyellow !important;*/
-    font-weight: bold;
-  }
-}
-
 /* Meant to be applied to an empty div to push a footer most of the
 way down a page. The problem is that the footer jumps up to the top
 when we're loading new content. */
