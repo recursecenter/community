@@ -140,7 +140,8 @@
 
   (render [_]
     (html
-      [:nav.navbar.navbar-community {:role "navigation"}
+      [:nav.navbar.navbar-community {:role "navigation"
+                                     :data-spy "affix"}
        [:div.container
         [:div.navbar-header
          (partials/link-to "/" {:class "navbar-brand"}

@@ -1,3 +1,8 @@
+body {
+  // required for fixed navbar
+  padding-top: 70px;
+}
+
 #main-content {
   @include make-sm-column-offset(1);
   @include make-sm-column(10);
@@ -26,6 +31,12 @@
     color: #fff;
     font-size: 1.25em;
   }
+}
+
+.navbar.affix {
+  top: 0;
+  width: 100%;
+  z-index: 1;
 }
 
 .navbar-community {
