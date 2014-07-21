@@ -33,7 +33,7 @@
 
 (defcomponent autocompleting-textarea [{:as state :keys [value autocomplete-list]}
                                        owner
-                                       {:keys [passthrough on-change]}]
+                                       {:keys [passthrough on-change focus?]}]
   (display-name [_] "AutocompletingTextArea")
 
   (init-state [_]
@@ -41,6 +41,19 @@
      :focused? false
      :new-cursor-pos nil
      :should-drop-down? false})
+
+  (did-mount [_]
+    (when focus?
+      (.focus (om/get-node owner "textarea"))))
+
+  (did-update [_ _ _]
+    (let [textarea (om/get-node owner "textarea")]
+      (when-let [new-cursor-pos (:new-cursor-pos (om/get-state owner))]
+        (ac/set-cursor-position textarea new-cursor-pos)
+        (om/set-state! owner :new-cursor-pos nil))
+
+      (let [textarea-top (.-y (goog.style/getClientPosition textarea))]
+        (om/set-state! owner :should-drop-down? (< textarea-top 120)))))
 
   (render-state [_ {:keys [focused? ac-selections should-drop-down?]}]
     (let [menu-showing? (and focused? (seq ac-selections))
@@ -89,16 +102,7 @@
                                :onBlur #(om/set-state! owner :focused? false)
                                :onFocus #(om/set-state! owner :focused? true)
                                :onChange (fn [e]
-                                           (on-change (.. e -target -value)))})]]]))))
-
-  (did-update [_ _ _]
-    (let [textarea (om/get-node owner "textarea")]
-      (when-let [new-cursor-pos (:new-cursor-pos (om/get-state owner))]
-        (ac/set-cursor-position textarea new-cursor-pos)
-        (om/set-state! owner :new-cursor-pos nil))
-
-      (let [textarea-top (.-y (goog.style/getClientPosition textarea))]
-        (om/set-state! owner :should-drop-down? (< textarea-top 120))))))
+                                           (on-change (.. e -target -value)))})]]])))))
 
 (defcomponent broadcast-group-picker [{:keys [broadcast-groups]} owner {:keys [on-toggle]}]
   (display-name [_] "BroadcastGroupPicker")
