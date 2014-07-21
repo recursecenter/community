@@ -5,7 +5,7 @@ body {
 }
 
 a {
-  color: #77D102;
+  color: $brand-primary;
   outline: 0;
 }
 
@@ -14,7 +14,7 @@ button {
 }
 
 .btn-default {
-  border-color: #77D102;
+  border-color: $brand-primary;
 }
 
 .text-danger {
