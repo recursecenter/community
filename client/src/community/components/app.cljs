@@ -80,7 +80,7 @@
          [:div.arrow-up]
          [:div.unread-count-container
           [:span.unread-count (util/pluralize unread-count "unread notification")]
-          [:button.btn.btn-link.btn-xs.pull-right {:onClick #(clear-all-notifications user)}
+          [:button.btn.btn-link.btn-xs.clear-all {:onClick #(clear-all-notifications user)}
            "Clear all"]]
          [:li.list-group.notification-group
           (when (not (empty? notifications))
