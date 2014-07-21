@@ -5,7 +5,7 @@ body {
 }
 
 a {
-  color: $brand-primary;
+  color: $brand-primary-muted;
   outline: 0;
 }
 
@@ -14,7 +14,7 @@ button {
 }
 
 .btn-default {
-  border-color: $brand-primary;
+  border-color: $brand-primary-muted;
 }
 
 .text-danger {
