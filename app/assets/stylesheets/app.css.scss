@@ -29,6 +29,23 @@
 }
 
 .navbar-community {
+  .navbar-header .navbar-brand {
+    img {
+      width: 26px;
+      height: auto;
+      background-color: white;
+      padding: 2px;
+      position: relative;
+      bottom: 9px;
+    }
+
+    .brand-text {
+      position: relative;
+      bottom: 6px;
+      margin-left: 10px;
+    }
+  }
+
   .navbar-header:hover a {
     color: $brand-primary;
   }

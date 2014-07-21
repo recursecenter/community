@@ -1,7 +1,7 @@
 (ns community.components.app
   (:require [community.api :as api]
             [community.models :as models]
-            [community.routes :as routes]
+            [community.routes :as routes :refer [routes]]
             [community.location :as location]
             [community.components.shared :as shared]
             [community.util :as util :refer-macros [<? p]]
@@ -23,7 +23,7 @@
 (defmulti notification-link-to :type)
 
 (defmethod notification-link-to "mention" [mention]
-  (routes/routes :thread (:thread mention)))
+  (routes :thread (:thread mention)))
 
 (defn mark-as-read! [notification]
   (om/update! notification :read true)
@@ -143,7 +143,10 @@
       [:nav.navbar.navbar-community {:role "navigation"}
        [:div.container
         [:div.navbar-header
-         (partials/link-to "/" {:class "navbar-brand"} "Community")]
+         (partials/link-to "/" {:class "navbar-brand"}
+           [:span
+            [:img {:src (routes :asset {:name "logo-small.png"})}]
+            [:span.brand-text "Community"]])]
         [:ul.nav.navbar-nav.navbar-right
          (when current-user
            (->notifications-dropdown current-user))
@@ -152,7 +155,7 @@
             [:a.dropdown-toggle {:href "#" :data-toggle "dropdown"}
              (:name current-user) [:b.caret]]
             [:ul.dropdown-menu
-             [:li (partials/link-to (routes/routes :settings) "Settings")]
+             [:li (partials/link-to (routes :settings) "Settings")]
              [:li [:a {:href "/logout"} "Logout"]]]])]]])))
 
 (defcomponent welcome-info [_ owner]
