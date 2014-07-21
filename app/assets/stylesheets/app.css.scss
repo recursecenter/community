@@ -89,10 +89,16 @@
     .notification-item {
       white-space: normal;
       font-size: 12px;
-      border: none;
-      border-top: 1px solid #ccc;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      border-bottom: 2px solid #ccc;
       border-radius: 0;
       padding-right: 25px;
+    }
+
+    .notification-item:last-child {
+      border-bottom: none;
     }
 
     .notification-item-name {
