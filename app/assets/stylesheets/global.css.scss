@@ -49,4 +49,12 @@ button {
 .form-control {
   border-radius: 0;
   box-shadow: none;
+  transition: none;
+  -webkit-transition: none;
+  -o-transition: none;
+}
+
+.form-control:focus {
+  border-color: $brand-primary-muted;
+  box-shadow: none;
 }
