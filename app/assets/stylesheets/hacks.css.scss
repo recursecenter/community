@@ -5,3 +5,10 @@
     font-weight: bold;
   }
 }
+
+/* Meant to be applied to an empty div to push a footer most of the
+way down a page. The problem is that the footer jumps up to the top
+when we're loading new content. */
+.push-down {
+  height: 500px;
+}

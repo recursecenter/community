@@ -222,4 +222,4 @@
                            :after-persisted (fn [post reset-form!]
                                               (reset-form!)
                                               (update-post! app post))})]]]
-          [:div])))))
+          [:div.push-down])))))

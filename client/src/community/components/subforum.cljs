@@ -125,4 +125,4 @@
               [:td created-by]
               [:td (util/human-format-time (:marked-unread-at thread))]])]]
          (->new-thread subforum)]
-        [:div]))))
+        [:div.push-down]))))
