@@ -121,10 +121,6 @@
            [:div.alert.alert-info "There are no threads - create the first one!"]
            [:table.table.threads-view
             [:tbody
-             [:tr.unread
-              [:td.name "Nicholas Bergson-Shilcock"]
-              [:td.title [:a "Some cool thing in Ruby"]]
-              [:td.timestamp "12:00pm"]]
              (for [{:keys [id slug title created-by] :as thread} (:threads subforum)]
                [:tr {:key id :class (if (:unread thread) "unread")}
                 [:td.name created-by]
