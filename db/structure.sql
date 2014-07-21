@@ -295,7 +295,8 @@ CREATE TABLE subforums (
     subforum_group_id integer,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    marked_unread_at timestamp without time zone
+    marked_unread_at timestamp without time zone,
+    ui_color character varying(255)
 );
 
 
@@ -332,7 +333,9 @@ CREATE TABLE users (
     hacker_school_id integer,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    email_on_mention boolean DEFAULT true
+    email_on_mention boolean DEFAULT true,
+    subscribe_on_create boolean DEFAULT true,
+    subscribe_when_mentioned boolean DEFAULT true
 );
 
 
@@ -359,6 +362,7 @@ CREATE VIEW subforums_with_visited_status AS
  SELECT subforum_users.id,
     subforum_users.name,
     subforum_users.subforum_group_id,
+    subforum_users.ui_color,
     subforum_users.created_at,
     subforum_users.updated_at,
     subforum_users.marked_unread_at,
@@ -366,6 +370,7 @@ CREATE VIEW subforums_with_visited_status AS
     visited_statuses.last_visited
    FROM (( SELECT subforums.id,
             subforums.name,
+            subforums.ui_color,
             subforums.subforum_group_id,
             subforums.created_at,
             subforums.updated_at,
@@ -374,6 +379,41 @@ CREATE VIEW subforums_with_visited_status AS
            FROM subforums,
             users) subforum_users
    LEFT JOIN visited_statuses ON ((((subforum_users.id = visited_statuses.visitable_id) AND ((subforum_users.user_id = visited_statuses.user_id) OR (visited_statuses.user_id IS NULL))) AND ((visited_statuses.visitable_type)::text = 'Subforum'::text))));
+
+
+--
+-- Name: subscriptions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE subscriptions (
+    id integer NOT NULL,
+    subscribed boolean DEFAULT false,
+    reason character varying(255),
+    subscribable_id integer,
+    subscribable_type character varying(255),
+    user_id integer,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
+-- Name: subscriptions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE subscriptions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: subscriptions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE subscriptions_id_seq OWNED BY subscriptions.id;
 
 
 --
@@ -501,6 +541,13 @@ ALTER TABLE ONLY subforums ALTER COLUMN id SET DEFAULT nextval('subforums_id_seq
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY subscriptions ALTER COLUMN id SET DEFAULT nextval('subscriptions_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
 
 
@@ -576,6 +623,14 @@ ALTER TABLE ONLY subforums
 
 
 --
+-- Name: subscriptions_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY subscriptions
+    ADD CONSTRAINT subscriptions_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -631,6 +686,13 @@ CREATE INDEX index_notifications_on_post_id ON notifications USING btree (post_i
 --
 
 CREATE INDEX index_notifications_on_user_id ON notifications USING btree (user_id);
+
+
+--
+-- Name: index_subscriptions_on_subscribable_id_and_subscribable_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_subscriptions_on_subscribable_id_and_subscribable_type ON subscriptions USING btree (subscribable_id, subscribable_type);
 
 
 --
@@ -700,4 +762,10 @@ INSERT INTO schema_migrations (version) VALUES ('20140702171957');
 INSERT INTO schema_migrations (version) VALUES ('20140707203027');
 
 INSERT INTO schema_migrations (version) VALUES ('20140708205925');
+
+INSERT INTO schema_migrations (version) VALUES ('20140710163204');
+
+INSERT INTO schema_migrations (version) VALUES ('20140712031258');
+
+INSERT INTO schema_migrations (version) VALUES ('20140721223232');
 

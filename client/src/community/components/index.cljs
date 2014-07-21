@@ -11,16 +11,17 @@
 
 (defn subforum-group [{:keys [name subforums id]}]
   (html
-   [:li {:key id}
+   [:div {:key id}
     [:h2 name]
     (if (not (empty? subforums))
-      [:div.row
-       [:div.block-grid
-        (for [{:keys [id slug] :as subforum} subforums]
-          [:ul
-          [:li {:key id :className (if (:unread subforum) "unread")}
+      [:ul.block-grid-4
+       (for [{:keys [id slug ui-color] :as subforum} subforums]
+         [:li.block-grid-item {:key id :className (if (:unread subforum) "unread")}
+          [:div {:style {:height "150px"
+                         :width "150px"
+                         :background-color ui-color}}
            [:a (link-to (routes :subforum {:id id :slug slug})
-                         (:name subforum))]]])]]) ]))
+                        (:name subforum))]]])]) ]))
 
 (defcomponent index [{:as app :keys [current-user subforum-groups]}
                      owner]
@@ -39,7 +40,5 @@
   (render [this]
     (html
       (if (not (empty? subforum-groups))
-        [:div
-         [:ol.list-unstyled
-          (map subforum-group subforum-groups)]]
+        [:div.row (map subforum-group subforum-groups)]
         [:div]))))
