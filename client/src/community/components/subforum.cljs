@@ -43,9 +43,10 @@
   (render [this]
     (let [{:keys [form-disabled? c-draft errors]} (om/get-state owner)]
       (html
-        [:div.panel {:class (if (empty? errors) "panel-default" "panel-danger")}
+        [:div.panel
+         {:class (if (empty? errors) "panel-default" "panel-danger")}
          [:div.panel-heading
-          [:h4 "New thread"]
+          [:span.title-caps "New thread"]
           (when (not (empty? errors))
             (map (fn [e] [:div e]) errors))]
          [:div.panel-body
@@ -63,21 +64,22 @@
                                     (om/transact! subforum [:new-thread :broadcast-to]
                                                   #(models/toggle-broadcast-to % id)))}}))]
            [:div.form-group
-            [:label {:for "thread-title"} "Title"]
+            [:label.hidden {:for "thread-title"} "Title"]
             [:input#thread-title.form-control
              {:type "text"
-              :name "thread[title]"
+              :placeholder "Thread title"
               :onChange (fn [e]
                           (om/update! subforum [:new-thread :title]
                                       (-> e .-target .-value)))}]]
            [:div.form-group
-            [:label {:for "post-body"} "Body"]
+            [:label.hidden {:for "post-body"} "Body"]
             (shared/->autocompleting-textarea
              {:value (get-in subforum [:new-thread :body])
               :autocomplete-list (mapv :name (:autocomplete-users subforum))}
              {:opts {:on-change #(om/update! subforum [:new-thread :body] %)
                      :passthrough {:id "post-body"
-                                   :class "form-control"}}})]
+                                   :class "form-control"
+                                   :placeholder "Compose your post..."}}})]
            [:button.btn.btn-default {:type "submit"
                                      :disabled form-disabled?}
             "Create thread"]]]]))))
@@ -115,14 +117,16 @@
             [:li (link-to (routes :index) "Community")]
             [:li.active (:name subforum)]]
          [:h1 (:name subforum)]
-         [:table.table.table-striped
-          [:thead
-           [:tr [:th "Topic"] [:th "Created by"] [:th "Last updated"]]]
-          [:tbody
-           (for [{:keys [id slug title created-by] :as thread} (:threads subforum)]
-             [:tr {:key id :class (if (:unread thread) "unread")}
-              [:td (link-to (routes :thread thread) title)]
-              [:td created-by]
-              [:td (util/human-format-time (:marked-unread-at thread))]])]]
+         (if (empty? (:threads subforum))
+           [:div.alert.alert-info "There are no threads - create the first one!"]
+           [:table.table.table-striped
+            [:thead
+             [:tr [:th "Topic"] [:th "Created by"] [:th "Last updated"]]]
+            [:tbody
+             (for [{:keys [id slug title created-by] :as thread} (:threads subforum)]
+               [:tr {:key id :class (if (:unread thread) "unread")}
+                [:td (link-to (routes :thread thread) title)]
+                [:td created-by]
+                [:td (util/human-format-time (:marked-unread-at thread))]])]])
          (->new-thread subforum)]
         [:div.push-down]))))

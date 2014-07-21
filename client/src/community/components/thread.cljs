@@ -57,40 +57,39 @@
         [:div
          (if (not (empty? errors))
            [:div (map (fn [e] [:p.text-danger e]) errors)])
-         [:div.row
-          [:form {:onSubmit (fn [e]
-                              (.preventDefault e)
-                              (when-not form-disabled?
-                                (async/put! c-post post)
-                                (om/set-state! owner :form-disabled? true)))}
-           [:div.post-form-body
-            (when (not (:persisted? post))
-              [:div.form-group
-               (shared/->broadcast-group-picker
-                {:broadcast-groups (mapv #(assoc % :selected? (contains? (:broadcast-to post) (:id %)))
-                                         broadcast-groups)}
-                {:opts {:on-toggle (fn [id]
-                                     (om/update-state! owner [:post :broadcast-to]
-                                                       #(models/toggle-broadcast-to % id)))}})])
-            (let [post-body-id (str "post-body-" (or (:id post) "new"))]
-              [:div.form-group
-               [:label.hide {:for post-body-id} "Body"]
-               (shared/->autocompleting-textarea
-                {:value (:body post)
-                 :autocomplete-list (mapv :name autocomplete-users)}
-                {:opts {:focus? (:persisted? post)
-                        :on-change #(om/set-state! owner [:post :body] %)
-                        :passthrough
-                        {:id post-body-id
-                         :class ["form-control" "post-textarea"]
-                         :name "post[body]"
-                         :placeholder "Compose your post..."}}})])]
-           [:div.post-form-controls
-            [:button.btn.btn-default.btn-sm {:type "submit"
-                                             :disabled form-disabled?}
-             (if (:persisted? post) "Update" "Post")]
-            (when (:persisted? post)
-              [:button.btn.btn-link.btn-sm {:onClick cancel-edit} "Cancel"])]]]]))))
+         [:form {:onSubmit (fn [e]
+                             (.preventDefault e)
+                             (when-not form-disabled?
+                               (async/put! c-post post)
+                               (om/set-state! owner :form-disabled? true)))}
+          [:div.post-form-body
+           (when (not (:persisted? post))
+             [:div.form-group
+              (shared/->broadcast-group-picker
+               {:broadcast-groups (mapv #(assoc % :selected? (contains? (:broadcast-to post) (:id %)))
+                                        broadcast-groups)}
+               {:opts {:on-toggle (fn [id]
+                                    (om/update-state! owner [:post :broadcast-to]
+                                                      #(models/toggle-broadcast-to % id)))}})])
+           (let [post-body-id (str "post-body-" (or (:id post) "new"))]
+             [:div.form-group
+              [:label.hidden {:for post-body-id} "Body"]
+              (shared/->autocompleting-textarea
+               {:value (:body post)
+                :autocomplete-list (mapv :name autocomplete-users)}
+               {:opts {:focus? (:persisted? post)
+                       :on-change #(om/set-state! owner [:post :body] %)
+                       :passthrough
+                       {:id post-body-id
+                        :class ["form-control" "post-textarea"]
+                        :name "post[body]"
+                        :placeholder "Compose your post..."}}})])]
+          [:div.post-form-controls
+           [:button.btn.btn-default.btn-sm {:type "submit"
+                                            :disabled form-disabled?}
+            (if (:persisted? post) "Update" "Post")]
+           (when (:persisted? post)
+             [:button.btn.btn-link.btn-sm {:onClick cancel-edit} "Cancel"])]]]))))
 
 (defcomponent post [{:keys [post autocomplete-users]} owner]
   (display-name [_] "Post")
@@ -214,7 +213,9 @@
             (for [post (:posts thread)]
               (->post {:post post :autocomplete-users autocomplete-users}
                       {:react-key (:id post)}))]
-           [:div.new-post.panel.panel-default
+           [:div.panel.panel-default
+            [:div.panel-heading
+             [:span.title-caps "New post"]]
             [:div.panel-body
              (->post-form {:init-post (models/empty-post (:id thread))
                            :broadcast-groups (:broadcast-groups thread)

@@ -27,3 +27,26 @@ button {
   border-bottom: #ccc dotted 1px;
   border-radius: 0;
 }
+
+.title-caps {
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #555;
+}
+
+.panel {
+  border-radius: 0;
+}
+
+.panel-body {
+  padding: 10px;
+}
+
+.form-group {
+  margin-bottom: 10px;
+}
+
+.form-control {
+  border-radius: 0;
+  box-shadow: none;
+}
