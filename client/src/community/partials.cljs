@@ -41,4 +41,9 @@
   (html
     [:div.row
      [:div.topic [:h1 title-text]]
-     [:div.topic-button [:button.btn.btn-new.btn-sm {:onClick scroll-to-bottom} button-text]]]))
+     [:div.topic-button
+      [:button.btn.btn-new.btn-sm
+       {:onClick (fn [e]
+                   (scroll-to-bottom)
+                   (.focus (.querySelector js/document "[data-new-anchor]")))}
+       button-text]]]))

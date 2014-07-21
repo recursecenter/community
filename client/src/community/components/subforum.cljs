@@ -68,6 +68,7 @@
             [:input#thread-title.form-control
              {:type "text"
               :placeholder "Thread title"
+              :data-new-anchor true
               :onChange (fn [e]
                           (om/update! subforum [:new-thread :title]
                                       (-> e .-target .-value)))}]]

@@ -83,6 +83,7 @@
                        {:id post-body-id
                         :class ["form-control" "post-textarea"]
                         :name "post[body]"
+                        :data-new-anchor true
                         :placeholder "Compose your post..."}}})])]
           [:div.post-form-controls
            [:button.btn.btn-default.btn-sm {:type "submit"
