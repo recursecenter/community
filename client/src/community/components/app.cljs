@@ -140,8 +140,7 @@
 
   (render [_]
     (html
-      [:nav.navbar.navbar-community {:role "navigation"
-                                     :data-spy "affix"}
+      [:nav.navbar.navbar-community {:role "navigation"}
        [:div.container
         [:div.navbar-header
          [:button.navbar-toggle {:data-toggle "collapse"
