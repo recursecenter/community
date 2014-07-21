@@ -78,7 +78,7 @@
       (html
         [:ul#notifications.dropdown-menu
          [:div.unread-count-container
-          [:span.unread-count (util/pluralize unread-count "unread notification")]
+          [:span.unread-count.small (util/pluralize unread-count "unread notification")]
           [:button.btn.btn-link.btn-xs.pull-right {:onClick #(clear-all-notifications user)}
            "Clear all"]]
          [:li.list-group.notification-group
