@@ -208,7 +208,7 @@
             [:li (link-to (routes/routes :index) "Community")]
             [:li (link-to (routes/routes :subforum (:subforum thread)) (-> thread :subforum :name))]
             [:li.active (:title thread)]]
-           [:h1 (:title thread)]
+           (partials/title (:title thread) "New post")
            [:ol.list-unstyled
             (for [post (:posts thread)]
               (->post {:post post :autocomplete-users autocomplete-users}

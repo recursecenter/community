@@ -13,6 +13,10 @@ button {
   outline: 0;
 }
 
+.inline {
+  display: inline;
+}
+
 .btn-default {
   border-color: $brand-primary-muted;
 }
@@ -57,4 +61,28 @@ button {
 .form-control:focus {
   border-color: $brand-primary-muted;
   box-shadow: none;
+}
+
+.btn-new {
+  background-color: $brand-primary-muted;
+  color: white;
+}
+
+.row {
+  .topic {
+    @include make-sm-column(10);
+
+    h1 {
+      margin-top: 0;
+    }
+  }
+
+  .topic-button {
+    @include make-sm-column(2);
+    margin-top: 8px;
+
+    button {
+      float: right;
+    }
+  }
 }

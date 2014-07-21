@@ -4,7 +4,7 @@
             [community.api :as api]
             [community.models :as models]
             [community.location :refer [redirect-to]]
-            [community.partials :refer [link-to]]
+            [community.partials :as partials :refer [link-to]]
             [community.routes :refer [routes]]
             [community.components.shared :as shared]
             [om.core :as om]
@@ -116,7 +116,7 @@
          [:ol.breadcrumb
             [:li (link-to (routes :index) "Community")]
             [:li.active (:name subforum)]]
-         [:h1 (:name subforum)]
+         (partials/title (:name subforum) "New thread")
          (if (empty? (:threads subforum))
            [:div.alert.alert-info "There are no threads - create the first one!"]
            [:table.table.table-striped

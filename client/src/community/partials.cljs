@@ -32,3 +32,13 @@
   ;; e.g. src and href. We simply allow all URLs.
   (let [safe-html-string (goog.string.html.htmlSanitize (js/marked md-string) identity)]
     (dom/div #js {:dangerouslySetInnerHTML #js {:__html safe-html-string}})))
+
+(defn scroll-to-bottom []
+  (set! (.-scrollTop js/document.body)
+        (.-scrollHeight js/document.body)))
+
+(defn title [title-text button-text]
+  (html
+    [:div.row
+     [:div.topic [:h1 title-text]]
+     [:div.topic-button [:button.btn.btn-new.btn-sm {:onClick scroll-to-bottom} button-text]]]))
