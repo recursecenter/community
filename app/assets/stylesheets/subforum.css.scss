@@ -12,4 +12,16 @@ table.threads-view {
     }
   }
 
+  td.name {
+    @include make-sm-column(2);
+  }
+
+  td.title {
+    @include make-sm-column(9);
+  }
+
+  td.timestamp {
+    @include make-sm-column(1);
+  }
+
 }
