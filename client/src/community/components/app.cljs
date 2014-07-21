@@ -140,7 +140,7 @@
 
   (render [_]
     (html
-      [:nav.navbar.navbar-default {:role "navigation"}
+      [:nav.navbar.navbar-community {:role "navigation"}
        [:div.container
         [:div.navbar-header
          (partials/link-to "/" {:class "navbar-brand"} "Community")]

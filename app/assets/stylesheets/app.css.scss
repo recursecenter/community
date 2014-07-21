@@ -28,6 +28,22 @@
   }
 }
 
+.navbar-community {
+  .navbar-header:hover a {
+    color: $brand-primary;
+  }
+
+  .navbar-nav > li > a {
+    color: #ccc;
+  }
+
+  .navbar-nav > li > a:hover,
+  .nav .open > a:focus,
+  .nav .open > a {
+    color: $gray-dark;
+  }
+}
+
 .unread-count-icon {
   z-index: 1000;
   position: absolute;
