@@ -28,8 +28,12 @@ button {
 .breadcrumb {
   background-color: #fff;
   padding-left: 0;
-  border-bottom: #ccc dotted 1px;
   border-radius: 0;
+
+  li {
+    border-bottom: #ccc solid 1px;
+    padding-bottom: 5px;
+  }
 }
 
 .title-caps {
