@@ -143,7 +143,7 @@
     (html
       [:nav#navbar-community {:role "navigation"}
        [:div.navbar-header
-        (partials/link-to "/" {:class "navbar-brand"}
+        (partials/link-to "/"
           [:span
            [:img {:src (routes :asset {:name "logo-small.png"})}]
            [:span.brand-text "Community"]])]

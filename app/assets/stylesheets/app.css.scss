@@ -22,22 +22,26 @@
   border-bottom: 1px dotted $brand-primary;
   height: 45px;
   margin-bottom: 1.25em;
+  padding: 0 10px;
 
-  .navbar-header .navbar-brand {
+  .navbar-header {
     img {
-      width: 26px;
+      width: 29px;
       height: auto;
       padding: 2px;
-      position: relative;
-      bottom: 12px;
     }
 
     .brand-text {
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
       font-weight: bold;
-      position: relative;
-      bottom: 10px;
+      font-size: 1.5em;
       margin-left: 5px;
+      position: relative;
+      top: 4px;
+    }
+
+    a:hover {
+      text-decoration: none;
     }
   }
 
@@ -67,6 +71,7 @@
     border-radius: 0;
     box-shadow: none;
     padding: 0;
+    border: 1px solid #eee;
   }
 
   .dropdown-menu > li > a {
@@ -86,7 +91,7 @@
       border-top: none;
       border-left: none;
       border-right: none;
-      border-bottom: 2px solid #ccc;
+      border-bottom: 2px solid #eee;
       border-radius: 0;
       padding-right: 25px;
     }
@@ -125,7 +130,8 @@
 
 .unread-count-container {
   padding: 5px 0;
-  border-bottom: 1px dotted #ccc;
+  border-bottom: 1px dotted #eee;
+  background-color: #eee;
 
   .clear-all {
     float: right;
@@ -147,7 +153,7 @@
   height: 0;
   border-left: 8px solid transparent;
   border-right: 8px solid transparent;
-  border-bottom: 8px solid white;
+  border-bottom: 8px solid #eee;
 }
 
 
