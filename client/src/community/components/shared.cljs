@@ -143,8 +143,8 @@
                     (state/add-error! [:ajax :generic])))))]
       (html
         [:div.subscription-info
-         [:button.btn.btn-default.btn-small {:onClick toggle-subscription-status}
+         [:button.btn.btn-link.subscription-button {:onClick toggle-subscription-status}
           (if subscribed
             [:span [:span.glyphicon.glyphicon-volume-off] " Unsubscribe"]
             [:span [:span.glyphicon.glyphicon-volume-up] " Subscribe"])]
-         [:p.small.text-muted reason]]))))
+         [:span.subscription-reason reason]]))))

@@ -210,8 +210,8 @@
             [:li (link-to (routes/routes :index) "Community")]
             [:li (link-to (routes/routes :subforum (:subforum thread)) (-> thread :subforum :name))]
             [:li.active (:title thread)]]
-           (shared/->subscription-info (:subscription thread))
            (partials/title (:title thread) "New post")
+           (shared/->subscription-info (:subscription thread))
            [:ol.list-unstyled
             (for [post (:posts thread)]
               (->post {:post post :autocomplete-users autocomplete-users}

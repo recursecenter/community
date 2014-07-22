@@ -9,5 +9,17 @@
 }
 
 .subscription-info {
-  margin-top: 10px;
+  margin: 5px 0;
+
+  .subscription-reason {
+    font-size: $font-size-small;
+    font-style: italic;
+    color: #999;
+    position: relative;
+    top: 2px;
+  }
+
+  .subscription-button {
+    padding-left: 0;
+  }
 }
