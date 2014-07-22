@@ -16,19 +16,6 @@
   @include make-sm-column(3);
 }
 
-// .navbar {
-//   // border-radius: 0;
-//   // border-top: 5px solid $brand-primary;
-//   // border-bottom: 1px dotted $brand-primary;
-//   // height: 45px;
-//   // margin-bottom: 1.25em;
-
-//   .fi-comments {
-//     color: #fff;
-//     font-size: 1.25em;
-//   }
-// }
-
 #navbar-community {
   border-radius: 0;
   border-top: 5px solid $brand-primary;
@@ -38,18 +25,19 @@
 
   .navbar-header .navbar-brand {
     img {
-      // width: 26px;
-      //height: auto;
-      // background-color: white;
-      // padding: 2px;
-      //position: relative;
-      // bottom: 9px;
+      width: 26px;
+      height: auto;
+      padding: 2px;
+      position: relative;
+      bottom: 12px;
     }
 
     .brand-text {
-      // position: relative;
-      // bottom: 6px;
-      // margin-left: 10px;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-weight: bold;
+      position: relative;
+      bottom: 10px;
+      margin-left: 5px;
     }
   }
 
