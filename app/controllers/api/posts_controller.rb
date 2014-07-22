@@ -1,19 +1,23 @@
 class Api::PostsController < Api::ApiController
   load_and_authorize_resource :post
 
-  include NotifyMentionedUsers
-  include NotifyBroadcastGroups
+  include MentionedUsers
 
   def create
     @post.save!
     @post.thread.mark_as_visited_for(current_user)
     PubSub.publish :created, :post, @post
-    notify_broadcast_groups!(@post)
-    notify_newly_mentioned_users!(@post)
+
+    NotificationCoordinator.new(
+      MentionNotifier.new(@post, mentioned_users),
+      ThreadSubscriptionNotifier.new(@post),
+      BroadcastNotifier.new(@post)
+    ).notify
   end
 
   def update
-    notify_newly_mentioned_users!(@post)
+    MentionNotifier.new(@post, mentioned_users).notify
+
     @post.update!(update_params)
     PubSub.publish :updated, :post, @post
   end

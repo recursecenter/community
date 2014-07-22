@@ -1,5 +1,6 @@
 (ns community.components.app
   (:require [community.api :as api]
+            [community.api.push :as push-api]
             [community.models :as models]
             [community.routes :as routes :refer [routes]]
             [community.location :as location]
@@ -155,9 +156,9 @@
           [:li [:a {:href "/logout"} [:i.fa.fa-sign-out]]]])])))
 
 (defn start-notifications-subscription! [user-id app]
-  (when api/subscriptions-enabled?
+  (when push-api/subscriptions-enabled?
     (go
-      (let [[notifications-feed unsubscribe!] (api/subscribe! {:feed :notifications :id user-id})]
+      (let [[notifications-feed unsubscribe!] (push-api/subscribe! {:feed :notifications :id user-id})]
         (loop []
           (when-let [message (<! notifications-feed)]
             (om/transact! app [:current-user :notifications]

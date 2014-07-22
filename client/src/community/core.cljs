@@ -1,7 +1,7 @@
 (ns community.core
   (:require [community.state :refer [app-state]]
             [community.routes :as routes]
-            [community.api :as api]
+            [community.api.push :as push-api]
             [community.location :as location :refer [redirect-to]]
             [community.components.app :as app]
             [community.components.index :as index]
@@ -31,7 +31,7 @@
 (defn ^:export init-app
   "Mounts the om application onto target element."
   [target]
-  (api/init-ws-connection! app-state)
+  (push-api/init-ws-connection! app-state)
   (om/root app/app
            app-state
            {:target target}))

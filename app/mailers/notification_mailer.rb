@@ -19,12 +19,30 @@ class NotificationMailer < ActionMailer::Base
          subject: %{#{@mentioned_by.name} mentioned you in "#{@post.thread.title}"})
   end
 
-  def broadcast_email(users, post, groups)
+  def broadcast_email(users, post)
     @post = post
-    @group_names = groups.map(&:name)
+    @group_names = post.broadcast_groups.map(&:name)
 
     mail(to: users.map(&:email),
          subject: "Community broadcast: #{@post.thread.title}")
+  end
+
+  def new_post_in_subscribed_thread_email(users, post)
+    @post = post
+
+    @quoted_post_body = quoted_post_body(@post)
+
+    mail(to: users.map(&:email),
+         subject: %{New post in "#{post.thread.title}"})
+  end
+
+  def new_thread_in_subscribed_subforum_email(users, thread)
+    @thread = thread
+
+    @quoted_post_body = quoted_post_body(@thread.posts.first)
+
+    mail(to: users.map(&:email),
+         subject: %{New thread "#{thread.title}" in #{thread.subforum.name}})
   end
 
 private

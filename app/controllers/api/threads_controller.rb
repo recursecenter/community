@@ -1,8 +1,10 @@
 class Api::ThreadsController < Api::ApiController
   load_and_authorize_resource :thread, class: 'DiscussionThread'
 
-  include NotifyMentionedUsers
-  include NotifyBroadcastGroups
+  include MentionedUsers
+  include SubscriptionActions
+
+  has_subscribable :thread
 
   def show
     @thread.mark_as_visited_for(current_user)
@@ -16,8 +18,15 @@ class Api::ThreadsController < Api::ApiController
     end
     @autocomplete_users = User.select(:id, :first_name, :last_name).ordered_by_first_name
 
-    notify_newly_mentioned_users!(@post)
-    notify_broadcast_groups!(@post)
+    NotificationCoordinator.new(
+      MentionNotifier.new(@post, mentioned_users),
+      SubforumSubscriptionNotifier.new(@post.thread),
+      BroadcastNotifier.new(@post)
+    ).notify
+
+    if @thread.created_by.subscribe_on_create
+      @thread.created_by.subscribe_to(@thread, "You are receiving emails because you created this thread.")
+    end
   end
 
 private

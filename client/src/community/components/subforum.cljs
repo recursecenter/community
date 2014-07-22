@@ -115,9 +115,10 @@
       (if (= (str (:id subforum)) (:id route-data))
         [:div
          [:ol.breadcrumb
-            [:li (link-to (routes :index) "Community")]
-            [:li.active (:name subforum)]]
+          [:li (link-to (routes :index) "Community")]
+          [:li.active (:name subforum)]]
          (partials/title (:name subforum) "New thread")
+         (shared/->subscription-info (:subscription subforum))
          (if (empty? (:threads subforum))
            [:div.alert.alert-info "There are no threads - create the first one!"]
            [:table.table.threads-view

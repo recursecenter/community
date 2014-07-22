@@ -1,12 +1,15 @@
 (ns community.components.shared
   (:require [community.routes :as routes]
-            [community.util :refer-macros [p]]
+            [community.state :as state]
+            [community.api :as api]
+            [community.util :refer-macros [p <?]]
             [community.util.autocomplete :as ac]
             [community.util.selection-list :as selection-list]
             [om.core :as om]
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :refer-macros [html]]
-            [goog.style]))
+            [goog.style])
+  (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (defcomponent page-not-found [app owner]
   (display-name [_] "PageNotFound")
@@ -123,3 +126,25 @@
           (for [{:keys [name id]} (filter :selected? broadcast-groups)]
             [:span.label.label-info.broadcast-label {:onClick (partial toggle id)}
              "× " name])]]))))
+
+(defcomponent subscription-info [{:keys [subscribed reason] :as subscription} owner]
+  (display-name [_] "SubscriptionInfo")
+
+  (render [_]
+    (letfn [(toggle-subscription-status [e]
+              (go
+                (try
+                  (let [res (<? (if subscribed
+                                  (api/unsubscribe @subscription)
+                                  (api/subscribe @subscription)))]
+                    (om/transact! subscription [] #(merge % res)))
+                  (state/remove-errors! :ajax)
+                  (catch ExceptionInfo e
+                    (state/add-error! [:ajax :generic])))))]
+      (html
+        [:div.subscription-info
+         [:button.btn.btn-default.btn-small {:onClick toggle-subscription-status}
+          (if subscribed
+            [:span [:span.glyphicon.glyphicon-volume-off] " Unsubscribe"]
+            [:span [:span.glyphicon.glyphicon-volume-up] " Subscribe"])]
+         [:p.small.text-muted reason]]))))

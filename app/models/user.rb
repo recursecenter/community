@@ -5,12 +5,9 @@ class User < ActiveRecord::Base
   has_many :mentions, class_name: 'Notifications::Mention'
   has_many :group_memberships
   has_many :groups, through: :group_memberships
+  has_many :subscriptions
 
   scope :ordered_by_first_name, -> { order(first_name: :asc) }
-
-  def name
-    "#{first_name} #{last_name}"
-  end
 
   def self.create_or_update_from_api_data(user_data)
     user = where(hacker_school_id: user_data["id"]).first_or_initialize
@@ -34,5 +31,20 @@ class User < ActiveRecord::Base
     user.save!
 
     user
+  end
+
+  def name
+    "#{first_name} #{last_name}"
+  end
+
+  def mention_for_post(post)
+    mentions.where(post: post, mentioned_by: post.author).first_or_create
+  end
+
+  def subscribe_to(subscribable, reason)
+    subscription = subscribable.subscription_for(self)
+    subscription.subscribed = true
+    subscription.reason = reason
+    subscription.save!
   end
 end
