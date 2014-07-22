@@ -113,20 +113,6 @@
 
 }
 
-@media (max-width: $screen-sm-min) {
-  .collapse-toggle {
-    color: #ccc;
-    position: relative;
-    bottom: 9px;
-  }
-
-  #community-navbar-collapse {
-    position: relative;
-    top: -19px;
-    background: $gray-lighter;
-  }
-}
-
 .unread-count-icon {
   z-index: 1000;
   position: absolute;

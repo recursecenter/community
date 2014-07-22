@@ -143,25 +143,21 @@
     (html
       [:nav#navbar-community {:role "navigation"}
        [:div.navbar-header
-        [:button.navbar-toggle {:data-toggle "collapse"
-                                :data-target "#community-navbar-collapse"}
-         [:span.fa.fa-bars.fa-2x.collapse-toggle]]
         (partials/link-to "/" {:class "navbar-brand"}
           [:span
            [:img {:src (routes :asset {:name "logo-small.png"})}]
            [:span.brand-text "Community"]])]
-       [:div#community-navbar-collapse.collapse.navbar-collapse
-        [:ul.nav.navbar-nav.navbar-right
-         (when current-user
-           (->notifications-dropdown current-user))
-         (when current-user
-           [:li.dropdown
-            [:a.dropdown-toggle {:href "#" :data-toggle "dropdown"}
-             (:name current-user) " " [:i.fa.fa-cog]]
-            [:ul.dropdown-menu
-             [:div.arrow-up]
-             [:li (partials/link-to (routes :settings) "Settings")]
-             [:li [:a {:href "/logout"} "Logout"]]]])]]])))
+       [:ul.nav.navbar-nav.navbar-right.hidden-xs
+        (when current-user
+          (->notifications-dropdown current-user))
+        (when current-user
+          [:li.dropdown
+           [:a.dropdown-toggle {:href "#" :data-toggle "dropdown"}
+            (:name current-user) " " [:i.fa.fa-cog]]
+           [:ul.dropdown-menu
+            [:div.arrow-up]
+            [:li (partials/link-to (routes :settings) "Settings")]
+            [:li [:a {:href "/logout"} "Logout"]]]])]])))
 
 (defn start-notifications-subscription! [user-id app]
   (when api/subscriptions-enabled?
