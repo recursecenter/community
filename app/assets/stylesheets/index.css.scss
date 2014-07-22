@@ -1,0 +1,48 @@
+.subforum-blocks {
+  li.block-grid-item > div {
+    width: 300px;
+    height: 155px;
+    overflow: scroll;
+    border-left-size: 3px;
+    border-left-style: solid;
+  }
+
+  ol {
+    padding-left: 0;
+    margin-left: 10px;
+    list-style: none;
+
+    li {
+      margin: 5px 0;
+
+      .timestamp {
+        font-size: 12px;
+        font-weight: bold;
+        color: #666;
+        margin-right: 5px;
+      }
+
+      .name {
+        font-size: 12px;
+      }
+
+      p.title {
+        line-height: 16px;
+        margin-bottom: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+
+  h3 {
+    margin-top: 0;
+    margin-left: 10px;
+    margin-bottom: 0;
+  }
+
+  a:hover {
+    color: black;
+  }
+}

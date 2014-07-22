@@ -1,6 +1,6 @@
 (ns community.components.index
   (:require [community.state :as state]
-            [community.util :refer-macros [<?]]
+            [community.util :as util :refer-macros [<?]]
             [community.api :as api]
             [community.partials :refer [link-to]]
             [community.routes :refer [routes]]
@@ -9,19 +9,28 @@
             [sablono.core :as html :refer-macros [html]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
+(defn subforum-item [{:keys [id slug ui-color name recent-threads]}]
+  (html
+    [:li.block-grid-item {:key id}
+     [:div {:style {:border-color ui-color}}
+      [:a (link-to (routes :subforum {:id id :slug slug})
+                   [:h3 {:style {:color ui-color}} name])]
+      [:ol
+       (for [{:as thread :keys [title last-posted-to-by marked-unread-at unread]} recent-threads]
+         [:li
+          [:span.timestamp (util/human-format-time marked-unread-at)]
+          [:span.name last-posted-to-by]
+          [:p.title (link-to (routes :thread thread) {:style {:color ui-color}}
+                             (if unread
+                               [:strong title]
+                               title))]])]]]))
+
 (defn subforum-group [{:keys [name subforums id]}]
   (html
    [:div {:key id}
     [:h2 name]
     (if (not (empty? subforums))
-      [:ul.block-grid-4
-       (for [{:keys [id slug ui-color] :as subforum} subforums]
-         [:li.block-grid-item {:key id :className (if (:unread subforum) "unread")}
-          [:div {:style {:height "150px"
-                         :width "150px"
-                         :background-color ui-color}}
-           [:a (link-to (routes :subforum {:id id :slug slug})
-                        (:name subforum))]]])]) ]))
+      [:ul.subforum-blocks.block-grid-3 (map subforum-item subforums)])]))
 
 (defcomponent index [{:as app :keys [current-user subforum-groups]}
                      owner]
