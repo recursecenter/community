@@ -195,8 +195,8 @@
           [:div.row
            [:div#main-content
             (let [component (routes/dispatch route-data)]
-              (om/build component app))]])
-        [:footer
-         [:ul.footer-links
-          [:li [:a {:href "https://github.com/hackerschool/community"} [:i.fa.fa-code-fork] " Source"]]
-          [:li "Made with " [:i.fa.fa-heart {:style {:color "red"}}] " at " [:a {:href "https://www.hackerschool.com"} "Hacker School"]]]]]])))
+              (om/build component app))]])]
+       [:footer
+        [:ul.footer-links
+         [:li [:a {:href "https://github.com/hackerschool/community"} [:i.fa.fa-code-fork] " Source"]]
+         [:li "Made with " [:i.fa.fa-heart {:style {:color "red"}}] " at " [:a {:href "https://www.hackerschool.com"} "Hacker School"]]]]])))
