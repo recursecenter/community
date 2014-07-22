@@ -15,20 +15,20 @@
      [:div {:style {:border-color ui-color}}
       [:a (link-to (routes :subforum {:id id :slug slug})
                    [:h3 {:style {:color ui-color}} name])]
-      [:ol
-       (for [{:as thread :keys [title last-posted-to-by marked-unread-at unread]} recent-threads]
-         [:li
-          [:span.timestamp (util/human-format-time marked-unread-at)]
-          [:span.name last-posted-to-by]
-          [:p.title (link-to (routes :thread thread) {:style {:color ui-color}}
-                             (if unread
-                               [:strong title]
-                               title))]])]]]))
+      (if (empty? recent-threads)
+        [:p.no-threads "No threads yet..."]
+        [:ol
+         (for [{:as thread :keys [title last-posted-to-by marked-unread-at unread]} recent-threads]
+           [:li
+            [:span.timestamp (util/human-format-time marked-unread-at)]
+            [:span.name last-posted-to-by]
+            [:p.title (link-to (routes :thread thread) {:style {:color ui-color}}
+                               (if unread [:strong title] title))]])])]]))
 
 (defn subforum-group [{:keys [name subforums id]}]
   (html
    [:div {:key id}
-    [:h2 name]
+    [:h2.title-caps.subforum-group-name name]
     (if (not (empty? subforums))
       [:ul.subforum-blocks.block-grid-3 (map subforum-item subforums)])]))
 

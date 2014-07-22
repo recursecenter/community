@@ -1,10 +1,22 @@
 .subforum-blocks {
+  @media (max-width: $screen-sm-min) {
+    margin-left: 0;
+  }
+
   li.block-grid-item > div {
     width: 300px;
     height: 155px;
     overflow: scroll;
-    border-left-size: 3px;
+    border-left-width: 2px;
     border-left-style: solid;
+  }
+
+  .no-threads {
+    margin-top: 5px;
+    margin-left: 10px;
+    font-size: 12px;
+    font-style: italic;
+    color: #666;
   }
 
   ol {
@@ -45,4 +57,8 @@
   a:hover {
     color: black;
   }
+}
+
+.subforum-group-name {
+  margin-top: 30px;
 }
