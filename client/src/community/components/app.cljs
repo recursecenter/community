@@ -147,17 +147,12 @@
           [:span
            [:img {:src (routes :asset {:name "logo-small.png"})}]
            [:span.brand-text "Community"]])]
-       [:ul.nav.navbar-nav.navbar-right.hidden-xs
-        (when current-user
-          (->notifications-dropdown current-user))
-        (when current-user
-          [:li.dropdown
-           [:a.dropdown-toggle {:href "#" :data-toggle "dropdown"}
-            (:name current-user) " " [:i.fa.fa-cog]]
-           [:ul.dropdown-menu
-            [:div.arrow-up]
-            [:li (partials/link-to (routes :settings) "Settings")]
-            [:li [:a {:href "/logout"} "Logout"]]]])]])))
+       (when current-user
+         [:ul.nav.navbar-nav.navbar-right.hidden-xs
+          [:li [:p.navbar-text "Hi, " (:first-name current-user) "!"]]
+          (->notifications-dropdown current-user)
+          [:li (partials/link-to (routes :settings) [:i.fa.fa-cog])]
+          [:li [:a {:href "/logout"} [:i.fa.fa-sign-out]]]])])))
 
 (defn start-notifications-subscription! [user-id app]
   (when api/subscriptions-enabled?
