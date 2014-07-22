@@ -8,6 +8,9 @@ a {
   color: $brand-primary-muted;
   outline: 0;
 }
+a:hover {
+  text-decoration: none;
+}
 
 button {
   outline: 0;
@@ -19,6 +22,10 @@ button {
 
 .btn-default {
   border-color: $brand-primary-muted;
+}
+
+.btn-link:hover {
+  text-decoration: none;
 }
 
 .text-danger {
