@@ -125,7 +125,7 @@
             (let [new-cb (make-notification-global-click-cb owner)]
               (when old-cb
                 (.removeEventListener js/document.body "click" old-cb))
-              (.addEventListener js/document.body "click" new-cb false)
+              (.addEventListener js/document.body "click" new-cb)
               (om/set-state! owner :global-click-cb new-cb))
 
             (transitioned? owner :open? true false)
