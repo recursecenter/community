@@ -110,19 +110,26 @@
         :else
         (recur (.-parentNode child) parent)))
 
+(defn- make-notification-global-click-cb [owner]
+  (fn [e]
+    (when-not (child-of? (.-target e) (om/get-node owner))
+      (om/set-state! owner :open? false))))
+
 (defcomponent notifications-dropdown [user owner]
   (init-state [_]
-    {:open? false
-     :on-click-cb (fn [e]
-                    (when-not (child-of? (.-target e) (om/get-node owner))
-                      (om/set-state! owner :open? false)))})
+    {:open? false})
 
   (will-update [_ next-props next-state]
-    (cond (transitioned? owner :open? false true)
-          (.addEventListener js/document.body "click" (om/get-state owner :on-click-cb) false)
+    (let [old-cb (om/get-state owner :global-click-cb)]
+      (cond (transitioned? owner :open? false true)
+            (let [new-cb (make-notification-global-click-cb owner)]
+              (when old-cb
+                (.removeEventListener js/document.body "click" old-cb))
+              (.addEventListener js/document.body "click" new-cb false)
+              (om/set-state! owner :global-click-cb new-cb))
 
-          (transitioned? owner :open? true false)
-          (.removeEventListener js/document.body "click" (om/get-state owner :on-click-cb))))
+            (transitioned? owner :open? true false)
+            (.removeEventListener js/document.body "click" old-cb))))
 
   (render-state [_ {:keys [open?]}]
     (let [unread-count (count (filter (complement :read) (:notifications user)))]
