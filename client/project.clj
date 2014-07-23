@@ -8,6 +8,8 @@
                  [com.cemerick/piggieback "0.1.3"]
                  [weasel "0.3.0"]]
 
+  :jvm-opts ^:replace ["-Xmx512m" "-server"]
+
   :plugins [[lein-cljsbuild "1.0.3"]]
 
   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
