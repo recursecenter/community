@@ -8,10 +8,7 @@
     (r/route :index [])
     (r/route :settings ["settings"])
     (r/route :subforum ["f" :slug :id])
-    (r/route :thread ["t" :slug :id])
-
-    ;; helper routes
-    (r/route :asset ["assets" :name])))
+    (r/route :thread ["t" :slug :id])))
 
 (defn set-route! [app]
   (let [route (routes (-> js/document .-location .-pathname))]

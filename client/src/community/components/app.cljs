@@ -153,7 +153,7 @@
        [:div.navbar-header
         (partials/link-to "/"
           [:span
-           [:img {:src (routes :asset {:name "logo-small.png"})}]
+           [:img {:src (om/get-shared owner :logo-url)}]
            [:span.brand-text "Community"]])]
        (when current-user
          [:ul.nav.navbar-nav.navbar-right.hidden-xs

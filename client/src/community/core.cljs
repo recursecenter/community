@@ -30,8 +30,9 @@
 
 (defn ^:export init-app
   "Mounts the om application onto target element."
-  [target]
+  [target logo-url]
   (push-api/init-ws-connection! app-state)
   (om/root app/app
            app-state
-           {:target target}))
+           {:target target
+            :shared {:logo-url logo-url}}))
