@@ -104,10 +104,11 @@
       [:li.post {:key (:id post)}
        [:div.row
         [:div.post-author-image
-         [:img
-          {:src (-> post :author :avatar-url)
-           :width "50"       ;TODO: request different image sizes
-           }]]
+         [:a {:href (routes/hs-route :person (:author post))}
+          [:img
+           {:src (-> post :author :avatar-url)
+            :width "50"       ;TODO: request different image sizes
+            }]]]
         [:div.post-metadata
          [:a {:href (routes/hs-route :person (:author post))}
           (-> post :author :name)]
