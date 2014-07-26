@@ -1,6 +1,7 @@
 .subforum-blocks {
   @media (max-width: $screen-sm-min) {
     margin-left: 0;
+    margin-right: 0;
   }
 
   li.block-grid-item > div {
@@ -9,6 +10,10 @@
     overflow: scroll;
     border-left-width: 5px;
     border-left-style: solid;
+
+    @media (max-width: $screen-sm-min) {
+      max-width: 290px;
+    }
   }
 
   .no-threads {
@@ -61,4 +66,8 @@
 
 .subforum-group-name {
   margin-top: 30px;
+
+  @media (max-width: $screen-sm-min) {
+      padding: 0 10px;
+  }
 }
