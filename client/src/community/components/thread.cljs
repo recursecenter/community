@@ -112,8 +112,7 @@
         [:div.post-metadata
          [:a {:href (routes/hs-route :person (:author post))}
           (-> post :author :name)]
-         [:div (-> post :author :batch-name)]
-         [:div (util/human-format-time (:created-at post))]]
+         [:div {:title (util/human-format-time (:created-at post))} (-> post :author :batch-name)]
         [:div.post-content
          (if editing?
            (->post-form {:init-post (om/value post)
