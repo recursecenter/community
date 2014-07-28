@@ -79,8 +79,7 @@ CREATE TABLE discussion_threads (
     created_by_id integer,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    marked_unread_at timestamp without time zone,
-    pinned boolean DEFAULT false
+    marked_unread_at timestamp without time zone
 );
 
 
@@ -424,7 +423,6 @@ ALTER SEQUENCE subscriptions_id_seq OWNED BY subscriptions.id;
 CREATE VIEW threads_with_visited_status AS
  SELECT thread_users.id,
     thread_users.title,
-    thread_users.pinned,
     thread_users.subforum_id,
     thread_users.created_by_id,
     thread_users.created_at,
@@ -434,7 +432,6 @@ CREATE VIEW threads_with_visited_status AS
     visited_statuses.last_visited
    FROM (( SELECT discussion_threads.id,
             discussion_threads.title,
-            discussion_threads.pinned,
             discussion_threads.subforum_id,
             discussion_threads.created_by_id,
             discussion_threads.created_at,
@@ -771,6 +768,4 @@ INSERT INTO schema_migrations (version) VALUES ('20140710163204');
 INSERT INTO schema_migrations (version) VALUES ('20140712031258');
 
 INSERT INTO schema_migrations (version) VALUES ('20140721223232');
-
-INSERT INTO schema_migrations (version) VALUES ('20140722164601');
 
