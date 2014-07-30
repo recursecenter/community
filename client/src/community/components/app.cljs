@@ -144,7 +144,7 @@
           [:i.fa.fa-comments]]
          (->notifications user)]))))
 
-(defcomponent navbar [{:as data :keys [current-user foos]} owner]
+(defcomponent navbar [{:as data :keys [current-user]} owner]
   (display-name [_] "NavBar")
 
   (render [_]
@@ -198,7 +198,7 @@
           [:div
            (for [error errors]
              [:div.alert.alert-danger error])])
-        (if current-user
+        (when current-user
           [:div.row
            [:div#main-content
             (let [component (routes/dispatch route-data)]

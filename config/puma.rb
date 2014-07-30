@@ -13,8 +13,7 @@ on_worker_boot do
     config = ActiveRecord::Base.configurations[Rails.env] ||
                 Rails.application.config.database_configuration[Rails.env]
 
-    # We add 1 to our connection pool to account for our WebSocket thread.
-    config['pool'] = Integer(ENV['MAX_THREADS'] || 1) + 1
+    config['reaping_frequency'] = 8
     ActiveRecord::Base.establish_connection(config)
   end
 
