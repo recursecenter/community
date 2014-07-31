@@ -1,10 +1,6 @@
-Hi <%= @user.first_name %>,
+<%= @post.body %>
 
-<%= @mentioned_by.name %> mentioned you in "<%= @punctuated_thread_title %>"
+---
+You received this message because <%= @mentioned_by.first_name %> mentioned you in the post above.
 
 To reply, click here: <%= post_url(slug: @post.thread.slug, thread_id: @post.thread.id, id: @post.id) %>
-
-<%= @quoted_post_body %>
-
-Beep,
-Community bot

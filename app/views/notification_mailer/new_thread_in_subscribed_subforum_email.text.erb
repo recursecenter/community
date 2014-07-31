@@ -1,3 +1,6 @@
-<%= @thread.created_by.name %> made a new thread: <%= thread_url(slug: @thread.slug, id: @thread.id) %>
+<%= @thread.posts.first.body %>
 
-<%= @quoted_post_body %>
+---
+You received this message because you are subscribed to the subforum "<%= @thread.subforum.name %>"
+
+To reply, click here: <%= thread_url(slug: @thread.slug, id: @thread.id) %>

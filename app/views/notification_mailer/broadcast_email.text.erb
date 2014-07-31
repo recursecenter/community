@@ -1,5 +1,6 @@
+<%= @post.body %>
+
+---
 <%= @post.author.name %> broadcast this message to <%= @group_names.map(&:downcase).to_sentence %>.
 
 To reply, click here: <%= post_url(slug: @post.thread.slug, thread_id: @post.thread.id, id: @post.id) %>
-
-<%= @post.body %>

@@ -8,15 +8,9 @@ class NotificationMailer < ActionMailer::Base
     @user = mention.user
     @mentioned_by = mention.mentioned_by
 
-    @punctuated_thread_title = @post.thread.title
-    unless @punctuated_thread_title[-1].match /[.?!]/
-      @punctuated_thread_title += "."
-    end
-
-    @quoted_post_body = quoted_post_body(@post)
-
     mail(to: @user.email,
-         subject: %{#{@mentioned_by.name} mentioned you in "#{@post.thread.title}"})
+         from: from_field(@mentioned_by),
+         subject: @post.thread.title)
   end
 
   def broadcast_email(users, post)
@@ -24,31 +18,28 @@ class NotificationMailer < ActionMailer::Base
     @group_names = post.broadcast_groups.map(&:name)
 
     mail(to: users.map(&:email),
-         subject: "Community broadcast: #{@post.thread.title}")
+         from: from_field(@post.author),
+         subject: @post.thread.title)
   end
 
   def new_post_in_subscribed_thread_email(users, post)
     @post = post
 
-    @quoted_post_body = quoted_post_body(@post)
-
     mail(to: users.map(&:email),
-         subject: %{New post in "#{post.thread.title}"})
+         from: from_field(@post.author),
+         subject: post.thread.title)
   end
 
   def new_thread_in_subscribed_subforum_email(users, thread)
     @thread = thread
 
-    @quoted_post_body = quoted_post_body(@thread.posts.first)
-
     mail(to: users.map(&:email),
-         subject: %{New thread "#{thread.title}" in #{thread.subforum.name}})
+         from: from_field(@thread.created_by),
+         subject: thread.title)
   end
 
 private
-  def quoted_post_body(post)
-    post.body.split("\n").map do |line|
-      "> #{line}"
-    end.join("\n")
+  def from_field(user)
+    "\"#{user.name} (via Community)\" <bot@mail.community.hackerschool.com>"
   end
 end

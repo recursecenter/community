@@ -1,3 +1,6 @@
-<%= @post.author.name %> made a new post: <%= post_url(slug: @post.thread.slug, thread_id: @post.thread.id, id: @post.id) %>
+<%= @post.body %>
 
-<%= @quoted_post_body %>
+---
+You received this message because you are subscribed to the thread "<%= @post.thread.title %>"
+
+To reply, click here: <%= post_url(slug: @post.thread.slug, thread_id: @post.thread.id, id: @post.id) %>
