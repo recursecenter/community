@@ -24,7 +24,7 @@ gem 'font-awesome-sass'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 
-gem 'rails_12factor'
+gem 'rails_12factor', group: [:development, :production]
 
 gem 'oauth2'
 gem 'cancancan', '~> 1.8'

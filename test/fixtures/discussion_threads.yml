@@ -1,11 +1,7 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  title: MyString
-  subforum_id: 
-  created_by_id: 
+  title: Om is cool!
+  subforum: programming
+  created_by: zach
 
-two:
-  title: MyString
-  subforum_id: 
-  created_by_id: 
