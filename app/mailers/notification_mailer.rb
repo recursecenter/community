@@ -40,6 +40,6 @@ class NotificationMailer < ActionMailer::Base
 
 private
   def from_field(user)
-    "\"#{user.name} (via Community)\" <bot@mail.community.hackerschool.com>"
+    %{"#{user.name} (via Community)" <bot@mail.community.hackerschool.com>}
   end
 end
