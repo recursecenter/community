@@ -30,7 +30,7 @@ class Api::Private::EmailRepliesController < Api::ApiController
 
     post = thread.posts.build
 
-    unless Ability.new(current_user).can? :create, post
+    unless can? :create, post
       head 406 and return
     end
 
