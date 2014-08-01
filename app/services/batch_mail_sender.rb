@@ -29,7 +29,9 @@ private
     url = URI("https://api:#{ENV["MAILGUN_API_KEY"]}@api.mailgun.net/v2/mail.community.hackerschool.com/messages")
 
     res = Net::HTTP.post_form(url,
-      "to" => mail["to"].to_s,
+      # TODO: These To fields need to match up with keys in recipient_variables,
+      # which might not include display addresses.
+      "to" => mail.to,
       "from" => mail["from"].to_s,
       "subject" => mail.subject,
       "text" => mail.body.to_s,
