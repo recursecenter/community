@@ -1,3 +1,5 @@
+require 'openssl'
+
 class Api::Private::EmailRepliesController < Api::ApiController
   before_filter :require_mailgun_origin, only:   :reply
   before_filter :require_login,          except: :reply
@@ -71,7 +73,24 @@ private
   end
 
   def require_mailgun_origin
-    # TODO: see "Securing Webhooks"
-    # http://documentation.mailgun.com/user_manual.html#webhooks
+    api_key = ENV["MAILGUN_API_KEY"]
+    digest = OpenSSL::Digest::SHA256.new
+    data = "#{params[:timestamp]}#{params[:token]}"
+
+    unless secure_equals(params[:signature], OpenSSL::HMAC.hexdigest(digest, api_key, data))
+      head 404
+    end
+  end
+
+  def secure_equals(first, second)
+    return false if first.nil? || second.nil? || first.size != second.size
+
+    same = true
+
+    first.chars.zip(second.chars) do |c1, c2|
+      same = false if c1 != c2
+    end
+
+    same
   end
 end
