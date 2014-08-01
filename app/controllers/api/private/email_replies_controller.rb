@@ -43,7 +43,8 @@ class Api::Private::EmailRepliesController < Api::ApiController
 
     PubSub.publish :created, :post, post
 
-    # TODO NotificationCoordinator stuff, parsing mentions
+    # TODO: parse and notify @mentions as well
+    ThreadSubscriptionNotifier.new(post).notify
 
     head 200
   end
