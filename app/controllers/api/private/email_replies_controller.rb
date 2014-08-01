@@ -7,7 +7,7 @@ class Api::Private::EmailRepliesController < Api::ApiController
   # Mailgun will POST to this endpoint when someone replies to an
   # email with a reply-to of the form:
   #
-  #     reply-(reply_info)@reply.community.hackerschool.com
+  #     reply-(reply_info)@mail.community.hackerschool.com
   #
   # important params:
   #

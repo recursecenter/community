@@ -6,6 +6,6 @@ module EmailFields
   end
 
   def reply_to_field(reply_info)
-    "reply-#{reply_info}@reply.community.hackerschool.com"
+    "reply-#{reply_info}@mail.community.hackerschool.com"
   end
 end
