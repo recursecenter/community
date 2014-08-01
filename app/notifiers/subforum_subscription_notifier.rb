@@ -9,7 +9,7 @@ class SubforumSubscriptionNotifier < Notifier
 
   def notify(email_recipients)
     unless email_recipients.empty?
-      BatchNotificationSender.delay.deliver(:new_thread_in_subscribed_subforum_email, email_recipients, thread)
+      BatchNotificationSender.delay.deliver(:new_thread_in_subscribed_subforum_email, recipient_variables(email_recipients, thread), email_recipients, thread)
     end
   end
 

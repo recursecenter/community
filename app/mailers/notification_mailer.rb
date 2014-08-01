@@ -1,7 +1,7 @@
 class NotificationMailer < ActionMailer::Base
   add_template_helper ApplicationHelper
 
-  default from: "bot@mail.community.hackerschool.com"
+  include EmailFields
 
   def user_mentioned_email(mention)
     @post = mention.post
@@ -9,7 +9,8 @@ class NotificationMailer < ActionMailer::Base
     @mentioned_by = mention.mentioned_by
 
     mail(to: @user.email,
-         from: from_field(@mentioned_by),
+         from: from_field(@mentioned_by.name),
+         reply_to: reply_to_field(ReplyInfoVerifier.generate(@user, @post.thread)),
          subject: @post.thread.title)
   end
 
@@ -18,7 +19,7 @@ class NotificationMailer < ActionMailer::Base
     @group_names = post.broadcast_groups.map(&:name)
 
     mail(to: users.map(&:email),
-         from: from_field(@post.author),
+         from: from_field(@post.author.name),
          subject: @post.thread.title)
   end
 
@@ -26,7 +27,7 @@ class NotificationMailer < ActionMailer::Base
     @post = post
 
     mail(to: users.map(&:email),
-         from: from_field(@post.author),
+         from: from_field(@post.author.name),
          subject: post.thread.title)
   end
 
@@ -34,12 +35,7 @@ class NotificationMailer < ActionMailer::Base
     @thread = thread
 
     mail(to: users.map(&:email),
-         from: from_field(@thread.created_by),
+         from: from_field(@thread.created_by.name),
          subject: thread.title)
-  end
-
-private
-  def from_field(user)
-    %{"#{user.name} (via Community)" <bot@mail.community.hackerschool.com>}
   end
 end
