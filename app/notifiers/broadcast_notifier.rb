@@ -1,6 +1,8 @@
 require 'set'
 
 class BroadcastNotifier < Notifier
+  include RecipientVariables
+
   attr_reader :post
 
   def initialize(post)

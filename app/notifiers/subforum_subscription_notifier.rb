@@ -1,6 +1,8 @@
 require 'set'
 
 class SubforumSubscriptionNotifier < Notifier
+  include RecipientVariables
+
   attr_reader :thread
 
   def initialize(thread)
