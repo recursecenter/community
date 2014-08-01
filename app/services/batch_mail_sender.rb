@@ -29,8 +29,8 @@ private
     url = URI("https://api:#{ENV["MAILGUN_API_KEY"]}@api.mailgun.net/v2/mail.community.hackerschool.com/messages")
 
     res = Net::HTTP.post_form(url,
-      "to" => mail.to,
-      "from" => mail.from.first,
+      "to" => mail["to"].to_s,
+      "from" => mail["from"].to_s,
       "subject" => mail.subject,
       "text" => mail.body.to_s,
       "h:Reply-To" => reply_to_field("%recipient.reply_info%"),
