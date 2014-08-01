@@ -40,7 +40,9 @@ Rails.application.routes.draw do
         end
       end
     end
+
+    namespace :private do
+      post :reply, to: 'email_replies#reply'
+    end
   end
-
-
 end
