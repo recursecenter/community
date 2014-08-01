@@ -43,7 +43,6 @@ a sample `.env` file to get you started:
 ```sh
 PORT=5001
 RACK_ENV=development
-DATABASE_URL=postgres://localhost/community_development
 REDIS_URL=redis://localhost:6379
 
 HACKER_SCHOOL_CLIENT_ID=your_client_id

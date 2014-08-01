@@ -4,12 +4,15 @@ require 'json'
 
 # NOTE: This ignores HTML messages for the moment.
 class BatchMailSender
+  include EmailFields
+
   class Error < StandardError; end
 
-  attr_reader :mail
+  attr_reader :mail, :recipient_variables
 
-  def initialize(mail)
+  def initialize(mail, recipient_variables)
     @mail = mail
+    @recipient_variables = recipient_variables
   end
 
   def deliver
@@ -25,15 +28,12 @@ private
   def deliver_to_recipients
     url = URI("https://api:#{ENV["MAILGUN_API_KEY"]}@api.mailgun.net/v2/mail.community.hackerschool.com/messages")
 
-    recipient_variables = mail.to.map do |addr|
-      [addr, {}]
-    end.to_h
-
     res = Net::HTTP.post_form(url,
       "to" => mail.to,
       "from" => mail.from.first,
       "subject" => mail.subject,
       "text" => mail.body.to_s,
+      "h:Reply-To" => reply_to_field("%recipient.reply_info%"),
       "recipient-variables" => JSON.generate(recipient_variables))
 
     unless res.code == "200"
