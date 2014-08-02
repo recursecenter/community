@@ -32,7 +32,10 @@ class Api::Private::EmailRepliesController < Api::ApiController
 
     post = thread.posts.build
 
-    unless can? :create, post
+    # The second check isn't _actual_ security, but prevents
+    # unintended issues in the event we send reply_info to the wrong
+    # person...
+    unless can?(:create, post) && params['sender'] == current_user.email
       head 406 and return
     end
 
