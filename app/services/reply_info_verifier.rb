@@ -1,4 +1,8 @@
+require 'openssl'
+
 class ReplyInfoVerifier
+  class InvalidSignature < StandardError; end
+
   def self.generate(user, thread)
     new.generate(user, thread)
   end
@@ -8,17 +12,29 @@ class ReplyInfoVerifier
   end
 
   def initialize
-    secret = Rails.application.secrets[:email_secret_key]
-    @verifier = ActiveSupport::MessageVerifier.new(secret, serializer: YAML)
+    @secret = Rails.application.secrets[:email_secret_key]
   end
 
   def generate(user, thread)
-    @verifier.generate([user.id, thread.id])
+    data = "#{user.id}-#{thread.id}"
+    "#{data}--#{generate_digest(data)}"
   end
 
-  def verify(info)
-    user_id, thread_id = @verifier.verify(info)
+  def verify(signed_info)
+    raise InvalidSignature if signed_info.blank?
+    signed_info = signed_info.downcase
 
-    [User.find(user_id), DiscussionThread.find(thread_id)]
+    data, digest = signed_info.split("--")
+    if data.present? && digest.present? && SecureEquals.secure_equals(digest, generate_digest(data))
+      user_id, thread_id = data.split("-")
+      [User.find(user_id), DiscussionThread.find(thread_id)]
+    else
+      raise InvalidSignature
+    end
+  end
+
+private
+  def generate_digest(data)
+    OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, @secret, data)
   end
 end

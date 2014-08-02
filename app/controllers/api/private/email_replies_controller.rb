@@ -58,7 +58,7 @@ private
   def reply_info
     @reply_info ||= begin
       ReplyInfoVerifier.verify(params['reply_info'])
-    rescue ActiveSupport::MessageVerifier::InvalidSignature => e
+    rescue ReplyInfoVerifier::InvalidSignature => e
       nil
     end
   end
@@ -80,20 +80,8 @@ private
     digest = OpenSSL::Digest::SHA256.new
     data = "#{params[:timestamp]}#{params[:token]}"
 
-    unless secure_equals(params[:signature], OpenSSL::HMAC.hexdigest(digest, api_key, data))
+    unless SecureEquals.secure_equals(params[:signature], OpenSSL::HMAC.hexdigest(digest, api_key, data))
       head 404
     end
-  end
-
-  def secure_equals(first, second)
-    return false if first.nil? || second.nil? || first.size != second.size
-
-    same = true
-
-    first.chars.zip(second.chars) do |c1, c2|
-      same = false if c1 != c2
-    end
-
-    same
   end
 end
