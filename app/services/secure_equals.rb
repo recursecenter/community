@@ -1,11 +1,11 @@
 module SecureEquals
   def self.secure_equals(first, second)
-    return false if first.nil? || second.nil? || first.size != second.size
+    return false if first.nil? || second.nil? || first.bytesize != second.bytesize
 
     same = true
 
-    first.chars.zip(second.chars) do |c1, c2|
-      same = false if c1 != c2
+    first.bytes.zip(second.bytes) do |b1, b2|
+      same = false if b1 != b2
     end
 
     same
