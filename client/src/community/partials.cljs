@@ -1,6 +1,7 @@
 (ns community.partials
   (:require [community.location :as location]
             [community.util :refer-macros [p]]
+            [community.api.push :as push-api]
             [sablono.core :refer-macros [html]]
             [om.dom :as dom]
             [goog.window :as window]
@@ -13,7 +14,8 @@
     (html
       [:a (merge opts {:href path
                        :onClick (fn [e]
-                                  (when location/pushstate-enabled
+                                  (when (and location/pushstate-enabled
+                                             (not (push-api/ws-closed?)))
                                     (.preventDefault e)
                                     (if (location/open-in-new-window? e)
                                       (window/open path)

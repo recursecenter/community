@@ -38,33 +38,40 @@
     (set! (.-onmessage ws) onmessage)))
 
 (def !ws-connection (atom nil))
+(def !ws-ready-state-log (atom []))
 
-(defn log-ready-state-until-open! [ws log]
+(defn log-ready-state! [ws log]
   (go
     (loop [prev-state nil]
       (let [state (.-readyState ws)]
         (when (not= state prev-state)
-          (swap! log conj state))
+          (swap! log conj (case state
+                            0 :connecting
+                            1 :open
+                            2 :closing
+                            3 :closed)))
         (<! (async/timeout 16))
-        (when (not= state 1)
-          (recur state))))))
+        (recur state)))))
+
+(defn ws-closed? []
+  (let [state (peek @!ws-ready-state-log)]
+    (or (= :closing state) (= :closed state))))
 
 (defn init-ws-connection!
   "error-state should be an atom with an :errors key. An error will be
   added if the WebSocket connection closes or errors."
   [error-state]
-  (let [ws (new-ws-connection)
-        ready-state-log (atom [])]
+  (let [ws (new-ws-connection)]
     (reset! !ws-connection ws)
     (begin-publishing! ws *pubsub*)
-    (log-ready-state-until-open! ws ready-state-log)
+    (log-ready-state! ws !ws-ready-state-log)
     (set! (.-onclose ws)
           (fn [e]
             ;; don't show error if the websocket went directly from CONNECTING to CLOSED
             ;; or if the log only shows CONNECTING, in which case the CLOSED hasn't
             ;; been registered yet
-            (let [log @ready-state-log]
-              (when-not (or (= log [0 3]) (= log [0]))
+            (let [log @!ws-ready-state-log]
+              (when-not (or (= log [:connecting :closed]) (= log [:connecting]))
                 (state/add-error! [:websocket :closed]))))))
   nil)
 
