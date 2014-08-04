@@ -2,7 +2,8 @@
   (:require [community.util.pubsub :as pubsub]
             [community.state :as state]
             [community.api :as api]
-            [cljs.core.async :as async]))
+            [cljs.core.async :as async :refer [<!]])
+  (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (def *pubsub* (pubsub/pubsub))
 (def !ws-connection (atom nil))
@@ -38,15 +39,30 @@
 
 (def !ws-connection (atom nil))
 
+(defn log-ready-state-until-open! [ws log]
+  (go
+    (loop [prev-state nil]
+      (let [state (.-readyState ws)]
+        (when (not= state prev-state)
+          (swap! log conj state))
+        (<! (async/timeout 16))
+        (when (not= state 1)
+          (recur state))))))
+
 (defn init-ws-connection!
   "error-state should be an atom with an :errors key. An error will be
   added if the WebSocket connection closes or errors."
   [error-state]
-  (let [ws (new-ws-connection)]
+  (let [ws (new-ws-connection)
+        ready-state-log (atom [])]
     (reset! !ws-connection ws)
     (begin-publishing! ws *pubsub*)
-    (set! (.-onclose ws) #(state/add-error! [:websocket :closed]))
-    (set! (.-onerror ws) #(state/add-error! [:websocket :errored])))
+    (log-ready-state-until-open! ws ready-state-log)
+    (set! (.-onclose ws)
+          (fn [e]
+            ;; don't show error if the websocket went directly from CONNECTING to CLOSED
+            (when (not= @ready-state-log [0 3])
+              (state/add-error! [:websocket :closed])))))
   nil)
 
 (defmulti feed-format :feed)
