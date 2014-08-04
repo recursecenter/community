@@ -168,4 +168,4 @@
           (if subscribed
             [:span [:span.glyphicon.glyphicon-volume-off] " Unsubscribe"]
             [:span [:span.glyphicon.glyphicon-volume-up] " Subscribe"])]
-         [:span.subscription-reason reason]]))))
+         [:p.subscription-reason reason]]))))

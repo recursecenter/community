@@ -12,11 +12,12 @@
   margin: 5px 0;
 
   .subscription-reason {
+    display: inline-block;
+    margin: 5px 0;
+    vertical-align: middle;
     font-size: $font-size-small;
     font-style: italic;
     color: #999;
-    position: relative;
-    top: 2px;
   }
 
   .subscription-button {
