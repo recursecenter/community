@@ -8,7 +8,8 @@
             [om.core :as om]
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :refer-macros [html]]
-            [goog.style])
+            [goog.style]
+            [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (defcomponent page-not-found [app owner]
@@ -77,13 +78,14 @@
                 (let [next-or-prev (case direction "ArrowDown" :next "ArrowUp" :prev)]
                   (om/set-state! owner :ac-selections
                                  (selection-list/select next-or-prev ac-selections))))
-              (insert-selected [e]
-                (let [selected (selection-list/selected ac-selections)
-                      ac (-> (ac/autocompleter value (ac/cursor-position (.-target e)))
+              (insert [selected]
+                (let [ac (-> (ac/autocompleter value (ac/cursor-position (om/get-node owner "textarea")))
                              (ac/insert selected {:marker "@"}))]
                   (on-change (ac/value ac))
                   (om/set-state! owner :ac-selections [])
                   (om/set-state! owner :new-cursor-pos (ac/cursor-position ac))))
+              (insert-selected [e]
+                (insert (selection-list/selected ac-selections)))
               (handle-autocomplete-action [e]
                 ;; HACK: update value before possible causing a local
                 ;; re-render (see #71)
@@ -99,17 +101,29 @@
           [:div
            [:div.btn-group.full-size {:class [(if menu-showing? "open")
                                               (if should-drop-down? "dropdown" "dropup")]}
-            [:ul.dropdown-menu
+            [:ul.dropdown-menu {:ref "dropdown-menu"}
              (for [{:keys [value selected?]} ac-selections]
                [:li {:class (if selected? "active")}
-                [:a {:href "#"} value]])]
+                [:a {:href "#" :onClick (fn [e]
+                                          (.preventDefault e)
+                                          (insert value))}
+                 value]])]
             [:textarea (merge passthrough
                               {:value value
                                :ref "textarea"
                                :onClick set-ac-selections
                                :onKeyUp set-ac-selections
                                :onKeyDown handle-autocomplete-action
-                               :onBlur #(om/set-state! owner :focused? false)
+                               :onBlur #(go
+                                          ;; HACK: We have to wait before setting :focused?
+                                          ;; to false to give the dropdown items' :onClick
+                                          ;; a chance to run before being rendered away.
+                                          ;; We then have to check that the textarea hasn't
+                                          ;; been focused in the meantime.
+                                          ;; >:( Seriously, React?
+                                          (async/<! (async/timeout 200))
+                                          (when-not (= (.-activeElement js/document) (om/get-node owner "textarea"))
+                                            (om/set-state! owner :focused? false)))
                                :onFocus #(om/set-state! owner :focused? true)
                                :onChange (fn [e]
                                            (on-change (.. e -target -value)))})]]])))))
