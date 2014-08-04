@@ -61,8 +61,11 @@
     (set! (.-onclose ws)
           (fn [e]
             ;; don't show error if the websocket went directly from CONNECTING to CLOSED
-            (when (not= @ready-state-log [0 3])
-              (state/add-error! [:websocket :closed])))))
+            ;; or if the log only shows CONNECTING, in which case the CLOSED hasn't
+            ;; been registered yet
+            (let [log @ready-state-log]
+              (when-not (or (= log [0 3]) (= log [0]))
+                (state/add-error! [:websocket :closed]))))))
   nil)
 
 (defmulti feed-format :feed)
