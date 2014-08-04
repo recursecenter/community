@@ -79,7 +79,7 @@
               :autocomplete-list (mapv :name (:autocomplete-users subforum))}
              {:opts {:on-change #(om/update! subforum [:new-thread :body] %)
                      :passthrough {:id "post-body"
-                                   :class "form-control"
+                                   :class ["form-control" "post-textarea"]
                                    :placeholder "Compose your post..."}}})]
            [:button.btn.btn-default {:type "submit"
                                      :disabled form-disabled?}
