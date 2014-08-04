@@ -93,6 +93,12 @@
            (when (:persisted? post)
              [:button.btn.btn-link.btn-sm {:onClick cancel-edit} "Cancel"])]]]))))
 
+(defn wrap-mentions
+  "Wraps @mentions in a post body in <span class=\"at-mention\">"
+  [body users]
+  (models/replace-mentions body users (fn [name]
+                                        (str "<span class=\"at-mention\">" name "</span>"))))
+
 (defcomponent post [{:keys [post autocomplete-users]} owner]
   (display-name [_] "Post")
 
@@ -126,7 +132,8 @@
                                         (om/set-state! owner :editing? false))})
            [:div.row
             [:div.post-body
-             (partials/html-from-markdown (:body post))]
+             (partials/html-from-markdown
+              (wrap-mentions (:body post) autocomplete-users))]
             [:div.post-controls
              (when (and (:editable post) (not editing?))
                [:button.btn.btn-default.btn-sm

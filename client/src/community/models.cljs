@@ -50,3 +50,7 @@
 
 (defn with-mentions [post users]
   (assoc post :mentions (parse-mentions post users)))
+
+(defn replace-mentions [body users replace-fn]
+  (let [regexp (names->mention-regexp (map :name users))]
+    (.replace body regexp replace-fn)))
