@@ -14,7 +14,8 @@
     [:li.block-grid-item {:key id}
      [:div {:style {:border-color ui-color}}
       [:a (link-to (routes :subforum {:id id :slug slug})
-                   [:h3 {:style {:color ui-color}} name])]
+                   {:style {:color ui-color}}
+                   [:h3 name])]
       (if (empty? recent-threads)
         [:p.no-threads "No threads yet..."]
         [:ol
