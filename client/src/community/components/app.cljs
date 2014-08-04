@@ -198,11 +198,12 @@
           [:div
            (for [error errors]
              [:div.alert.alert-danger error])])
-        (when current-user
-          [:div.row
-           [:div#main-content
+        [:div.row
+         [:div#main-content
+          (if current-user
             (let [component (routes/dispatch route-data)]
-              (om/build component app))]])]
+              (om/build component app))
+            (partials/loading-icon))]]]
        [:footer
         [:ul.footer-links
          [:li [:a {:href "https://github.com/hackerschool/community"} [:i.fa.fa-code-fork] " Source"]]

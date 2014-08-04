@@ -227,4 +227,4 @@
                            :after-persisted (fn [post reset-form!]
                                               (reset-form!)
                                               (update-post! app post))})]]]
-          [:div.push-down])))))
+          (partials/loading-icon))))))

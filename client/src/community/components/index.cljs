@@ -2,7 +2,7 @@
   (:require [community.state :as state]
             [community.util :as util :refer-macros [<?]]
             [community.api :as api]
-            [community.partials :refer [link-to]]
+            [community.partials :as partials :refer [link-to]]
             [community.routes :refer [routes]]
             [om.core :as om]
             [om-tools.core :refer-macros [defcomponent]]
@@ -50,4 +50,4 @@
     (html
       (if (not (empty? subforum-groups))
         [:div.row (map subforum-group subforum-groups)]
-        [:div]))))
+        (partials/loading-icon)))))

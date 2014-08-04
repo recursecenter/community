@@ -47,3 +47,8 @@
                    (scroll-to-bottom)
                    (.focus (.querySelector js/document "[data-new-anchor]")))}
        button-text]]]))
+
+(defn loading-icon []
+  (html
+    [:div.push-down {:style {:text-align "center"}}
+     [:i.fa.fa-circle-o-notch.fa-spin.fa-2x]]))

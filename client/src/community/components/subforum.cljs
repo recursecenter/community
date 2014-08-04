@@ -129,4 +129,4 @@
                 [:td.title (link-to (routes :thread thread) title)]
                 [:td.timestamp (util/human-format-time (:marked-unread-at thread))]])]])
          (->new-thread subforum)]
-        [:div.push-down]))))
+        (partials/loading-icon)))))
