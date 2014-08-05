@@ -52,5 +52,5 @@
 
 (defn loading-icon []
   (html
-    [:div.push-down {:style {:text-align "center"}}
+    [:div.push-down.loading
      [:i.fa.fa-circle-o-notch.fa-spin.fa-2x]]))
