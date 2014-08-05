@@ -91,7 +91,9 @@
                                             :disabled form-disabled?}
             (if (:persisted? post) "Update" "Post")]
            (when (:persisted? post)
-             [:button.btn.btn-link.btn-sm {:onClick cancel-edit} "Cancel"])]]]))))
+             [:button.btn.btn-link.btn-sm {:type "button"
+                                           :onClick cancel-edit}
+              "Cancel"])]]]))))
 
 (defn wrap-mentions
   "Wraps @mentions in a post body in <span class=\"at-mention\">"
@@ -128,8 +130,7 @@
                                             (om/set-state! owner :editing? false)
                                             (doseq [[k v] new-post]
                                               (om/update! post k v)))
-                         :cancel-edit (fn []
-                                        (om/set-state! owner :editing? false))})
+                         :cancel-edit #(om/set-state! owner :editing? false)})
            [:div.row
             [:div.post-body
              (partials/html-from-markdown
