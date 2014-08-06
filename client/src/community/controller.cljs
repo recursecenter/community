@@ -33,8 +33,7 @@
       (swap! app-state assoc :loading? true)
       (swap! app-state assoc
         key (<? (api-call))
-        :route-data route-data
-        :loading? false)
+        :route-data route-data)
       (state/remove-errors! :ajax)
 
       (catch ExceptionInfo e
@@ -44,13 +43,16 @@
             (state/add-error! (:error-info e-data)))))
 
       (catch Exception e
-        (.log js/console e)))))
+        (.log js/console e))
+
+      (finally
+        (swap! app-state assoc :loading? false)))))
 
 (defn handle-route-changed [app-state route-data]
   (condp keyword-identical? (:route route-data)
     :index    (load-from-api app-state route-data :subforum-groups api/subforum-groups)
-    :subforum (load-from-api app-state route-data :subforum #(api/subforum (:id route-data)))
-    :thread   (load-from-api app-state route-data :thread #(api/thread (:id route-data)))
+    :subforum (load-from-api app-state route-data :subforum      #(api/subforum (:id route-data)))
+    :thread   (load-from-api app-state route-data :thread        #(api/thread (:id route-data)))
     :settings (swap! app-state assoc :route-data route-data)
     (swap! app-state assoc :route-data {:route :page-not-found})))
 
