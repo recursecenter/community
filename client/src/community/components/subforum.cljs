@@ -1,5 +1,6 @@
 (ns community.components.subforum
   (:require [community.state :as state]
+            [community.controller :as controller]
             [community.util :as util :refer-macros [<? p]]
             [community.api :as api]
             [community.models :as models]
@@ -12,77 +13,51 @@
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
-(defcomponent new-thread [{:as subforum :keys [broadcast-groups]} owner]
+(defcomponent new-thread [{:as subforum :keys [broadcast-groups submitting? errors]} owner]
   (display-name [_] "NewThread")
 
-  (init-state [this]
-    {:c-draft (async/chan 1)
-     :form-disabled? false
-     :errors #{}})
-
-  (will-mount [this]
-    (let [{:keys [c-draft]} (om/get-state owner)]
-      (go-loop []
-        (when-let [draft (<! c-draft)]
-          (try
-            (let [{:keys [id autocomplete-users]} @subforum
-                  new-thread (<? (api/new-thread id (models/with-mentions draft autocomplete-users)))]
-              (routes/redirect-to (routes :thread new-thread)))
-
-            (catch ExceptionInfo e
-              (om/set-state! owner :form-disabled? false)
-              (let [e-data (ex-data e)]
-                (om/update-state! owner :errors #(conj % (state/error-message e-data))))))
-
-          (recur)))))
-
-  (will-unmount [this]
-    (async/close! (:c-draft (om/get-state owner))))
-
   (render [this]
-    (let [{:keys [form-disabled? c-draft errors]} (om/get-state owner)]
-      (html
-        [:div.panel
-         {:class (if (empty? errors) "panel-default" "panel-danger")}
-         [:div.panel-heading
-          [:span.title-caps "New thread"]
-          (when (not (empty? errors))
-            (map (fn [e] [:div e]) errors))]
-         [:div.panel-body
-          [:form {:onSubmit (fn [e]
-                              (.preventDefault e)
-                              (when-not form-disabled?
-                                (async/put! c-draft (:new-thread @subforum))
-                                (om/set-state! owner :form-disabled? true)))}
-           [:div.form-group
-            (let [broadcast-to (:broadcast-to (:new-thread subforum))]
-              (shared/->broadcast-group-picker
-               {:broadcast-groups (mapv #(assoc % :selected? (contains? broadcast-to (:id %)))
-                                        broadcast-groups)}
-               {:opts {:on-toggle (fn [id]
-                                    (om/transact! subforum [:new-thread :broadcast-to]
-                                                  #(models/toggle-broadcast-to % id)))}}))]
-           [:div.form-group
-            [:label.hidden {:for "thread-title"} "Title"]
-            [:input#thread-title.form-control
-             {:type "text"
-              :placeholder "Thread title"
-              :data-new-anchor true
-              :onChange (fn [e]
-                          (om/update! subforum [:new-thread :title]
-                                      (-> e .-target .-value)))}]]
-           [:div.form-group
-            [:label.hidden {:for "post-body"} "Body"]
-            (shared/->autocompleting-textarea
-             {:value (get-in subforum [:new-thread :body])
-              :autocomplete-list (mapv :name (:autocomplete-users subforum))}
-             {:opts {:on-change #(om/update! subforum [:new-thread :body] %)
-                     :passthrough {:id "post-body"
-                                   :class ["form-control" "post-textarea"]
-                                   :placeholder "Compose your post..."}}})]
-           [:button.btn.btn-default {:type "submit"
-                                     :disabled form-disabled?}
-            "Create thread"]]]]))))
+    (html
+      [:div.panel
+       {:class (if (empty? errors) "panel-default" "panel-danger")}
+       [:div.panel-heading
+        [:span.title-caps "New thread"]
+        (when (not (empty? errors))
+          (map (fn [e] [:div e]) errors))]
+       [:div.panel-body
+        [:form {:onSubmit (fn [e]
+                            (.preventDefault e)
+                            (when-not submitting?
+                              (controller/dispatch :new-thread (:new-thread @subforum))))}
+         [:div.form-group
+          (let [broadcast-to (:broadcast-to (:new-thread subforum))]
+            (shared/->broadcast-group-picker
+             {:broadcast-groups (mapv #(assoc % :selected? (contains? broadcast-to (:id %)))
+                                      broadcast-groups)}
+             {:opts {:on-toggle (fn [id]
+                                  (om/transact! subforum [:new-thread :broadcast-to]
+                                                #(models/toggle-broadcast-to % id)))}}))]
+         [:div.form-group
+          [:label.hidden {:for "thread-title"} "Title"]
+          [:input#thread-title.form-control
+           {:type "text"
+            :placeholder "Thread title"
+            :data-new-anchor true
+            :onChange (fn [e]
+                        (om/update! subforum [:new-thread :title]
+                                    (-> e .-target .-value)))}]]
+         [:div.form-group
+          [:label.hidden {:for "post-body"} "Body"]
+          (shared/->autocompleting-textarea
+           {:value (get-in subforum [:new-thread :body])
+            :autocomplete-list (mapv :name (:autocomplete-users subforum))}
+           {:opts {:on-change #(om/update! subforum [:new-thread :body] %)
+                   :passthrough {:id "post-body"
+                                 :class ["form-control" "post-textarea"]
+                                 :placeholder "Compose your post..."}}})]
+         [:button.btn.btn-default {:type "submit"
+                                   :disabled submitting?}
+          "Create thread"]]]])))
 
 (defcomponent subforum [{:keys [route-data subforum] :as app}
                         owner]

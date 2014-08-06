@@ -1,6 +1,5 @@
 (ns community.routes
-  (:require [community.util.routing :as r]
-            [community.controller :as controller]))
+  (:require [community.util.routing :as r]))
 
 ;;; App routes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -39,9 +38,3 @@
 
 (defn ^:private open-in-new-window? [click-e]
   (or (.-metaKey click-e) (.-ctrlKey click-e)))
-
-(defn init-location! []
-  (let [route-changed! #(controller/dispatch :route-changed
-                          (routes (-> js/document .-location .-pathname)))]
-    (route-changed!)
-    (.addEventListener js/window "popstate" route-changed!)))
