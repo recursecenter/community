@@ -89,7 +89,8 @@
       (let [data (<? (api-call))]
         (swap! app-state assoc
           key data
-          :route-data route-data)
+          :route-data route-data
+          :ui-color (:ui-color data))
         (state/remove-errors! :ajax)
         data)
 
@@ -132,10 +133,14 @@
       (start-thread-subscription app-state))))
 
 (defmethod update-route-data :settings [app-state route-data]
-  (swap! app-state assoc :route-data route-data))
+  (swap! app-state assoc
+    :route-data route-data
+    :ui-color nil))
 
 (defmethod update-route-data :page-not-found [app-state route-data]
-  (swap! app-state assoc :route-data {:route :page-not-found}))
+  (swap! app-state assoc
+    :route-data {:route :page-not-found}
+    :ui-color nil))
 
 (defn handle-route-changed [app-state route-data]
   (when-let [push-unsubscribe! (-> @app-state :route-data :push-unsubscribe!)]

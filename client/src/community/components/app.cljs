@@ -142,17 +142,17 @@
           [:i.fa.fa-comments]]
          (->notifications user)]))))
 
-(defcomponent navbar [{:as data :keys [current-user]} owner]
+(defcomponent navbar [{:keys [current-user ui-color]} owner]
   (display-name [_] "NavBar")
 
   (render [_]
     (html
-      [:nav#navbar-community {:role "navigation"}
+      [:nav#navbar-community {:role "navigation" :style {:border-color ui-color}}
        [:div.navbar-header
         (partials/link-to "/"
           [:span
            [:img {:src (om/get-shared owner :logo-url)}]
-           [:span.brand-text "Community"]])]
+           [:span.brand-text {:style {:color ui-color}} "Community"]])]
        (when current-user
          [:ul.nav.navbar-nav.navbar-right.hidden-xs
           [:li [:p.navbar-text "Hi, " (:first-name current-user) "!"]]
