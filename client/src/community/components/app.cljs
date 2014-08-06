@@ -1,6 +1,5 @@
 (ns community.components.app
-  (:require [community.api :as api]
-            [community.api.push :as push-api]
+  (:require [community.controller :as controller]
             [community.models :as models]
             [community.routes :as routes :refer [routes]]
             [community.components.shared :as shared]
@@ -27,7 +26,7 @@
 
 (defn mark-as-read! [notification]
   (om/update! notification :read true)
-  (api/mark-notification-as-read @notification))
+  (controller/dispatch :notifications-read [@notification]))
 
 (defn delete-notification!
   "Delete the i-th notification from the user's notifications."
@@ -67,7 +66,7 @@
 (defn clear-all-notifications [user]
   (let [notifications (:notifications @user)]
     (om/update! user :notifications [])
-    (api/mark-notifications-as-read notifications)))
+    (controller/dispatch :notifications-read notifications)))
 
 (defcomponent notifications [user owner]
   (display-name [_] "Notifications")

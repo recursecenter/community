@@ -189,6 +189,9 @@
       (finally
         (swap! app-state assoc-in [:thread :posts index :submitting?] false)))))
 
+(defn handle-notifications-read [app-state notifications]
+  (api/mark-notifications-as-read notifications))
+
 ;;; Main loop
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -199,7 +202,8 @@
                   :route-changed handle-route-changed
                   :new-thread handle-new-thread
                   :update-post handle-update-post
-                  :new-post handle-new-post)]
+                  :new-post handle-new-post
+                  :notifications-read handle-notifications-read)]
     (apply handler app-state args)))
 
 (defn start-loop! [app-state]

@@ -166,10 +166,6 @@
     :res-transform (partial models/api->model :thread)
     :validate validate-thread))
 
-(def mark-notification-as-read
-  (make-api-fn (fn [{id :id}]
-                 (POST (str "/notifications/" id "/read")))))
-
 (def mark-notifications-as-read
   (make-api-fn (fn [notifications]
                  (let [ids (mapv :id notifications)]
