@@ -159,20 +159,6 @@
       (let [i (reverse-find-index #(= (:id %) (:id post)) posts)]
         (om/transact! app [:thread :posts] #(assoc % i post))))))
 
-(defn update-thread! [app]
-  (go
-    (try
-      (let [thread (<? (api/thread (:id (:route-data @app))))]
-        (om/update! app :thread thread)
-        (state/remove-errors! :ajax)
-        thread)
-
-      (catch ExceptionInfo e
-        (let [e-data (ex-data e)]
-          (if (== 404 (:status e))
-            (om/update! app [:route-data :route] :page-not-found)
-            (state/add-error! (:error-info e-data))))))))
-
 (defn start-thread-subscription! [thread-id app owner]
   (when push-api/subscriptions-enabled?
     (go
@@ -195,17 +181,12 @@
     {:ws-unsubscribe! nil})
 
   (did-mount [this]
-    (go
-      (let [thread (<! (update-thread! app))]
-        (start-thread-subscription! (:id thread) app owner))))
+    (start-thread-subscription! (:id thread) app owner))
 
-  (will-update [this next-props next-state]
-    (let [last-props (om/get-props owner)]
-      (when (not= (:route-data next-props) (:route-data last-props))
-        (stop-thread-subscription! owner)
-        (go
-          (let [thread (<! (update-thread! app))]
-            (start-thread-subscription! (:id thread) app owner))))))
+  (will-receive-props [this next-props]
+    (when (not= (:route-data next-props) (:route-data (om/get-props owner)))
+      (stop-thread-subscription! owner)
+      (start-thread-subscription! (:id thread) app owner)))
 
   (will-unmount [this]
     (stop-thread-subscription! owner))
@@ -213,26 +194,24 @@
   (render [this]
     (let [autocomplete-users (:autocomplete-users thread)]
       (html
-        (if (= (str (:id thread)) (:id route-data))
-          [:div
-           [:ol.breadcrumb
-            [:li (link-to (routes/routes :index) "Community")]
-            [:li (link-to (routes/routes :subforum (:subforum thread)) (-> thread :subforum :name))]
-            [:li.active (:title thread)]]
-           (partials/title (:title thread) "New post")
-           (shared/->subscription-info (:subscription thread))
-           [:ol.list-unstyled
-            (for [post (:posts thread)]
-              (->post {:post post :autocomplete-users autocomplete-users}
-                      {:react-key (:id post)}))]
-           [:div.panel.panel-default
-            [:div.panel-heading
-             [:span.title-caps "New post"]]
-            [:div.panel-body
-             (->post-form {:init-post (models/empty-post (:id thread))
-                           :broadcast-groups (:broadcast-groups thread)
-                           :autocomplete-users autocomplete-users
-                           :after-persisted (fn [post reset-form!]
-                                              (reset-form!)
-                                              (update-post! app post))})]]]
-          (partials/loading-icon))))))
+        [:div
+         [:ol.breadcrumb
+          [:li (link-to (routes/routes :index) "Community")]
+          [:li (link-to (routes/routes :subforum (:subforum thread)) (-> thread :subforum :name))]
+          [:li.active (:title thread)]]
+         (partials/title (:title thread) "New post")
+         (shared/->subscription-info (:subscription thread))
+         [:ol.list-unstyled
+          (for [post (:posts thread)]
+            (->post {:post post :autocomplete-users autocomplete-users}
+                    {:react-key (:id post)}))]
+         [:div.panel.panel-default
+          [:div.panel-heading
+           [:span.title-caps "New post"]]
+          [:div.panel-body
+           (->post-form {:init-post (models/empty-post (:id thread))
+                         :broadcast-groups (:broadcast-groups thread)
+                         :autocomplete-users autocomplete-users
+                         :after-persisted (fn [post reset-form!]
+                                            (reset-form!)
+                                            (update-post! app post))})]]]))))

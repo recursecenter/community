@@ -1,7 +1,9 @@
 (ns community.routes
-  (:require [community.util.routing :as r]))
+  (:require [community.util.routing :as r]
+            [community.controller :as controller]))
 
 ;;; App routes
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def routes
   (r/routes
@@ -10,13 +12,10 @@
     (r/route :subforum ["f" :slug :id])
     (r/route :thread ["t" :slug :id])))
 
-(defn set-route! [app]
-  (let [route (routes (-> js/document .-location .-pathname))]
-    (swap! app assoc :route-data route)))
-
 (defmulti dispatch :route)
 
 ;;; HS routes
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def hs-root "https://www.hackerschool.com")
 
@@ -27,3 +26,22 @@
 (defn hs-route
   [& args]
   (str hs-root (apply hs-routes args)))
+
+;;; Browser location
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(def pushstate-enabled
+  (boolean (.-pushState js/history)))
+
+(defn redirect-to [path]
+  (.pushState js/history nil nil path)
+  (.dispatchEvent js/window (js/Event. "popstate")))
+
+(defn ^:private open-in-new-window? [click-e]
+  (or (.-metaKey click-e) (.-ctrlKey click-e)))
+
+(defn init-location! []
+  (let [route-changed! #(controller/dispatch :route-changed
+                          (routes (-> js/document .-location .-pathname)))]
+    (route-changed!)
+    (.addEventListener js/window "popstate" route-changed!)))

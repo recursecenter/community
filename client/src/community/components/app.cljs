@@ -3,7 +3,6 @@
             [community.api.push :as push-api]
             [community.models :as models]
             [community.routes :as routes :refer [routes]]
-            [community.location :as location]
             [community.components.shared :as shared]
             [community.util :as util :refer-macros [<? p]]
             [community.partials :as partials]
@@ -88,7 +87,7 @@
             (for [[i n] (map-indexed vector notifications)]
               (->notification {:notification n
                                :on-click #(do (mark-as-read! n)
-                                              (location/redirect-to (notification-link-to @n)))
+                                              (routes/redirect-to (notification-link-to @n)))
                                :on-remove #(do (mark-as-read! n)
                                                (delete-notification! user i))}
                               {:react-key (:id n)})))]]))))
@@ -172,7 +171,7 @@
                           #(conj % (models/api->model :notification (:data message))))
             (recur)))))))
 
-(defcomponent app [{:as app :keys [current-user route-data errors]}
+(defcomponent app [{:as app :keys [current-user route-data errors loading?]}
                    owner]
   (display-name [_] "App")
 
@@ -200,10 +199,11 @@
              [:div.alert.alert-danger error])])
         [:div.row
          [:div#main-content
-          (if current-user
-            (let [component (routes/dispatch route-data)]
-              (om/build component app))
-            (partials/loading-icon))]]]
+          (cond loading?
+                (partials/loading-icon)
+
+                (and current-user route-data)
+                (om/build (routes/dispatch route-data) app))]]]
        [:footer
         [:ul.footer-links
          [:li [:a {:href "https://github.com/hackerschool/community"} [:i.fa.fa-code-fork] " Source"]]

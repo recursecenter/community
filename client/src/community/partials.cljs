@@ -1,5 +1,5 @@
 (ns community.partials
-  (:require [community.location :as location]
+  (:require [community.routes :as routes]
             [community.util :refer-macros [p]]
             [community.api.push :as push-api]
             [sablono.core :refer-macros [html]]
@@ -14,12 +14,12 @@
     (html
       [:a (merge opts {:href path
                        :onClick (fn [e]
-                                  (when (and location/pushstate-enabled
+                                  (when (and routes/pushstate-enabled
                                              (not (push-api/ws-closed?)))
                                     (.preventDefault e)
-                                    (if (location/open-in-new-window? e)
+                                    (if (routes/open-in-new-window? e)
                                       (window/open path)
-                                      (location/redirect-to path))))})
+                                      (routes/redirect-to path))))})
        body])))
 
 ;;; Marked configuration (Markdown parsing/rendering)

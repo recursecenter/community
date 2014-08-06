@@ -3,9 +3,8 @@
             [community.util :as util :refer-macros [<? p]]
             [community.api :as api]
             [community.models :as models]
-            [community.location :refer [redirect-to]]
             [community.partials :as partials :refer [link-to]]
-            [community.routes :refer [routes]]
+            [community.routes :as routes :refer [routes]]
             [community.components.shared :as shared]
             [om.core :as om]
             [om-tools.core :refer-macros [defcomponent]]
@@ -28,7 +27,7 @@
           (try
             (let [{:keys [id autocomplete-users]} @subforum
                   new-thread (<? (api/new-thread id (models/with-mentions draft autocomplete-users)))]
-              (redirect-to (routes :thread new-thread)))
+              (routes/redirect-to (routes :thread new-thread)))
 
             (catch ExceptionInfo e
               (om/set-state! owner :form-disabled? false)
@@ -85,48 +84,25 @@
                                      :disabled form-disabled?}
             "Create thread"]]]]))))
 
-(defn update-subforum! [app]
-  (go
-    (try
-      (let [subforum (<? (api/subforum (-> @app :route-data :id)))]
-        (om/update! app :subforum subforum)
-        (state/remove-errors! :ajax))
-
-      (catch ExceptionInfo e
-        (let [e-data (ex-data e)]
-          (if (== 404 (:status e-data))
-            (om/update! app [:route-data :route] :page-not-found)
-            (state/add-error! (:error-info e-data))))))))
-
 (defcomponent subforum [{:keys [route-data subforum] :as app}
                         owner]
   (display-name [_] "Subforum")
 
-  (did-mount [_]
-    (update-subforum! app))
-
-  (will-receive-props [_ next-props]
-    (let [last-props (om/get-props owner)]
-      (when (not= (:route-data next-props) (:route-data last-props))
-        (update-subforum! app))))
-
   (render [this]
     (html
-      (if (= (str (:id subforum)) (:id route-data))
-        [:div
-         [:ol.breadcrumb
-          [:li (link-to (routes :index) "Community")]
-          [:li.active (:name subforum)]]
-         (partials/title (:name subforum) "New thread")
-         (shared/->subscription-info (:subscription subforum))
-         (if (empty? (:threads subforum))
-           [:div.alert.alert-info "There are no threads - create the first one!"]
-           [:table.table.threads-view
-            [:tbody
-             (for [{:keys [id slug title created-by] :as thread} (:threads subforum)]
-               [:tr {:key id :class (if (:unread thread) "unread")}
-                [:td.name created-by]
-                [:td.title (link-to (routes :thread thread) title)]
-                [:td.timestamp (util/human-format-time (:marked-unread-at thread))]])]])
-         (->new-thread subforum)]
-        (partials/loading-icon)))))
+      [:div
+       [:ol.breadcrumb
+        [:li (link-to (routes :index) "Community")]
+        [:li.active (:name subforum)]]
+       (partials/title (:name subforum) "New thread")
+       (shared/->subscription-info (:subscription subforum))
+       (if (empty? (:threads subforum))
+         [:div.alert.alert-info "There are no threads - create the first one!"]
+         [:table.table.threads-view
+          [:tbody
+           (for [{:keys [id slug title created-by] :as thread} (:threads subforum)]
+             [:tr {:key id :class (if (:unread thread) "unread")}
+              [:td.name created-by]
+              [:td.title (link-to (routes :thread thread) title)]
+              [:td.timestamp (util/human-format-time (:marked-unread-at thread))]])]])
+       (->new-thread subforum)])))

@@ -33,22 +33,9 @@
     (if (not (empty? subforums))
       [:ul.subforum-blocks.block-grid-3 (map subforum-item subforums)])]))
 
-(defcomponent index [{:as app :keys [current-user subforum-groups]}
-                     owner]
+(defcomponent index [{:keys [subforum-groups]} owner]
   (display-name [_] "Index")
-
-  (did-mount [this]
-    (go
-      (try
-        (om/update! app :subforum-groups (<? (api/subforum-groups)))
-        (state/remove-errors! :ajax)
-
-        (catch ExceptionInfo e
-          (let [e-data (ex-data e)]
-            (state/add-error! (:error-info e-data)))))))
 
   (render [this]
     (html
-      (if (not (empty? subforum-groups))
-        [:div.row (map subforum-group subforum-groups)]
-        (partials/loading-icon)))))
+      [:div.row (map subforum-group subforum-groups)])))

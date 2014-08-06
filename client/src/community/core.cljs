@@ -1,8 +1,8 @@
 (ns community.core
   (:require [community.state :refer [app-state]]
+            [community.controller :as controller]
             [community.routes :as routes]
             [community.api.push :as push-api]
-            [community.location :as location :refer [redirect-to]]
             [community.components.app :as app]
             [community.components.index :as index]
             [community.components.subforum :as subforum]
@@ -23,7 +23,7 @@
 (defmethod routes/dispatch :page-not-found [_] shared/page-not-found)
 (defmethod routes/dispatch :default        [_] shared/page-not-found)
 
-(location/init-location! app-state)
+(routes/init-location!)
 
 ;;; Exports
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -32,6 +32,7 @@
   "Mounts the om application onto target element."
   [target logo-url]
   (push-api/init-ws-connection! app-state)
+  (controller/start-loop! app-state)
   (om/root app/app
            app-state
            {:target target

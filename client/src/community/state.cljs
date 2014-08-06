@@ -10,6 +10,8 @@
     ;;
     :route-data nil
 
+    :loading? false
+
     :current-user nil
 
     :subforum-groups []
