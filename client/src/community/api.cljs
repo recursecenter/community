@@ -77,13 +77,10 @@
 
 (defn make-api-fn
   "`res-transform` transforms the response if the request is successful.
-  `err-transform` transforms the error-res if the request is
-  unsuccessful. `validate` validates the args passed to the api-fn,
-  returning an error message if there is an error, or nil if there is
-  not."
-  [req-fn & {:keys [res-transform err-transform validate]
+  `validate` validates the args passed to the api-fn, returning an error message
+  if there is an error, or nil if there is not."
+  [req-fn & {:keys [res-transform validate]
              :or {res-transform identity
-                  err-transform identity
                   validate (constantly nil)}}]
   (fn [& args]
     (let [out (async/chan 1)
@@ -94,16 +91,13 @@
             (let [res (<? (apply req-fn args))]
               (>! out (res-transform res)))
             (catch ExceptionInfo e
-              (>! out (err-transform e)))))
+              (>! out e))))
         (async/put! out (ex-info error-message {:message error-message})))
       out)))
 
 (def current-user
   (make-api-fn #(GET "/users/me")
-    :res-transform (partial models/api->model :user)
-    :err-transform #(if (== 403 (:status (ex-data %)))
-                      ::no-current-user
-                      %)))
+    :res-transform (partial models/api->model :user)))
 
 (def update-settings
   (make-api-fn (fn [settings-to-update]

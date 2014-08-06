@@ -175,20 +175,16 @@
                    owner]
   (display-name [_] "App")
 
-  (did-mount [this]
-    (go
-      (try
-        (let [user (<? (api/current-user))]
-          (if (= user :community.api/no-current-user)
-            (set! (.-location js/document) "/login")
-            (do (om/update! app :current-user user)
-                (start-notifications-subscription! (:id user) app))))
+  (did-mount [_]
+    (when-let [id (:id current-user)]
+      (start-notifications-subscription! id app)))
 
-        (catch ExceptionInfo e
-          ;; TODO: display an error modal
-          (prn (ex-data e))))))
+  (will-receive-props [_ next-props]
+    (when-let [id (-> next-props :current-user :id)]
+      (when (not= id (:id current-user))
+        (start-notifications-subscription! id app))))
 
-  (render [this]
+  (render [_]
     (html
       [:div
        (->navbar app)

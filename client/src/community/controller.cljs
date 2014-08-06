@@ -24,7 +24,7 @@
   (defn dispatch [tag & args]
     (async/put! c-dispatch (apply vector tag args))))
 
-;;; Route controllers
+;;; Controller actions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn load-from-api [app-state route-data key api-call]
@@ -56,6 +56,22 @@
     :settings (swap! app-state assoc :route-data route-data)
     (swap! app-state assoc :route-data {:route :page-not-found})))
 
+(defn fetch-current-user [app-state]
+  (go
+    (try
+      (swap! app-state assoc :loading? true)
+      (swap! app-state assoc
+        :current-user (<? (api/current-user))
+        :loading? false)
+      true
+
+      (catch ExceptionInfo e
+        (let [e-data (ex-data e)]
+          (if (= 403 (:status e-data))
+            (set! (.-location js/document) "/login")
+            (state/add-error! (:error-info e-data))))
+        false))))
+
 ;;; Main loop
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -67,4 +83,7 @@
 
 (defn start-loop! [app-state]
   (let [c (register)]
-    (go (while true (handle app-state (<! c))))))
+    (go
+      ;; fetch the current user before handling any other actions
+      (when (<! (fetch-current-user app-state))
+        (while true (handle app-state (<! c)))))))

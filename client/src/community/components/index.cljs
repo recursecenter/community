@@ -1,7 +1,6 @@
 (ns community.components.index
   (:require [community.state :as state]
             [community.util :as util :refer-macros [<?]]
-            [community.api :as api]
             [community.partials :as partials :refer [link-to]]
             [community.routes :refer [routes]]
             [om.core :as om]
