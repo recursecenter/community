@@ -2,6 +2,7 @@
   (:require [community.state :as state]
             [community.api :as api]
             [community.api.push :as push-api]
+            [community.models :as models]
             [community.util :refer-macros [<?]]
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go]]
@@ -56,6 +57,15 @@
     :settings (swap! app-state assoc :route-data route-data)
     (swap! app-state assoc :route-data {:route :page-not-found})))
 
+(defn subscribe-to-user-notifications [app-state]
+  (when push-api/subscriptions-enabled?
+    (go
+      (let [[notifications-feed unsubscribe!] (push-api/subscribe! {:feed :notifications :id (-> @app-state :current-user :id)})]
+        (while true
+          (when-let [message (<! notifications-feed)]
+            (swap! app-state update-in [:current-user :notifications]
+              conj (models/api->model :notification (:data message)))))))))
+
 (defn fetch-current-user [app-state]
   (go
     (try
@@ -63,6 +73,7 @@
       (swap! app-state assoc
         :current-user (<? (api/current-user))
         :loading? false)
+      (subscribe-to-user-notifications app-state)
       true
 
       (catch ExceptionInfo e

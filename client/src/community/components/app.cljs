@@ -161,28 +161,9 @@
           [:li (partials/link-to (routes :settings) [:i.fa.fa-cog])]
           [:li [:a {:href "/logout"} [:i.fa.fa-sign-out]]]])])))
 
-(defn start-notifications-subscription! [user-id app]
-  (when push-api/subscriptions-enabled?
-    (go
-      (let [[notifications-feed unsubscribe!] (push-api/subscribe! {:feed :notifications :id user-id})]
-        (loop []
-          (when-let [message (<! notifications-feed)]
-            (om/transact! app [:current-user :notifications]
-                          #(conj % (models/api->model :notification (:data message))))
-            (recur)))))))
-
 (defcomponent app [{:as app :keys [current-user route-data errors loading?]}
                    owner]
   (display-name [_] "App")
-
-  (did-mount [_]
-    (when-let [id (:id current-user)]
-      (start-notifications-subscription! id app)))
-
-  (will-receive-props [_ next-props]
-    (when-let [id (-> next-props :current-user :id)]
-      (when (not= id (:id current-user))
-        (start-notifications-subscription! id app))))
 
   (render [_]
     (html
