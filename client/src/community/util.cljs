@@ -49,3 +49,9 @@
   (if (= 1 n)
     (str n " " s)
     (str n " " s "s")))
+
+(defn reverse-find-index
+  [pred v]
+  (first (for [[i el] (map-indexed vector (rseq v))
+               :when (pred el)]
+           (- (count v) i 1))))

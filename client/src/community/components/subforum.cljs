@@ -2,7 +2,6 @@
   (:require [community.state :as state]
             [community.controller :as controller]
             [community.util :as util :refer-macros [<? p]]
-            [community.api :as api]
             [community.models :as models]
             [community.partials :as partials :refer [link-to]]
             [community.routes :as routes :refer [routes]]

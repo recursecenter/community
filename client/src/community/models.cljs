@@ -24,6 +24,10 @@
 
 (deftransformer api->model)
 
+(deftransform api->model :thread thread
+  (assoc thread
+    :new-post (empty-post (:id thread))))
+
 (deftransform api->model {:single [:user :mentioned-by] :many :autocomplete-users}
   {:as user :keys [first-name last-name]}
   (assoc user
