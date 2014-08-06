@@ -27,9 +27,6 @@
 ;;; Route controllers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defmulti handle-route-changed (fn [app-state {route :route}] route)
-  :default :page-not-found)
-
 (defn load-from-api [app-state route-data key api-call]
   (go
     (try
