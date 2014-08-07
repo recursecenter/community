@@ -142,7 +142,28 @@
           [:i.fa.fa-comments]]
          (->notifications user)]))))
 
-(defcomponent navbar [{:keys [current-user ui-color]} owner]
+(defcomponent breadcrumbs [{:as app :keys [route-data ui-color]} owner]
+  (display-name [_] "Breadcrumbs")
+
+  (render [_]
+    (html
+      (if (some #{(:route route-data)} [:subforum :thread])
+        (condp = (:route route-data)
+          :subforum
+          (let [subforum (:subforum app)]
+            [:ol.breadcrumbs.list-inline
+             [:li.active (:name subforum)]])
+
+          :thread
+          (let [thread (:thread app)]
+            [:ol.breadcrumbs.list-inline
+             [:li (partials/link-to (routes :subforum (:subforum thread))
+                                    {:style {:color ui-color}}
+                                    (:name (:subforum thread)))]
+             [:li.active (:title thread)]]))
+        [:div]))))
+
+(defcomponent navbar [{:as app :keys [current-user ui-color]} owner]
   (display-name [_] "NavBar")
 
   (render [_]
@@ -153,6 +174,7 @@
           [:span
            [:img {:src (om/get-shared owner :logo-url)}]
            [:span.brand-text {:style {:color ui-color}} "Community"]])]
+       (->breadcrumbs app)
        (when current-user
          [:ul.nav.navbar-nav.navbar-right.hidden-xs
           [:li [:p.navbar-text "Hi, " (:first-name current-user) "!"]]

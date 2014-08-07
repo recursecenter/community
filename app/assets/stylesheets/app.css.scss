@@ -125,6 +125,35 @@
     }
   }
 
+  .breadcrumbs {
+    display: inline-block;
+    float: left;
+    list-style: none;
+    line-height: 40px;
+
+    li {
+      float: left;
+      padding-right: 0;
+    }
+
+    li:first-child {
+      margin-left: 5px;
+    }
+
+    li.active {
+      color: #999;
+      max-width: 300px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    li:before {
+      content: "/\00a0";
+      color: #ccc;
+      padding: 0 5px;
+    }
+  }
 }
 
 .unread-count-icon {

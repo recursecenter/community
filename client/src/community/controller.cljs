@@ -129,7 +129,7 @@
 
 (defmethod update-route-data :thread [app-state route-data]
   (go
-    (when (<! (load-from-api app-state route-data :thread #(api/thread (:id route-data))))
+    (when-let [thread (<! (load-from-api app-state route-data :thread #(api/thread (:id route-data))))]
       (start-thread-subscription app-state))))
 
 (defmethod update-route-data :settings [app-state route-data]

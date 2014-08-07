@@ -113,10 +113,6 @@
     (let [autocomplete-users (:autocomplete-users thread)]
       (html
         [:div
-         [:ol.breadcrumb
-          [:li (link-to (routes/routes :index) "Community")]
-          [:li (link-to (routes/routes :subforum (:subforum thread)) (-> thread :subforum :name))]
-          [:li.active (:title thread)]]
          (partials/title (:title thread) "New post")
          (shared/->subscription-info (:subscription thread))
          [:ol.list-unstyled

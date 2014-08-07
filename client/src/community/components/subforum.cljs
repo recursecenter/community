@@ -65,9 +65,6 @@
   (render [this]
     (html
       [:div
-       [:ol.breadcrumb
-        [:li (link-to (routes :index) "Community")]
-        [:li.active (:name subforum)]]
        (partials/title (:name subforum) "New thread")
        (shared/->subscription-info (:subscription subforum))
        (if (empty? (:threads subforum))

@@ -1,4 +1,5 @@
 json.extract! subforum, :name, :id, :slug, :ui_color
+json.subforum_group_name subforum.subforum_group.name
 json.threads do
   json.array! threads do |thread|
     json.extract! thread, :title, :id, :slug
