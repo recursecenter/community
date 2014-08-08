@@ -147,7 +147,7 @@
 
   (render [_]
     (html
-      (if (some #{(:route route-data)} [:subforum :thread])
+      (if (contains? #{:subforum :thread} (:route route-data))
         (condp = (:route route-data)
           :subforum
           (let [subforum (:subforum app)]

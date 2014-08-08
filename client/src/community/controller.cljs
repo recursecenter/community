@@ -129,7 +129,7 @@
 
 (defmethod update-route-data :thread [app-state route-data]
   (go
-    (when-let [thread (<! (load-from-api app-state route-data :thread #(api/thread (:id route-data))))]
+    (when (<! (load-from-api app-state route-data :thread #(api/thread (:id route-data))))
       (start-thread-subscription app-state))))
 
 (defmethod update-route-data :settings [app-state route-data]
@@ -156,8 +156,10 @@
         (routes/redirect-to (routes :thread thread)))
 
       (catch ExceptionInfo e
-        (swap! app-state assoc-in [:subforum :submitting?] false)
-        (add-error! app-state :subforum e)))))
+        (add-error! app-state :subforum e))
+
+      (finally
+        (swap! app-state assoc-in [:subforum :submitting?] false)))))
 
 (defn handle-new-post [app-state new-post]
   (go

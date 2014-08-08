@@ -13,7 +13,7 @@
             [clojure.string :as str])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
-(defcomponent post-form [{:keys [post index autocomplete-users broadcast-groups cancel-edit]} owner]
+(defcomponent post-form [{:keys [post index autocomplete-users broadcast-groups]} owner]
   (display-name [_] "PostForm")
 
   (init-state [_]
@@ -61,7 +61,7 @@
            [:button.btn.btn-link.btn-sm {:type "button"
                                          :onClick (fn [e]
                                                     (om/update! post :body (om/get-state owner :original-post-body))
-                                                    (cancel-edit))}
+                                                    (om/update! post :editing? false))}
             "Cancel"])]]])))
 
 (defn wrap-mentions
@@ -92,8 +92,7 @@
          (if (:editing? post)
            (->post-form {:post post
                          :index index
-                         :autocomplete-users autocomplete-users
-                         :cancel-edit #(om/update! post :editing? false)})
+                         :autocomplete-users autocomplete-users})
            [:div.row
             [:div.post-body
              (partials/html-from-markdown
