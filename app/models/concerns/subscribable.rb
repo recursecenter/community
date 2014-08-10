@@ -3,7 +3,10 @@ module Subscribable
 
   included do
     has_many :subscriptions, as: :subscribable
-    has_many :subscribers, through: :subscriptions, source: 'user'
+  end
+
+  def subscribers
+    User.where(id: subscriptions.where(subscribed: true).map(&:user_id))
   end
 
   def subscription_for(user)
