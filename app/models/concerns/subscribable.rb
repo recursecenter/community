@@ -6,7 +6,7 @@ module Subscribable
   end
 
   def subscribers
-    User.where(id: subscriptions.where(subscribed: true).map(&:user_id))
+    User.where(id: subscriptions.where(subscribed: true).select(:user_id))
   end
 
   def subscription_for(user)
