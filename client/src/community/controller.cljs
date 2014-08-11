@@ -133,9 +133,13 @@
       (start-thread-subscription app-state))))
 
 (defmethod update-route-data :settings [app-state route-data]
-  (swap! app-state assoc
-    :route-data route-data
-    :ui-color nil))
+  (go
+    (swap! app-state assoc :loading? true)
+    (when (<! (fetch-current-user app-state))
+      (swap! app-state assoc
+             :route-data route-data
+             :ui-color nil
+             :loading? false))))
 
 (defmethod update-route-data :page-not-found [app-state route-data]
   (swap! app-state assoc
