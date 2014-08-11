@@ -140,7 +140,7 @@
          [:div.dropdown
           [:button.btn.btn-link.btn-xs.dropdown-toggle {:type "button" :data-toggle "dropdown"}
            "Add broadcast group"]
-          [:ul.dropdown-menu
+          [:ul.dropdown-menu.broadcast-group-list
            (for [{:keys [name id]} (filter (complement :selected?) broadcast-groups)]
              [:li [:a {:href "#" :onClick (partial toggle id)}
                    name]])]
