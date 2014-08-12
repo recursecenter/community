@@ -5,6 +5,6 @@ module ApplicationHelper
 
   def markdown(md)
     markdown_renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, fenced_code_blocks: true)
-    markdown_renderer.render(md).html_safe
+    sanitize(markdown_renderer.render(md))
   end
 end
