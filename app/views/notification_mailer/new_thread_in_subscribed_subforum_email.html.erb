@@ -1,6 +1,6 @@
 <%= markdown @thread.posts.first.body %>
 
 <div style="border-top: 1px solid #ccc;">
-  <p>You received this message because you are subscribed to the subforum "<%= @thread.subforum.name %>"</p>
+  <p>You received this message because you are subscribed to the subforum "<%= @thread.subforum.name %>."</p>
   <p>To reply, either respond to this email or <%= link_to "click here", thread_url(slug: @thread.slug, id: @thread.id) %>.</p>
 </div>
