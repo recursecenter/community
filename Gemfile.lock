@@ -129,6 +129,7 @@ GEM
     rake (10.3.2)
     rdoc (4.1.1)
       json (~> 1.4)
+    redcarpet (3.1.2)
     redis (3.1.0)
     sass (3.2.19)
     sass-rails (4.0.3)
@@ -188,6 +189,7 @@ DEPENDENCIES
   quiet_assets
   rails (= 4.1.4)
   rails_12factor
+  redcarpet
   redis
   sass-rails (~> 4.0.3)
   sdoc (~> 0.4.0)

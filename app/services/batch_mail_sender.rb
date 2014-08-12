@@ -34,7 +34,8 @@ private
       "to" => mail.to,
       "from" => mail["from"].to_s,
       "subject" => mail.subject,
-      "text" => mail.body.to_s,
+      "text" => mail.text_part.body.to_s,
+      "html" => mail.html_part.body.to_s,
       "h:Reply-To" => reply_to_field("%recipient.reply_info%"),
       "recipient-variables" => JSON.generate(recipient_variables))
 
