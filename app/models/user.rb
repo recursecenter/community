@@ -6,6 +6,7 @@ class User < ActiveRecord::Base
   has_many :group_memberships
   has_many :groups, through: :group_memberships
   has_many :subscriptions
+  has_and_belongs_to_many :roles
 
   scope :ordered_by_first_name, -> { order(first_name: :asc) }
 
@@ -46,5 +47,9 @@ class User < ActiveRecord::Base
     subscription.subscribed = true
     subscription.reason = reason
     subscription.save!
+  end
+
+  def has_role?(role)
+    roles.where(name: role).present?
   end
 end

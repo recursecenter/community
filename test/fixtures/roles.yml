@@ -1,0 +1,8 @@
+admitted:
+  name: admitted
+
+attended:
+  name: attended
+
+faculty:
+  name: faculty
