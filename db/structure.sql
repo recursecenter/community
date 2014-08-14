@@ -276,6 +276,16 @@ ALTER SEQUENCE roles_id_seq OWNED BY roles.id;
 
 
 --
+-- Name: roles_subforums; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE roles_subforums (
+    subforum_id integer NOT NULL,
+    role_id integer NOT NULL
+);
+
+
+--
 -- Name: roles_users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -745,6 +755,20 @@ CREATE INDEX index_notifications_on_user_id ON notifications USING btree (user_i
 
 
 --
+-- Name: index_roles_subforums_on_role_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_roles_subforums_on_role_id ON roles_subforums USING btree (role_id);
+
+
+--
+-- Name: index_roles_subforums_on_subforum_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_roles_subforums_on_subforum_id ON roles_subforums USING btree (subforum_id);
+
+
+--
 -- Name: index_roles_users_on_role_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -840,4 +864,6 @@ INSERT INTO schema_migrations (version) VALUES ('20140712031258');
 INSERT INTO schema_migrations (version) VALUES ('20140721223232');
 
 INSERT INTO schema_migrations (version) VALUES ('20140814153449');
+
+INSERT INTO schema_migrations (version) VALUES ('20140814203855');
 

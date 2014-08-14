@@ -19,4 +19,4 @@ dave:
   roles: admitted, attended, faculty
 
 hacker_schooler_1:
-  roles: admitted, attended
+  roles: admitted
