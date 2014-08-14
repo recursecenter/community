@@ -49,7 +49,11 @@ class User < ActiveRecord::Base
     subscription.save!
   end
 
-  def has_role?(role)
-    roles.where(name: role).present?
+  def has_role?(role_name)
+    roles.where(name: role_name).present?
+  end
+
+  def has_roles?(*role_names)
+    roles.where(name: role_names).count == role_names.count
   end
 end
