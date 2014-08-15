@@ -35,6 +35,10 @@ class User < ActiveRecord::Base
       user.roles += [Role.full_hacker_schooler]
     end
 
+    if user_data["is_faculty"]
+      user.roles += [Role.admin]
+    end
+
     user.save!
 
     user
