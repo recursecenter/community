@@ -2,5 +2,5 @@
 
 <div style="border-top: 1px solid #ccc;">
   <p><%= @post.author.name %> broadcast this message to <%= @group_names.map(&:downcase).to_sentence %>.</p>
-  <p>To reply, either respond to this email or <%= link_to "click here", post_url(slug: @post.thread.slug, thread_id: @post.thread.id, id: @post.id) %>.</p>
+  <p>Reply to this email or <%= link_to "view the post on Community", post_url(slug: @post.thread.slug, thread_id: @post.thread.id, id: @post.id) %>.</p>
 </div>
