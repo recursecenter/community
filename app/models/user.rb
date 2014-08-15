@@ -29,6 +29,12 @@ class User < ActiveRecord::Base
       user.groups += [Group.faculty]
     end
 
+    user.roles = [Role.everyone]
+
+    if (Date.parse(user_data["batch"]["start_date"]) - 1.day).past?
+      user.roles += [Role.full_hacker_schooler]
+    end
+
     user.save!
 
     user
