@@ -7,7 +7,6 @@ zach:
   avatar_url: example.com/zach_avatar.jpg
   batch_name: Summer 2012
   hacker_school_id: 1
-  roles: everyone, full_hacker_schooler, admin
 
 dave:
   first_name: Dave
@@ -16,7 +15,7 @@ dave:
   avatar_url: example.com/dave_avatar.jpg
   batch_name: All the batches
   hacker_school_id: 2
-  roles: everyone, full_hacker_schooler, admin
 
 hacker_schooler_1:
-  roles: everyone
+  first_name: Hacker
+  last_name: Schooler

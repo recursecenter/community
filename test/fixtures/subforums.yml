@@ -2,12 +2,9 @@
 
 welcome:
   name: Welcome
-  required_role_ids: [1]
 
 programming:
   name: Programming
-  required_role_ids: [1, 2]
 
 nyc:
   name: NYC
-  required_role_ids: [1, 2]
