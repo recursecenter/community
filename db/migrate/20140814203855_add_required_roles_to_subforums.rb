@@ -1,8 +1,5 @@
 class AddRequiredRolesToSubforums < ActiveRecord::Migration
   def change
-    create_join_table :subforums, :roles do |t|
-      t.index :subforum_id
-      t.index :role_id
-    end
+    add_column :subforums, :required_role_ids, :integer, array: true
   end
 end

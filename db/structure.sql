@@ -276,16 +276,6 @@ ALTER SEQUENCE roles_id_seq OWNED BY roles.id;
 
 
 --
--- Name: roles_subforums; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE roles_subforums (
-    subforum_id integer NOT NULL,
-    role_id integer NOT NULL
-);
-
-
---
 -- Name: roles_users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -347,7 +337,8 @@ CREATE TABLE subforums (
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
     marked_unread_at timestamp without time zone,
-    ui_color character varying(255)
+    ui_color character varying(255),
+    required_role_ids integer[]
 );
 
 
@@ -752,20 +743,6 @@ CREATE INDEX index_notifications_on_post_id ON notifications USING btree (post_i
 --
 
 CREATE INDEX index_notifications_on_user_id ON notifications USING btree (user_id);
-
-
---
--- Name: index_roles_subforums_on_role_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_roles_subforums_on_role_id ON roles_subforums USING btree (role_id);
-
-
---
--- Name: index_roles_subforums_on_subforum_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_roles_subforums_on_subforum_id ON roles_subforums USING btree (subforum_id);
 
 
 --

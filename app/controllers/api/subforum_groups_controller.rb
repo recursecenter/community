@@ -1,7 +1,11 @@
 class Api::SubforumGroupsController < Api::ApiController
-  load_and_authorize_resource :subforum_group
+  skip_authorization_check :index
 
   def index
-    @subforum_groups = @subforum_groups.includes(:subforums)
+    @subforum_groups = SubforumGroup.
+      includes(:subforums).
+      references(:subforums).
+      where("subforums.required_role_ids <@ '{?}'", current_user.role_ids).
+      order("subforums.id ASC")
   end
 end

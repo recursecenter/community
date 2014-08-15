@@ -4,7 +4,7 @@ class Role < ActiveRecord::Base
   validates :name, uniqueness: true
 
   class << self
-    [:admitted, :attended, :faculty].each do |role|
+    [:everyone, :full_hacker_schooler, :admin].each do |role|
       define_method role do
         where(name: role).first_or_create!
       end
