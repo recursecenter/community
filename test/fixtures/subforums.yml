@@ -2,12 +2,12 @@
 
 welcome:
   name: Welcome
-  required_roles: admitted
+  required_role_ids: [1]
 
 programming:
   name: Programming
-  required_roles: admitted, attended
+  required_role_ids: [1, 2]
 
 nyc:
   name: NYC
-  required_roles: admitted, attended
+  required_role_ids: [1, 2]

@@ -5,15 +5,15 @@ class UserTest < ActiveSupport::TestCase
     zach = users(:zach)
     hacker_schooler_1 = users(:hacker_schooler_1)
 
-    assert hacker_schooler_1.has_roles?(roles(:admitted))
-    assert_not hacker_schooler_1.has_roles?(roles(:faculty))
+    assert hacker_schooler_1.has_roles?(roles(:everyone))
+    assert_not hacker_schooler_1.has_roles?(roles(:admin))
 
-    attended_and_faculty = Role.where(name: ["faculty", "attended"])
+    full_hacker_schooler_and_admin = Role.where(name: ["admin", "full_hacker_schooler"])
 
-    assert zach.has_roles?(*attended_and_faculty)
-    assert_not hacker_schooler_1.has_roles?(*attended_and_faculty)
+    assert zach.has_roles?(*full_hacker_schooler_and_admin)
+    assert_not hacker_schooler_1.has_roles?(*full_hacker_schooler_and_admin)
     assert hacker_schooler_1.has_roles?(*Role.none)
 
-    assert hacker_schooler_1.has_roles?(roles(:admitted), roles(:admitted))
+    assert hacker_schooler_1.has_roles?(roles(:everyone), roles(:everyone))
   end
 end
