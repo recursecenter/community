@@ -336,7 +336,7 @@ CREATE TABLE users (
     email_on_mention boolean DEFAULT true,
     subscribe_on_create boolean DEFAULT true,
     subscribe_when_mentioned boolean DEFAULT true,
-    subscribe_new_thread_in_subscribed_subforum boolean DEFAULT false
+    subscribe_new_thread_in_subscribed_subforum boolean DEFAULT true
 );
 
 
