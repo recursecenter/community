@@ -12,4 +12,11 @@ class ApplicationController < ActionController::Base
   def logout
     reset_session
   end
+
+  def require_login
+    unless current_user
+      session[:redirect_to] = request.url
+      redirect_to login_url
+    end
+  end
 end

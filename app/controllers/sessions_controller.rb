@@ -1,6 +1,6 @@
 class SessionsController < ApplicationController
   def new
-    session[:origin] = request.referrer
+    session[:redirect_to] ||= request.referrer
     redirect_to client.auth_code.authorize_url(redirect_uri: login_complete_url)
   end
 
@@ -13,8 +13,8 @@ class SessionsController < ApplicationController
 
       login(user)
 
-      if session[:origin]
-        redirect_to session.delete(:origin)
+      if session[:redirect_to]
+        redirect_to session.delete(:redirect_to)
       else
         redirect_to root_url
       end
