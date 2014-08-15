@@ -36,7 +36,7 @@ class User < ActiveRecord::Base
     end
 
     if user_data["is_faculty"]
-      user.roles += [Role.admin]
+      user.roles = [Role.everyone, Role.full_hacker_schooler, Role.admin]
     end
 
     user.save!
