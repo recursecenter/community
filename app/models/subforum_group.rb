@@ -11,7 +11,10 @@ class SubforumGroup < ActiveRecord::Base
     self.ordinal = self.class.count
   end
 
-  def subforums_for_user(user)
-    subforums_with_visited_status.for_user(user)
+  def self.includes_subforums_for_user(user)
+    self.includes(:subforums).
+      references(:subforums).
+      where("subforums.required_role_ids <@ '{?}'", user.role_ids).
+      order("subforums.id ASC")
   end
 end

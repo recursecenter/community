@@ -1,11 +1,9 @@
 class Api::SubforumGroupsController < Api::ApiController
-  skip_authorization_check :index
+  skip_authorization_check only: [:index]
 
   def index
     @subforum_groups = SubforumGroup.
-      includes(:subforums).
-      references(:subforums).
-      where("subforums.required_role_ids <@ '{?}'", current_user.role_ids).
+      includes_subforums_for_user(current_user).
       order("subforums.id ASC")
   end
 end
