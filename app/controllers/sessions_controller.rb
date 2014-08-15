@@ -1,5 +1,6 @@
 class SessionsController < ApplicationController
   def new
+    session[:origin] = request.referrer
     redirect_to client.auth_code.authorize_url(redirect_uri: login_complete_url)
   end
 
@@ -12,10 +13,13 @@ class SessionsController < ApplicationController
 
       login(user)
 
-      redirect_to root_url
+      if session[:origin]
+        redirect_to session.delete(:origin)
+      else
+        redirect_to root_url
+      end
     else
-      # TODO: Fix me!
-      raise params.to_s
+      render plain: "Invalid", status: :unprocessable_entity
     end
   end
 
