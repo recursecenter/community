@@ -23,13 +23,13 @@
   .post-controls, .post-form-controls {
     @include make-sm-column(2);
   }
+}
 
-  .at-mention {
-    background-color: #eee;
-    padding: 0 2px;
-    font-weight: bold;
-    color: #555;
-  }
+.at-mention {
+  background-color: #eee;
+  padding: 0 2px;
+  font-weight: bold;
+  color: #555;
 }
 
 .post-textarea {

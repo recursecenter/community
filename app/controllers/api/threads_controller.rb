@@ -27,6 +27,13 @@ class Api::ThreadsController < Api::ApiController
     if @thread.created_by.subscribe_on_create
       @thread.created_by.subscribe_to(@thread, "You are receiving emails because you created this thread.")
     end
+
+    User.joins(:subscriptions).
+      where.not(id: current_user).
+      where(subscribe_new_thread_in_subscribed_subforum: true).
+      where("subscriptions.subscribable_type = 'Subforum' AND subscriptions.subscribable_id = ?", @thread.subforum.id).each do |user|
+      user.subscribe_to(@thread, "You are receiving emails because you were subscribed to this thread's subforum.")
+    end
   end
 
 private
