@@ -38,7 +38,7 @@ class Api::Private::EmailWebhooksControllerTest < ActionController::TestCase
 
     visited_status.reload
 
-    assert_equal visited_status.last_visited, posts(:zach_post_1).created_at
+    assert_equal visited_status.last_visited.to_i, posts(:zach_post_1).created_at.to_i
   end
 
   test "email opened doesn't update visited status if the thread has been visited since the post was made" do
