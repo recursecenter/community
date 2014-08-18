@@ -28,11 +28,7 @@ class Api::ThreadsController < Api::ApiController
       @thread.created_by.subscribe_to(@thread, "You are receiving emails because you created this thread.")
     end
 
-    User.joins(:subscriptions).
-      where.not(id: current_user).
-      where(subscribe_new_thread_in_subscribed_subforum: true, subscriptions: {subscribable: @thread.subforum, subscribed: true}).each do |user|
-      user.subscribe_to(@thread, "You are receiving emails because you were subscribed to this thread's subforum.")
-    end
+    subscribe_subforum_subscribers_to_new_thread
   end
 
 private
@@ -46,5 +42,15 @@ private
     params.require(:post).permit(:body).
       merge(author: current_user,
             broadcast_groups: Group.where(id: params.permit(broadcast_to: [])[:broadcast_to]))
+  end
+
+  def subscribe_subforum_subscribers_to_new_thread
+    to_be_subscribed = User.joins(:subscriptions).
+      where.not(id: current_user).
+      where(subscribe_new_thread_in_subscribed_subforum: true, subscriptions: {subscribable: @thread.subforum, subscribed: true})
+
+    to_be_subscribed.each do |user|
+      user.subscribe_to(@thread, "You are receiving emails because you were subscribed to this thread's subforum.")
+    end
   end
 end
