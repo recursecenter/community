@@ -37,7 +37,7 @@ private
       "text" => mail.text_part.body.to_s,
       "html" => mail.html_part.body.to_s,
       "h:Reply-To" => reply_to_field("%recipient.reply_info%"),
-      "v:reply_info" => JSON.generate({reply_info: "%recipient.reply_info%"}),
+      "v:reply_info" => "%recipient.reply_info%",
       "recipient-variables" => JSON.generate(recipient_variables))
 
     unless res.code == "200"
