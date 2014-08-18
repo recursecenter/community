@@ -11,7 +11,7 @@ class CreateUserRoles < ActiveRecord::Migration
     end
 
     User.all.each do |u|
-      u.roles = [Role.admitted]
+      u.roles = [Role.everyone]
     end
   end
 end
