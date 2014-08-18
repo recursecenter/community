@@ -11,3 +11,14 @@ class ActiveSupport::TestCase
 
   # Add more helper methods to be used by all tests here...
 end
+
+class ActionController::TestCase
+  def login(user_name)
+    session[:user_id] = users(user_name).id
+  end
+end
+
+class MockRedis
+  def publish(feed, data)
+  end
+end
