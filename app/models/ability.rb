@@ -24,7 +24,7 @@ class Ability
 
   def can?(action, resource)
     if resource.respond_to?(:required_roles)
-      @user.has_roles?(*resource.required_roles) && super
+      @user.satisfies_roles?(*resource.required_roles) && super
     else
       super
     end

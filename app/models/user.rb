@@ -59,7 +59,7 @@ class User < ActiveRecord::Base
     subscription.save!
   end
 
-  def has_roles?(*roles)
+  def satisfies_roles?(*roles)
     self.roles.where(id: roles).count == roles.uniq.count
   end
 end
