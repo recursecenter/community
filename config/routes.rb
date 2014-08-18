@@ -14,7 +14,7 @@ Rails.application.routes.draw do
   # When you uncomment this, remove ApplicationHelper#post_url
   #get '/t/:slug/:thread_id/:id' => 'pages#index', as: 'post'
 
-  get '/threads/:id/unsubscribe' => 'threads#unsubscribe', as :unsubscribe_thread
+  get '/threads/:id/unsubscribe' => 'threads#unsubscribe', as: :unsubscribe_thread
 
   namespace :api, format: false, defaults: {format: 'json'} do
     resources :users do
