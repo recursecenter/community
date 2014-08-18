@@ -2,8 +2,10 @@
 
 zach_post_1:
   body: Some cool stuff
+  thread: one
   author: zach
 
 dave_post_1:
   body: Some other stuff
+  thread: one
   author: dave

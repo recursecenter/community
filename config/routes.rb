@@ -41,7 +41,7 @@ Rails.application.routes.draw do
     end
 
     namespace :private do
-      post :reply, to: 'email_replies#reply'
+      post :reply, to: 'email_webhooks#reply'
     end
   end
 end

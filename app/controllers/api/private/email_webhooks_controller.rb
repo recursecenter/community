@@ -1,10 +1,10 @@
 require 'openssl'
 
-class Api::Private::EmailRepliesController < Api::ApiController
-  before_filter :require_mailgun_origin, only:   :reply
-  before_filter :require_login,          except: :reply
-  protect_from_forgery                   except: :reply
-  skip_authorization_check               only:   :reply
+class Api::Private::EmailWebhooksController < Api::ApiController
+  before_filter :require_mailgun_origin
+  skip_before_action :require_login
+  skip_before_action :verify_authenticity_token
+  skip_authorization_check
 
   # Mailgun will POST to this endpoint when someone replies to an
   # email with a reply-to of the form:
