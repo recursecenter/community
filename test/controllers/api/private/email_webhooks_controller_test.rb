@@ -27,6 +27,34 @@ class Api::Private::EmailWebhooksControllerTest < ActionController::TestCase
     assert_response 406
   end
 
+  test "email opened updates visited status" do
+    visited_status = VisitedStatus.where(user: users(:dave), visitable: posts(:zach_post_1).thread).first_or_create
+
+    visited_status.update(last_visited: 1.day.ago)
+    posts(:zach_post_1).update(created_at: DateTime.current)
+
+    post :opened, mailgun_origin_params.merge({reply_info: @reply_info})
+    assert_response :success
+
+    visited_status.reload
+
+    assert_equal visited_status.last_visited, posts(:zach_post_1).created_at
+  end
+
+  test "email opened doesn't update visited status if the thread has been visited since the post was made" do
+    visited_status = VisitedStatus.where(user: users(:dave), visitable: posts(:zach_post_1).thread).first_or_create
+
+    visited_status.update(last_visited: DateTime.current)
+    posts(:zach_post_1).update(created_at: 1.day.ago)
+
+    post :opened, mailgun_origin_params.merge({reply_info: @reply_info})
+    assert_response :success
+
+    visited_status.reload
+
+    assert_operator visited_status.last_visited, :>, posts(:zach_post_1).created_at
+  end
+
 private
   def mailgun_origin_params
     api_key = ENV["MAILGUN_API_KEY"]
