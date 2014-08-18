@@ -37,6 +37,6 @@ class Api::ThreadsControllerTest < ActionController::TestCase
         post: {body: "A new post"}
     end
 
-    assert Subscription.where(user: zach, subscribable: DiscussionThread.last).empty?
+    assert_not DiscussionThread.last.subscription_for(zach).subscribed
   end
 end
