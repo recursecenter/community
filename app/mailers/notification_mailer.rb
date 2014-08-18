@@ -8,7 +8,7 @@ class NotificationMailer < ActionMailer::Base
     @user = mention.user
     @mentioned_by = mention.mentioned_by
 
-    reply_token = ReplyInfoVerifier.generate(@user, @post.thread)
+    reply_token = ReplyInfoVerifier.generate(@user, @post)
 
     headers["X-Mailgun-Variables"] = JSON.generate({reply_token: reply_token})
 

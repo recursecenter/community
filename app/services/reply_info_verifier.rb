@@ -3,8 +3,8 @@ require 'openssl'
 class ReplyInfoVerifier
   class InvalidSignature < StandardError; end
 
-  def self.generate(user, thread)
-    new.generate(user, thread)
+  def self.generate(user, post)
+    new.generate(user, post)
   end
 
   def self.verify(info)
@@ -15,8 +15,8 @@ class ReplyInfoVerifier
     @secret = Rails.application.secrets[:email_secret_key]
   end
 
-  def generate(user, thread)
-    data = "#{user.id}-#{thread.id}"
+  def generate(user, post)
+    data = "#{user.id}-#{post.id}"
     "#{data}--#{generate_digest(data)}"
   end
 
@@ -26,8 +26,8 @@ class ReplyInfoVerifier
 
     data, digest = signed_info.split("--")
     if data.present? && digest.present? && SecureEquals.secure_equals(digest, generate_digest(data))
-      user_id, thread_id = data.split("-")
-      [User.find(user_id), DiscussionThread.find(thread_id)]
+      user_id, post_id = data.split("-")
+      [User.find(user_id), Post.find(post_id)]
     else
       raise InvalidSignature
     end

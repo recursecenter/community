@@ -30,7 +30,7 @@ class Api::Private::EmailRepliesController < Api::ApiController
       head 406 and return
     end
 
-    post = thread.posts.build
+    post = emailed_post.thread.posts.build
 
     unless can?(:create, post)
       head 406 and return
@@ -68,7 +68,7 @@ private
     reply_info[0]
   end
 
-  def thread
+  def emailed_post
     reply_info[1]
   end
 

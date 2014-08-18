@@ -11,7 +11,7 @@ class BroadcastNotifier < Notifier
 
   def notify(email_recipients)
     unless email_recipients.empty?
-      BatchNotificationSender.delay.deliver(:broadcast_email, recipient_variables(email_recipients, post.thread), email_recipients, post)
+      BatchNotificationSender.delay.deliver(:broadcast_email, recipient_variables(email_recipients, post), email_recipients, post)
     end
   end
 
