@@ -13,7 +13,7 @@ module UnreadAndVisitable
     update!(marked_unread_at: time)
   end
 
-  def mark_as_visited_for(user)
+  def mark_visited(user)
     status = visited_statuses.where(user_id: user.id).first_or_initialize
     status.last_visited = DateTime.current
     status.save!

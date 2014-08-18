@@ -7,7 +7,7 @@ class Api::ThreadsController < Api::ApiController
   has_subscribable :thread
 
   def show
-    @thread.mark_as_visited_for(current_user)
+    @thread.mark_visited(current_user)
     @autocomplete_users = User.select(:id, :first_name, :last_name).ordered_by_first_name
   end
 
