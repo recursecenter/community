@@ -15,7 +15,6 @@ class BroadcastNotifier < Notifier
     # See: https://github.com/hackerschool/community/issues/148
     if post.broadcast_groups.empty?
       Rails.logger.error("Attempted to broadcast Post(id=#{post.id}) to #{pluralize(email_recipients.size, "recipient")} (with #{pluralize(possible_recipients.size, "possible recipient")}).")
-      Rails.logger.error(Thread.current.backtrace.join("\n"))
       return
     end
 
