@@ -1,7 +1,7 @@
 json.extract! thread, :id, :title, :slug
 json.ui_color thread.subforum.ui_color
 json.posts do
-  json.array! thread.posts.order(:created_at).includes(:author) do |post|
+  json.array! thread.posts.order(:post_number).includes(:author) do |post|
     json.partial! 'api/posts/post', post: post
   end
 end
