@@ -45,8 +45,11 @@ private
       # Confirm that current value isn't stale
       begin
         @redis.watch(@key)
-        @redis.get(@key).to_i < Time.now.to_i && !!@redis.multi do
-          @redis.set(@key, Time.now.to_i + 20)
+        time = @redis.get(@key)
+        if time && time.to_i < Time.now.to_i
+          return !!@redis.multi do
+            @redis.set(@key, Time.now.to_i + 20)
+          end
         end
       ensure
         @redis.unwatch

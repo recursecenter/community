@@ -1,9 +1,11 @@
+require 'test_helper'
+
 class DistributedLockTest < ActiveSupport::TestCase
   test "one thread can hold the lock at once" do
     x = 0
 
-    10.times.map do
-      lock = DistributedLock.new(:x)
+    20.times.map do
+      lock = DistributedLock.new(:test_distributed_lock_x)
       Thread.new do
         lock.synchronize do
           y = x
@@ -13,7 +15,7 @@ class DistributedLockTest < ActiveSupport::TestCase
       end
     end.each(&:join)
 
-    assert_equal 10, x
+    assert_equal 20, x
   end
 
   test "cleans up stale values" do
