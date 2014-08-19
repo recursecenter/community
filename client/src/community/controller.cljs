@@ -96,7 +96,7 @@
 
       (catch ExceptionInfo e
         (let [e-data (ex-data e)]
-          (if (== 404 (:status e-data))
+          (if (contains? #{404 403} (:status e-data))
             (dispatch :route-changed {:route :page-not-found})
             (state/add-error! (:error-info e-data))))
         nil)
@@ -129,7 +129,7 @@
 
 (defmethod update-route-data :thread [app-state route-data]
   (go
-    (when (<! (load-from-api app-state route-data :thread #(api/thread (:id route-data))))
+    (when (<? (load-from-api app-state route-data :thread #(api/thread (:id route-data))))
       (start-thread-subscription app-state))))
 
 (defmethod update-route-data :settings [app-state route-data]
