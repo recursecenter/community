@@ -30,10 +30,9 @@
 
   Keyword
   (unparse [k params]
-    (if (and (contains? params k)
-             (k params))
-      (k params)
-      (throw (js/Error. (str "Missing route parameter " k " from " (pr-str params)))))))
+    (when (and (contains? params k)
+               (k params))
+      (k params))))
 
 (defrecord Routes
   [routes]

@@ -70,12 +70,15 @@
   (models/replace-mentions body users (fn [name]
                                         (str "<span class=\"at-mention\">" name "</span>"))))
 
+(defn post-number [n]
+  (str "post-number-" n))
+
 (defcomponent post [{:keys [post index autocomplete-users]} owner]
   (display-name [_] "Post")
 
   (render [_]
     (html
-      [:li.post {:key (:id post)}
+      [:li.post {:id (post-number (:post-number post))}
        [:div.row
         [:div.post-author-image
          [:a {:href (routes/hs-route :person (:author post))}
@@ -105,10 +108,16 @@
                             (om/update! post :editing? true))}
                 "Edit"])]])]]])))
 
-(defcomponent thread [{:keys [thread]} owner]
+(defcomponent thread [{:keys [thread route-data]} owner]
   (display-name [_] "Thread")
 
-  (render [this]
+  (did-mount [_]
+    )
+
+  (did-update [_ prev-props prev-state]
+    )
+
+  (render [_]
     (let [autocomplete-users (:autocomplete-users thread)]
       (html
         [:div

@@ -17,6 +17,7 @@ class Notifications::Mention < Notification
 
       json.thread do
         json.extract! post.thread, :id, :title, :slug
+        json.post_number post.post_number
       end
 
       json.post do
