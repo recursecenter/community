@@ -2,6 +2,7 @@ require 'set'
 
 class BroadcastNotifier < Notifier
   include RecipientVariables
+  include ActionView::Helpers::TextHelper # pluralize
 
   attr_reader :post
 
@@ -10,6 +11,14 @@ class BroadcastNotifier < Notifier
   end
 
   def notify(email_recipients)
+    # Guard against accidentally broadcasting a post without broadcast groups.
+    # See: https://github.com/hackerschool/community/issues/148
+    if post.broadcast_groups.empty?
+      Rails.logger.error("Attempted to broadcast Post(id=#{post.id}) to #{pluralize(email_recipients.size, "recipient")} (with #{pluralize(possible_recipients.size, "possible recipient")}).")
+      Rails.logger.error(Thread.current.backtrace.join("\n"))
+      return
+    end
+
     unless email_recipients.empty?
       BatchNotificationSender.delay.deliver(:broadcast_email, recipient_variables(email_recipients, post.thread), email_recipients, post)
     end
