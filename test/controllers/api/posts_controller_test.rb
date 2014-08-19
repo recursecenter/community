@@ -14,7 +14,7 @@ class Api::PostsControllerTest < ActionController::TestCase
     assert_difference('Delayed::Job.count', +1) do
       post :create, format: :json, thread_id: t.id, post: {body: "A new post"}
     end
-p
+
     method, recipient_vars, users, post = YAML.load(Delayed::Job.last.handler).args
 
     assert_equal method, :new_post_in_subscribed_thread_email
