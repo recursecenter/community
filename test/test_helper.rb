@@ -2,6 +2,9 @@ ENV['RAILS_ENV'] = 'test'
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 
+uri = URI.parse(ENV["REDIS_URL"])
+$redis = Redis.new(host: uri.host, port: uri.port, password: uri.password)
+
 class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
   #
