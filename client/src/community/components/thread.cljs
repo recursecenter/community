@@ -70,15 +70,16 @@
   (models/replace-mentions body users (fn [name]
                                         (str "<span class=\"at-mention\">" name "</span>"))))
 
-(defn post-number [n]
+(defn post-number-id [n]
   (str "post-number-" n))
 
-(defcomponent post [{:keys [post index autocomplete-users]} owner]
+(defcomponent post [{:keys [post index autocomplete-users highlight?]} owner]
   (display-name [_] "Post")
 
   (render [_]
     (html
-      [:li.post {:id (post-number (:post-number post))}
+      [:li.post {:id (post-number-id (:post-number post))
+                 :class (when highlight? "post-highlight")}
        [:div.row
         [:div.post-author-image
          [:a {:href (routes/hs-route :person (:author post))}
@@ -108,14 +109,25 @@
                             (om/update! post :editing? true))}
                 "Edit"])]])]]])))
 
+(defn scroll-to-post-number [post-number]
+  (when post-number
+    (let [scroll-pos (-> js/document
+                         (.getElementById (post-number-id post-number))
+                         (.getBoundingClientRect)
+                         (.-top)
+                         (- 100))]
+      (.scrollTo js/window 0 scroll-pos))))
+
 (defcomponent thread [{:keys [thread route-data]} owner]
   (display-name [_] "Thread")
 
   (did-mount [_]
-    )
+    (scroll-to-post-number (:post-number route-data)))
 
   (did-update [_ prev-props prev-state]
-    )
+    (if-not (= (:post-number (:route-data prev-props))
+               (:post-number route-data))
+      (scroll-to-post-number (:post-number route-data))))
 
   (render [_]
     (let [autocomplete-users (:autocomplete-users thread)]
@@ -125,7 +137,10 @@
          (shared/->subscription-info (:subscription thread))
          [:ol.list-unstyled
           (for [[i post] (map-indexed vector (:posts thread))]
-            (->post {:post post :autocomplete-users autocomplete-users :index i}
+            (->post {:post post
+                     :autocomplete-users autocomplete-users
+                     :index i
+                     :highlight? (= (str (:post-number post)) (:post-number route-data))}
                     {:react-key (:id post)}))]
          [:div.panel.panel-default
           [:div.panel-heading

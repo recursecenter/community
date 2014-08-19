@@ -32,6 +32,10 @@
   }
 }
 
+.post-highlight {
+  border-top: 3px dashed $brand-primary-muted;
+}
+
 .post-textarea {
   min-height: 150px;
   max-width: 100%;
