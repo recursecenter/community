@@ -445,7 +445,10 @@ CREATE VIEW threads_with_visited_status AS
     thread_users.pinned,
     thread_users.highest_post_number,
     thread_users.user_id,
-    visited_statuses.last_post_number_read,
+        CASE
+            WHEN (visited_statuses.last_post_number_read IS NULL) THEN 0
+            ELSE visited_statuses.last_post_number_read
+        END AS last_post_number_read,
         CASE
             WHEN (visited_statuses.last_post_number_read IS NULL) THEN true
             ELSE (visited_statuses.last_post_number_read < thread_users.highest_post_number)
