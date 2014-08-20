@@ -8,6 +8,9 @@ json.subforums do
         json.updated_at thread.updated_at.to_i
         json.last_posted_to_by thread.posts.last.author.name
         json.unread thread.unread?
+        if thread.next_unread_post_number
+          json.post_number thread.next_unread_post_number
+        end
       end
     end
   end

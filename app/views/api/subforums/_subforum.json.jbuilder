@@ -6,6 +6,9 @@ json.threads do
     json.updated_at thread.updated_at.to_i
     json.created_by thread.created_by.name
     json.unread thread.unread?
+    if thread.next_unread_post_number
+      json.post_number thread.next_unread_post_number
+    end
   end
 end
 json.autocomplete_users @autocomplete_users, :id, :first_name, :last_name
