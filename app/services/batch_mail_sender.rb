@@ -16,6 +16,10 @@ class BatchMailSender
   end
 
   def deliver
+    if ActionMailer::Base.delivery_method == :test
+      ActionMailer::Base.deliveries << mail
+    end
+
     if Rails.env.production?
       deliver_to_recipients
     end

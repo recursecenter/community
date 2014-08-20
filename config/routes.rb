@@ -12,6 +12,8 @@ Rails.application.routes.draw do
   get '/t/:slug/:id' => 'pages#index', as: 'thread'
   get '/t/:slug/:thread_id/:post_number' => 'pages#index', as: 'post'
 
+  get '/threads/:id/unsubscribe' => 'threads#unsubscribe', as: :unsubscribe_thread
+
   namespace :api, format: false, defaults: {format: 'json'} do
     resources :users do
       get :me, on: :collection

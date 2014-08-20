@@ -413,7 +413,8 @@ CREATE TABLE users (
     updated_at timestamp without time zone,
     email_on_mention boolean DEFAULT true,
     subscribe_on_create boolean DEFAULT true,
-    subscribe_when_mentioned boolean DEFAULT true
+    subscribe_when_mentioned boolean DEFAULT true,
+    subscribe_new_thread_in_subscribed_subforum boolean DEFAULT true
 );
 
 
@@ -820,6 +821,8 @@ INSERT INTO schema_migrations (version) VALUES ('20140722164601');
 INSERT INTO schema_migrations (version) VALUES ('20140814153449');
 
 INSERT INTO schema_migrations (version) VALUES ('20140814203855');
+
+INSERT INTO schema_migrations (version) VALUES ('20140815163922');
 
 INSERT INTO schema_migrations (version) VALUES ('20140819153927');
 
