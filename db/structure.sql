@@ -323,68 +323,6 @@ ALTER SEQUENCE subforums_id_seq OWNED BY subforums.id;
 
 
 --
--- Name: users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE users (
-    id integer NOT NULL,
-    first_name character varying(255),
-    last_name character varying(255),
-    email character varying(255),
-    avatar_url character varying(255),
-    batch_name character varying(255),
-    hacker_school_id integer,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
-    email_on_mention boolean DEFAULT true,
-    subscribe_on_create boolean DEFAULT true,
-    subscribe_when_mentioned boolean DEFAULT true
-);
-
-
---
--- Name: visited_statuses; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE visited_statuses (
-    id integer NOT NULL,
-    user_id integer,
-    last_visited timestamp without time zone,
-    visitable_id integer,
-    visitable_type character varying(255),
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone
-);
-
-
---
--- Name: subforums_with_visited_status; Type: VIEW; Schema: public; Owner: -
---
-
-CREATE VIEW subforums_with_visited_status AS
- SELECT subforum_users.id,
-    subforum_users.name,
-    subforum_users.subforum_group_id,
-    subforum_users.ui_color,
-    subforum_users.created_at,
-    subforum_users.updated_at,
-    subforum_users.marked_unread_at,
-    subforum_users.user_id,
-    visited_statuses.last_visited
-   FROM (( SELECT subforums.id,
-            subforums.name,
-            subforums.ui_color,
-            subforums.subforum_group_id,
-            subforums.created_at,
-            subforums.updated_at,
-            subforums.marked_unread_at,
-            users.id AS user_id
-           FROM subforums,
-            users) subforum_users
-   LEFT JOIN visited_statuses ON ((((subforum_users.id = visited_statuses.visitable_id) AND ((subforum_users.user_id = visited_statuses.user_id) OR (visited_statuses.user_id IS NULL))) AND ((visited_statuses.visitable_type)::text = 'Subforum'::text))));
-
-
---
 -- Name: subscriptions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -417,6 +355,41 @@ CREATE SEQUENCE subscriptions_id_seq
 --
 
 ALTER SEQUENCE subscriptions_id_seq OWNED BY subscriptions.id;
+
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE users (
+    id integer NOT NULL,
+    first_name character varying(255),
+    last_name character varying(255),
+    email character varying(255),
+    avatar_url character varying(255),
+    batch_name character varying(255),
+    hacker_school_id integer,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    email_on_mention boolean DEFAULT true,
+    subscribe_on_create boolean DEFAULT true,
+    subscribe_when_mentioned boolean DEFAULT true
+);
+
+
+--
+-- Name: visited_statuses; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE visited_statuses (
+    id integer NOT NULL,
+    user_id integer,
+    last_visited timestamp without time zone,
+    visitable_id integer,
+    visitable_type character varying(255),
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
 
 
 --
@@ -777,4 +750,6 @@ INSERT INTO schema_migrations (version) VALUES ('20140721223232');
 INSERT INTO schema_migrations (version) VALUES ('20140722164601');
 
 INSERT INTO schema_migrations (version) VALUES ('20140819153927');
+
+INSERT INTO schema_migrations (version) VALUES ('20140820160048');
 

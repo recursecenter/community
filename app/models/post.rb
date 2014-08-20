@@ -19,6 +19,5 @@ class Post < ActiveRecord::Base
 
   def mark_thread_as_read
     thread.mark_unread_at(self.created_at)
-    thread.subforum.mark_unread_at(thread.marked_unread_at)
   end
 end
