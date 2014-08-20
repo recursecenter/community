@@ -20,11 +20,8 @@ class Api::ThreadsControllerTest < ActionController::TestCase
 
   test "User#subscribe_new_thread_in_subscribed_subforum is true and a new thread is made, but the user has unsubscribed from the subforum" do
     subforum = subforums(:programming)
-
-    zach = users(:zach)
-    zach.update(subscribe_new_thread_in_subscribed_subforum: true)
-    zach.subscribe_to(subforum, "")
-    Subscription.where(user: zach, subscribable: subforum).first.update(subscribed: false)
+    user = users(:subscribes_to_new_threads)
+    Subscription.where(user: user, subscribable: subforum).first.update(subscribed: false)
 
     login(:dave)
 
@@ -34,6 +31,6 @@ class Api::ThreadsControllerTest < ActionController::TestCase
         post: {body: "A new post"}
     end
 
-    assert_not DiscussionThread.last.subscription_for(zach).subscribed
+    assert_not DiscussionThread.last.subscription_for(user).subscribed
   end
 end
