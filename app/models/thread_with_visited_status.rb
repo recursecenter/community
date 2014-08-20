@@ -4,9 +4,13 @@ class ThreadWithVisitedStatus < ActiveRecord::Base
 
   include PostgresView
   include DiscussionThreadCommon
-  include UnreadForUser
 
   include Slug
-
   has_slug_for :title
+
+  scope :for_user, ->(user) { where(user_id: user.id) }
+
+  def unread?
+    last_visited.nil? || marked_unread_at > last_visited
+  end
 end

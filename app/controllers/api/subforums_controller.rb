@@ -2,7 +2,6 @@ class Api::SubforumsController < Api::ApiController
   load_and_authorize_resource :subforum
 
   include SubscriptionActions
-
   has_subscribable :subforum
 
   def show
