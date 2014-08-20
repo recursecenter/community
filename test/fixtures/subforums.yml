@@ -1,7 +1,12 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 programming:
+  id: 1
   name: Programming
 
 nyc:
+  id: 2
   name: NYC
+
+subforum_no_one_subscribes_to:
+  name: Subforum No One Subscribes To

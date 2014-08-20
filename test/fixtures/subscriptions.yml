@@ -1,0 +1,11 @@
+subscribes_to_new_threads_programming_subscription:
+  user: subscribes_to_new_threads
+  subscribable_id: 1
+  subscribable_type: Subforum
+  subscribed: true
+
+full_hacker_schooler_thread_subscription:
+  user: full_hacker_schooler
+  subscribable_id: 1
+  subscribable_type: DiscussionThread
+  subscribed: true

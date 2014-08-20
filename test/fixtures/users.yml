@@ -1,5 +1,8 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
+subscribes_to_new_threads:
+  subscribe_new_thread_in_subscribed_subforum: true
+
 zach:
   first_name: Zach
   last_name: Allaun
@@ -15,3 +18,8 @@ dave:
   avatar_url: example.com/dave_avatar.jpg
   batch_name: All the batches
   hacker_school_id: 2
+
+full_hacker_schooler:
+  first_name: John
+  last_name: Doe
+  email: johndoe@example.com
