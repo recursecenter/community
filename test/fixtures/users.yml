@@ -1,8 +1,5 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-subscribes_to_new_threads:
-  subscribe_new_thread_in_subscribed_subforum: true
-
 zach:
   first_name: Zach
   last_name: Allaun
