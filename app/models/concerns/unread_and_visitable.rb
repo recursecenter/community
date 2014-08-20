@@ -4,7 +4,7 @@ module UnreadAndVisitable
   extend ActiveSupport::Concern
 
   included do
-    has_many :visited_statuses, as: :visitable
+    has_many :visited_statuses, foreign_key: 'thread_id'
 
     before_create -> { self.marked_unread_at ||= Time.zone.now }
   end

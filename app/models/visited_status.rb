@@ -1,15 +1,12 @@
 class VisitedStatus < ActiveRecord::Base
   belongs_to :user
-  belongs_to :visitable, polymorphic: true
+  belongs_to :thread, class_name: 'DiscussionThread'
 
-  validate :unique_for_visitable_and_user, on: :create
+  validate :unique_for_thread_and_user, on: :create
 
-  def unique_for_visitable_and_user
-    unless self.class.where(user_id: user_id,
-                            visitable_id: visitable_id,
-                            visitable_type: visitable_type).empty?
-
-      errors[:base] << "There can be only one VisitedStatus for a given user and visitable."
+  def unique_for_thread_and_user
+    unless self.class.where(user_id: user_id, thread: thread).empty?
+      errors[:base] << "There can be only one VisitedStatus for a given user and thread."
     end
   end
 end

@@ -1,6 +1,8 @@
 class DropSubforumsWithVisitedStatusView < ActiveRecord::Migration
   def up
     execute "DROP VIEW subforums_with_visited_status;"
+
+    VisitedStatus.where(visitable_type: 'Subforum').destroy_all
   end
 
   def down
