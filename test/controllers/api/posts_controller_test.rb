@@ -11,14 +11,13 @@ class Api::PostsControllerTest < ActionController::TestCase
 
     login(:dave)
 
-    assert_difference('Delayed::Job.count', +1) do
-      post :create, format: :json, thread_id: t.id, post: {body: "A new post"}
-    end
+    post :create, format: :json, thread_id: t.id, post: {body: "A new post"}
 
-    method, recipient_vars, users, post = YAML.load(Delayed::Job.last.handler).args
+    assert_equal 1, ActionMailer::Base.deliveries.size
+    mail = ActionMailer::Base.deliveries.first
 
-    assert_equal method, :new_post_in_subscribed_thread_email
-    assert_equal users, [zach]
+    assert_equal [zach.email], mail.to
+    assert_operator mail.text_part.body.to_s, :=~, /subscribed/
   end
 
   test "users subscribed and then unsubscribed from a post's thread shouldn't get an email when a new post is made" do
@@ -30,8 +29,8 @@ class Api::PostsControllerTest < ActionController::TestCase
 
     login(:dave)
 
-    assert_difference('Delayed::Job.count', 0) do
-      post :create, format: :json, thread_id: t.id, post: {body: "A new post"}
-    end
+    post :create, format: :json, thread_id: t.id, post: {body: "A new post"}
+
+    assert_equal [], ActionMailer::Base.deliveries
   end
 end
