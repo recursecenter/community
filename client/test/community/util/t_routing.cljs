@@ -40,7 +40,7 @@
         (is = (r "/users/10/foo") nil))
       (test "can unparse"
         (is = (r :user {:id 10}) "/users/10")
-        (throws (r :user {})))))
+        (is = (r :user {}) nil))))
 
   (context "a suite of routes"
     (let [r (routing/routes
