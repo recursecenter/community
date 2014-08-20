@@ -245,6 +245,47 @@ ALTER SEQUENCE posts_id_seq OWNED BY posts.id;
 
 
 --
+-- Name: roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE roles (
+    id integer NOT NULL,
+    name character varying(255),
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
+-- Name: roles_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE roles_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: roles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE roles_id_seq OWNED BY roles.id;
+
+
+--
+-- Name: roles_users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE roles_users (
+    user_id integer NOT NULL,
+    role_id integer NOT NULL
+);
+
+
+--
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -296,7 +337,8 @@ CREATE TABLE subforums (
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
     marked_unread_at timestamp without time zone,
-    ui_color character varying(255)
+    ui_color character varying(255),
+    required_role_ids integer[]
 );
 
 
@@ -528,6 +570,13 @@ ALTER TABLE ONLY posts ALTER COLUMN id SET DEFAULT nextval('posts_id_seq'::regcl
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY roles ALTER COLUMN id SET DEFAULT nextval('roles_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY subforum_groups ALTER COLUMN id SET DEFAULT nextval('subforum_groups_id_seq'::regclass);
 
 
@@ -605,6 +654,14 @@ ALTER TABLE ONLY notifications
 
 ALTER TABLE ONLY posts
     ADD CONSTRAINT posts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: roles_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY roles
+    ADD CONSTRAINT roles_pkey PRIMARY KEY (id);
 
 
 --
@@ -690,6 +747,20 @@ CREATE INDEX index_notifications_on_user_id ON notifications USING btree (user_i
 
 
 --
+-- Name: index_roles_users_on_role_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_roles_users_on_role_id ON roles_users USING btree (role_id);
+
+
+--
+-- Name: index_roles_users_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_roles_users_on_user_id ON roles_users USING btree (user_id);
+
+
+--
 -- Name: index_subscriptions_on_subscribable_id_and_subscribable_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -769,6 +840,10 @@ INSERT INTO schema_migrations (version) VALUES ('20140710163204');
 INSERT INTO schema_migrations (version) VALUES ('20140712031258');
 
 INSERT INTO schema_migrations (version) VALUES ('20140721223232');
+
+INSERT INTO schema_migrations (version) VALUES ('20140814153449');
+
+INSERT INTO schema_migrations (version) VALUES ('20140814203855');
 
 INSERT INTO schema_migrations (version) VALUES ('20140815163922');
 

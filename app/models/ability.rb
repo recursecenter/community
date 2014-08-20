@@ -2,6 +2,8 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
+    @user = user
+
     can :me, User
 
     can :read, SubforumGroup
@@ -18,5 +20,13 @@ class Ability
 
     alias_action :read, to: :update
     can :update, Notification, user: user
+  end
+
+  def can?(action, resource)
+    if resource.respond_to?(:required_roles)
+      @user.satisfies_roles?(*resource.required_roles) && super
+    else
+      super
+    end
   end
 end

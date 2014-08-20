@@ -3,7 +3,9 @@
 zach_post_1:
   body: Some cool stuff
   author: zach
+  thread: one
 
 dave_post_1:
   body: Some other stuff
   author: dave
+  thread: one

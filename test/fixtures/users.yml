@@ -20,3 +20,7 @@ full_hacker_schooler:
   first_name: John
   last_name: Doe
   email: johndoe@example.com
+
+hacker_schooler_1:
+  first_name: Hacker
+  last_name: Schooler

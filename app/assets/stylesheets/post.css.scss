@@ -23,6 +23,12 @@
   .post-controls, .post-form-controls {
     @include make-sm-column(2);
   }
+
+  .post-body {
+    ul, ol {
+      margin: 10px 0;
+    }
+  }
 }
 
 .at-mention {
