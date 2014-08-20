@@ -30,6 +30,12 @@
     font-weight: bold;
     color: #555;
   }
+
+  .post-body {
+    ul, ol {
+      margin: 10px 0;
+    }
+  }
 }
 
 .post-textarea {
