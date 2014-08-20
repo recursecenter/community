@@ -20,4 +20,8 @@ class Post < ActiveRecord::Base
   def mark_thread_as_read
     thread.mark_unread_at(self.created_at)
   end
+
+  def required_roles
+    thread.subforum.required_roles
+  end
 end
