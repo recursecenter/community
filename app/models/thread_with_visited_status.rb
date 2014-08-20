@@ -10,10 +10,6 @@ class ThreadWithVisitedStatus < ActiveRecord::Base
 
   scope :for_user, ->(user) { where(user_id: user.id) }
 
-  def unread?
-    unread
-  end
-
   def next_unread_post_number
     if unread? && last_post_number_read.present?
       last_post_number_read + 1
