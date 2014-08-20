@@ -5,7 +5,7 @@ class Api::PostsController < Api::ApiController
 
   def create
     @post.save!
-    @post.thread.mark_as_visited_for(current_user)
+    @post.thread.mark_as_visited_for(current_user, @post)
     PubSub.publish :created, :post, @post
 
     NotificationCoordinator.new(

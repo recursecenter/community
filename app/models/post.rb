@@ -7,7 +7,6 @@ class Post < ActiveRecord::Base
   validates :body, :author, :thread, presence: {allow_blank: false}
 
   before_create :add_and_increment_post_number
-  after_create :mark_thread_as_read
 
   def add_and_increment_post_number
     DistributedLock.new("thread_#{thread.id}").synchronize do
@@ -15,10 +14,6 @@ class Post < ActiveRecord::Base
       self.post_number = next_post_number
       thread.update(highest_post_number: next_post_number)
     end
-  end
-
-  def mark_thread_as_read
-    thread.mark_unread_at(self.created_at)
   end
 
   def required_roles

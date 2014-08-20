@@ -79,7 +79,6 @@ CREATE TABLE discussion_threads (
     created_by_id integer,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    marked_unread_at timestamp without time zone,
     pinned boolean DEFAULT false,
     highest_post_number integer DEFAULT 0
 );
@@ -339,7 +338,6 @@ CREATE TABLE subforums (
     subforum_group_id integer,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    marked_unread_at timestamp without time zone,
     ui_color character varying(255),
     required_role_ids integer[]
 );
@@ -426,10 +424,10 @@ CREATE TABLE users (
 CREATE TABLE visited_statuses (
     id integer NOT NULL,
     user_id integer,
-    last_visited timestamp without time zone,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    thread_id integer
+    thread_id integer,
+    last_post_number_read integer DEFAULT 0
 );
 
 
@@ -444,18 +442,20 @@ CREATE VIEW threads_with_visited_status AS
     thread_users.created_by_id,
     thread_users.created_at,
     thread_users.updated_at,
-    thread_users.marked_unread_at,
     thread_users.pinned,
     thread_users.highest_post_number,
     thread_users.user_id,
-    visited_statuses.last_visited
+    visited_statuses.last_post_number_read,
+        CASE
+            WHEN (visited_statuses.last_post_number_read IS NULL) THEN true
+            ELSE (visited_statuses.last_post_number_read < thread_users.highest_post_number)
+        END AS unread
    FROM (( SELECT discussion_threads.id,
             discussion_threads.title,
             discussion_threads.subforum_id,
             discussion_threads.created_by_id,
             discussion_threads.created_at,
             discussion_threads.updated_at,
-            discussion_threads.marked_unread_at,
             discussion_threads.pinned,
             discussion_threads.highest_post_number,
             users.id AS user_id
@@ -823,4 +823,6 @@ INSERT INTO schema_migrations (version) VALUES ('20140819153927');
 INSERT INTO schema_migrations (version) VALUES ('20140820160048');
 
 INSERT INTO schema_migrations (version) VALUES ('20140820161336');
+
+INSERT INTO schema_migrations (version) VALUES ('20140820175446');
 

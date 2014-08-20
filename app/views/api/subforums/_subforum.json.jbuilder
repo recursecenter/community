@@ -3,7 +3,7 @@ json.subforum_group_name subforum.subforum_group.name
 json.threads do
   json.array! threads do |thread|
     json.extract! thread, :title, :id, :slug
-    json.marked_unread_at thread.marked_unread_at.to_i
+    json.updated_at thread.updated_at.to_i
     json.created_by thread.created_by.name
     json.unread thread.unread?
   end

@@ -18,9 +18,9 @@
       (if (empty? recent-threads)
         [:p.no-threads "No threads yet..."]
         [:ol
-         (for [{:as thread :keys [title last-posted-to-by marked-unread-at unread]} recent-threads]
+         (for [{:as thread :keys [title last-posted-to-by updated-at unread]} recent-threads]
            [:li
-            [:span.timestamp (util/human-format-time marked-unread-at)]
+            [:span.timestamp (util/human-format-time updated-at)]
             [:span.name last-posted-to-by]
             [:p.title (link-to (routes :thread thread) {:style {:color ui-color}}
                                (if unread [:strong title] title))]])])]]))
