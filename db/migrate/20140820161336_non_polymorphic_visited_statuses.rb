@@ -4,7 +4,7 @@ class NonPolymorphicVisitedStatuses < ActiveRecord::Migration
 
     VisitedStatus.all.each do |vs|
       if vs.visitable_type == 'DiscussionThread'
-        vs.update(thread_id: vs.visitable_id)
+        vs.update_columns(thread_id: vs.visitable_id)
       end
     end
 
@@ -30,7 +30,7 @@ CREATE VIEW threads_with_visited_status AS
     end
 
     VisitedStatus.all.each do |vs|
-      vs.update(visitable_id: vs.thread_id, visitable_type: 'DiscussionThread')
+      vs.update_columns(visitable_id: vs.thread_id, visitable_type: 'DiscussionThread')
     end
 
     execute <<-SQL

@@ -4,7 +4,7 @@ class TrackLastPostRead < ActiveRecord::Migration
 
     VisitedStatus.includes(:thread).each do |vs|
       last_post_number_read = vs.thread.posts.where("created_at <= ?", vs.last_visited).order(created_at: :desc).first.post_number
-      vs.update(last_post_number_read: last_post_number_read)
+      vs.update_columns(last_post_number_read: last_post_number_read)
     end
 
     execute <<-SQL
@@ -48,7 +48,7 @@ CREATE VIEW threads_with_visited_status AS
 
     VisitedStatus.includes(:thread).each do |vs|
       last_visited = vs.thread.posts.where(post_number: vs.last_post_number_read).first.created_at
-      vs.update(last_visited: last_visited)
+      vs.update_columns(last_visited: last_visited)
     end
 
     execute <<-SQL
