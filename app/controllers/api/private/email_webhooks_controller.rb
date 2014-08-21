@@ -2,6 +2,7 @@ require 'openssl'
 
 class Api::Private::EmailWebhooksController < Api::ApiController
   before_filter :require_mailgun_origin
+  before_filter :require_valid_reply_info
   skip_before_action :require_login
   skip_before_action :verify_authenticity_token
   skip_authorization_check
@@ -26,10 +27,6 @@ class Api::Private::EmailWebhooksController < Api::ApiController
   # For any other code, Mailgun will retry the POST on an increasing
   # interval over the next 8 hours.
   def reply
-    unless valid_reply_info?
-      head 406 and return
-    end
-
     post = emailed_post.thread.posts.build
 
     unless can?(:create, post)
@@ -52,10 +49,6 @@ class Api::Private::EmailWebhooksController < Api::ApiController
   end
 
   def opened
-    unless valid_reply_info?
-      head 406 and return
-    end
-
     visited_status = VisitedStatus.where(user: current_user, thread: emailed_post.thread).first_or_initialize
 
     if visited_status.last_post_number_read < emailed_post.post_number
@@ -93,6 +86,12 @@ private
 
     unless SecureEquals.secure_equals(params[:signature], OpenSSL::HMAC.hexdigest(digest, api_key, data))
       head 404
+    end
+  end
+
+  def require_valid_reply_info
+    unless valid_reply_info?
+      head 406 and return
     end
   end
 end
