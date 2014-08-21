@@ -12,13 +12,10 @@ class PostTest < ActiveSupport::TestCase
   end
 
   test "associated mentions are destroyed with their post" do
-    user = users(:full_hacker_schooler)
-    p = discussion_threads(:created_by_full_hacker_schooler).
-      posts.create(author: user, body: "post body")
-    mention = p.mentions.create(user: user, mentioned_by: user)
+    p = posts(:zach_post_1)
+    mention = p.mentions.create(user: users(:full_hacker_schooler), mentioned_by: p.author)
 
     p.destroy
-
     assert mention.destroyed?
   end
 end
