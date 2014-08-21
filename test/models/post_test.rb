@@ -10,4 +10,12 @@ class PostTest < ActiveSupport::TestCase
     assert ability.can? :update, posts(:zach_post_1)
     assert ability.cannot? :update, posts(:dave_post_1)
   end
+
+  test "associated mentions are destroyed with their post" do
+    p = posts(:zach_post_1)
+    mention = p.mentions.create(user: users(:full_hacker_schooler), mentioned_by: p.author)
+
+    p.destroy
+    assert mention.destroyed?
+  end
 end
