@@ -1,5 +1,5 @@
 class AddPostNumberToPostsAndHighestPostNumberToDiscussionThreads < ActiveRecord::Migration
-  def change
+  def up
     add_column :posts, :post_number, :integer
     add_column :discussion_threads, :highest_post_number, :integer, default: 0
 
@@ -9,5 +9,10 @@ class AddPostNumberToPostsAndHighestPostNumberToDiscussionThreads < ActiveRecord
         post.update(post_number: i+1)
       end
     end
+  end
+
+  def down
+    remove_column :posts, :post_number
+    remove_column :discussion_threads, :highest_post_number
   end
 end
