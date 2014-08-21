@@ -1,6 +1,5 @@
 class Api::PostsControllerTest < ActionController::TestCase
   def setup
-    $redis = MockRedis.new
     ActionMailer::Base.deliveries.clear
   end
 

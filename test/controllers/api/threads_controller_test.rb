@@ -1,8 +1,4 @@
 class Api::ThreadsControllerTest < ActionController::TestCase
-  def setup
-    $redis = MockRedis.new
-  end
-
   test "User#subscribe_new_thread_in_subscribed_subforum is true and a new thread is made" do
     subforum = subforums(:programming)
     users(:full_hacker_schooler).subscribe_to(subforum, "")

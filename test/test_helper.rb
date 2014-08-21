@@ -20,8 +20,3 @@ class ActionController::TestCase
     session[:user_id] = users(user_name).id
   end
 end
-
-class MockRedis
-  def publish(feed, data)
-  end
-end
