@@ -73,15 +73,13 @@
 (defn post-number-id [n]
   (str "post-number-" n))
 
-(defcomponent post [{:keys [post index autocomplete-users unread?]} owner]
+(defcomponent post [{:keys [post index autocomplete-users highlight?]} owner]
   (display-name [_] "Post")
 
   (render [_]
     (html
       [:li.post {:id (post-number-id (:post-number post))
-                 :class (when unread? "post-highlight")}
-       (when unread?
-         [:p.unread-indicator [:i.fa.fa-chevron-down] " Unread messages " [:i.fa.fa-chevron-down]])
+                 :class (when highlight? "post-highlight")}
        [:div.row
         [:div.post-author-image
          [:a {:href (routes/hs-route :person (:author post))}
@@ -142,7 +140,7 @@
             (->post {:post post
                      :autocomplete-users autocomplete-users
                      :index i
-                     :unread? (= (str (:post-number post)) (:post-number route-data))}
+                     :highlight? (= (str (:post-number post)) (:post-number route-data))}
                     {:react-key (:id post)}))]
          [:div.panel.panel-default
           [:div.panel-heading
