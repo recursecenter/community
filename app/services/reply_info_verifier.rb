@@ -17,17 +17,24 @@ class ReplyInfoVerifier
 
   def generate(user, post)
     data = "#{user.id}-#{post.id}"
-    "#{data}--#{generate_digest(data)}"
+    "v2--#{data}--#{generate_digest(data)}"
   end
 
   def verify(signed_info)
     raise InvalidSignature if signed_info.blank?
     signed_info = signed_info.downcase
 
+    v2 = signed_info.slice!("v2--")
+
     data, digest = signed_info.split("--")
     if data.present? && digest.present? && SecureEquals.secure_equals(digest, generate_digest(data))
-      user_id, post_id = data.split("-")
-      [User.find(user_id), Post.find(post_id)]
+      user_id, resource_id = data.split("-")
+
+      if v2
+        [User.find(user_id), Post.find(resource_id)]
+      else
+        [User.find(user_id), DiscussionThread.find(resource_id).posts.last]
+      end
     else
       raise InvalidSignature
     end

@@ -11,11 +11,11 @@ class ReplyInfoVerifierTest < ActiveSupport::TestCase
     assert_kind_of String, @info
   end
 
-  test "verify returns a pair of the user and post" do
+  test "v2: verify returns a pair of the user and post" do
     assert_equal [@user, @post], ReplyInfoVerifier.verify(@info)
   end
 
-  test "generated info is case-insensitive" do
+  test "v2: generated info is case-insensitive" do
     assert_nothing_raised ReplyInfoVerifier::InvalidSignature do
       assert_equal [@user, @post], ReplyInfoVerifier.verify(@info.downcase)
       assert_equal [@user, @post], ReplyInfoVerifier.verify(@info.upcase)
@@ -25,5 +25,14 @@ class ReplyInfoVerifierTest < ActiveSupport::TestCase
   test "tampering with info causes an error" do
     assert_raises(ReplyInfoVerifier::InvalidSignature) { ReplyInfoVerifier.verify(@info[1..-1]) }
     assert_raises(ReplyInfoVerifier::InvalidSignature) { ReplyInfoVerifier.verify(@info[0..-2]) }
+  end
+
+  test "v1 reply info" do
+    user = users(:dave)
+    thread = discussion_threads(:one)
+    info = ReplyInfoVerifier.generate(user, thread)
+    info.slice!("v2--")
+
+    assert_equal [@user, thread.posts.last], ReplyInfoVerifier.verify(info)
   end
 end

@@ -49,6 +49,11 @@ class Api::Private::EmailWebhooksController < Api::ApiController
   end
 
   def opened
+    # Skip unless we have a v2 reply info
+    if !params['reply_info'].start_with?("v2--")
+      head 406 and return
+    end
+
     visited_status = VisitedStatus.where(user: current_user, thread: emailed_post.thread).first_or_initialize
 
     if visited_status.last_post_number_read < emailed_post.post_number
