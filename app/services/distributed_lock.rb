@@ -38,17 +38,17 @@ class DistributedLock
 
 private
   def acquire_lock
-    if @redis.setnx(@key, Time.now.to_i + 20)
-      @redis.expire(@key, 20)
+    if @redis.setnx(@key, 20.seconds.from_now.to_i)
+      @redis.expire(@key, 20.seconds)
       return true
     else
       # Confirm that current value isn't stale
       begin
         @redis.watch(@key)
         time = @redis.get(@key)
-        if time && time.to_i < Time.now.to_i
+        if time && time.to_i < Time.zone.now.to_i
           return !!@redis.multi do
-            @redis.set(@key, Time.now.to_i + 20)
+            @redis.set(@key, 20.seconds.from_now.to_i)
           end
         end
       ensure
