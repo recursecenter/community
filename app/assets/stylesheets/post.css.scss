@@ -32,7 +32,14 @@
 }
 
 .post-highlight {
-  border-top: 3px dashed $brand-primary-muted;
+  border-top: 1px dashed $brand-primary-muted;
+}
+
+.unread-indicator {
+  text-align: center;
+  color: $brand-primary-muted;
+  font-size: 12px;
+  font-weight: bold;
 }
 
 .at-mention {
