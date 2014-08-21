@@ -1,5 +1,11 @@
 language: ruby
 cache: bundler
+services:
+  - redis-server
+addons:
+  postgresql: "9.3"
+env:
+  - REDIS_URL=redis://localhost:6379
 rvm:
   - "2.1.2"
 before_install:

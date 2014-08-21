@@ -56,10 +56,10 @@ class Api::Private::EmailWebhooksController < Api::ApiController
       head 406 and return
     end
 
-    visited_status = VisitedStatus.where(user: current_user, visitable: emailed_post.thread).first_or_initialize
+    visited_status = VisitedStatus.where(user: current_user, thread: emailed_post.thread).first_or_initialize
 
-    if visited_status.last_visited.nil? || visited_status.last_visited < emailed_post.created_at
-      visited_status.update(last_visited: emailed_post.created_at)
+    if visited_status.last_post_number_read < emailed_post.post_number
+      visited_status.update(last_post_number_read: emailed_post.post_number)
     end
 
     head 200

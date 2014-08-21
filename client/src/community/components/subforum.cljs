@@ -75,5 +75,5 @@
              [:tr {:key id :class (if (:unread thread) "unread")}
               [:td.name created-by]
               [:td.title (link-to (routes :thread thread) title)]
-              [:td.timestamp (util/human-format-time (:marked-unread-at thread))]])]])
+              [:td.timestamp (util/human-format-time (:updated-at thread))]])]])
        (->new-thread subforum)])))

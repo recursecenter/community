@@ -24,12 +24,24 @@
     @include make-sm-column(2);
   }
 
-  .at-mention {
-    background-color: #eee;
-    padding: 0 2px;
-    font-weight: bold;
-    color: #555;
+  .post-body {
+    ul, ol {
+      margin: 10px 0;
+    }
   }
+}
+
+.post-highlight {
+  border-top: 2px dashed $brand-primary-muted;
+  padding-top: 1.5em;
+  margin-top: 1em;
+}
+
+.at-mention {
+  background-color: #eee;
+  padding: 0 2px;
+  font-weight: bold;
+  color: #555;
 }
 
 .post-textarea {

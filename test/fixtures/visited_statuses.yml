@@ -1,11 +1,1 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
-one:
-  user_id: 
-  last_visited: 2014-06-05 16:06:42
-  visitable_id: 
-
-two:
-  user_id: 
-  last_visited: 2014-06-05 16:06:42
-  visitable_id: 

@@ -2,6 +2,11 @@
 
 one:
   title: Om is cool!
-  subforum: programming
+  subforum_id: 1
   created_by: zach
 
+created_by_full_hacker_schooler:
+  id: 1
+  title: Foo bar
+  subforum: subforum_no_one_subscribes_to
+  created_by: full_hacker_schooler

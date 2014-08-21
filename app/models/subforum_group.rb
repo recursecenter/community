@@ -1,17 +1,16 @@
 class SubforumGroup < ActiveRecord::Base
   default_scope -> { order('ordinal ASC') }
 
-  has_many :subforums
+  scope :includes_subforums_for_user, ->(user) do
+    includes(:subforums).
+      references(:subforums).
+      where("subforums.required_role_ids <@ '{?}'", user.role_ids).
+      order("subforums.id ASC")
+  end
 
-  # we need to specify class_name because we want "subforum" to be pluralized,
-  # not "status".
-  has_many :subforums_with_visited_status, class_name: 'SubforumWithVisitedStatus'
+  has_many :subforums
 
   before_create do
     self.ordinal = self.class.count
-  end
-
-  def subforums_for_user(user)
-    subforums_with_visited_status.for_user(user)
   end
 end

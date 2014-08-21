@@ -6,6 +6,7 @@ class User < ActiveRecord::Base
   has_many :group_memberships
   has_many :groups, through: :group_memberships
   has_many :subscriptions
+  has_and_belongs_to_many :roles
 
   scope :ordered_by_first_name, -> { order(first_name: :asc) }
 
@@ -28,6 +29,16 @@ class User < ActiveRecord::Base
       user.groups += [Group.faculty]
     end
 
+    user.roles = [Role.everyone]
+
+    if (Date.parse(user_data["batch"]["start_date"]) - 1.day).past?
+      user.roles += [Role.full_hacker_schooler]
+    end
+
+    if user_data["is_faculty"]
+      user.roles = [Role.everyone, Role.full_hacker_schooler, Role.admin]
+    end
+
     user.save!
 
     user
@@ -46,5 +57,9 @@ class User < ActiveRecord::Base
     subscription.subscribed = true
     subscription.reason = reason
     subscription.save!
+  end
+
+  def satisfies_roles?(*roles)
+    self.roles.where(id: roles).count == roles.uniq.count
   end
 end

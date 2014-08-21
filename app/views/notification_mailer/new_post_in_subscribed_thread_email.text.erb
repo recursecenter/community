@@ -1,6 +1,6 @@
 <%= @post.body %>
 
 ---
-You received this message because you are subscribed to this thread.
+You received this message because you are subscribed to this thread. Unsubscribe from this thread: <%= unsubscribe_thread_url(@post.thread) %>
 
-To reply, either respond to this email or click here: <%= post_url(slug: @post.thread.slug, thread_id: @post.thread.id, id: @post.id) %>
+Reply to this email or view the post on Community: <%= post_url(slug: @post.thread.slug, thread_id: @post.thread.id, post_number: @post.post_number) %>

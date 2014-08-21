@@ -3,6 +3,8 @@ require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 
 ENV['MAILGUN_API_KEY'] = "foobarbaz"
+uri = URI.parse(ENV["REDIS_URL"])
+$redis = Redis.new(host: uri.host, port: uri.port, password: uri.password)
 
 class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
@@ -14,7 +16,8 @@ class ActiveSupport::TestCase
   # Add more helper methods to be used by all tests here...
 end
 
-class MockRedis
-  def publish(feed, data)
+class ActionController::TestCase
+  def login(user_name)
+    session[:user_id] = users(user_name).id
   end
 end

@@ -1,0 +1,11 @@
+everyone:
+  id: 1
+  name: everyone
+
+full_hacker_schooler:
+  id: 2
+  name: full_hacker_schooler
+
+admin:
+  id: 3
+  name: admin

@@ -1,6 +1,5 @@
 class Api::Private::EmailWebhooksControllerTest < ActionController::TestCase
   def setup
-    $redis = MockRedis.new
     @reply_info = ReplyInfoVerifier.generate(users(:dave), posts(:zach_post_1))
   end
 
@@ -28,31 +27,29 @@ class Api::Private::EmailWebhooksControllerTest < ActionController::TestCase
   end
 
   test "email opened updates visited status" do
-    visited_status = VisitedStatus.where(user: users(:dave), visitable: posts(:zach_post_1).thread).first_or_create
+    visited_status = VisitedStatus.where(user: users(:dave), thread: posts(:zach_post_1).thread).first_or_create
 
-    visited_status.update(last_visited: 1.day.ago)
-    posts(:zach_post_1).update(created_at: DateTime.current)
+    visited_status.update(last_post_number_read: 0)
 
     post :opened, mailgun_origin_params.merge({reply_info: @reply_info})
     assert_response :success
 
     visited_status.reload
 
-    assert_equal visited_status.last_visited.to_i, posts(:zach_post_1).created_at.to_i
+    assert_equal visited_status.last_post_number_read, posts(:zach_post_1).post_number
   end
 
   test "email opened doesn't update visited status if the thread has been visited since the post was made" do
-    visited_status = VisitedStatus.where(user: users(:dave), visitable: posts(:zach_post_1).thread).first_or_create
+    visited_status = VisitedStatus.where(user: users(:dave), thread: posts(:zach_post_1).thread).first_or_create
 
-    visited_status.update(last_visited: DateTime.current)
-    posts(:zach_post_1).update(created_at: 1.day.ago)
+    visited_status.update(last_post_number_read: posts(:zach_post_1).post_number + 1)
 
     post :opened, mailgun_origin_params.merge({reply_info: @reply_info})
     assert_response :success
 
     visited_status.reload
 
-    assert_operator visited_status.last_visited, :>, posts(:zach_post_1).created_at
+    assert_equal posts(:zach_post_1).post_number + 1, visited_status.last_post_number_read
   end
 
 private

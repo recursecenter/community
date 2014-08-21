@@ -79,7 +79,8 @@ CREATE TABLE discussion_threads (
     created_by_id integer,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    marked_unread_at timestamp without time zone
+    pinned boolean DEFAULT false,
+    highest_post_number integer DEFAULT 0
 );
 
 
@@ -221,7 +222,8 @@ CREATE TABLE posts (
     thread_id integer,
     author_id integer,
     created_at timestamp without time zone,
-    updated_at timestamp without time zone
+    updated_at timestamp without time zone,
+    post_number integer
 );
 
 
@@ -242,6 +244,47 @@ CREATE SEQUENCE posts_id_seq
 --
 
 ALTER SEQUENCE posts_id_seq OWNED BY posts.id;
+
+
+--
+-- Name: roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE roles (
+    id integer NOT NULL,
+    name character varying(255),
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
+-- Name: roles_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE roles_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: roles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE roles_id_seq OWNED BY roles.id;
+
+
+--
+-- Name: roles_users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE roles_users (
+    user_id integer NOT NULL,
+    role_id integer NOT NULL
+);
 
 
 --
@@ -295,8 +338,8 @@ CREATE TABLE subforums (
     subforum_group_id integer,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    marked_unread_at timestamp without time zone,
-    ui_color character varying(255)
+    ui_color character varying(255),
+    required_role_ids integer[]
 );
 
 
@@ -317,68 +360,6 @@ CREATE SEQUENCE subforums_id_seq
 --
 
 ALTER SEQUENCE subforums_id_seq OWNED BY subforums.id;
-
-
---
--- Name: users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE users (
-    id integer NOT NULL,
-    first_name character varying(255),
-    last_name character varying(255),
-    email character varying(255),
-    avatar_url character varying(255),
-    batch_name character varying(255),
-    hacker_school_id integer,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
-    email_on_mention boolean DEFAULT true,
-    subscribe_on_create boolean DEFAULT true,
-    subscribe_when_mentioned boolean DEFAULT true
-);
-
-
---
--- Name: visited_statuses; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE visited_statuses (
-    id integer NOT NULL,
-    user_id integer,
-    last_visited timestamp without time zone,
-    visitable_id integer,
-    visitable_type character varying(255),
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone
-);
-
-
---
--- Name: subforums_with_visited_status; Type: VIEW; Schema: public; Owner: -
---
-
-CREATE VIEW subforums_with_visited_status AS
- SELECT subforum_users.id,
-    subforum_users.name,
-    subforum_users.subforum_group_id,
-    subforum_users.ui_color,
-    subforum_users.created_at,
-    subforum_users.updated_at,
-    subforum_users.marked_unread_at,
-    subforum_users.user_id,
-    visited_statuses.last_visited
-   FROM (( SELECT subforums.id,
-            subforums.name,
-            subforums.ui_color,
-            subforums.subforum_group_id,
-            subforums.created_at,
-            subforums.updated_at,
-            subforums.marked_unread_at,
-            users.id AS user_id
-           FROM subforums,
-            users) subforum_users
-   LEFT JOIN visited_statuses ON ((((subforum_users.id = visited_statuses.visitable_id) AND ((subforum_users.user_id = visited_statuses.user_id) OR (visited_statuses.user_id IS NULL))) AND ((visited_statuses.visitable_type)::text = 'Subforum'::text))));
 
 
 --
@@ -417,6 +398,41 @@ ALTER SEQUENCE subscriptions_id_seq OWNED BY subscriptions.id;
 
 
 --
+-- Name: users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE users (
+    id integer NOT NULL,
+    first_name character varying(255),
+    last_name character varying(255),
+    email character varying(255),
+    avatar_url character varying(255),
+    batch_name character varying(255),
+    hacker_school_id integer,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    email_on_mention boolean DEFAULT true,
+    subscribe_on_create boolean DEFAULT true,
+    subscribe_when_mentioned boolean DEFAULT true,
+    subscribe_new_thread_in_subscribed_subforum boolean DEFAULT true
+);
+
+
+--
+-- Name: visited_statuses; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE visited_statuses (
+    id integer NOT NULL,
+    user_id integer,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    thread_id integer,
+    last_post_number_read integer DEFAULT 0
+);
+
+
+--
 -- Name: threads_with_visited_status; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -427,20 +443,29 @@ CREATE VIEW threads_with_visited_status AS
     thread_users.created_by_id,
     thread_users.created_at,
     thread_users.updated_at,
-    thread_users.marked_unread_at,
+    thread_users.pinned,
+    thread_users.highest_post_number,
     thread_users.user_id,
-    visited_statuses.last_visited
+        CASE
+            WHEN (visited_statuses.last_post_number_read IS NULL) THEN 0
+            ELSE visited_statuses.last_post_number_read
+        END AS last_post_number_read,
+        CASE
+            WHEN (visited_statuses.last_post_number_read IS NULL) THEN true
+            ELSE (visited_statuses.last_post_number_read < thread_users.highest_post_number)
+        END AS unread
    FROM (( SELECT discussion_threads.id,
             discussion_threads.title,
             discussion_threads.subforum_id,
             discussion_threads.created_by_id,
             discussion_threads.created_at,
             discussion_threads.updated_at,
-            discussion_threads.marked_unread_at,
+            discussion_threads.pinned,
+            discussion_threads.highest_post_number,
             users.id AS user_id
            FROM discussion_threads,
             users) thread_users
-   LEFT JOIN visited_statuses ON ((((thread_users.id = visited_statuses.visitable_id) AND ((thread_users.user_id = visited_statuses.user_id) OR (visited_statuses.user_id IS NULL))) AND ((visited_statuses.visitable_type)::text = 'DiscussionThread'::text))));
+   LEFT JOIN visited_statuses ON (((thread_users.id = visited_statuses.thread_id) AND ((thread_users.user_id = visited_statuses.user_id) OR (visited_statuses.user_id IS NULL)))));
 
 
 --
@@ -527,6 +552,13 @@ ALTER TABLE ONLY posts ALTER COLUMN id SET DEFAULT nextval('posts_id_seq'::regcl
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY roles ALTER COLUMN id SET DEFAULT nextval('roles_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY subforum_groups ALTER COLUMN id SET DEFAULT nextval('subforum_groups_id_seq'::regclass);
 
 
@@ -604,6 +636,14 @@ ALTER TABLE ONLY notifications
 
 ALTER TABLE ONLY posts
     ADD CONSTRAINT posts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: roles_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY roles
+    ADD CONSTRAINT roles_pkey PRIMARY KEY (id);
 
 
 --
@@ -689,6 +729,20 @@ CREATE INDEX index_notifications_on_user_id ON notifications USING btree (user_i
 
 
 --
+-- Name: index_roles_users_on_role_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_roles_users_on_role_id ON roles_users USING btree (role_id);
+
+
+--
+-- Name: index_roles_users_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_roles_users_on_user_id ON roles_users USING btree (user_id);
+
+
+--
 -- Name: index_subscriptions_on_subscribable_id_and_subscribable_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -707,13 +761,6 @@ CREATE INDEX index_users_on_hacker_school_id ON users USING btree (hacker_school
 --
 
 CREATE INDEX index_visited_statuses_on_user_id ON visited_statuses USING btree (user_id);
-
-
---
--- Name: index_visited_statuses_on_visitable_id_and_visitable_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_visited_statuses_on_visitable_id_and_visitable_type ON visited_statuses USING btree (visitable_id, visitable_type);
 
 
 --
@@ -768,4 +815,20 @@ INSERT INTO schema_migrations (version) VALUES ('20140710163204');
 INSERT INTO schema_migrations (version) VALUES ('20140712031258');
 
 INSERT INTO schema_migrations (version) VALUES ('20140721223232');
+
+INSERT INTO schema_migrations (version) VALUES ('20140722164601');
+
+INSERT INTO schema_migrations (version) VALUES ('20140814153449');
+
+INSERT INTO schema_migrations (version) VALUES ('20140814203855');
+
+INSERT INTO schema_migrations (version) VALUES ('20140815163922');
+
+INSERT INTO schema_migrations (version) VALUES ('20140819153927');
+
+INSERT INTO schema_migrations (version) VALUES ('20140820160048');
+
+INSERT INTO schema_migrations (version) VALUES ('20140820161336');
+
+INSERT INTO schema_migrations (version) VALUES ('20140820175446');
 

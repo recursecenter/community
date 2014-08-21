@@ -1,5 +1,4 @@
 class Subforum < ActiveRecord::Base
-  include UnreadAndVisitable
   include Subscribable
   include SubforumCommon
 

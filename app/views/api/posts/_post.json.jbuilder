@@ -1,4 +1,4 @@
-json.extract! post, :id, :body, :thread_id
+json.extract! post, :id, :body, :thread_id, :post_number
 json.created_at post.created_at.to_i
 json.editable can?(:edit, post)
 

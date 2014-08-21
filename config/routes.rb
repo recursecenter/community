@@ -10,9 +10,9 @@ Rails.application.routes.draw do
   get '/settings' => 'pages#index'
   get '/f/*path' => 'pages#index'
   get '/t/:slug/:id' => 'pages#index', as: 'thread'
+  get '/t/:slug/:thread_id/:post_number' => 'pages#index', as: 'post'
 
-  # When you uncomment this, remove ApplicationHelper#post_url
-  #get '/t/:slug/:thread_id/:id' => 'pages#index', as: 'post'
+  get '/threads/:id/unsubscribe' => 'threads#unsubscribe', as: :unsubscribe_thread
 
   namespace :api, format: false, defaults: {format: 'json'} do
     resources :users do

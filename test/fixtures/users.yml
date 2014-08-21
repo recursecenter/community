@@ -15,3 +15,12 @@ dave:
   avatar_url: example.com/dave_avatar.jpg
   batch_name: All the batches
   hacker_school_id: 2
+
+full_hacker_schooler:
+  first_name: John
+  last_name: Doe
+  email: johndoe@example.com
+
+hacker_schooler_1:
+  first_name: Hacker
+  last_name: Schooler

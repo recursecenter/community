@@ -5,7 +5,7 @@ class AddLastPostedToToDiscussionThreads < ActiveRecord::Migration
     DiscussionThread.reset_column_information
 
     DiscussionThread.all.each do |t|
-      t.update(last_posted_to: t.updated_at)
+      t.update_columns(last_posted_to: t.updated_at)
     end
   end
 

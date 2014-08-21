@@ -61,7 +61,7 @@
              (->live-checkbox settings
                {:opts {:submit submit-setting
                        :key :email-on-mention
-                       :label [:span "Email me when I get " [:strong "@mentioned"] "."]}})]]
+                       :label [:span "Email me when I get " [:span.at-mention "@mentioned"] "."]}})]]
            [:div.panel.panel-default
             [:div.panel-heading [:strong "Subscriptions"]]
             [:div.panel-body
@@ -72,4 +72,8 @@
              (->live-checkbox settings
                {:opts {:submit submit-setting
                        :key :subscribe-when-mentioned
-                       :label [:span "Subscribe me to threads I am " [:strong "@mentioned"] " in."]}})]]]]]))))
+                       :label [:span "Subscribe me to threads I am " [:span.at-mention "@mentioned"] " in."]}})
+             (->live-checkbox settings
+               {:opts {:submit submit-setting
+                       :key :subscribe-new-thread-in-subscribed-subforum
+                       :label [:span "Subscribe me to new threads created in subforums I'm subscribed to."]}})]]]]]))))
