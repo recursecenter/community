@@ -14,7 +14,7 @@ class DatabaseForker
   end
 
   def has_fork?
-    system("echo '\q' | psql -d #{fork_name} 2>/dev/null")
+    Rails.env.development? && system("echo '\q' | psql -d #{fork_name} 2>/dev/null")
   end
 
   def database_name
