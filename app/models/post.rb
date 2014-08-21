@@ -20,7 +20,7 @@ class Post < ActiveRecord::Base
     thread.subforum.required_roles
   end
 
-  def mark_as_visited_for(user)
-    thread.mark_as_visited_for(user, self)
+  def mark_as_visited(user)
+    thread.mark_post_as_visited(user, self)
   end
 end
