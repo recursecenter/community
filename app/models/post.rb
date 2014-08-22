@@ -23,4 +23,19 @@ class Post < ActiveRecord::Base
   def mark_as_visited(user)
     thread.mark_post_as_visited(user, self)
   end
+
+  def message_id
+    format_message_id(thread_id, post_number)
+  end
+
+  def previous_message_id
+    if post_number > 1
+      format_message_id(thread_id, post_number-1)
+    end
+  end
+
+private
+  def format_message_id(thread_id, post_number)
+    "<thread-#{thread_id}/post-#{post_number}@community.hackerschool.com>"
+  end
 end

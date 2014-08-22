@@ -11,8 +11,10 @@ class NotificationMailer < ActionMailer::Base
     reply_token = ReplyInfoVerifier.generate(@user, @post)
 
     headers["X-Mailgun-Variables"] = JSON.generate({reply_token: reply_token})
+    headers["In-Reply-To"] = @post.previous_message_id
 
-    mail(to: @user.email,
+    mail(message_id: @post.message_id,
+         to: @user.email,
          from: from_field(@mentioned_by.name),
          reply_to: reply_to_field(reply_token),
          subject: subject_field(@post.thread.title))
@@ -22,7 +24,10 @@ class NotificationMailer < ActionMailer::Base
     @post = post
     @group_names = post.broadcast_groups.map(&:name)
 
-    mail(to: users.map(&:email),
+    headers["In-Reply-To"] = @post.previous_message_id
+
+    mail(message_id: @post.message_id,
+         to: users.map(&:email),
          from: from_field(@post.author.name),
          subject: subject_field(@post.thread.title))
   end
@@ -30,7 +35,10 @@ class NotificationMailer < ActionMailer::Base
   def new_post_in_subscribed_thread_email(users, post)
     @post = post
 
-    mail(to: users.map(&:email),
+    headers["In-Reply-To"] = @post.previous_message_id
+
+    mail(message_id: @post.message_id,
+         to: users.map(&:email),
          from: from_field(@post.author.name),
          subject: subject_field(post.thread.title))
   end
@@ -38,7 +46,8 @@ class NotificationMailer < ActionMailer::Base
   def new_thread_in_subscribed_subforum_email(users, thread)
     @thread = thread
 
-    mail(to: users.map(&:email),
+    mail(message_id: @thread.posts.first.message_id,
+         to: users.map(&:email),
          from: from_field(@thread.created_by.name),
          subject: subject_field(thread.title))
   end
