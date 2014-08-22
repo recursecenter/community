@@ -5,6 +5,7 @@
             [community.util :refer-macros [p <?]]
             [community.util.autocomplete :as ac]
             [community.util.selection-list :as selection-list]
+            [community.partials :as partials]
             [om.core :as om]
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :refer-macros [html]]
@@ -169,3 +170,40 @@
             [:span [:span.glyphicon.glyphicon-volume-off] " Unsubscribe"]
             [:span [:span.glyphicon.glyphicon-volume-up] " Subscribe"])]
          [:p.subscription-reason reason]]))))
+
+(defcomponent post-preview [{:keys [post autocomplete-users]}]
+  (display-name [_] "PostPreview")
+
+  (render [_]
+    (html
+      [:div.post.post-preview
+       [:div.post-body
+        (partials/html-from-markdown
+         (partials/wrap-mentions (:body post) autocomplete-users))]])))
+
+(defn tab [owner id body]
+  (html
+    [:li {:class (when (= id (om/get-state owner :active-tab-id)) "active")}
+     [:a {:href "#" :onClick (fn [e]
+                               (.preventDefault e)
+                               (om/set-state! owner :active-tab-id id))}
+      body]]))
+
+(defcomponent tabbed-panel [{:keys [tabs props]} owner]
+  (display-name [_] "TabbedPanel")
+
+  (init-state [_]
+    {:active-tab-id (-> tabs first :id)})
+
+  (render-state [_ {:keys [active-tab-id]}]
+    (html
+      [:div.panel.panel-default
+       [:div.panel-heading.community-heading
+        [:ul.nav.nav-tabs.community-tabs
+         (for [{:keys [id body]} tabs]
+           (tab owner id body))]]
+       [:div.panel-body
+        (let [view-fn (-> (filter #(= active-tab-id (:id %)) tabs)
+                          first
+                          :view-fn)]
+          (view-fn props))]])))

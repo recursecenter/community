@@ -30,3 +30,20 @@
     margin: 5px 10px 5px 0;
   }
 }
+
+.community-heading {
+  padding: 10px 0 0 0;
+  border-bottom: 0;
+
+  .community-tabs {
+    padding-left: 10px;
+
+    li a {
+      padding: 7px 10px;
+    }
+  }
+}
+
+.post-preview {
+  min-height: 200px;
+}
