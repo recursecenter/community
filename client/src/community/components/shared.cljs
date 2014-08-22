@@ -176,7 +176,7 @@
 
   (render [_]
     (html
-      [:div.post
+      [:div.post.post-preview
        [:div.post-body
         (partials/html-from-markdown
          (partials/wrap-mentions (:body post) autocomplete-users))]])))
