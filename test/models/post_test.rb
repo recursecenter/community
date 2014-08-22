@@ -18,4 +18,18 @@ class PostTest < ActiveSupport::TestCase
     p.destroy
     assert mention.destroyed?
   end
+
+  test "marking an earlier post as visited doesn't regress a user's visited status" do
+    user = users(:hacker_schooler_1)
+    p1 = posts(:first_in_thread_created_by_full_hacker_schooler)
+    p2 = posts(:second_in_thread_created_by_full_hacker_schooler)
+
+    p2.mark_as_visited(user)
+
+    assert_equal p2.post_number, VisitedStatus.where(user: user, thread: p2.thread).first.last_post_number_read
+
+    p1.mark_as_visited(user)
+
+    assert_equal p2.post_number, VisitedStatus.where(user: user, thread: p2.thread).first.last_post_number_read
+  end
 end
