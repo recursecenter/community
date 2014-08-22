@@ -40,6 +40,7 @@ class Api::Private::EmailWebhooksController < Api::ApiController
       head 406 and return
     end
 
+    post.mark_as_visited(current_user)
     PubSub.publish :created, :post, post
 
     # TODO: parse and notify @mentions as well
