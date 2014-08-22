@@ -11,14 +11,14 @@ class BroadcastNotifier < Notifier
   end
 
   def notify(email_recipients)
-    # Guard against accidentally broadcasting a post without broadcast groups.
-    # See: https://github.com/hackerschool/community/issues/148
-    if post.broadcast_groups.empty?
-      Rails.logger.error("Attempted to broadcast Post(id=#{post.id}) to #{pluralize(email_recipients.size, "recipient")} (with #{pluralize(possible_recipients.size, "possible recipient")}).")
-      return
-    end
-
     unless email_recipients.empty?
+      # Guard against accidentally broadcasting a post without broadcast groups.
+      # See: https://github.com/hackerschool/community/issues/148
+      if post.broadcast_groups.empty?
+        Rails.logger.error("Attempted to broadcast Post(id=#{post.id}) to #{pluralize(email_recipients.size, "recipient")} (with #{pluralize(possible_recipients.size, "possible recipient")}).")
+        return
+      end
+
       BatchNotificationSender.delay.deliver(:broadcast_email, recipient_variables(email_recipients, post), email_recipients, post)
     end
   end
