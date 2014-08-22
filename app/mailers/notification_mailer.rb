@@ -11,7 +11,10 @@ class NotificationMailer < ActionMailer::Base
     reply_token = ReplyInfoVerifier.generate(@user, @post)
 
     headers["X-Mailgun-Variables"] = JSON.generate({reply_token: reply_token})
-    headers["In-Reply-To"] = @post.previous_message_id
+
+    if @post.previous_message_id
+      headers["In-Reply-To"] = @post.previous_message_id
+    end
 
     mail(message_id: @post.message_id,
          to: @user.email,
@@ -24,7 +27,9 @@ class NotificationMailer < ActionMailer::Base
     @post = post
     @group_names = post.broadcast_groups.map(&:name)
 
-    headers["In-Reply-To"] = @post.previous_message_id
+    if @post.previous_message_id
+      headers["In-Reply-To"] = @post.previous_message_id
+    end
 
     mail(message_id: @post.message_id,
          to: users.map(&:email),
@@ -35,7 +40,9 @@ class NotificationMailer < ActionMailer::Base
   def new_post_in_subscribed_thread_email(users, post)
     @post = post
 
-    headers["In-Reply-To"] = @post.previous_message_id
+    if @post.previous_message_id
+      headers["In-Reply-To"] = @post.previous_message_id
+    end
 
     mail(message_id: @post.message_id,
          to: users.map(&:email),
