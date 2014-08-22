@@ -182,11 +182,12 @@
          (partials/wrap-mentions (:body post) autocomplete-users))]])))
 
 (defn tab [owner id body]
-  [:li {:class (when (= id (om/get-state owner :active-tab-id)) "active")}
-   [:a {:href "#" :onClick (fn [e]
-                             (.preventDefault e)
-                             (om/set-state! owner :active-tab-id id))}
-    body]])
+  (html
+    [:li {:class (when (= id (om/get-state owner :active-tab-id)) "active")}
+     [:a {:href "#" :onClick (fn [e]
+                               (.preventDefault e)
+                               (om/set-state! owner :active-tab-id id))}
+      body]]))
 
 (defcomponent tabbed-panel [{:keys [tabs props]} owner]
   (display-name [_] "TabbedPanel")
