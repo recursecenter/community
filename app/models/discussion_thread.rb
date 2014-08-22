@@ -11,8 +11,10 @@ class DiscussionThread < ActiveRecord::Base
 
   def mark_post_as_visited(user, post)
     status = visited_statuses.where(user_id: user.id).first_or_initialize
-    status.last_post_number_read = post.post_number
-    status.save!
+    if post.post_number > status.last_post_number_read
+      status.last_post_number_read = post.post_number
+      status.save!
+    end
   end
 
   def mark_as_visited(user)

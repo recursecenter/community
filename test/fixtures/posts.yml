@@ -4,12 +4,22 @@ zach_post_1:
   body: Some cool stuff
   thread: one
   author: zach
-  thread: one
   post_number: 1
 
 dave_post_1:
   body: Some other stuff
   thread: one
   author: dave
-  thread: one
+  post_number: 2
+
+first_in_thread_created_by_full_hacker_schooler:
+  body: a post body
+  thread_id: 1
+  author: full_hacker_schooler
+  post_number: 1
+
+second_in_thread_created_by_full_hacker_schooler:
+  body: a post body
+  thread_id: 1
+  author: full_hacker_schooler
   post_number: 2
