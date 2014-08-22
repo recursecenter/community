@@ -1,5 +1,6 @@
 (ns community.partials
   (:require [community.routes :as routes]
+            [community.models :as models]
             [community.util :refer-macros [p]]
             [community.api.push :as push-api]
             [sablono.core :refer-macros [html]]
@@ -58,3 +59,9 @@
   (html
     [:div.push-down.loading
      [:i.fa.fa-circle-o-notch.fa-spin.fa-2x]]))
+
+(defn wrap-mentions
+  "Wraps @mentions in a post body in <span class=\"at-mention\">"
+  [body users]
+  (models/replace-mentions body users (fn [name]
+                                        (str "<span class=\"at-mention\">" name "</span>"))))

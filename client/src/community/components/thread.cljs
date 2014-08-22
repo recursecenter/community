@@ -64,12 +64,6 @@
                                                     (om/update! post :editing? false))}
             "Cancel"])]]])))
 
-(defn wrap-mentions
-  "Wraps @mentions in a post body in <span class=\"at-mention\">"
-  [body users]
-  (models/replace-mentions body users (fn [name]
-                                        (str "<span class=\"at-mention\">" name "</span>"))))
-
 (defn post-number-id [n]
   (str "post-number-" n))
 
@@ -100,7 +94,7 @@
            [:div.row
             [:div.post-body
              (partials/html-from-markdown
-              (wrap-mentions (:body post) autocomplete-users))]
+              (partials/wrap-mentions (:body post) autocomplete-users))]
             [:div.post-controls
              (when (and (:editable post) (not (:editing? post)))
                [:button.btn.btn-default.btn-sm
@@ -121,6 +115,9 @@
 (defcomponent thread [{:keys [thread route-data]} owner]
   (display-name [_] "Thread")
 
+  (init-state [_]
+    {:active-tab :compose})
+
   (did-mount [_]
     (scroll-to-post-number (:post-number route-data)))
 
@@ -129,7 +126,7 @@
                (:post-number route-data))
       (scroll-to-post-number (:post-number route-data))))
 
-  (render [_]
+  (render-state [_ {:keys [active-tab]}]
     (let [autocomplete-users (:autocomplete-users thread)]
       (html
         [:div
@@ -142,12 +139,15 @@
                      :index i
                      :highlight? (= (str (:post-number post)) (:post-number route-data))}
                     {:react-key (:id post)}))]
-         [:div.panel.panel-default
-          [:div.panel-heading
-           [:span.title-caps "New post"]]
-          [:div.panel-body
-           (->post-form {:broadcast-groups (:broadcast-groups thread)
-                         :autocomplete-users autocomplete-users
-                         :post (assoc (:new-post thread)
-                                 :errors (:errors thread)
-                                 :submitting? (:submitting? thread))})]]]))))
+         (shared/->tabbed-panel
+          {:tabs [{:id :compose
+                   :body "Compose"
+                   :view-fn ->post-form}
+                  {:id :preview
+                   :body "Preview"
+                   :view-fn shared/->post-preview}]
+           :props {:broadcast-groups (:broadcast-groups thread)
+                   :autocomplete-users autocomplete-users
+                   :post (assoc (:new-post thread)
+                           :errors (:errors thread)
+                           :submitting? (:submitting? thread))}})]))))
