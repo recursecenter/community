@@ -8,9 +8,9 @@ class NotificationMailer < ActionMailer::Base
     @user = mention.user
     @mentioned_by = mention.mentioned_by
 
-    reply_token = ReplyInfoVerifier.generate(@user, @post)
+    reply_info = ReplyInfoVerifier.generate(@user, @post)
 
-    headers["X-Mailgun-Variables"] = JSON.generate({reply_token: reply_token})
+    headers["X-Mailgun-Variables"] = JSON.generate({reply_info: reply_info})
 
     if @post.previous_message_id
       headers["In-Reply-To"] = @post.previous_message_id
@@ -19,7 +19,7 @@ class NotificationMailer < ActionMailer::Base
     mail(message_id: @post.message_id,
          to: @user.email,
          from: from_field(@mentioned_by.name),
-         reply_to: reply_to_field(reply_token),
+         reply_to: reply_to_field(reply_info),
          subject: subject_field(@post.thread.title))
   end
 

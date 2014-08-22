@@ -97,7 +97,7 @@ private
 
   def require_valid_reply_info
     unless valid_reply_info?
-      head 406 and return
+      head 406
     end
   end
 end
