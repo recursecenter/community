@@ -35,7 +35,7 @@
         mins (.getMinutes date)]
     (cond (= hours 0) (str "12:" (pad-time mins) "am")
           (> hours 12) (str (- hours 12) ":" (pad-time mins) "pm")
-          :else (str hours ":" mins "am"))))
+          :else (str hours ":" (pad-time mins) "am"))))
 
 (defn human-format-time [unix-time]
   (let [date (-> (* unix-time 1000)
