@@ -132,6 +132,10 @@
 (defcomponent broadcast-group-picker [{:keys [broadcast-groups]} owner {:keys [on-toggle]}]
   (display-name [_] "BroadcastGroupPicker")
 
+  (did-mount [_]
+    (.tooltip (js/jQuery (om/get-node owner "subscription-label"))
+              #js {:container "body"}))
+
   (render [_]
     (html
       (let [toggle (fn [id e]
@@ -145,6 +149,12 @@
            (for [{:keys [name id]} (filter (complement :selected?) broadcast-groups)]
              [:li [:a {:href "#" :onClick (partial toggle id)}
                    name]])]
+          [:span.label.label-info.broadcast-label.inactive
+           {:data-toggle "tooltip"
+            :data-placement "top"
+            :title "Subscribers are always notified"
+            :ref "subscription-label"}
+           "Subscribers"]
           (for [{:keys [name id]} (filter :selected? broadcast-groups)]
             [:span.label.label-info.broadcast-label {:onClick (partial toggle id)}
              "× " name])]]))))

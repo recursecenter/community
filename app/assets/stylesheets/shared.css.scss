@@ -8,6 +8,11 @@
   cursor: pointer;
 }
 
+.broadcast-label.inactive {
+  background-color: #999;
+  cursor: default;
+}
+
 .broadcast-group-list {
   max-height: 200px;
   overflow-y: scroll;
