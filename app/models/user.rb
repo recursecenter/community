@@ -1,3 +1,5 @@
+require 'set'
+
 class User < ActiveRecord::Base
   has_many :threads, foreign_key: 'created_by_id', class_name: 'DiscussionThread'
   has_many :posts, foreign_key: 'author_id'
@@ -29,15 +31,19 @@ class User < ActiveRecord::Base
       user.groups += [Group.faculty]
     end
 
-    user.roles = [Role.everyone]
+    roles = user.roles.to_set
+
+    roles << Role.everyone
 
     if (Date.parse(user_data["batch"]["start_date"]) - 1.day).past?
-      user.roles += [Role.full_hacker_schooler]
+      roles << Role.full_hacker_schooler
     end
 
     if user_data["is_faculty"]
-      user.roles = [Role.everyone, Role.full_hacker_schooler, Role.admin]
+      roles |= [Role.everyone, Role.full_hacker_schooler, Role.admin]
     end
+
+    user.roles = roles.to_a
 
     user.save!
 
