@@ -1,6 +1,8 @@
 module ConnectionMonitor
   CONNECTIONS = {}
 
+  PRINT_MUTEX = Mutex.new
+
   def checkout
     conn = super
     CONNECTIONS[conn.object_id] = {call_stack: caller, time: Time.now.to_s}
@@ -19,10 +21,12 @@ module ConnectionMonitor
 
 private
   def puts_formatted_error
-    Rails.logger.error "DB per-process connection limit exceeded: #{CONNECTIONS.count}"
-    CONNECTIONS.each do |k, conn_info|
-      Rails.logger.error "#{conn_info[:time]} " + '='*60
-      Rails.logger.error conn_info[:call_stack].join("\n")
+    PRINT_MUTEX.synchronize do
+      Rails.logger.error "DB per-process connection limit exceeded: #{CONNECTIONS.count}"
+      CONNECTIONS.each do |k, conn_info|
+        Rails.logger.error "#{conn_info[:time]} " + '='*60
+        Rails.logger.error conn_info[:call_stack].join("\n")
+      end
     end
   end
 end
