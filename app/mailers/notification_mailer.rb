@@ -20,7 +20,7 @@ class NotificationMailer < ActionMailer::Base
          to: @user.email,
          from: from_field(@mentioned_by.name),
          reply_to: reply_to_field(reply_info),
-         subject: subject_field(@post.thread.title))
+         subject: subject_field(@post.thread))
   end
 
   def broadcast_email(users, post)
@@ -34,7 +34,7 @@ class NotificationMailer < ActionMailer::Base
     mail(message_id: @post.message_id,
          to: users.map(&:email),
          from: from_field(@post.author.name),
-         subject: subject_field(@post.thread.title))
+         subject: subject_field(@post.thread))
   end
 
   def new_post_in_subscribed_thread_email(users, post)
@@ -47,7 +47,7 @@ class NotificationMailer < ActionMailer::Base
     mail(message_id: @post.message_id,
          to: users.map(&:email),
          from: from_field(@post.author.name),
-         subject: subject_field(post.thread.title))
+         subject: subject_field(@post.thread))
   end
 
   def new_thread_in_subscribed_subforum_email(users, thread)
@@ -56,11 +56,11 @@ class NotificationMailer < ActionMailer::Base
     mail(message_id: @thread.posts.first.message_id,
          to: users.map(&:email),
          from: from_field(@thread.created_by.name),
-         subject: subject_field(thread.title))
+         subject: subject_field(@thread))
   end
 
 private
-  def subject_field(thread_title)
-    "[Community] #{thread_title}"
+  def subject_field(thread)
+    "[Community - #{thread.subforum.name}] #{thread.title}"
   end
 end
