@@ -62,6 +62,6 @@ private
   end
 
   def valid_broadcast_groups
-    Group.all + [Group::Subscribers.new]
+    Group.all + [Group::Subscribers.new("Thread Subscribers")]
   end
 end

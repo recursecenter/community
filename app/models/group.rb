@@ -27,8 +27,9 @@ class Group < ActiveRecord::Base
 
     attr_reader :id, :name
 
-    def initialize
-      @id = @name = ID
+    def initialize(name="Subscribers")
+      @id = ID
+      @name = name
     end
   end
 end
