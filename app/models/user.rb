@@ -54,6 +54,16 @@ class User < ActiveRecord::Base
     "#{first_name} #{last_name}"
   end
 
+  def avatar_url
+    super || gravatar_url
+  end
+
+  def gravatar_url
+    default_url = "http://gravatar.com/avatar/images/guest.png"
+    gravatar_id = Digest::MD5.hexdigest(email.downcase)
+    "http://gravatar.com/avatar/#{gravatar_id}.png?s=150&d=#{CGI.escape(default_url)}"
+  end
+
   def mention_for_post(post)
     mentions.where(post: post, mentioned_by: post.author).first_or_create
   end
