@@ -7,5 +7,7 @@ module PostgresView
     # :id can be looked up as an attribute instead of as a primary
     # key, which fails.
     self.define_attribute_methods
+    # Release connection acquired defining attribute methods
+    ActiveRecord::Base.clear_active_connections!
   end
 end
