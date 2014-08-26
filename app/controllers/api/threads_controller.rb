@@ -9,6 +9,7 @@ class Api::ThreadsController < Api::ApiController
   def show
     @thread.mark_as_visited(current_user)
     @autocomplete_users = User.select(:id, :first_name, :last_name).ordered_by_first_name
+    @valid_broadcast_groups = valid_broadcast_groups
   end
 
   def create
@@ -17,6 +18,7 @@ class Api::ThreadsController < Api::ApiController
       @post = @thread.posts.create!(post_params)
     end
     @autocomplete_users = User.select(:id, :first_name, :last_name).ordered_by_first_name
+    @valid_broadcast_groups = valid_broadcast_groups
 
     NotificationCoordinator.new(
       MentionNotifier.new(@post, mentioned_users),
@@ -39,9 +41,12 @@ private
   end
 
   def post_params
+    broadcast_to = params.permit(broadcast_to: [])[:broadcast_to]
+    broadcast_to_subscribers = broadcast_to && !!broadcast_to.delete("Subscribers")
     params.require(:post).permit(:body).
       merge(author: current_user,
-            broadcast_groups: Group.where(id: params.permit(broadcast_to: [])[:broadcast_to]))
+            broadcast_groups: Group.where(id: broadcast_to),
+            broadcast_to_subscribers: broadcast_to_subscribers)
   end
 
   def subscribe_subforum_subscribers_to_new_thread
@@ -52,5 +57,9 @@ private
     to_be_subscribed.each do |user|
       user.subscribe_to(@thread, "You are receiving emails because you were subscribed to this thread's subforum.")
     end
+  end
+
+  def valid_broadcast_groups
+    Group.all + [Group::Subscribers.new]
   end
 end

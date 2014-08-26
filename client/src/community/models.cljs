@@ -7,12 +7,12 @@
   {:body ""
    :thread-id thread-id
    :persisted? false
-   :broadcast-to #{}})
+   :broadcast-to #{"Subscribers"}})
 
 (defn empty-thread []
   {:title ""
    :body ""
-   :broadcast-to #{}})
+   :broadcast-to #{"Subscribers"}})
 
 (defn toggle-broadcast-to [broadcast-to id]
   (if (contains? broadcast-to id)
