@@ -30,7 +30,9 @@ class Api::ThreadsController < Api::ApiController
       @thread.created_by.subscribe_to(@thread, "You are receiving emails because you created this thread.")
     end
 
-    subscribe_subforum_subscribers_to_new_thread
+    if @post.broadcast_to_subscribers
+      subscribe_subforum_subscribers_to_new_thread
+    end
   end
 
 private
