@@ -1,3 +1,4 @@
+require 'digest'
 require 'set'
 
 class User < ActiveRecord::Base
