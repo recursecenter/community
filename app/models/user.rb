@@ -19,7 +19,7 @@ class User < ActiveRecord::Base
     user.first_name = user_data["first_name"]
     user.last_name = user_data["last_name"]
     user.email = user_data["email"]
-    user.avatar_url = user_data["image"]
+    user.avatar_url = user_data["image"] if user_data["has_photo"]
     user.batch_name = user_data["batch"]["name"]
     user.groups = [Group.everyone, Group.for_batch_api_data(user_data["batch"])]
 
