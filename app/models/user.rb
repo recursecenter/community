@@ -60,9 +60,9 @@ class User < ActiveRecord::Base
   end
 
   def gravatar_url
-    default_url = "http://gravatar.com/avatar/images/guest.png"
+    default_url = "https://gravatar.com/avatar/images/guest.png"
     gravatar_id = Digest::MD5.hexdigest(email.downcase)
-    "http://gravatar.com/avatar/#{gravatar_id}.png?s=150&d=#{CGI.escape(default_url)}"
+    "https://gravatar.com/avatar/#{gravatar_id}.png?s=150&d=#{CGI.escape(default_url)}"
   end
 
   def mention_for_post(post)
