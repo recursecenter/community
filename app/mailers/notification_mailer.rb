@@ -58,9 +58,4 @@ class NotificationMailer < ActionMailer::Base
          from: from_field(@thread.created_by.name),
          subject: subject_field(@thread))
   end
-
-private
-  def subject_field(thread)
-    "[Community - #{thread.subforum.name}] #{thread.title}"
-  end
 end
