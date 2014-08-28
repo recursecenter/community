@@ -3,6 +3,7 @@ class Api::ThreadsController < Api::ApiController
 
   include MentionedUsers
   include SubscriptionActions
+  include PostParams
 
   has_subscribable :thread
 
@@ -40,15 +41,6 @@ private
     subforum = Subforum.find(params[:subforum_id])
     params.require(:thread).permit(:title).
       merge(created_by: current_user, subforum: subforum)
-  end
-
-  def post_params
-    broadcast_to = params.permit(broadcast_to: [])[:broadcast_to]
-    broadcast_to_subscribers = broadcast_to && !!broadcast_to.delete(Group::Subscribers::ID)
-    params.require(:post).permit(:body).
-      merge(author: current_user,
-            broadcast_groups: Group.where(id: broadcast_to),
-            broadcast_to_subscribers: broadcast_to_subscribers)
   end
 
   def subscribe_subforum_subscribers_to_new_thread

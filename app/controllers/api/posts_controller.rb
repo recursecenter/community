@@ -2,6 +2,7 @@ class Api::PostsController < Api::ApiController
   load_and_authorize_resource :post
 
   include MentionedUsers
+  include PostParams
 
   def create
     @post.save!
@@ -30,13 +31,5 @@ private
 
   def update_params
     post_params
-  end
-
-  def post_params
-    broadcast_to = params.permit(broadcast_to: [])[:broadcast_to]
-    broadcast_to_subscribers = broadcast_to && !!broadcast_to.delete(Group::Subscribers::ID)
-    params.require(:post).permit(:body).
-      merge(broadcast_groups: Group.where(id: broadcast_to),
-            broadcast_to_subscribers: broadcast_to_subscribers)
   end
 end
