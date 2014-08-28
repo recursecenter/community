@@ -30,11 +30,11 @@
            [:input {:type "checkbox"
                     :checked (get data key)
                     :onChange change-handler}]
-           [:span {:ref "label"
-                   :class (case last-update-successful?
-                            true "bg-success"
-                            false "bg-danger"
-                            nil)}
+           [:div {:ref "label"
+                  :class (case last-update-successful?
+                           true "bg-success"
+                           false "bg-danger"
+                           nil)}
             label]]]]))))
 
 (defn submit-setting [setting new-value]
@@ -76,4 +76,5 @@
              (->live-checkbox settings
                {:opts {:submit submit-setting
                        :key :subscribe-new-thread-in-subscribed-subforum
-                       :label [:span "Subscribe me to new threads created in subforums I'm subscribed to."]}})]]]]]))))
+                       :label [:div "Subscribe me to new threads created in subforums I'm subscribed to."
+                               [:p.small "You will only be subscribed to new threads that are broadcast to subforum subscribers."]]}})]]]]]))))

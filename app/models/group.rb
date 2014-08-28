@@ -21,4 +21,15 @@ class Group < ActiveRecord::Base
     group.save!
     group
   end
+
+  class Subscribers
+    ID = "Subscribers"
+
+    attr_reader :id, :name
+
+    def initialize(name="Subscribers")
+      @id = ID
+      @name = name
+    end
+  end
 end

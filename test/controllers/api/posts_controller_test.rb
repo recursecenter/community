@@ -10,7 +10,7 @@ class Api::PostsControllerTest < ActionController::TestCase
 
     login(:dave)
 
-    post :create, format: :json, thread_id: t.id, post: {body: "A new post"}
+    post :create, format: :json, thread_id: t.id, post: {body: "A new post"}, broadcast_to: [Group::Subscribers::ID]
 
     assert_equal 1, ActionMailer::Base.deliveries.size
 

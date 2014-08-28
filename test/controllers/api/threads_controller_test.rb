@@ -8,7 +8,8 @@ class Api::ThreadsControllerTest < ActionController::TestCase
     assert_difference('DiscussionThread.count', +1) do
       post :create, format: :json, subforum_id: subforum.id,
         thread: {title: "A new thread"},
-        post: {body: "A new post"}
+        post: {body: "A new post"},
+        broadcast_to: [Group::Subscribers::ID]
     end
 
     assert Subscription.where(user: users(:full_hacker_schooler),

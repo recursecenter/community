@@ -223,7 +223,8 @@ CREATE TABLE posts (
     author_id integer,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    post_number integer
+    post_number integer,
+    broadcast_to_subscribers boolean DEFAULT true
 );
 
 
@@ -831,4 +832,6 @@ INSERT INTO schema_migrations (version) VALUES ('20140820160048');
 INSERT INTO schema_migrations (version) VALUES ('20140820161336');
 
 INSERT INTO schema_migrations (version) VALUES ('20140820175446');
+
+INSERT INTO schema_migrations (version) VALUES ('20140826193115');
 
