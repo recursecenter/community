@@ -29,8 +29,7 @@
                     (.. js/hljs (highlightAuto code) -value))
        :gfm true
        :tables true
-       :smartLists true
-       :breaks true})
+       :smartLists true})
 
 ;; TODO: use google's caja html sanitizer instead
 (defn html-from-markdown [md-string]

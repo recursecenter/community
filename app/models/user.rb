@@ -1,3 +1,4 @@
+require 'digest'
 require 'set'
 
 class User < ActiveRecord::Base
@@ -19,7 +20,7 @@ class User < ActiveRecord::Base
     user.first_name = user_data["first_name"]
     user.last_name = user_data["last_name"]
     user.email = user_data["email"]
-    user.avatar_url = user_data["image"]
+    user.avatar_url = user_data["image"] if user_data["has_photo"]
     user.batch_name = user_data["batch"]["name"]
     user.groups = [Group.everyone, Group.for_batch_api_data(user_data["batch"])]
 
@@ -52,6 +53,16 @@ class User < ActiveRecord::Base
 
   def name
     "#{first_name} #{last_name}"
+  end
+
+  def avatar_url
+    super || gravatar_url
+  end
+
+  def gravatar_url
+    default_url = "https://gravatar.com/avatar/images/guest.png"
+    gravatar_id = Digest::MD5.hexdigest(email.downcase)
+    "https://gravatar.com/avatar/#{gravatar_id}.png?s=150&d=#{CGI.escape(default_url)}"
   end
 
   def mention_for_post(post)

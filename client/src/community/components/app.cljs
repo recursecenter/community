@@ -68,7 +68,7 @@
     (om/update! user :notifications [])
     (controller/dispatch :notifications-read notifications)))
 
-(defcomponent notifications [user owner]
+(defcomponent notifications [{:keys [user close-dropdown]} owner]
   (display-name [_] "Notifications")
 
   (render [_]
@@ -79,14 +79,15 @@
          [:div.arrow-up]
          [:div.unread-count-container
           [:span.unread-count (util/pluralize unread-count "unread notification")]
-          [:button.btn.btn-link.btn-xs.clear-all {:onClick #(clear-all-notifications user)}
+          [:button.btn.btn-link.btn-xs.clear-all {:onClick #(do (clear-all-notifications user) (close-dropdown))}
            "Clear all"]]
          [:li.list-group.notification-group
           (when (not (empty? notifications))
             (for [[i n] (map-indexed vector notifications)]
               (->notification {:notification n
                                :on-click #(do (mark-as-read! n)
-                                              (routes/redirect-to (notification-link-to @n)))
+                                              (routes/redirect-to (notification-link-to @n))
+                                              (close-dropdown))
                                :on-remove #(do (mark-as-read! n)
                                                (delete-notification! user i))}
                               {:react-key (:id n)})))]]))))
@@ -140,7 +141,7 @@
           (if-not (zero? unread-count)
             [:span.badge.unread-count-icon unread-count])
           [:i.fa.fa-comments]]
-         (->notifications user)]))))
+         (->notifications {:user user :close-dropdown #(om/set-state! owner :open? false)})]))))
 
 (defcomponent breadcrumbs [{:as app :keys [route-data ui-color]} owner]
   (display-name [_] "Breadcrumbs")

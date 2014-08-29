@@ -7,7 +7,7 @@ module ConnectionMonitor
     conn = super
     CONNECTIONS[conn.object_id] = {call_stack: caller, time: Time.now.to_s}
 
-    if CONNECTIONS.size > 3 # we should have a max of 3 connections per-process, so log if we ever have more
+    if CONNECTIONS.size > 4 # we should have a max of 4 connections per-process, so log if we ever have more
       puts_formatted_error
     end
 

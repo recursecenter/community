@@ -6,6 +6,10 @@ module EmailFields
   end
 
   def reply_to_field(reply_info)
-    "reply-#{reply_info}@mail.community.hackerschool.com"
+    "Community <reply-#{reply_info}@mail.community.hackerschool.com>"
+  end
+
+  def subject_field(thread)
+    "[Community - #{thread.subforum.name}] #{thread.title}"
   end
 end
