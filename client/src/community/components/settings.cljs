@@ -76,4 +76,39 @@
              (->live-checkbox settings
                {:opts {:submit submit-setting
                        :key :subscribe-new-thread-in-subscribed-subforum
-                       :label [:span "Subscribe me to new threads created in subforums I'm subscribed to."]}})]]]]]))))
+                       :label [:span "Subscribe me to new threads created in subforums I'm subscribed to."]}}) ]]
+          (->subforum-settings current-user)]]]))))
+
+(defn submit-subscription-change [subforum-id _ new-value]
+  (go
+    (try
+      (if new-value
+        (<? (api/subscribe {:resource-name "subforum" :subscribable-id subforum-id}))
+        (<? (api/unsubscribe {:resource-name "subforum" :subscribable-id subforum-id})))
+      true
+      (catch ExceptionInfo e
+        false))))
+
+(defn subforum-item [{:keys [name subforum-id subscribed] :as data}]
+  (->live-checkbox data 
+                   {:opts {:submit (partial submit-subscription-change subforum-id)
+                           :key :subscribed
+                           :label [:span name]}}))
+
+(defn subforum-group [{:keys [name subforum-subscriptions]}]
+  (html
+    [:div 
+     [:h5 name]
+     (if (not (empty? subforum-subscriptions))
+       [:ul (map subforum-item subforum-subscriptions)])]))
+
+(defcomponent subforum-settings [{:keys [subscription-info]} owner]
+  (display-name [_] "Subforum Settings")
+
+  (render [_]
+    (let [subforum-groups (:subforum-groups subscription-info)]
+      (html
+        [:div.panel.panel-default
+         [:div.panel-heading [:strong "Subforum Subscriptions"]]
+         [:div.panel-body
+           [:div (map subforum-group subforum-groups)]]]))))
