@@ -32,4 +32,23 @@ class PostTest < ActiveSupport::TestCase
 
     assert_equal p2.post_number, VisitedStatus.where(user: user, thread: p2.thread).first.last_post_number_read
   end
+
+  test "marking a new post as visited simultaneously does not result in multiple visited statuses" do
+    user = users(:full_hacker_schooler_2)
+
+    thread = discussion_threads(:created_by_full_hacker_schooler)
+    post = thread.posts.create(author: users(:full_hacker_schooler), body: "...")
+
+    5.times.map do
+      Thread.new do
+        sleep 0.1
+        begin
+          post.mark_as_visited(user)
+        rescue; end
+        ActiveRecord::Base.clear_active_connections!
+      end
+    end.map(&:join)
+
+    assert_equal 1, VisitedStatus.where(user: user, thread: thread).count
+  end
 end
