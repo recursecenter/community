@@ -14,7 +14,7 @@ class DiscussionThread < ActiveRecord::Base
       status = visited_statuses.where(user_id: user.id).first_or_initialize
       if post.post_number > status.last_post_number_read
         status.last_post_number_read = post.post_number
-        status.save!
+        status.save
       end
     end
   end
