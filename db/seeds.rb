@@ -35,6 +35,19 @@ roles.each do |role|
   Role.create(name: role)
 end
 
+users = [
+  {:first_name => "David", :last_name => "Albert", :email => "dave@hackerschool.com"},
+  {:first_name => "Nick", :last_name => "Bergson-Shilcock", :email => "nick@hackerschool.com"},
+  {:first_name => "Sonali", :last_name => "Sridhar", :email => "sonali@hackerschool.com"}
+]
+
+users.each do |user|
+  user = User.create :first_name => user[:first_name], :last_name => user[:last_name], :email => user[:email]
+  user.groups = [Group.everyone]
+  user.roles << Role.all
+  user.save!
+end
+
 subforum_groups.each do |subforum_group_name, subforums|
   group = SubforumGroup.create(name: subforum_group_name)
   subforums.each do |(subforum_name, ui_color, required_roles, description)|
