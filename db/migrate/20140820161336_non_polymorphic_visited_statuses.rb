@@ -39,7 +39,6 @@ DROP VIEW threads_with_visited_status;
 CREATE VIEW threads_with_visited_status AS
  SELECT thread_users.id,
     thread_users.title,
-    thread_users.pinned,
     thread_users.subforum_id,
     thread_users.created_by_id,
     thread_users.created_at,
@@ -49,7 +48,6 @@ CREATE VIEW threads_with_visited_status AS
     visited_statuses.last_visited
    FROM (( SELECT discussion_threads.id,
             discussion_threads.title,
-            discussion_threads.pinned,
             discussion_threads.subforum_id,
             discussion_threads.created_by_id,
             discussion_threads.created_at,
