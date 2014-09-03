@@ -22,11 +22,12 @@ table.threads-view {
   }
 
   td.title {
-    @include make-sm-column(9);
+    @include make-sm-column(8.5);
   }
 
   td.timestamp {
-    @include make-sm-column(1);
+    @include make-sm-column(1.5);
+    text-align: right;
   }
 
 }

@@ -28,10 +28,9 @@
     margin: 0;
 
     .subforum-name { @include make-sm-column(2.5); }
-    .description { @include make-sm-column(5.5); }
+    .description { @include make-sm-column(6); }
     .n-threads {
-      text-align: right;
-      @include make-sm-column(2);
+      @include make-sm-column(1.5);
     }
     .n-subforum-subscribers { @include make-sm-column(2); }
 
@@ -52,7 +51,7 @@
       .last-updated-info { @include make-sm-column(2.5); }
 
       p.title {
-        @include make-sm-column(5.5);
+        @include make-sm-column(6);
 
         line-height: 18px;
         margin-bottom: 0;
@@ -62,8 +61,7 @@
       }
 
       .post-number-info {
-        @include make-sm-column(2);
-        text-align: right;
+        @include make-sm-column(1.5);
       }
 
       .n-thread-subscribers { @include make-sm-column(2); }
