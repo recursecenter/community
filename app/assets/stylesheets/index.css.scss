@@ -1,18 +1,83 @@
-.subforum-blocks {
-  @media (max-width: $screen-sm-min) {
-    margin-left: 0;
-    margin-right: 0;
+#subforum-index {
+  .welcome {
+    margin-bottom: 2em;
+    background-color: $super-light-gray;
+    padding: 2em;
+    font-size: 12px;
   }
 
-  li.block-grid-item > div {
-    width: 300px;
-    height: 155px;
-    overflow: hidden;
-    border-left-width: 5px;
-    border-left-style: solid;
+  .subforum-group-name {
+    @include make-sm-column(2);
+  }
 
-    @media (max-width: $screen-sm-min) {
-      max-width: 290px;
+  ul.subforums {
+    @include make-sm-column(9);
+    list-style: none;
+    padding: 0;
+  }
+
+  ul.subforums > li {
+    border: 1px solid $super-light-gray;
+    border-top-width: 5px;
+    margin-bottom: 50px;
+  }
+
+  .header-info {
+    background-color: $super-light-gray;
+    padding: 5px;
+    margin: 0;
+
+    .subforum-name { @include make-sm-column(2.5); }
+    .description { @include make-sm-column(5.5); }
+    .n-threads {
+      text-align: right;
+      @include make-sm-column(2);
+    }
+    .n-subforum-subscribers { @include make-sm-column(2); }
+
+    h3 {
+      margin-top: 0;
+    }
+  }
+
+  ol.recent-threads {
+    padding: 5px;
+    list-style: none;
+
+    li > div {
+      margin: 1em 0;
+    }
+
+    li {
+      .last-updated-info { @include make-sm-column(2.5); }
+
+      p.title {
+        @include make-sm-column(5.5);
+
+        line-height: 18px;
+        margin-bottom: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .post-number-info {
+        @include make-sm-column(2);
+        text-align: right;
+      }
+
+      .n-thread-subscribers { @include make-sm-column(2); }
+
+      .timestamp {
+        font-size: 12px;
+        font-weight: bold;
+        color: #666;
+        margin-right: 5px;
+      }
+
+      .meta {
+        font-size: 12px;
+      }
     }
   }
 
@@ -24,50 +89,15 @@
     color: #666;
   }
 
-  ol {
-    padding-left: 0;
-    margin-left: 10px;
-    list-style: none;
-
-    li {
-      margin: 4px 0;
-
-      .timestamp {
-        font-size: 12px;
-        font-weight: bold;
-        color: #666;
-        margin-right: 5px;
-      }
-
-      .name {
-        font-size: 12px;
-      }
-
-      p.title {
-        line-height: 18px;
-        margin-bottom: 0;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-    }
-  }
-
-  h3 {
-    margin-top: 0;
-    margin-left: 10px;
-    margin-bottom: 0;
-  }
-
   a:hover {
     text-decoration: underline;
   }
 }
 
 .subforum-group-name {
-  margin-top: 30px;
-
-  @media (max-width: $screen-sm-min) {
-      padding: 0 10px;
+  h2 {
+    float: right;
+    font-size: 18px;
+    margin-top: 0;
   }
 }

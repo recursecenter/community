@@ -129,7 +129,7 @@
   (render-state [_ {:keys [active-tab]}]
     (let [autocomplete-users (:autocomplete-users thread)]
       (html
-        [:div
+        [:div#thread-view
          (partials/title (:title thread) "New post")
          (shared/->subscription-info (:subscription thread))
          [:ol.list-unstyled

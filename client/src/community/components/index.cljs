@@ -2,39 +2,67 @@
   (:require [community.state :as state]
             [community.util :as util :refer-macros [<?]]
             [community.partials :as partials :refer [link-to]]
+            [community.components.shared :as shared]
             [community.routes :refer [routes]]
             [om.core :as om]
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :as html :refer-macros [html]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
-(defn subforum-item [{:keys [id slug ui-color name recent-threads]}]
+(defn post-number-unread [n]
+  [:span.post-number-unread (util/pluralize n "new post")])
+
+(defn post-number-read [n]
+  [:span.post-number-read (util/pluralize n "post")])
+
+(defn subforum-info-header [{:keys [id slug ui-color name recent-threads] :as subforum}]
+  [:div.header-info.row
+   [:div.subforum-name
+    [:a (link-to (routes :subforum {:id id :slug slug})
+                 {:style {:color ui-color}}
+                 [:h3 name])]
+    (shared/->subscription-info (:subscription subforum) {:opts {:reason? false}})]
+   [:div.description "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."]
+   [:div.n-threads (:n-threads subforum) " threads"]
+   [:div.n-subforum-subscribers (:n-subscribers subforum) " subscribers"]])
+
+(defn subforum-info [{:keys [id slug ui-color name recent-threads] :as subforum}]
   (html
-    [:li.block-grid-item {:key id}
-     [:div {:style {:border-color ui-color}}
-      [:a (link-to (routes :subforum {:id id :slug slug})
-                   {:style {:color ui-color}}
-                   [:h3 name])]
-      (if (empty? recent-threads)
-        [:p.no-threads "No threads yet..."]
-        [:ol
-         (for [{:as thread :keys [title last-posted-to-by updated-at unread]} recent-threads]
-           [:li
-            [:span.timestamp (util/human-format-time updated-at)]
-            [:span.name last-posted-to-by]
+    [:li {:key id :style {:border-top-color ui-color}}
+     (subforum-info-header subforum)
+     (if (empty? recent-threads)
+       [:p.no-threads "No threads yet..."]
+       [:ol.recent-threads
+        (for [{:as thread :keys [title unread]} recent-threads]
+          [:li
+           [:div.row
+            [:div.last-updated-info.meta
+             [:span.timestamp (util/human-format-time (:updated-at thread))]
+             [:span.meta (:last-posted-to-by thread)]]
             [:p.title (link-to (routes :thread thread) {:style {:color ui-color}}
-                               (if unread [:strong title] title))]])])]]))
+                               (if unread [:strong title] title))]
+            [:div.post-number-info.meta
+             (let [{:keys [last-post-number-read highest-post-number]} thread]
+               (cond (zero? last-post-number-read) (post-number-unread highest-post-number)
+                     (= last-post-number-read highest-post-number) (post-number-read highest-post-number)
+                     :else [:span
+                            (post-number-read highest-post-number)
+                            " (" (post-number-unread (- highest-post-number last-post-number-read)) ")"]))]
+            [:div.n-thread-subscribers.meta (:n-subscribers thread) " subscribers"]]])])]))
 
 (defn subforum-group [{:keys [name subforums id]}]
   (html
-   [:div {:key id}
-    [:h2.title-caps.subforum-group-name name]
-    (if (not (empty? subforums))
-      [:ul.subforum-blocks.block-grid-3 (map subforum-item subforums)])]))
+    [:div.subforum-group.row {:key id}
+     [:div.subforum-group-name [:h2.title-caps name]]
+     (if (not (empty? subforums))
+       [:ul.subforums (map subforum-info subforums)])]))
 
 (defcomponent index [{:keys [subforum-groups]} owner]
   (display-name [_] "Index")
 
   (render [this]
     (html
-      [:div.row (map subforum-group subforum-groups)])))
+      [:div#subforum-index
+       [:div.welcome
+        "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."]
+       (map subforum-group subforum-groups)])))

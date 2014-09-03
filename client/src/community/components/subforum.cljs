@@ -64,7 +64,7 @@
 
   (render [this]
     (html
-      [:div
+      [:div#subforum-view
        (partials/title (:name subforum) "New thread")
        (shared/->subscription-info (:subscription subforum))
        (if (empty? (:threads subforum))

@@ -1,10 +1,5 @@
 #main-content {
-  @include make-sm-column-offset(1);
-  @include make-sm-column(10);
-}
-
-#sidebar {
-  @include make-sm-column(3);
+  @include make-sm-column(12);
 }
 
 #notifications {

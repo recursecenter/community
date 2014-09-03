@@ -1,0 +1,4 @@
+#thread-view {
+  @include make-sm-column-offset(1);
+  @include make-sm-column(10);
+}
