@@ -57,7 +57,7 @@
 (defn subforum-group [{:keys [name subforum-subscriptions]}]
   (html
     [:div 
-     [:h5 name]
+     [:strong name]
      (if (not (empty? subforum-subscriptions))
        [:ul (map subforum-item subforum-subscriptions)])]))
 
