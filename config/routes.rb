@@ -15,9 +15,11 @@ Rails.application.routes.draw do
   get '/threads/:id/unsubscribe' => 'threads#unsubscribe', as: :unsubscribe_thread
 
   # sudo for development only
-  if Rails.env.development?
-    get '/sudo' => 'application#sudo'
-    post '/grant-sudo' => 'application#grant_sudo'
+  namespace :admin do
+    if Rails.env.development?
+      get '/sudo' => 'sudo#index'
+      post '/grant-sudo' => 'sudo#grant'
+    end
   end
 
   namespace :api, format: false, defaults: {format: 'json'} do

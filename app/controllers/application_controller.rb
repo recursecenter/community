@@ -19,19 +19,4 @@ class ApplicationController < ActionController::Base
       redirect_to login_url
     end
   end
-
-  def sudo
-    unless current_user.is_admin?
-      redirect_to root_path
-    end
-  end
-
-  def grant_sudo
-    if current_user.is_admin?
-      @user = User.where(:email => params['email']).first
-      login(@user)
-    end
-
-    redirect_to root_path
-  end
 end
