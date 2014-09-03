@@ -37,9 +37,10 @@ class PostTest < ActiveSupport::TestCase
     user = users(:full_hacker_schooler_2)
 
     thread = discussion_threads(:created_by_full_hacker_schooler)
-    post = thread.posts.create(author: users(:full_hacker_schooler), body: "...")
+    post1 = thread.posts.create(author: users(:full_hacker_schooler), body: "...")
+    post2 = thread.posts.create(author: users(:full_hacker_schooler), body: "...")
 
-    5.times.map do
+    ([post1, post2] * 5).map do |post|
       Thread.new do
         sleep 0.1
         begin
