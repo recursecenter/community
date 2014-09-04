@@ -10,13 +10,12 @@
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (defn post-number-unread
-  ([]
-     (post-number-unread nil))
-  ([n]
+  ([thread]
+     (post-number-unread nil thread))
+  ([n thread]
      [:span.post-number-unread.label.label-info
-      (if n
-        [:span n " new"]
-        "new")]))
+      (link-to (routes :thread thread)
+               (if n [:span n " new"] "new"))]))
 
 (defn post-number-read [n]
   [:span.post-number-read (util/pluralize n "post")])
@@ -30,7 +29,7 @@
     [:div [:span.title-caps.small "Subscribers: " (:n-subscribers subforum)]]
     [:p.subforum-description (:description subforum)]]])
 
-(defn recent-threads-list [{:keys [recent-threads ui-color n-threads]}]
+(defn recent-threads-list [{:keys [recent-threads ui-color n-threads] :as subforum}]
   [:div.subforum-recent-threads
    [:div.subforum-top-bar {:style {:background-color ui-color}}]
    [:ol.recent-threads
@@ -45,12 +44,13 @@
         [:div.post-number-info.meta
          (let [{:keys [last-post-number-read highest-post-number]} thread]
            [:span (post-number-read highest-post-number)
-            (cond (zero? last-post-number-read) (post-number-unread)
-                  (< last-post-number-read highest-post-number) (post-number-unread (- highest-post-number last-post-number-read)))])]
+            (cond (zero? last-post-number-read) (post-number-unread thread)
+                  (< last-post-number-read highest-post-number) (post-number-unread (- highest-post-number last-post-number-read) thread))])]
         [:div.n-thread-subscribers.meta (:n-subscribers thread) " subscribers"]]])
     [:li [:div.more-threads
-          [:a {:href "#" :style {:color ui-color}}
-           [:span [:i.fa.fa-list-ul.small] " " (util/pluralize n-threads "thread")]]]]]])
+          (link-to (routes :subforum subforum)
+                   {:style {:color ui-color}}
+                   [:span [:i.fa.fa-list-ul.small] " " (util/pluralize n-threads "thread")])]]]])
 
 (defn subforum-info [{:keys [id slug ui-color name recent-threads] :as subforum}]
   (html
@@ -62,9 +62,9 @@
 
 (defn subforum-group [{:keys [name subforums id]}]
   (html
-    [:div.subforum-group.row {:key id}
-     (if (not (empty? subforums))
-       [:ul.subforums (map subforum-info subforums)])]))
+    [:div.subforum-group {:key id}
+     [:div.subforum-group-name [:h1.title-caps name]]
+     [:ul.subforums (map subforum-info subforums)]]))
 
 (defcomponent index [{:keys [subforum-groups]} owner]
   (display-name [_] "Index")

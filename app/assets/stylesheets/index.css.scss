@@ -84,6 +84,15 @@
       .post-number-read {
         margin-right: .5em;
       }
+
+      .post-number-unread a {
+        color: white;
+      }
+
+      .post-number-unread a:hover {
+        color: white;
+        text-decoration: none;
+      }
     }
   }
 
@@ -101,9 +110,6 @@
 }
 
 .subforum-group-name {
-  h2 {
-    float: right;
-    font-size: 18px;
-    margin-top: 0;
-  }
+  @include make-sm-column-offset(2.5);
+  @include make-sm-column(9.5);
 }
