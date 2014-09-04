@@ -10,6 +10,11 @@
     @include make-sm-column(2);
   }
 
+  .subforum-top-bar {
+    height: 5px;
+    margin: -1px -1px 0 -1px;
+  }
+
   ul.subforums {
     @include make-sm-column(9);
     list-style: none;
@@ -18,7 +23,6 @@
 
   ul.subforums > li {
     border: 1px solid $super-light-gray;
-    border-top-width: 5px;
     margin-bottom: 50px;
   }
 
