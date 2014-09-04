@@ -24,8 +24,11 @@ class User < ActiveRecord::Base
     user.batch_name = user_data["batch"]["name"]
     user.groups = [Group.everyone, Group.for_batch_api_data(user_data["batch"])]
 
+    new_york = Subforum.where(name: "New York").first!
+
     if user_data["currently_at_hacker_school"]
       user.groups += [Group.current_hacker_schoolers]
+      user.subscribe_to_unless_existing(new_york, "You are receiving emails because you were auto-subscribed at the beginning of your batch.")
     end
 
     if user_data["is_faculty"]
@@ -74,6 +77,14 @@ class User < ActiveRecord::Base
     subscription.subscribed = true
     subscription.reason = reason
     subscription.save!
+  end
+
+  def subscribe_to_unless_existing(subscribable, reason)
+    subscription = subscribable.subscription_for(self)
+
+    if subscription.new_record?
+      subscription.update!(subscribed: true, reason: reason)
+    end
   end
 
   def satisfies_roles?(*roles)
