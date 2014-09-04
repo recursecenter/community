@@ -22,46 +22,47 @@
   [:span.post-number-read (util/pluralize n "post")])
 
 (defn subforum-info-header [{:keys [id slug ui-color name recent-threads] :as subforum}]
-  [:div.header-info.row
+  [:div.header-info
    [:div.subforum-name
-    [:a (link-to (routes :subforum {:id id :slug slug})
-                 {:style {:color ui-color}}
-                 [:h3 name])]
-    (shared/->subscription-info (:subscription subforum) {:opts {:reason? false}})]
-   [:div.description (:description subforum)]
-   [:div.n-threads (:n-threads subforum) " threads"]
-   [:div.n-subforum-subscribers (:n-subscribers subforum) " subscribers"]])
+    (link-to (routes :subforum {:id id :slug slug})
+             {:style {:color ui-color}}
+             [:h3 name])
+    [:div [:span.title-caps.small "Subscribers: " (:n-subscribers subforum)]]
+    [:p.subforum-description (:description subforum)]]])
 
-(defn recent-threads-list [recent-threads ui-color]
-  [:ol.recent-threads
-   (for [{:as thread :keys [title unread]} recent-threads]
-     [:li
-      [:div.row
-       [:div.last-updated-info.meta
-        [:span.timestamp (util/human-format-time (:updated-at thread))]
-        [:span.meta (:last-posted-to-by thread)]]
-       [:p.title (link-to (routes :thread thread) {:style {:color ui-color}}
-                          (if unread [:strong title] title))]
-       [:div.post-number-info.meta
-        (let [{:keys [last-post-number-read highest-post-number]} thread]
-          [:span (post-number-read highest-post-number)
-           (cond (zero? last-post-number-read) (post-number-unread)
-                 (< last-post-number-read highest-post-number) (post-number-unread (- highest-post-number last-post-number-read)))])]
-       [:div.n-thread-subscribers.meta (:n-subscribers thread) " subscribers"]]])])
+(defn recent-threads-list [{:keys [recent-threads ui-color n-threads]}]
+  [:div.subforum-recent-threads
+   [:div.subforum-top-bar {:style {:background-color ui-color}}]
+   [:ol.recent-threads
+    (for [{:as thread :keys [title unread]} recent-threads]
+      [:li
+       [:div.row
+        [:div.last-updated-info.meta
+         [:span.timestamp (util/human-format-time (:updated-at thread))]
+         [:span.meta (:last-posted-to-by thread)]]
+        [:p.title (link-to (routes :thread thread) {:style {:color ui-color}}
+                           (if unread [:strong title] title))]
+        [:div.post-number-info.meta
+         (let [{:keys [last-post-number-read highest-post-number]} thread]
+           [:span (post-number-read highest-post-number)
+            (cond (zero? last-post-number-read) (post-number-unread)
+                  (< last-post-number-read highest-post-number) (post-number-unread (- highest-post-number last-post-number-read)))])]
+        [:div.n-thread-subscribers.meta (:n-subscribers thread) " subscribers"]]])
+    [:li [:div.more-threads
+          [:a {:href "#" :style {:color ui-color}}
+           [:span [:i.fa.fa-list-ul.small] " " (util/pluralize n-threads "thread")]]]]]])
 
 (defn subforum-info [{:keys [id slug ui-color name recent-threads] :as subforum}]
   (html
     [:li {:key id}
-     [:div.subforum-top-bar {:style {:background-color ui-color}}]
      (subforum-info-header subforum)
      (if (empty? recent-threads)
        [:p.no-threads "No threads yet..."]
-       (recent-threads-list recent-threads ui-color))]))
+       (recent-threads-list subforum))]))
 
 (defn subforum-group [{:keys [name subforums id]}]
   (html
     [:div.subforum-group.row {:key id}
-     [:div.subforum-group-name [:h2.title-caps name]]
      (if (not (empty? subforums))
        [:ul.subforums (map subforum-info subforums)])]))
 

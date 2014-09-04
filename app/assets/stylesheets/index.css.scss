@@ -6,49 +6,49 @@
     font-size: 12px;
   }
 
-  .subforum-group-name {
-    @include make-sm-column(2);
-  }
-
   .subforum-top-bar {
     height: 5px;
-    margin: -1px -1px 0 -1px;
   }
 
   ul.subforums {
-    @include make-sm-column(9);
     list-style: none;
     padding: 0;
   }
 
-  ul.subforums > li {
-    border: 1px solid $super-light-gray;
+  .header-info {
+    @include make-sm-column(2.5);
+    text-align: right;
+
+    h3 {
+      margin: 0 auto;
+      font-weight: bold;
+      position: relative;
+      bottom: 4px;
+    }
+
+    .subforum-description {
+      margin-top: 4px;
+      font-size: 12px;
+      color: $medium-gray;
+    }
+  }
+
+  .subforum-recent-threads {
+    @include make-sm-column(9.5);
     margin-bottom: 2em;
   }
 
-  .header-info {
-    background-color: $super-light-gray;
-    padding: 5px;
-    margin: 0;
-
-    .subforum-name { @include make-sm-column(2.5); }
-    .description { @include make-sm-column(6); }
-    .n-threads {
-      @include make-sm-column(1.5);
-    }
-    .n-subforum-subscribers { @include make-sm-column(2); }
-
-    h3 {
-      margin-top: 0;
-    }
-  }
-
   ol.recent-threads {
+    border: 1px solid $super-light-gray;
     padding: 5px;
     list-style: none;
 
     li > div {
       margin: .7em 0;
+    }
+
+    li > div.more-threads {
+      margin-left: 15px;
     }
 
     li {
