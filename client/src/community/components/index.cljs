@@ -22,7 +22,7 @@
                  {:style {:color ui-color}}
                  [:h3 name])]
     (shared/->subscription-info (:subscription subforum) {:opts {:reason? false}})]
-   [:div.description "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."]
+   [:div.description (:description subforum)]
    [:div.n-threads (:n-threads subforum) " threads"]
    [:div.n-subforum-subscribers (:n-subscribers subforum) " subscribers"]])
 

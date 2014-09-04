@@ -1,7 +1,7 @@
 json.extract! subforum_group, :name, :id
 json.subforums do
   json.array! subforum_group.subforums do |subforum|
-    json.extract! subforum, :id, :name, :slug, :ui_color
+    json.extract! subforum, :id, :name, :slug, :ui_color, :description
     json.n_subscribers subforum.subscribers.count
     json.n_threads subforum.threads_for_user(current_user).count
     json.subscription do
