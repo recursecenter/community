@@ -1,9 +1,6 @@
 #subforum-index {
-  .welcome {
-    margin-bottom: 2em;
-    background-color: $super-light-gray;
-    padding: 2em;
-    font-size: 12px;
+  .quick-links {
+    margin: 0 0 3em 0;
   }
 
   .subforum-top-bar {
@@ -112,4 +109,9 @@
 .subforum-group-name {
   @include make-sm-column-offset(2.5);
   @include make-sm-column(9.5);
+
+  h1 {
+    margin-top: 0;
+    font-size: 32px;
+  }
 }
