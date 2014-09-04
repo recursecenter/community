@@ -9,8 +9,14 @@
             [sablono.core :as html :refer-macros [html]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
-(defn post-number-unread [n]
-  [:span.post-number-unread (util/pluralize n "new post")])
+(defn post-number-unread
+  ([]
+     (post-number-unread nil))
+  ([n]
+     [:span.post-number-unread.label.label-info
+      (if n
+        [:span n " new"]
+        "new")]))
 
 (defn post-number-read [n]
   [:span.post-number-read (util/pluralize n "post")])
@@ -38,11 +44,9 @@
                           (if unread [:strong title] title))]
        [:div.post-number-info.meta
         (let [{:keys [last-post-number-read highest-post-number]} thread]
-          (cond (zero? last-post-number-read) (post-number-unread highest-post-number)
-                (= last-post-number-read highest-post-number) (post-number-read highest-post-number)
-                :else [:span
-                       (post-number-read highest-post-number)
-                       " (" (post-number-unread (- highest-post-number last-post-number-read)) ")"]))]
+          [:span (post-number-read highest-post-number)
+           (cond (zero? last-post-number-read) (post-number-unread)
+                 (< last-post-number-read highest-post-number) (post-number-unread (- highest-post-number last-post-number-read)))])]
        [:div.n-thread-subscribers.meta (:n-subscribers thread) " subscribers"]]])])
 
 (defn subforum-info [{:keys [id slug ui-color name recent-threads] :as subforum}]
