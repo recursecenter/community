@@ -1,6 +1,18 @@
 #subforum-index {
   .quick-links {
-    margin: 0 0 3em 0;
+    @include make-sm-column(12);
+    margin-top: 0;
+    margin-bottom: 3em;
+  }
+
+  @media (max-width: $screen-sm-max) {
+    .quick-links {
+      margin-bottom: 1em;
+
+      li {
+        border: 0;
+      }
+    }
   }
 
   .subforum-top-bar {
@@ -14,7 +26,6 @@
 
   .header-info {
     @include make-sm-column(2.5);
-    text-align: right;
 
     h3 {
       margin: 0 auto;
@@ -27,6 +38,12 @@
       margin-top: 4px;
       font-size: 12px;
       color: $medium-gray;
+    }
+  }
+
+  @media (min-width: $screen-sm-min) {
+    .header-info {
+      text-align: right;
     }
   }
 
