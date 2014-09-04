@@ -16,11 +16,14 @@ class NotificationMailer < ActionMailer::Base
       headers["In-Reply-To"] = @post.previous_message_id
     end
 
-    mail(message_id: @post.message_id,
-         to: @user.email,
-         from: from_field(@mentioned_by.name),
-         reply_to: reply_to_field(reply_info),
-         subject: subject_field(@post.thread))
+    mail(
+      message_id: @post.message_id,
+      to: @user.email,
+      from: from_field(@mentioned_by),
+      subject: subject_field(@post.thread),
+      "List-ID" => list_id_field,
+      "List-Post" => list_post_field(reply_info)
+    )
   end
 
   def broadcast_email(users, post)
@@ -33,7 +36,7 @@ class NotificationMailer < ActionMailer::Base
 
     mail(message_id: @post.message_id,
          to: users.map(&:email),
-         from: from_field(@post.author.name),
+         from: from_field(@post.author),
          subject: subject_field(@post.thread))
   end
 
@@ -46,7 +49,7 @@ class NotificationMailer < ActionMailer::Base
 
     mail(message_id: @post.message_id,
          to: users.map(&:email),
-         from: from_field(@post.author.name),
+         from: from_field(@post.author),
          subject: subject_field(@post.thread))
   end
 
@@ -55,7 +58,7 @@ class NotificationMailer < ActionMailer::Base
 
     mail(message_id: @thread.posts.first.message_id,
          to: users.map(&:email),
-         from: from_field(@thread.created_by.name),
+         from: from_field(@thread.created_by),
          subject: subject_field(@thread))
   end
 end
