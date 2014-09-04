@@ -2,7 +2,7 @@ module EmailFields
   extend ActiveSupport::Concern
 
   def from_field(user)
-    %{"#{user.name} (via Community)" <#{user.email}>}
+    %{"#{user.name}" <#{user.email}>}
   end
 
   def subject_field(thread)
