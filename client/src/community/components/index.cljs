@@ -15,7 +15,7 @@
      [:div.subforum-group-name [:h1.title-caps name]]
      [:ul.subforums
       (for [{:keys [id] :as subforum} subforums]
-        [:li {:key id} (->subforum-info subforum)])]]))
+        [:li {:key id} [:div.row.subforum-info-row (->subforum-info subforum)]])]]))
 
 (defcomponent index [{:keys [subforum-groups]} owner]
   (display-name [_] "Index")
