@@ -86,7 +86,7 @@
          [:a {:href (routes/hs-route :person (:author post))}
           (-> post :author :name)]
          [:div (-> post :author :batch-name)]
-         [:div (util/human-format-time (:created-at post))]]
+         [:div.timestamp (util/human-format-time (:created-at post))]]
         [:div.post-content
          (if (:editing? post)
            (->post-form {:post post
@@ -136,10 +136,10 @@
 
          [:div.row.no-side-margin
           [:div.subscribe (shared/->subscription-info (:subscription thread))]
-          [:div.new-item-button (partials/new-anchor-button "New post" {:class ["btn" "btn-link"]})]]
+          [:div.new-item-button.hidden-xs (partials/new-anchor-button "New post" {:class ["btn" "btn-link"]})]]
 
          [:div.row.no-side-margin
-          (subforum-info-header (:subforum thread) {:title-link? false})
+          [:div.hidden-xs (subforum-info-header (:subforum thread) {:title-link? false})]
           [:div.t-threads
            [:div.t-top-bar {:style {:background-color (:ui-color thread)}}]
            [:ol.list-unstyled

@@ -105,12 +105,30 @@ a:hover {
 }
 
 .new-item-button {
-    @include make-sm-column(1.5);
-    margin: 5px 0;
+  @include make-sm-column(1.5);
+  margin: 5px 0;
+
+  button {
+    padding-left: 0;
+    padding-right: 0;
+    float: right;
+  }
+}
+
+// Small screen only
+@media (max-width: $screen-sm-min) {
+  .new-item-button {
+    margin: 0;
 
     button {
-      padding-left: 0;
-      padding-right: 0;
-      float: right;
+      float: none;
     }
   }
+}
+
+.timestamp {
+  font-size: 12px;
+  font-weight: bold;
+  color: #666;
+  margin-right: 5px;
+}

@@ -32,4 +32,11 @@
       }
     }
   }
+
+  // Small screen only
+  @media (max-width: $screen-sm-min) {
+    .subscription-info {
+      margin: 0;
+    }
+  }
 }
