@@ -38,7 +38,7 @@
        [:div.row
         [:div.last-updated-info.meta
          [:span.timestamp (util/human-format-time (:updated-at thread))]
-         [:span.meta (:last-posted-to-by thread)]]
+         [:span.user-name (:last-posted-to-by thread)]]
         [:p.title (link-to (routes :thread thread) {:style {:color ui-color}}
                            (if unread [:strong title] title))]
         [:div.post-number-info.meta.hidden-xs
@@ -47,7 +47,7 @@
             (cond (zero? last-post-number-read) (post-number-unread thread)
                   (< last-post-number-read highest-post-number) (post-number-unread (- highest-post-number last-post-number-read) thread))])]
         [:div.n-thread-subscribers.meta.hidden-xs
-         (:n-subscribers thread) " subscribers"]]])
+         (util/pluralize (:n-subscribers thread) "subscriber")]]])
     [:li [:div.more-threads
           (link-to (routes :subforum subforum)
                    {:style {:color ui-color}}

@@ -5,21 +5,6 @@
     margin-bottom: 3em;
   }
 
-  @media (max-width: $screen-sm-min) {
-    .quick-links {
-      margin-bottom: 1em;
-
-      li {
-        border: 0;
-      }
-
-      li:nth-child(4n+4):after {
-        content: "\A";
-        white-space: pre;
-      }
-    }
-  }
-
   .subforum-top-bar {
     height: 5px;
   }
@@ -43,12 +28,6 @@
       margin-top: 4px;
       font-size: 12px;
       color: $medium-gray;
-    }
-  }
-
-  @media (min-width: $screen-sm-min) {
-    .header-info {
-      text-align: right;
     }
   }
 
@@ -126,6 +105,62 @@
 
   a:hover {
     text-decoration: underline;
+  }
+
+  // Larger than a small screen
+  @media (min-width: $screen-sm-min) {
+    .header-info {
+      text-align: right;
+    }
+  }
+
+  // Smaller than a large screen
+  @media (max-width: $screen-lg-min) {
+    ol.recent-threads li {
+      .user-name {
+        display: block;
+      }
+
+      p.title {
+        white-space: normal;
+      }
+    }
+  }
+
+  // Smaller than a medium screen
+  @media (max-width: $screen-md-min) {
+    ol.recent-threads li {
+      .post-number-unread {
+        display: inline-block;
+      }
+
+      .n-thread-subscribers {
+        padding-left: 0;
+        padding-right: 0;
+      }
+    }
+  }
+
+  // Small screen only
+  @media (max-width: $screen-sm-min) {
+    .quick-links {
+      margin-bottom: 1em;
+
+      li {
+        border: 0;
+      }
+
+      li:nth-child(4n+4):after {
+        content: "\A";
+        white-space: pre;
+      }
+    }
+
+    ol.recent-threads li {
+      .user-name {
+        display: inline;
+      }
+    }
   }
 }
 
