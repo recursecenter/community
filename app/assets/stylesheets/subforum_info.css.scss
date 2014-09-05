@@ -146,6 +146,18 @@
 
   // Small screen only
   @media (max-width: $screen-sm-min) {
+    .header-info {
+      h3 {
+        position: inherit;
+        display: inline;
+        margin-right: 5px;
+      }
+
+      .subscribers {
+        display: inline;
+      }
+    }
+
     ol.threads li {
       .user-name {
         display: inline;

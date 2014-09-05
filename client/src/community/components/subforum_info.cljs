@@ -22,7 +22,7 @@
     (link-to (routes :subforum {:id id :slug slug})
              {:style {:color ui-color}}
              [:h3 name])
-    [:div [:span.title-caps.small "Subscribers: " (:n-subscribers subforum)]]
+    [:div.subscribers [:span.title-caps.small "Subscribers: " (:n-subscribers subforum)]]
     [:p.subforum-description (:description subforum)]]])
 
 (defn threads-list [{:keys [threads ui-color n-threads] :as subforum} nowrap?]

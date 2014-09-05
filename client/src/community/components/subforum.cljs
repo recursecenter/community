@@ -67,7 +67,8 @@
     (html
       [:div#subforum-view
        [:div.row.subforum-info-row
-        [:div.subscribe (shared/->subscription-info (:subscription subforum))]]
+        [:div.subscribe (shared/->subscription-info (:subscription subforum))]
+        [:div.new-thread-button (partials/new-anchor-button "New thread" {:class ["btn" "btn-link"]})]]
 
        [:div.row.subforum-info-row
         (if (empty? (:threads subforum))

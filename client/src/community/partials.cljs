@@ -43,16 +43,22 @@
   (set! (.-scrollTop js/document.body)
         (.-scrollHeight js/document.body)))
 
+(defn new-anchor-button
+  ([button-text]
+     (new-anchor-button button-text {}))
+  ([button-text attrs]
+     [:button (merge attrs
+                     {:onClick (fn [e]
+                                 (scroll-to-bottom)
+                                 (.focus (.querySelector js/document "[data-new-anchor]")))})
+      button-text]))
+
 (defn title [title-text button-text]
   (html
     [:div.row
      [:div.topic [:h1 title-text]]
      [:div.topic-button
-      [:button.btn.btn-new.btn-sm
-       {:onClick (fn [e]
-                   (scroll-to-bottom)
-                   (.focus (.querySelector js/document "[data-new-anchor]")))}
-       button-text]]]))
+      (new-anchor-button button-text {:class ["btn" "btn-new" "btn-sm"]})]]))
 
 (defn loading-icon []
   (html

@@ -1,11 +1,37 @@
 #subforum-view {
   .subscribe {
     @include make-sm-column-offset(2.5);
-    @include make-sm-column(9.5);
+    @include make-sm-column(8);
+  }
+
+  .new-thread-button {
+    @include make-sm-column(1.5);
+    margin: 5px 0;
+
+    button {
+      padding-left: 0;
+      padding-right: 0;
+      float: right;
+    }
   }
 
   .new-thread {
     @include make-sm-column-offset(2.5);
     @include make-sm-column(9.5);
+  }
+
+  // Small screen only
+  @media (max-width: $screen-sm-min) {
+    .subscription-info {
+      margin: 0;
+    }
+
+    .new-thread-button {
+      margin: 0;
+
+      button {
+        float: none;
+      }
+    }
   }
 }
