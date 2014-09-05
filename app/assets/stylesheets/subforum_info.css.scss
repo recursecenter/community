@@ -61,7 +61,7 @@
       font-size: 12px;
     }
 
-    li.thread:nth-child(2n+2) {
+    li.thread:nth-child(even) {
       background-color: $super-light-gray;
     }
 
