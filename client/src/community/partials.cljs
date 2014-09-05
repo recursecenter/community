@@ -47,11 +47,12 @@
   ([button-text]
      (new-anchor-button button-text {}))
   ([button-text attrs]
-     [:button (merge attrs
-                     {:onClick (fn [e]
-                                 (scroll-to-bottom)
-                                 (.focus (.querySelector js/document "[data-new-anchor]")))})
-      button-text]))
+     (html
+       [:button (merge attrs
+                       {:onClick (fn [e]
+                                   (scroll-to-bottom)
+                                   (.focus (.querySelector js/document "[data-new-anchor]")))})
+        button-text])))
 
 (defn loading-icon []
   (html
