@@ -17,11 +17,15 @@
   }
 
   .post-body, .post-form-body {
-    @include make-sm-column(10);
+    @include make-sm-column(10.5);
+  }
+
+  .post-form-body {
+    padding: 0;
   }
 
   .post-controls, .post-form-controls {
-    @include make-sm-column(2);
+    @include make-sm-column(1.5);
   }
 
   .post-body {

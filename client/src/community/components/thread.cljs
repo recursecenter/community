@@ -6,6 +6,7 @@
             [community.partials :as partials :refer [link-to]]
             [community.routes :as routes]
             [community.components.shared :as shared]
+            [community.components.subforum-info :refer [subforum-info-header]]
             [om.core :as om]
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :refer-macros [html]]
@@ -130,24 +131,36 @@
     (let [autocomplete-users (:autocomplete-users thread)]
       (html
         [:div#thread-view
-         (partials/title (:title thread) "New post")
-         (shared/->subscription-info (:subscription thread))
-         [:ol.list-unstyled
-          (for [[i post] (map-indexed vector (:posts thread))]
-            (->post {:post post
+         [:div.t-title
+          [:h3 (:title thread)]]
+
+         [:div.row.no-side-margin
+          [:div.subscribe (shared/->subscription-info (:subscription thread))]
+          [:div.new-item-button (partials/new-anchor-button "New post" {:class ["btn" "btn-link"]})]]
+
+         [:div.row.no-side-margin
+          (subforum-info-header (:subforum thread) {:title-link? false})
+          [:div.t-threads
+           [:div.t-top-bar {:style {:background-color (:ui-color thread)}}]
+           [:ol.list-unstyled
+            (for [[i post] (map-indexed vector (:posts thread))]
+              (->post {:post post
+                       :autocomplete-users autocomplete-users
+                       :index i
+                       :highlight? (= (str (:post-number post)) (:post-number route-data))}
+                      {:react-key (:id post)}))]]]
+
+         [:div.row.no-side-margin
+          [:div.new-post
+           (shared/->tabbed-panel
+            {:tabs [{:id :compose
+                     :body "Compose"
+                     :view-fn ->post-form}
+                    {:id :preview
+                     :body "Preview"
+                     :view-fn shared/->post-preview}]
+             :props {:broadcast-groups (:broadcast-groups thread)
                      :autocomplete-users autocomplete-users
-                     :index i
-                     :highlight? (= (str (:post-number post)) (:post-number route-data))}
-                    {:react-key (:id post)}))]
-         (shared/->tabbed-panel
-          {:tabs [{:id :compose
-                   :body "Compose"
-                   :view-fn ->post-form}
-                  {:id :preview
-                   :body "Preview"
-                   :view-fn shared/->post-preview}]
-           :props {:broadcast-groups (:broadcast-groups thread)
-                   :autocomplete-users autocomplete-users
-                   :post (assoc (:new-post thread)
-                           :errors (:errors thread)
-                           :submitting? (:submitting? thread))}})]))))
+                     :post (assoc (:new-post thread)
+                             :errors (:errors thread)
+                             :submitting? (:submitting? thread))}})]]]))))

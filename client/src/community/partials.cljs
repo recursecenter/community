@@ -53,13 +53,6 @@
                                  (.focus (.querySelector js/document "[data-new-anchor]")))})
       button-text]))
 
-(defn title [title-text button-text]
-  (html
-    [:div.row
-     [:div.topic [:h1 title-text]]
-     [:div.topic-button
-      (new-anchor-button button-text {:class ["btn" "btn-new" "btn-sm"]})]]))
-
 (defn loading-icon []
   (html
     [:div.push-down.loading

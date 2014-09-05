@@ -66,17 +66,17 @@
   (render [this]
     (html
       [:div#subforum-view
-       [:div.row.subforum-info-row
+       [:div.row.no-side-margin
         [:div.subscribe (shared/->subscription-info (:subscription subforum))]
-        [:div.new-thread-button (partials/new-anchor-button "New thread" {:class ["btn" "btn-link"]})]]
+        [:div.new-item-button (partials/new-anchor-button "New thread" {:class ["btn" "btn-link"]})]]
 
-       [:div.row.subforum-info-row
+       [:div.row.no-side-margin
         (if (empty? (:threads subforum))
           [:div.alert.alert-info "There are no threads - create the first one!"]
           (->subforum-info subforum {:opts {:nowrap? false
                                             :title-link? false}}))]
 
-       [:div.row.subforum-info-row
+       [:div.row.no-side-margin
         [:div.new-thread
          (shared/->tabbed-panel
           {:tabs [{:id :new-thread :body "Compose thread" :view-fn ->new-thread}

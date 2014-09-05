@@ -16,17 +16,17 @@
 (defn post-number-read [n]
   [:span.post-number-read (util/pluralize n "post")])
 
-(defn subforum-info-header [{:keys [id slug ui-color name threads] :as subforum}
+(defn subforum-info-header [{:keys [id slug ui-color name description n-subscribers] :as subforum}
                             {:keys [title-link?]}]
-  [:div.header-info
+  [:div.subforum-info-header
    [:div.subforum-name
     (if title-link?
       (link-to (routes :subforum {:id id :slug slug})
                {:style {:color ui-color}}
                [:h3 name])
       [:h3 name])
-    [:div.subscribers [:span.title-caps.small "Subscribers: " (:n-subscribers subforum)]]
-    [:p.subforum-description (:description subforum)]]])
+    [:div.subscribers [:span.title-caps.small "Subscribers: " n-subscribers]]
+    [:p.subforum-description description]]])
 
 (defn threads-list [{:keys [threads ui-color n-threads] :as subforum} nowrap?]
   [:ol.threads

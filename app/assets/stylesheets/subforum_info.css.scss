@@ -1,28 +1,45 @@
-.subforum-info-row {
-  margin-left: 0;
-  margin-right: 0;
+.subforum-info-header {
+  @include make-sm-column(2.5);
+
+  h3 {
+    margin: 0 auto;
+    font-weight: bold;
+    position: relative;
+    bottom: 4px;
+  }
+
+  .subforum-description {
+    margin-top: 4px;
+    font-size: 12px;
+    color: $medium-gray;
+  }
+}
+
+// Larger than a small screen
+@media (min-width: $screen-sm-min) {
+  .subforum-info-header {
+    text-align: right;
+  }
+}
+
+// Small screen only
+@media (max-width: $screen-sm-min) {
+  .subforum-info-header {
+    h3 {
+      position: inherit;
+      display: inline;
+      margin-right: 5px;
+    }
+
+    .subscribers {
+      display: inline;
+    }
+  }
 }
 
 .subforum-info {
   .subforum-top-bar {
     height: 5px;
-  }
-
-  .header-info {
-    @include make-sm-column(2.5);
-
-    h3 {
-      margin: 0 auto;
-      font-weight: bold;
-      position: relative;
-      bottom: 4px;
-    }
-
-    .subforum-description {
-      margin-top: 4px;
-      font-size: 12px;
-      color: $medium-gray;
-    }
   }
 
   .subforum-threads {
@@ -110,13 +127,6 @@
     text-decoration: underline;
   }
 
-  // Larger than a small screen
-  @media (min-width: $screen-sm-min) {
-    .header-info {
-      text-align: right;
-    }
-  }
-
   // Smaller than a large screen
   @media (max-width: $screen-lg-min) {
     ol.threads li {
@@ -146,18 +156,6 @@
 
   // Small screen only
   @media (max-width: $screen-sm-min) {
-    .header-info {
-      h3 {
-        position: inherit;
-        display: inline;
-        margin-right: 5px;
-      }
-
-      .subscribers {
-        display: inline;
-      }
-    }
-
     ol.threads li {
       .user-name {
         display: inline;

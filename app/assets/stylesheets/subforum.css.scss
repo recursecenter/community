@@ -4,17 +4,6 @@
     @include make-sm-column(8);
   }
 
-  .new-thread-button {
-    @include make-sm-column(1.5);
-    margin: 5px 0;
-
-    button {
-      padding-left: 0;
-      padding-right: 0;
-      float: right;
-    }
-  }
-
   .new-thread {
     @include make-sm-column-offset(2.5);
     @include make-sm-column(9.5);
