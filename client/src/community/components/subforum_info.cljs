@@ -24,7 +24,7 @@
       (link-to (routes :subforum {:id id :slug slug})
                {:style {:color ui-color}}
                [:h3 name])
-      [:h3 {:style {:color ui-color}} name])
+      [:h3 name])
     [:div.subscribers [:span.title-caps.small "Subscribers: " (:n-subscribers subforum)]]
     [:p.subforum-description (:description subforum)]]])
 
