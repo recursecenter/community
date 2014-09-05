@@ -9,8 +9,12 @@ module EmailFields
     "[Community - #{thread.subforum.name}] #{thread.title}"
   end
 
+  def reply_to_community(reply_info)
+    "reply-#{reply_info}@mail.community.hackerschool.com"
+  end
+
   def list_post_field(reply_info)
-    "Community <reply-#{reply_info}@mail.community.hackerschool.com>"
+    "Community <#{reply_to_community(reply_info)}>"
   end
 
   def list_id_field
