@@ -5,12 +5,17 @@
     margin-bottom: 3em;
   }
 
-  @media (max-width: $screen-sm-max) {
+  @media (max-width: $screen-sm-min) {
     .quick-links {
       margin-bottom: 1em;
 
       li {
         border: 0;
+      }
+
+      li:nth-child(4n+4):after {
+        content: "\A";
+        white-space: pre;
       }
     }
   }
