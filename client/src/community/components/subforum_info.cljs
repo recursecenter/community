@@ -16,12 +16,15 @@
 (defn post-number-read [n]
   [:span.post-number-read (util/pluralize n "post")])
 
-(defn subforum-info-header [{:keys [id slug ui-color name threads] :as subforum}]
+(defn subforum-info-header [{:keys [id slug ui-color name threads] :as subforum}
+                            {:keys [title-link?]}]
   [:div.header-info
    [:div.subforum-name
-    (link-to (routes :subforum {:id id :slug slug})
-             {:style {:color ui-color}}
-             [:h3 name])
+    (if title-link?
+      (link-to (routes :subforum {:id id :slug slug})
+               {:style {:color ui-color}}
+               [:h3 name])
+      [:h3 {:style {:color ui-color}} name])
     [:div.subscribers [:span.title-caps.small "Subscribers: " (:n-subscribers subforum)]]
     [:p.subforum-description (:description subforum)]]])
 
@@ -51,13 +54,13 @@
 
 (defcomponent subforum-info [{:keys [threads] :as subforum}
                              owner
-                             {:keys [nowrap?] :or {nowrap? true}}]
+                             {:keys [nowrap? title-link?] :or {nowrap? true title-link? true}}]
   (display-name [_] "SubforumInfo")
 
   (render [_]
     (html
       [:div.subforum-info
-       (subforum-info-header subforum)
+       (subforum-info-header subforum {:title-link? title-link?})
        (if (empty? threads)
          [:p.no-threads "No threads yet..."]
          [:div.subforum-threads

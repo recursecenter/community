@@ -73,7 +73,8 @@
        [:div.row.subforum-info-row
         (if (empty? (:threads subforum))
           [:div.alert.alert-info "There are no threads - create the first one!"]
-          (->subforum-info subforum {:opts {:nowrap? false}}))]
+          (->subforum-info subforum {:opts {:nowrap? false
+                                            :title-link? false}}))]
 
        [:div.row.subforum-info-row
         [:div.new-thread
