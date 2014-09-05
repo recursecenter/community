@@ -31,12 +31,12 @@
     }
   }
 
-  .subforum-recent-threads {
+  .subforum-threads {
     @include make-sm-column(9.5);
     margin-bottom: 2em;
   }
 
-  ol.recent-threads {
+  ol.threads {
     border: 1px solid $super-light-gray;
     padding: 5px;
     list-style: none;
@@ -116,7 +116,7 @@
 
   // Smaller than a large screen
   @media (max-width: $screen-lg-min) {
-    ol.recent-threads li {
+    ol.threads li {
       .user-name {
         display: block;
       }
@@ -129,7 +129,7 @@
 
   // Smaller than a medium screen
   @media (max-width: $screen-md-min) {
-    ol.recent-threads li {
+    ol.threads li {
       .post-number-unread {
         display: inline-block;
       }
@@ -156,7 +156,7 @@
       }
     }
 
-    ol.recent-threads li {
+    ol.threads li {
       .user-name {
         display: inline;
       }

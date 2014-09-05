@@ -5,7 +5,7 @@ json.subforums do
     json.n_subscribers subforum.subscribers.count
     json.n_threads subforum.threads_for_user(current_user).count
 
-    json.recent_threads do
+    json.threads do
       json.array! subforum.threads_for_user(current_user).order(updated_at: :desc).limit(3) do |thread|
         json.extract! thread, :id, :title, :slug, :highest_post_number, :last_post_number_read
         json.n_subscribers thread.subscribers.count
