@@ -25,31 +25,33 @@
     [:div [:span.title-caps.small "Subscribers: " (:n-subscribers subforum)]]
     [:p.subforum-description (:description subforum)]]])
 
-(defn threads-list [{:keys [threads ui-color n-threads] :as subforum}]
-  [:div.subforum-threads
-   [:div.subforum-top-bar {:style {:background-color ui-color}}]
-   [:ol.threads
-    (for [{:as thread :keys [title unread]} threads]
-      [:li
-       [:div.row
-        [:div.last-updated-info.meta
-         [:span.timestamp (util/human-format-time (:updated-at thread))]
-         [:span.user-name (:last-posted-to-by thread)]]
-        [:p.title (link-to (routes :thread thread) {:style {:color ui-color}}
-                           (if unread [:strong title] title))]
-        [:div.post-number-info.meta.hidden-xs
-         (let [{:keys [last-post-number-read highest-post-number]} thread]
-           [:span (post-number-read highest-post-number)
-            (cond (zero? last-post-number-read) (post-number-unread thread)
-                  (< last-post-number-read highest-post-number) (post-number-unread (- highest-post-number last-post-number-read) thread))])]
-        [:div.n-thread-subscribers.meta.hidden-xs
-         (util/pluralize (:n-subscribers thread) "subscriber")]]])
-    [:li [:div.more-threads
-          (link-to (routes :subforum subforum)
-                   {:style {:color ui-color}}
-                   [:span [:i.fa.fa-list-ul.small] " " (util/pluralize n-threads "thread")])]]]])
+(defn threads-list [{:keys [threads ui-color n-threads] :as subforum} nowrap?]
+  [:ol.threads
+   (for [{:as thread :keys [title unread]} threads]
+     [:li.thread
+      [:div.row
+       [:div.last-updated-info.meta
+        [:span.timestamp (util/human-format-time (:updated-at thread))]
+        [:span.user-name (:last-posted-to-by thread)]]
+       [:p.title {:class (when nowrap? "nowrap-text")}
+        (link-to (routes :thread thread) {:style {:color ui-color}}
+                 (if unread [:strong title] title))]
+       [:div.n-posts.meta.hidden-xs
+        (let [{:keys [last-post-number-read highest-post-number]} thread]
+          [:span (post-number-read highest-post-number)
+           (cond (zero? last-post-number-read) (post-number-unread thread)
+                 (< last-post-number-read highest-post-number) (post-number-unread (- highest-post-number last-post-number-read) thread))])]
+       [:div.n-thread-subscribers.meta.hidden-xs
+        (util/pluralize (:n-subscribers thread) "subscriber")]]])
+   (when n-threads
+     [:li [:div.more-threads
+           (link-to (routes :subforum subforum)
+                    {:style {:color ui-color}}
+                    [:span [:i.fa.fa-list-ul.small] " " (util/pluralize n-threads "thread")])]])])
 
-(defcomponent subforum-info [{:keys [threads] :as subforum}]
+(defcomponent subforum-info [{:keys [threads] :as subforum}
+                             owner
+                             {:keys [nowrap?] :or {nowrap? true}}]
   (display-name [_] "SubforumInfo")
 
   (render [_]
@@ -58,4 +60,6 @@
        (subforum-info-header subforum)
        (if (empty? threads)
          [:p.no-threads "No threads yet..."]
-         (threads-list subforum))])))
+         [:div.subforum-threads
+          [:div.subforum-top-bar {:style {:background-color (:ui-color subforum)}}]
+          (threads-list subforum nowrap?)])])))

@@ -1,33 +1,11 @@
 #subforum-view {
-  @include make-sm-column-offset(1);
-  @include make-sm-column(10);
-}
-
-table.threads-view {
-
-  tbody tr {
-    background-color: #F9F9F9;
+  .subscribe {
+    @include make-sm-column-offset(2.5);
+    @include make-sm-column(9.5);
   }
 
-  tr.unread {
-    background-color: white;
-
-    td {
-      font-weight: bold;
-    }
+  .new-thread {
+    @include make-sm-column-offset(2.5);
+    @include make-sm-column(9.5);
   }
-
-  td.name {
-    @include make-sm-column(2);
-  }
-
-  td.title {
-    @include make-sm-column(8.5);
-  }
-
-  td.timestamp {
-    @include make-sm-column(1.5);
-    text-align: right;
-  }
-
 }
