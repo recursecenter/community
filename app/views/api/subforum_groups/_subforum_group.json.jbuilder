@@ -4,9 +4,6 @@ json.subforums do
     json.extract! subforum, :id, :name, :slug, :ui_color, :description
     json.n_subscribers subforum.subscribers.count
     json.n_threads subforum.threads_for_user(current_user).count
-    json.subscription do
-      json.partial! 'api/subscriptions/subscription', subscription: subforum.subscription_for(current_user)
-    end
 
     json.recent_threads do
       json.array! subforum.threads_for_user(current_user).order(updated_at: :desc).limit(3) do |thread|
