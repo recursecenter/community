@@ -92,4 +92,8 @@ class User < ActiveRecord::Base
   def satisfies_roles?(*roles)
     self.roles.where(id: roles).count == roles.uniq.count
   end
+
+  def is_admin?
+    self.roles.include? Role.admin
+  end
 end
