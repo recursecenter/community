@@ -61,8 +61,7 @@
           (let [{:keys [last-post-number-read highest-post-number]} thread]
             [:span (post-number-read highest-post-number)
              (cond (zero? last-post-number-read) (post-number-unread thread)
-                   (< last-post-number-read highest-post-number) (post-number-unread (- highest-post-number last-post-number-read) thread))])]
-         ]])
+                   (< last-post-number-read highest-post-number) (post-number-unread (- highest-post-number last-post-number-read) thread))])]]])
      (when n-threads
        [:li [:div.more-threads
              (link-to (routes :subforum subforum)
