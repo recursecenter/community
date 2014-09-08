@@ -48,6 +48,10 @@
       margin-left: 5px;
       position: relative;
       top: 6px;
+
+      @media (max-width: $screen-sm-min) {
+        font-size: 1em;
+      }
     }
 
     a:hover {
@@ -64,21 +68,21 @@
     li {
       display: inline-block;
       vertical-align: top;
-    }
-
-    .navbar-text {
-      font-weight: bold;
-      color: #555;
-      margin: 0 15px 0 0;
-    }
-
-    a {
-      color: #555;
       padding: 0 15px;
 
       @media (max-width: $screen-sm-min) {
         padding: 0 10px;
       }
+    }
+
+    .navbar-text {
+      font-weight: bold;
+      color: #555;
+      margin: 0;
+    }
+
+    a {
+      color: #555;
     }
   }
 
