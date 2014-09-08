@@ -65,28 +65,34 @@
       font-size: 12px;
     }
 
-    li.thread:nth-child(even) {
+    li.thread:nth-child(2n+1) {
       background-color: $super-light-gray;
     }
 
     li {
       padding: 1px;
 
-      .mini-col-header {
-        font-size: 10px;
-        font-weight: bold;
-        color: #555;
+      .headers {
+        margin-bottom: -7px;
+
+        .mini-col-header {
+          font-size: 10px;
+          font-weight: bold;
+          color: #555;
+        }
       }
 
       .last-updated-info {
         @include make-sm-column(2.5);
       }
 
-      p.title {
+      .title {
         @include make-sm-column(5.5);
 
-        line-height: 18px;
-        margin-bottom: 0;
+        p {
+          line-height: 18px;
+          margin-bottom: 0;
+        }
       }
 
       .nowrap-text {

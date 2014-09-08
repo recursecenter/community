@@ -39,19 +39,23 @@
 (defn threads-list [{:keys [threads ui-color n-threads] :as subforum} nowrap?]
   (html
     [:ol.threads
-     (for [[i {:as thread :keys [title unread]}] (map-indexed vector threads)
-           :let [first? (zero? i)]]
+     [:li
+      [:div.row.headers
+       [:div.last-updated-info.mini-col-header "Latest"]
+       [:div.title.mini-col-header "Thread"]
+       [:div.created-by.mini-col-header "Created by"]
+       [:div.n-posts.mini-col-header]]]
+     (for [{:as thread :keys [title unread]} threads]
        [:li.thread
         [:div.row
          [:div.last-updated-info.meta
-          (when first? [:div.mini-col-header "Latest"])
           [:span.timestamp (util/human-format-time (:updated-at thread))]
           [:span.user-name (:last-posted-to-by thread)]]
-         [:p.title {:class (when (and nowrap? (not first?)) "nowrap-text")}
-          (link-to (routes :thread thread) {:style {:color ui-color}}
-                   (if unread [:strong title] title))]
+         [:div.title
+          [:p {:class (when nowrap? "nowrap-text")}
+           (link-to (routes :thread thread) {:style {:color ui-color}}
+                    (if unread [:strong title] title))]]
          [:div.created-by.meta
-          (when first? [:div.mini-col-header "Created by"])
           [:span.user-name (get-in thread [:created-by :name])]]
          [:div.n-posts.meta.hidden-xs
           (let [{:keys [last-post-number-read highest-post-number]} thread]
