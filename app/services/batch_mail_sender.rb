@@ -41,10 +41,14 @@ private
       "text" => mail.text_part.body.to_s,
       "html" => mail.html_part.body.to_s,
       "h:Message-ID" => mail.header["Message-ID"].to_s,
+      "h:Reply-To" => "#{list_post_field(reply_info)}, #{mail["from"].to_s}",
       "h:In-Reply-To" => mail.header["In-Reply-To"].to_s,
-      "h:Reply-To" => reply_to_field("%recipient.reply_info%"),
+      "h:List-Post" => list_post_field("%recipient.reply_info%"),
+      "h:List-ID" => list_id_field,
+      "h:Precedence" => "list",
       "v:reply_info" => "%recipient.reply_info%",
-      "recipient-variables" => JSON.generate(recipient_variables))
+      "recipient-variables" => JSON.generate(recipient_variables)
+    )
 
     unless res.code == "200"
       raise Error, "Mailgun API returned response code: #{res.code}\n#{res.body}"
