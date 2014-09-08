@@ -1,8 +1,8 @@
 module EmailFields
   extend ActiveSupport::Concern
 
-  def from_field(name)
-    %{"#{name} (via Community)" <bot@mail.community.hackerschool.com>}
+  def from_field(user)
+    %{"#{user.name}" <#{user.email}>}
   end
 
   def reply_to_field(reply_info)

@@ -18,7 +18,7 @@ class NotificationMailer < ActionMailer::Base
 
     mail(message_id: @post.message_id,
          to: @user.email,
-         from: from_field(@mentioned_by.name),
+         from: from_field(@mentioned_by),
          reply_to: reply_to_field(reply_info),
          subject: subject_field(@post.thread))
   end
@@ -33,7 +33,7 @@ class NotificationMailer < ActionMailer::Base
 
     mail(message_id: @post.message_id,
          to: users.map(&:email),
-         from: from_field(@post.author.name),
+         from: from_field(@post.author),
          subject: subject_field(@post.thread))
   end
 
@@ -46,7 +46,7 @@ class NotificationMailer < ActionMailer::Base
 
     mail(message_id: @post.message_id,
          to: users.map(&:email),
-         from: from_field(@post.author.name),
+         from: from_field(@post.author),
          subject: subject_field(@post.thread))
   end
 
@@ -55,7 +55,7 @@ class NotificationMailer < ActionMailer::Base
 
     mail(message_id: @thread.posts.first.message_id,
          to: users.map(&:email),
-         from: from_field(@thread.created_by.name),
+         from: from_field(@thread.created_by),
          subject: subject_field(@thread))
   end
 end
