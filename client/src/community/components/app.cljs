@@ -179,10 +179,11 @@
         [:div.breadcrumbs-container.hidden-xs (->breadcrumbs app)]
         (when current-user
           [:ul.community-nav.list-inline
-           [:li [:p.navbar-text "Hi, " (:first-name current-user) "!"]]
+           [:li.hidden-xs [:p.navbar-text "Hi, " (:first-name current-user) "!"]]
            [:li.hidden-xs (->notifications-dropdown current-user)]
-           [:li (partials/link-to (routes :settings) [:i.fa.fa-cog])]
-           [:li [:a {:href "/logout"} [:i.fa.fa-sign-out]]]])]])))
+           [:li (partials/link-to (routes :settings)
+                  [:div [:i.fa.fa-cog] [:span.visible-xs-inline " " (:first-name current-user)]])]
+           [:li.hidden-xs [:a {:href "/logout"} [:i.fa.fa-sign-out]]]])]])))
 
 (defcomponent app [{:as app :keys [current-user route-data errors loading?]}
                    owner]

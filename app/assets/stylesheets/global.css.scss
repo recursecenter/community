@@ -132,3 +132,11 @@ a:hover {
   color: #666;
   margin-right: 5px;
 }
+
+.visible-xs-inline {
+  display: none !important;
+
+  @media (max-width: $screen-sm-min) {
+    display: inline !important;
+  }
+}
