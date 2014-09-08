@@ -1,10 +1,12 @@
-json.extract! subforum, :name, :id, :slug, :ui_color
+json.extract! subforum, :name, :id, :slug, :ui_color, :description
 json.subforum_group_name subforum.subforum_group.name
+json.n_subscribers subforum.subscribers.count
 json.threads do
   json.array! threads do |thread|
-    json.extract! thread, :title, :id, :slug
+    json.extract! thread, :id, :title, :slug, :highest_post_number, :last_post_number_read
+    json.n_subscribers thread.subscribers.count
     json.updated_at thread.updated_at.to_i
-    json.created_by thread.created_by.name
+    json.last_posted_to_by thread.posts.last.author.name
     json.unread thread.unread?
     if thread.next_unread_post_number
       json.post_number thread.next_unread_post_number

@@ -1,27 +1,18 @@
-table.threads-view {
-
-  tbody tr {
-    background-color: #F9F9F9;
+#subforum-view {
+  .subscribe {
+    @include make-sm-column-offset(2.5);
+    @include make-sm-column(8);
   }
 
-  tr.unread {
-    background-color: white;
+  .new-thread {
+    @include make-sm-column-offset(2.5);
+    @include make-sm-column(9.5);
+  }
 
-    td {
-      font-weight: bold;
+  // Small screen only
+  @media (max-width: $screen-sm-min) {
+    .subscription-info {
+      margin: 0;
     }
   }
-
-  td.name {
-    @include make-sm-column(2);
-  }
-
-  td.title {
-    @include make-sm-column(9);
-  }
-
-  td.timestamp {
-    @include make-sm-column(1);
-  }
-
 }

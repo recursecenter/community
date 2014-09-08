@@ -1,10 +1,13 @@
 #main-content {
-  @include make-sm-column-offset(1);
-  @include make-sm-column(10);
+  @include make-sm-column(12);
 }
 
-#sidebar {
-  @include make-sm-column(3);
+// Small screen only
+@media (max-width: $screen-sm-min) {
+  #main-content {
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
 
 #notifications {
@@ -198,21 +201,22 @@
 footer {
   border-top: 1px dotted $brand-primary;
   margin: 1em 0;
+}
 
-  ul.footer-links {
-    text-align: center;
-    margin-top: 1em;
+ul.inline-links {
+  padding-left: 0;
+  text-align: center;
+  margin-top: 1em;
 
-    li {
-      font-size: 12px;
-      padding: 3px 8px;
-      display: inline;
-      list-style: none;
-      border-right: 1px dotted #ccc;
-    }
+  li {
+    font-size: 12px;
+    padding: 3px 8px;
+    display: inline;
+    list-style: none;
+    border-right: 1px dotted #ccc;
+  }
 
-    li:last-child {
-      border-right: none;
-    }
+  li:last-child {
+    border-right: none;
   }
 }

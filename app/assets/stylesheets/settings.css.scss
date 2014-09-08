@@ -1,3 +1,8 @@
+#settings-view {
+  @include make-sm-column-offset(1);
+  @include make-sm-column(10);
+}
+
 .settings-container {
   @include make-lg-column(10);
 }

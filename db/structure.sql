@@ -339,7 +339,8 @@ CREATE TABLE subforums (
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
     ui_color character varying(255),
-    required_role_ids integer[]
+    required_role_ids integer[],
+    description text
 );
 
 
@@ -833,4 +834,6 @@ INSERT INTO schema_migrations (version) VALUES ('20140820175446');
 INSERT INTO schema_migrations (version) VALUES ('20140826193115');
 
 INSERT INTO schema_migrations (version) VALUES ('20140903171050');
+
+INSERT INTO schema_migrations (version) VALUES ('20140904163524');
 

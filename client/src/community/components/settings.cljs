@@ -86,7 +86,7 @@
   (render [_]
     (let [settings (:settings current-user)]
       (html
-        [:div
+        [:div#settings-view
          [:h1 "Settings"]
          [:div.row
           [:div.settings-container

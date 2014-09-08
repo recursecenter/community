@@ -10,6 +10,10 @@ class ThreadWithVisitedStatus < ActiveRecord::Base
 
   scope :for_user, ->(user) { where(user_id: user.id) }
 
+  def subscribers
+    User.where(id: Subscription.where(subscribed: true, subscribable_id: id, subscribable_type: 'DiscussionThread').select(:user_id))
+  end
+
   def next_unread_post_number
     if unread? && !last_post_number_read.zero?
       last_post_number_read + 1

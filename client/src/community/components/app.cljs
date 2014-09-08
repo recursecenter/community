@@ -175,7 +175,7 @@
           [:span
            [:img {:src (om/get-shared owner :logo-url)}]
            [:span.brand-text {:style {:color ui-color}} "Community"]])]
-       (->breadcrumbs app)
+       [:div.hidden-xs (->breadcrumbs app)]
        (when current-user
          [:ul.nav.navbar-nav.navbar-right.hidden-xs
           [:li [:p.navbar-text "Hi, " (:first-name current-user) "!"]]
@@ -204,6 +204,6 @@
                 (and current-user route-data)
                 (om/build (routes/dispatch route-data) app))]]]
        [:footer
-        [:ul.footer-links
+        [:ul.inline-links
          [:li [:a {:href "https://github.com/hackerschool/community"} [:i.fa.fa-code-fork] " Source"]]
          [:li "Made with " [:i.fa.fa-heart {:style {:color "red"}}] " at " [:a {:href "https://www.hackerschool.com"} "Hacker School"]]]]])))

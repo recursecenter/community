@@ -6,6 +6,7 @@
             [community.partials :as partials :refer [link-to]]
             [community.routes :as routes :refer [routes]]
             [community.components.shared :as shared]
+            [community.components.subforum-info :refer [->subforum-info]]
             [om.core :as om]
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :as html :refer-macros [html]]
@@ -64,19 +65,20 @@
 
   (render [this]
     (html
-      [:div
-       (partials/title (:name subforum) "New thread")
-       (shared/->subscription-info (:subscription subforum))
-       (if (empty? (:threads subforum))
-         [:div.alert.alert-info "There are no threads - create the first one!"]
-         [:table.table.threads-view
-          [:tbody
-           (for [{:keys [id slug title created-by] :as thread} (:threads subforum)]
-             [:tr {:key id :class (if (:unread thread) "unread")}
-              [:td.name created-by]
-              [:td.title (link-to (routes :thread thread) title)]
-              [:td.timestamp (util/human-format-time (:updated-at thread))]])]])
-       (shared/->tabbed-panel
-        {:tabs [{:id :new-thread :body "Compose thread" :view-fn ->new-thread}
-                {:id :preview :body "Preview" :view-fn thread-post-preview}]
-         :props subforum})])))
+      [:div#subforum-view
+       [:div.row.no-side-margin
+        [:div.subscribe (shared/->subscription-info (:subscription subforum))]
+        [:div.new-item-button (partials/new-anchor-button "New thread" {:class ["btn" "btn-link"]})]]
+
+       [:div.row.no-side-margin
+        (if (empty? (:threads subforum))
+          [:div.alert.alert-info "There are no threads - create the first one!"]
+          (->subforum-info subforum {:opts {:nowrap? false
+                                            :title-link? false}}))]
+
+       [:div.row.no-side-margin
+        [:div.new-thread
+         (shared/->tabbed-panel
+          {:tabs [{:id :new-thread :body "Compose thread" :view-fn ->new-thread}
+                  {:id :preview :body "Preview" :view-fn thread-post-preview}]
+           :props subforum})]]])))

@@ -26,6 +26,11 @@ class User < ActiveRecord::Base
 
     if user_data["currently_at_hacker_school"]
       user.groups += [Group.current_hacker_schoolers]
+
+      subforums = ["New York", "455 Broadway"].map { |name| Subforum.where(name: name).first! }
+      subforums.each do |subforum|
+        user.subscribe_to_unless_existing(subforum, "You are receiving emails because you were auto-subscribed at the beginning of your batch.")
+      end
     end
 
     if user_data["is_faculty"]
@@ -74,6 +79,14 @@ class User < ActiveRecord::Base
     subscription.subscribed = true
     subscription.reason = reason
     subscription.save!
+  end
+
+  def subscribe_to_unless_existing(subscribable, reason)
+    subscription = subscribable.subscription_for(self)
+
+    if subscription.new_record?
+      subscription.update!(subscribed: true, reason: reason)
+    end
   end
 
   def satisfies_roles?(*roles)

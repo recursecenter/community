@@ -149,7 +149,7 @@
             [:span.label.label-info.broadcast-label {:onClick (partial toggle id)}
              "× " name])]]))))
 
-(defcomponent subscription-info [{:keys [subscribed reason] :as subscription} owner]
+(defcomponent subscription-info [{:keys [subscribed reason] :as subscription} owner {:keys [reason?] :or {reason? true}}]
   (display-name [_] "SubscriptionInfo")
 
   (render [_]
@@ -169,7 +169,8 @@
           (if subscribed
             [:span [:span.glyphicon.glyphicon-volume-off] " Unsubscribe"]
             [:span [:span.glyphicon.glyphicon-volume-up] " Subscribe"])]
-         [:p.subscription-reason reason]]))))
+         (when reason?
+           [:p.subscription-reason reason])]))))
 
 (defcomponent post-preview [{:keys [post autocomplete-users]}]
   (display-name [_] "PostPreview")

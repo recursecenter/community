@@ -1,0 +1,42 @@
+#thread-view {
+  .subscribe {
+    @include make-sm-column-offset(2.5);
+    @include make-sm-column(8);
+  }
+
+  .new-post {
+    @include make-sm-column-offset(2.5);
+    @include make-sm-column(9.5);
+  }
+
+  .t-title {
+    @include make-sm-column-offset(2.5);
+    @include make-sm-column(9.5);
+  }
+
+  .t-header-info {
+    @include make-sm-column(2.5);
+  }
+
+  .t-top-bar {
+    height: 5px;
+  }
+
+  .t-threads {
+    @include make-sm-column(9.5);
+
+    ol {
+      li:first-child {
+        margin-top: 0;
+        border-top: 0;
+      }
+    }
+  }
+
+  // Small screen only
+  @media (max-width: $screen-sm-min) {
+    .subscription-info {
+      margin: 0;
+    }
+  }
+}

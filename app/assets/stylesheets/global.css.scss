@@ -98,3 +98,37 @@ a:hover {
 .loading {
   text-align: center;
 }
+
+.no-side-margin {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.new-item-button {
+  @include make-sm-column(1.5);
+  margin: 5px 0;
+
+  button {
+    padding-left: 0;
+    padding-right: 0;
+    float: right;
+  }
+}
+
+// Small screen only
+@media (max-width: $screen-sm-min) {
+  .new-item-button {
+    margin: 0;
+
+    button {
+      float: none;
+    }
+  }
+}
+
+.timestamp {
+  font-size: 12px;
+  font-weight: bold;
+  color: #666;
+  margin-right: 5px;
+}

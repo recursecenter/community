@@ -17,16 +17,54 @@
   }
 
   .post-body, .post-form-body {
-    @include make-sm-column(10);
+    @include make-sm-column(10.5);
+  }
+
+  .post-form-body {
+    padding: 0;
   }
 
   .post-controls, .post-form-controls {
-    @include make-sm-column(2);
+    @include make-sm-column(1.5);
   }
 
   .post-body {
     ul, ol {
       margin: 10px 0;
+    }
+    img {
+      max-width: 100%;
+    }
+  }
+
+  // Smaller than a medium screen
+  @media (max-width: $screen-md-min) {
+    .post-author-image {
+
+      img {
+        width: 40px;
+      }
+    }
+  }
+
+  // Small screen only
+  @media (max-width: $screen-sm-min) {
+    .post-author-image {
+      float: left;
+
+      img {
+        margin-top: 5px;
+      }
+    }
+
+    .post-metadata {
+      display: inline-block;
+      padding-left: 0;
+    }
+
+    .post-content {
+      margin-bottom: 0;
+      margin-top: 10px;
     }
   }
 }
