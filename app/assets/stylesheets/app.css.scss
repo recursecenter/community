@@ -61,12 +61,15 @@
     list-style: none;
     margin-top: 10px;
 
-    li { display: inline-block; }
+    li {
+      display: inline-block;
+      vertical-align: top;
+    }
 
     .navbar-text {
       font-weight: bold;
       color: #555;
-      margin: 0;
+      margin: 0 15px 0 0;
     }
 
     a {
@@ -80,6 +83,7 @@
   }
 
   .dropdown-menu {
+    margin-top: 5px;
     border-radius: 0;
     box-shadow: none;
     padding: 0;

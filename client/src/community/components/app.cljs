@@ -75,7 +75,7 @@
     (let [notifications (:notifications user)
           unread-count (count (filter (complement :read) notifications))]
       (html
-        [:ul#notifications.dropdown-menu
+        [:ul#notifications.dropdown-menu.dropdown-menu-right
          [:div.arrow-up]
          [:div.unread-count-container
           [:span.unread-count (util/pluralize unread-count "unread notification")]
@@ -180,7 +180,7 @@
         (when current-user
           [:ul.community-nav.list-inline
            [:li [:p.navbar-text "Hi, " (:first-name current-user) "!"]]
-           [:li (->notifications-dropdown current-user)]
+           [:li.hidden-xs (->notifications-dropdown current-user)]
            [:li (partials/link-to (routes :settings) [:i.fa.fa-cog])]
            [:li [:a {:href "/logout"} [:i.fa.fa-sign-out]]]])]])))
 
