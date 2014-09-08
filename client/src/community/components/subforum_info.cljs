@@ -40,7 +40,7 @@
   (html
     [:ol.threads
      [:li
-      [:div.row.headers
+      [:div.row.headers.hidden-xs
        [:div.last-updated-info.mini-col-header "Latest"]
        [:div.title.mini-col-header "Thread"]
        [:div.created-by.mini-col-header "Created by"]
@@ -55,7 +55,7 @@
           [:p {:class (when nowrap? "nowrap-text")}
            (link-to (routes :thread thread) {:style {:color ui-color}}
                     (if unread [:strong title] title))]]
-         [:div.created-by.meta
+         [:div.created-by.meta.hidden-xs
           [:span.user-name (get-in thread [:created-by :name])]]
          [:div.n-posts.meta.hidden-xs
           (let [{:keys [last-post-number-read highest-post-number]} thread]
