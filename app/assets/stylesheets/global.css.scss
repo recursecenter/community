@@ -117,6 +117,10 @@ a:hover {
 
 // Small screen only
 @media (max-width: $screen-sm-min) {
+  .container {
+
+  }
+
   .new-item-button {
     margin: 0;
 

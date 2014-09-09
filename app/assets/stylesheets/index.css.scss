@@ -36,3 +36,24 @@
     }
   }
 }
+
+.welcome {
+  @include make-sm-column-offset(1);
+  @include make-sm-column(10);
+
+  background-color: $super-light-gray;
+  margin-bottom: 2em;
+  padding: 0;
+
+  .close {
+    margin: 5px 10px;
+  }
+
+  .welcome-content {
+    padding: 1.5em;
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+  }
+}

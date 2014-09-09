@@ -415,7 +415,8 @@ CREATE TABLE users (
     email_on_mention boolean DEFAULT true,
     subscribe_on_create boolean DEFAULT true,
     subscribe_when_mentioned boolean DEFAULT true,
-    subscribe_new_thread_in_subscribed_subforum boolean DEFAULT true
+    subscribe_new_thread_in_subscribed_subforum boolean DEFAULT true,
+    last_read_welcome_message_at timestamp without time zone
 );
 
 
@@ -506,6 +507,37 @@ ALTER SEQUENCE visited_statuses_id_seq OWNED BY visited_statuses.id;
 
 
 --
+-- Name: welcome_messages; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE welcome_messages (
+    id integer NOT NULL,
+    message text,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
+-- Name: welcome_messages_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE welcome_messages_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: welcome_messages_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE welcome_messages_id_seq OWNED BY welcome_messages.id;
+
+
+--
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -587,6 +619,13 @@ ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regcl
 --
 
 ALTER TABLE ONLY visited_statuses ALTER COLUMN id SET DEFAULT nextval('visited_statuses_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY welcome_messages ALTER COLUMN id SET DEFAULT nextval('welcome_messages_id_seq'::regclass);
 
 
 --
@@ -683,6 +722,14 @@ ALTER TABLE ONLY users
 
 ALTER TABLE ONLY visited_statuses
     ADD CONSTRAINT visited_statuses_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: welcome_messages_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY welcome_messages
+    ADD CONSTRAINT welcome_messages_pkey PRIMARY KEY (id);
 
 
 --
@@ -836,4 +883,6 @@ INSERT INTO schema_migrations (version) VALUES ('20140826193115');
 INSERT INTO schema_migrations (version) VALUES ('20140903171050');
 
 INSERT INTO schema_migrations (version) VALUES ('20140904163524');
+
+INSERT INTO schema_migrations (version) VALUES ('20140909190021');
 

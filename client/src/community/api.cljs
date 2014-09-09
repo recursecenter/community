@@ -173,6 +173,9 @@
                          {:params {:ids ids}
                           :format :json})))))
 
+(def mark-welcome-message-as-read
+  (make-api-fn (fn [] (POST "/welcome_message/read"))))
+
 (def subscribe
   (make-api-fn (fn [{:keys [subscribable-id resource-name]}]
                  (POST (str "/" resource-name "s/" subscribable-id "/subscribe")))))

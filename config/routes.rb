@@ -15,6 +15,8 @@ Rails.application.routes.draw do
   get '/threads/:id/unsubscribe' => 'threads#unsubscribe', as: :unsubscribe_thread
 
   namespace :api, format: false, defaults: {format: 'json'} do
+    post 'welcome_message/read' => 'welcome_messages#read'
+
     resources :users do
       get :me, on: :collection
     end

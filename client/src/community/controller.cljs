@@ -203,6 +203,10 @@
 (defn handle-notifications-read [app-state notifications]
   (api/mark-notifications-as-read notifications))
 
+(defn handle-welcome-message-read [app-state]
+  (swap! app-state assoc-in [:current-user :welcome-message] nil)
+  (api/mark-welcome-message-as-read))
+
 ;;; Main loop
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -214,7 +218,8 @@
                   :new-thread handle-new-thread
                   :update-post handle-update-post
                   :new-post handle-new-post
-                  :notifications-read handle-notifications-read)]
+                  :notifications-read handle-notifications-read
+                  :welcome-message-read handle-welcome-message-read)]
     (apply handler app-state args)))
 
 (defn start-loop! [app-state]
