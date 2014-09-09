@@ -17,8 +17,7 @@
     (html
       [:div.welcome
        [:button.close {:onClick #(controller/dispatch :welcome-message-read)} "×"]
-       [:div.welcome-content
-        {:dangerouslySetInnerHTML {:__html (:welcome-message current-user)}}]])))
+       [:div.welcome-content (partials/html-from-markdown (:welcome-message current-user))]])))
 
 (defn subforum-group [{:keys [name subforums id]}]
   (html
