@@ -18,7 +18,7 @@ Rails.application.routes.draw do
   namespace :admin do
     if Rails.env.development?
       get '/sudo' => 'sudo#index'
-      post '/grant-sudo' => 'sudo#grant'
+      post '/sudo' => 'sudo#create'
     end
   end
 
