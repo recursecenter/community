@@ -92,12 +92,4 @@ class User < ActiveRecord::Base
   def satisfies_roles?(*roles)
     self.roles.where(id: roles).count == roles.uniq.count
   end
-
-  def welcome_message
-    welcome_message = WelcomeMessage.latest
-    if welcome_message && (last_read_welcome_message_at.nil? ||
-                           welcome_message.created_at > last_read_welcome_message_at)
-      welcome_message.message
-    end
-  end
 end
