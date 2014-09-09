@@ -65,20 +65,34 @@
       font-size: 12px;
     }
 
-    li.thread:nth-child(even) {
+    li.thread:nth-child(2n+1) {
       background-color: $super-light-gray;
     }
 
     li {
       padding: 1px;
 
-      .last-updated-info { @include make-sm-column(2.5); }
+      .headers {
+        margin-bottom: -7px;
 
-      p.title {
+        .mini-col-header {
+          font-size: 10px;
+          font-weight: bold;
+          color: #555;
+        }
+      }
+
+      .last-updated-info {
+        @include make-sm-column(2.5);
+      }
+
+      .title {
         @include make-sm-column(5.5);
 
-        line-height: 18px;
-        margin-bottom: 0;
+        p {
+          line-height: 18px;
+          margin-bottom: 0;
+        }
       }
 
       .nowrap-text {
@@ -91,7 +105,9 @@
         @include make-sm-column(2);
       }
 
-      .n-thread-subscribers { @include make-sm-column(2); }
+      .created-by {
+        @include make-sm-column(2);
+      }
 
       .meta {
         font-size: 12px;

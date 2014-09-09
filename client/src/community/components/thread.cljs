@@ -139,7 +139,10 @@
           [:div.new-item-button.hidden-xs (partials/new-anchor-button "New post" {:class ["btn" "btn-link"]})]]
 
          [:div.row.no-side-margin
-          [:div.hidden-xs (subforum-info-header (:subforum thread) {:title-link? true})]
+          [:div.hidden-xs (subforum-info-header
+                           (assoc (:subforum thread)
+                             :n-thread-subscribers (:n-subscribers thread))
+                           {:title-link? true})]
           [:div.t-threads
            [:div.t-top-bar {:style {:background-color (:ui-color thread)}}]
            [:ol.list-unstyled

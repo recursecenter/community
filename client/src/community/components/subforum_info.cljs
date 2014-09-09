@@ -17,7 +17,7 @@
 (defn post-number-read [n]
   (html [:span.post-number-read (util/pluralize n "post")]))
 
-(defn subforum-info-header [{:keys [id slug ui-color name description n-subscribers] :as subforum}
+(defn subforum-info-header [{:keys [id slug ui-color name description] :as subforum}
                             {:keys [title-link?]}]
   (html
     [:div.subforum-info-header
@@ -27,28 +27,41 @@
                  {:style {:color ui-color}}
                  [:h3 name])
         [:h3 name])
-      [:div.subscribers [:span.title-caps.small "Subscribers: " n-subscribers]]
+      [:div.subscribers
+       [:span.title-caps.small
+        (let [{:keys [n-thread-subscribers n-subscribers]} subforum]
+          (cond n-thread-subscribers
+                (str "Thread subscribers: " n-thread-subscribers)
+                n-subscribers
+                (str "Subscribers: " n-subscribers)))]]
       [:p.subforum-description description]]]))
 
 (defn threads-list [{:keys [threads ui-color n-threads] :as subforum} nowrap?]
   (html
     [:ol.threads
+     [:li
+      [:div.row.headers.hidden-xs
+       [:div.last-updated-info.mini-col-header "Latest"]
+       [:div.title.mini-col-header "Thread"]
+       [:div.created-by.mini-col-header "Created by"]
+       [:div.n-posts.mini-col-header]]]
      (for [{:as thread :keys [title unread]} threads]
        [:li.thread
         [:div.row
          [:div.last-updated-info.meta
           [:span.timestamp (util/human-format-time (:updated-at thread))]
           [:span.user-name (:last-posted-to-by thread)]]
-         [:p.title {:class (when nowrap? "nowrap-text")}
-          (link-to (routes :thread thread) {:style {:color ui-color}}
-                   (if unread [:strong title] title))]
+         [:div.title
+          [:p {:class (when nowrap? "nowrap-text")}
+           (link-to (routes :thread thread) {:style {:color ui-color}}
+                    (if unread [:strong title] title))]]
+         [:div.created-by.meta.hidden-xs
+          [:span.user-name (get-in thread [:created-by :name])]]
          [:div.n-posts.meta.hidden-xs
           (let [{:keys [last-post-number-read highest-post-number]} thread]
             [:span (post-number-read highest-post-number)
              (cond (zero? last-post-number-read) (post-number-unread thread)
-                   (< last-post-number-read highest-post-number) (post-number-unread (- highest-post-number last-post-number-read) thread))])]
-         [:div.n-thread-subscribers.meta.hidden-xs
-          (util/pluralize (:n-subscribers thread) "subscriber")]]])
+                   (< last-post-number-read highest-post-number) (post-number-unread (- highest-post-number last-post-number-read) thread))])]]])
      (when n-threads
        [:li [:div.more-threads
              (link-to (routes :subforum subforum)
