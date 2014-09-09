@@ -1,4 +1,4 @@
-class Admin::SudoController < AdminController
+class Admin::SuController < AdminController
   def create
     user = User.where(:email => params['email']).first
     session[:user_id] = user.id if user
