@@ -27,14 +27,12 @@
   margin-bottom: 1em;
   padding: 0 20px;
 
-  .navbar-text {
-    font-weight: bold;
-    color: #555;
-    position: relative;
-    bottom: 2px;
-  }
-
   .navbar-header {
+    width: 100%;
+
+    .header-link { float: left }
+    .breadcrumbs-container { float: left }
+
     img {
       width: 24px;
       height: auto;
@@ -54,32 +52,38 @@
 
     a:hover {
       text-decoration: none;
+      color: $brand-primary;
     }
   }
 
-  .navbar-header:hover a {
-    color: $brand-primary;
-  }
+  .community-nav {
+    float: right;
+    list-style: none;
+    margin-top: 10px;
 
-  .navbar-nav a {
-    color: #555;
-    padding: 13px 15px 12px 15px;
-  }
+    li {
+      display: inline-block;
+      vertical-align: top;
+      padding: 0 15px;
 
-  .nav .open > a,
-  .nav .open > a:focus,
-  .nav .open > a:hover,
-  .nav > li > a:focus,
-  .nav > li > a:hover {
-    background-color: rgba(0,0,0,0);
-    color: $brand-primary;
-  }
+      @media (max-width: $screen-sm-min) {
+        padding: 0 10px;
+      }
+    }
 
-  .dropdown.open, .dropdown:hover, .dropdown:focus {
-    height: 44px;
+    .navbar-text {
+      font-weight: bold;
+      color: #555;
+      margin: 0;
+    }
+
+    a {
+      color: #555;
+    }
   }
 
   .dropdown-menu {
+    margin-top: 5px;
     border-radius: 0;
     box-shadow: none;
     padding: 0;
@@ -130,9 +134,9 @@
 
   .breadcrumbs {
     display: inline-block;
-    float: left;
     list-style: none;
     line-height: 40px;
+    margin-bottom: 0;
 
     li {
       float: left;
@@ -145,7 +149,7 @@
 
     li.active {
       color: #999;
-      max-width: 300px;
+      max-width: 280px;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
@@ -219,4 +223,8 @@ ul.inline-links {
   li:last-child {
     border-right: none;
   }
+}
+
+.notifications {
+  display: inline;
 }
