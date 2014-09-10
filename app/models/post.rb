@@ -1,4 +1,6 @@
 class Post < ActiveRecord::Base
+  include Searchable
+
   belongs_to :thread, class_name: "DiscussionThread"
   belongs_to :author, class_name: "User"
   has_and_belongs_to_many :broadcast_groups, class_name: "Group"
@@ -32,6 +34,23 @@ class Post < ActiveRecord::Base
     if post_number > 1
       format_message_id(thread_id, post_number-1)
     end
+  end
+
+  def to_search_mapping
+    {
+      index: {
+        _id: id,
+        data: {
+          body: body,
+          author: author.id,
+          author_name: author.first_name,
+          author_email: author.email,
+          thread: thread.id,
+          thread_title: thread.title,
+          post_number: post_number
+        }
+      }
+    }
   end
 
 private
