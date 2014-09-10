@@ -5,14 +5,14 @@ class NotificationMailerPreview < ActionMailer::Preview
   end
 
   def broadcast_email
-    NotificationMailer.broadcast_email([User.first], Post.first)
+    NotificationMailer.broadcast_email([User.first.id], Post.first)
   end
 
   def new_post_in_subscribed_thread_email
-    NotificationMailer.new_post_in_subscribed_thread_email([User.first], Post.first)
+    NotificationMailer.new_post_in_subscribed_thread_email([User.first.id], Post.first)
   end
 
   def new_thread_in_subscribed_subforum_email
-    NotificationMailer.new_thread_in_subscribed_subforum_email([User.first], DiscussionThread.first)
+    NotificationMailer.new_thread_in_subscribed_subforum_email([User.first.id], DiscussionThread.first)
   end
 end
