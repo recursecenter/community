@@ -19,7 +19,7 @@ class BroadcastNotifier < Notifier
         return
       end
 
-      BatchNotificationSender.delay.deliver(:broadcast_email, recipient_variables(email_recipients, post), email_recipients, post)
+      BatchNotificationSender.delay.deliver(:broadcast_email, recipient_variables(email_recipients, post), email_recipients.map(&:id), post)
     end
   end
 
