@@ -1,7 +1,7 @@
 module EmailFields
   extend ActiveSupport::Concern
 
-  def reply_to_thread_address(reply_info)
+  def reply_to_post_address(reply_info)
     "Community <reply-#{reply_info}@mail.community.hackerschool.com>"
   end
 

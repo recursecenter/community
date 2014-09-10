@@ -20,7 +20,7 @@ class NotificationMailer < ActionMailer::Base
          to: list_address(@post.thread.subforum),
          bcc: @user.email,
          from: @mentioned_by.display_email,
-         reply_to: reply_to_thread_address(reply_info),
+         reply_to: reply_to_post_address(reply_info),
          subject: subforum_thread_subject(@post.thread))
   end
 
