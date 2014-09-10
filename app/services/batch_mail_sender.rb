@@ -36,6 +36,7 @@ private
       # TODO: These To fields need to match up with keys in recipient_variables,
       # which might not include display addresses.
       "to" => mail.to,
+      "bcc" => mail.bcc,
       "from" => mail["from"].to_s,
       "subject" => mail.subject,
       "text" => mail.text_part.body.to_s,

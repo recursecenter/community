@@ -17,7 +17,8 @@ class NotificationMailer < ActionMailer::Base
     end
 
     mail(message_id: @post.message_id,
-         to: @user.email,
+         to: list_address(@post.thread.subforum),
+         bcc: @user.email,
          from: @mentioned_by.display_email,
          reply_to: reply_to_thread_address(reply_info),
          subject: subforum_thread_subject(@post.thread))
@@ -32,7 +33,8 @@ class NotificationMailer < ActionMailer::Base
     end
 
     mail(message_id: @post.message_id,
-         to: users.map(&:email),
+         to: list_address(@post.thread.subforum),
+         bcc: users.map(&:email),
          from: @post.author.display_email,
          subject: subforum_thread_subject(@post.thread))
   end
@@ -45,7 +47,8 @@ class NotificationMailer < ActionMailer::Base
     end
 
     mail(message_id: @post.message_id,
-         to: users.map(&:email),
+         to: list_address(@post.thread.subforum),
+         bcc: users.map(&:email),
          from: @post.author.display_email,
          subject: subforum_thread_subject(@post.thread))
   end
@@ -54,7 +57,8 @@ class NotificationMailer < ActionMailer::Base
     @thread = thread
 
     mail(message_id: @thread.posts.first.message_id,
-         to: users.map(&:email),
+         to: list_address(@thread.subforum),
+         bcc: users.map(&:email),
          from: @thread.created_by.display_email,
          subject: subforum_thread_subject(@thread))
   end
