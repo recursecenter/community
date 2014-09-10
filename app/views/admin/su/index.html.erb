@@ -1,12 +1,12 @@
 <div id="app">
   <div class="container">
-    <%= form_tag('/admin/grant-sudo', :class=> 'form-horizontal') do %>
+    <%= form_tag(admin_su_path, :class=> 'form-horizontal') do %>
       <fieldset>
-        <legend>$ sudo </legend>
+        <legend>$ su</legend>
         <div class="control-group">
           <div class="controls">
             <input type="text" class="input-xlarge" name="email">
-            <button class="btn btn-danger" > <i class="icon-user icon-white"></i> Change user</button> 
+            <button class="btn btn-danger"> <i class="icon-user icon-white"></i> Change user</button>
           </div>
         </div>
       </fieldset>
