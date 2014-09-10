@@ -24,7 +24,8 @@ class NotificationMailer < ActionMailer::Base
          subject: subforum_thread_subject(@post.thread))
   end
 
-  def broadcast_email(users, post)
+  def broadcast_email(user_ids, post)
+    users = User.where(id: user_ids)
     @post = post
     @group_names = post.broadcast_groups.map(&:name)
 
@@ -39,7 +40,8 @@ class NotificationMailer < ActionMailer::Base
          subject: subforum_thread_subject(@post.thread))
   end
 
-  def new_post_in_subscribed_thread_email(users, post)
+  def new_post_in_subscribed_thread_email(user_ids, post)
+    users = User.where(id: user_ids)
     @post = post
 
     if @post.previous_message_id
@@ -53,7 +55,8 @@ class NotificationMailer < ActionMailer::Base
          subject: subforum_thread_subject(@post.thread))
   end
 
-  def new_thread_in_subscribed_subforum_email(users, thread)
+  def new_thread_in_subscribed_subforum_email(user_ids, thread)
+    users = User.where(id: user_ids)
     @thread = thread
 
     mail(message_id: @thread.posts.first.message_id,
