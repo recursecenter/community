@@ -6,7 +6,7 @@ module EmailFields
   end
 
   def list_address(subforum)
-    "#{subforum.name.downcase.gsub(/\s+/, '-')}@list.community.hackerschool.com"
+    "#{subforum.name.downcase.gsub(/\s+/, '-')}@lists.community.hackerschool.com"
   end
 
   def subforum_thread_subject(thread)
