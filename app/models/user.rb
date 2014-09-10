@@ -2,6 +2,7 @@ require 'digest'
 require 'set'
 
 class User < ActiveRecord::Base
+  include Searchable
   has_many :threads, foreign_key: 'created_by_id', class_name: 'DiscussionThread'
   has_many :posts, foreign_key: 'author_id'
   has_many :notifications
