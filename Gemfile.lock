@@ -44,6 +44,19 @@ GEM
     dotenv-deployment (0.0.2)
     dotenv-rails (0.11.1)
       dotenv (= 0.11.1)
+    elasticsearch (1.0.5)
+      elasticsearch-api (= 1.0.5)
+      elasticsearch-transport (= 1.0.5)
+    elasticsearch-api (1.0.5)
+      multi_json
+    elasticsearch-model (0.1.5)
+      activesupport (> 3)
+      elasticsearch (> 0.4)
+      hashie
+    elasticsearch-rails (0.1.5)
+    elasticsearch-transport (1.0.5)
+      faraday
+      multi_json
     erubis (2.7.0)
     eventmachine (1.0.3)
     execjs (2.2.1)
@@ -54,6 +67,7 @@ GEM
       websocket-driver (>= 0.3.1)
     font-awesome-sass (4.1.0)
       sass (~> 3.2)
+    hashie (3.3.1)
     hike (1.2.3)
     i18n (0.6.11)
     jasmine (2.0.2)
@@ -173,6 +187,9 @@ DEPENDENCIES
   dalli
   delayed_job_active_record
   dotenv-rails
+  elasticsearch
+  elasticsearch-model
+  elasticsearch-rails
   eventmachine
   faye-websocket
   font-awesome-sass

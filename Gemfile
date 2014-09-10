@@ -59,3 +59,8 @@ gem 'faye-websocket'
 gem 'eventmachine'
 
 gem 'thread_safe'
+
+# ElasticCache gem for searching
+gem 'elasticsearch'
+gem 'elasticsearch-model'
+gem 'elasticsearch-rails'
