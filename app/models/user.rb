@@ -70,6 +70,10 @@ class User < ActiveRecord::Base
     "https://gravatar.com/avatar/#{gravatar_id}.png?s=150&d=#{CGI.escape(default_url)}"
   end
 
+  def display_email
+    %{"#{name}" <#{email}>}
+  end
+
   def mention_for_post(post)
     mentions.where(post: post, mentioned_by: post.author).first_or_create
   end
