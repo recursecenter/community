@@ -21,10 +21,11 @@ module Searchable
       self.import force: true, batch_size: 50, transform: lambda {|item| item.to_search_mapping }
     end
 
-    def self.search_with_intent(query)
+    def self.search(query)
       #TODO: Do some complex query parsing and discover intent here
-      self.search(query)
+      __elasticsearch__.search(query).results
     end
+  end
 
   end
 end
