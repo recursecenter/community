@@ -5,8 +5,8 @@
         <legend>$ su</legend>
         <div class="control-group">
           <div class="controls">
-            <input type="text" class="input-xlarge" name="email">
-            <button class="btn btn-danger"> <i class="icon-user icon-white"></i> Change user</button>
+            <%= select_tag "user_id", options_for_select(available_users) %>
+            <%= submit_tag "Change User", :class => "btn btn-danger" %>
           </div>
         </div>
       </fieldset>
