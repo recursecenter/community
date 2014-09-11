@@ -47,7 +47,12 @@ class Post < ActiveRecord::Base
           author_email: author.email,
           thread: thread.id,
           thread_title: thread.title,
-          post_number: post_number
+          post_number: post_number,
+          subforum: thread.subforum.id,
+          subforum_name: thread.subforum.name,
+          subforum_group: thread.subforum.subforum_group.id,
+          subforum_group_name: thread.subforum.subforum_group.name,
+          ui_color: thread.subforum.ui_color
         }
       }
     }
