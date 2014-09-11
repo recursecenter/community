@@ -16,6 +16,7 @@ Rails.application.routes.draw do
 
   namespace :api, format: false, defaults: {format: 'json'} do
     post 'welcome_message/read' => 'welcome_messages#read'
+    get 'search' => 'search#query'
 
     resources :users do
       get :me, on: :collection
@@ -45,10 +46,6 @@ Rails.application.routes.draw do
     namespace :private do
       post :reply, to: 'email_webhooks#reply'
       post :opened, to: 'email_webhooks#opened'
-    end
-
-    namespace :search do
-      get :query
     end
   end
 end
