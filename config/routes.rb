@@ -14,6 +14,14 @@ Rails.application.routes.draw do
 
   get '/threads/:id/unsubscribe' => 'threads#unsubscribe', as: :unsubscribe_thread
 
+  # sudo for development only
+  namespace :admin do
+    if Rails.env.development?
+      get 'su' => 'su#index'
+      post 'su' => 'su#create'
+    end
+  end
+
   namespace :api, format: false, defaults: {format: 'json'} do
     post 'welcome_message/read' => 'welcome_messages#read'
 
