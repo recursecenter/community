@@ -117,6 +117,9 @@
   (make-api-fn (fn [id] (GET (str "/threads/" id)))
     :res-transform (partial models/api->model :thread)))
 
+(def search
+  (make-api-fn (fn [query] (GET (str "/search/q=" query)))))
+
 (defn validate-post [post]
   (when (empty? (:body post))
     "The body of a post cannot be empty."))

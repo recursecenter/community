@@ -7,6 +7,7 @@
             [community.components.index :as index]
             [community.components.subforum :as subforum]
             [community.components.thread :as thread]
+            [community.components.search :as search]
             [community.components.shared :as shared]
             [community.components.settings :as settings]
             [om.core :as om]))
@@ -17,6 +18,7 @@
 (defmethod routes/dispatch :settings       [_] settings/settings)
 (defmethod routes/dispatch :subforum       [_] subforum/subforum)
 (defmethod routes/dispatch :thread         [_] thread/thread)
+(defmethod routes/dispatch :search         [_] search/search)
 (defmethod routes/dispatch :page-not-found [_] shared/page-not-found)
 (defmethod routes/dispatch :default        [_] shared/page-not-found)
 

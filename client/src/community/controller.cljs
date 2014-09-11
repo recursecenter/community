@@ -141,6 +141,14 @@
              :ui-color nil
              :loading? false))))
 
+(defmethod update-route-data :search [app-state route-data]
+  (go
+    (swap! app-state assoc :loading? true)
+    (swap! app-state assoc
+           :route-data route-data
+           :ui-color nil
+           :loading? false)))
+
 (defmethod update-route-data :page-not-found [app-state route-data]
   (swap! app-state assoc
     :route-data {:route :page-not-found}
