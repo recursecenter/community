@@ -61,7 +61,7 @@
     list-style: none;
     margin-top: 10px;
 
-    li {
+    > li {
       display: inline-block;
       vertical-align: top;
       padding: 0 15px;
@@ -84,6 +84,7 @@
 
   .dropdown-menu {
     margin-top: 5px;
+    margin-right: -15px;
     border-radius: 0;
     box-shadow: none;
     padding: 0;

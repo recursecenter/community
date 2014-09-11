@@ -1,0 +1,15 @@
+<div id="app">
+  <div class="container">
+    <%= form_tag(admin_su_path, :class=> 'form-horizontal') do %>
+      <fieldset>
+        <legend>$ su</legend>
+        <div class="control-group">
+          <div class="controls">
+            <%= select_tag "user_id", options_for_select(@su_users.map { |u| [u.name, u.id] }) %>
+            <%= submit_tag "Change User", :class => "btn btn-danger" %>
+          </div>
+        </div>
+      </fieldset>
+    <% end %>
+  </div>
+</div>

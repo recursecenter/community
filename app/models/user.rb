@@ -100,4 +100,8 @@ class User < ActiveRecord::Base
   def last_read_welcome_message_at
     super || Time.zone.at(0).to_datetime # Unix Epoch start
   end
+
+  def is_admin?
+    self.roles.include? Role.admin
+  end
 end
