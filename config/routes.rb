@@ -46,5 +46,9 @@ Rails.application.routes.draw do
       post :reply, to: 'email_webhooks#reply'
       post :opened, to: 'email_webhooks#opened'
     end
+
+    namespace :search do
+      get :query
+    end
   end
 end
