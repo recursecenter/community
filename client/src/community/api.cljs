@@ -118,7 +118,7 @@
     :res-transform (partial models/api->model :thread)))
 
 (def search
-  (make-api-fn (fn [query] (GET (str "/search/q=" query)))))
+  (make-api-fn (fn [query] (GET (str "/search?q=" query)))))
 
 (defn validate-post [post]
   (when (empty? (:body post))

@@ -10,9 +10,24 @@
             [sablono.core :refer-macros [html]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
   
-(defcomponent search [app owner]
-  (display-name [_] "Search Box")
-
+(defcomponent result [{:keys [-source] :as app} result]
+  (display-name [_] "Result")
+  
   (render [_]
     (html
-      [:div "You searched for stuff"])))
+      [:div.search-result
+        [:h3.thread-title (:thread-title -source)]
+        [:p.post (:body -source)]
+        [:p.post.small (:author-name -source)]])))
+
+(defcomponent search [{:keys [search] :as app} owner]
+  (display-name [_] "Search Results")
+
+  (render [_]
+    (let [results (:results search)]
+      (if (empty? results)
+        (html
+          [:div
+           "Sorry, there were no matching results for this search."])
+        (html
+          [:div.results (map (partial ->result) results)])))))

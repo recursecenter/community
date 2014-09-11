@@ -11,7 +11,7 @@ Rails.application.routes.draw do
   get '/f/*path' => 'pages#index'
   get '/t/:slug/:id' => 'pages#index', as: 'thread'
   get '/t/:slug/:thread_id/:post_number' => 'pages#index', as: 'post'
-
+  get '/s/*query/' => 'pages#index', as: 'search'
   get '/threads/:id/unsubscribe' => 'threads#unsubscribe', as: :unsubscribe_thread
 
   namespace :api, format: false, defaults: {format: 'json'} do
