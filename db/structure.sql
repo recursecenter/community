@@ -80,7 +80,8 @@ CREATE TABLE discussion_threads (
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
     highest_post_number integer DEFAULT 0,
-    pinned boolean DEFAULT false
+    pinned boolean DEFAULT false,
+    last_post_created_at timestamp without time zone
 );
 
 
@@ -449,6 +450,7 @@ CREATE VIEW threads_with_visited_status AS
     thread_users.highest_post_number,
     thread_users.user_id,
     thread_users.pinned,
+    thread_users.last_post_created_at,
         CASE
             WHEN (visited_statuses.last_post_number_read IS NULL) THEN 0
             ELSE visited_statuses.last_post_number_read
@@ -465,6 +467,7 @@ CREATE VIEW threads_with_visited_status AS
             discussion_threads.updated_at,
             discussion_threads.highest_post_number,
             discussion_threads.pinned,
+            discussion_threads.last_post_created_at,
             users.id AS user_id
            FROM discussion_threads,
             users) thread_users
@@ -890,4 +893,6 @@ INSERT INTO schema_migrations (version) VALUES ('20140904163524');
 INSERT INTO schema_migrations (version) VALUES ('20140909190021');
 
 INSERT INTO schema_migrations (version) VALUES ('20140911152147');
+
+INSERT INTO schema_migrations (version) VALUES ('20140911192911');
 

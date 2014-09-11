@@ -5,7 +5,7 @@ json.threads do
   json.array! threads do |thread|
     json.extract! thread, :id, :title, :slug, :highest_post_number, :last_post_number_read, :pinned
     json.n_subscribers thread.subscribers.count
-    json.updated_at thread.updated_at.to_i
+    json.last_post_created_at thread.last_post_created_at.to_i
     json.last_posted_to_by thread.posts.last.author.name
     json.unread thread.unread?
 

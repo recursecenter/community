@@ -12,7 +12,7 @@ class Post < ActiveRecord::Base
     DistributedLock.new("thread_#{thread.id}").synchronize do
       next_post_number = thread.highest_post_number + 1
       self.post_number = next_post_number
-      thread.update(highest_post_number: next_post_number)
+      thread.update(highest_post_number: next_post_number, last_post_created_at: created_at)
     end
   end
 
