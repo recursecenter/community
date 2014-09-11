@@ -7,7 +7,7 @@ json.subforums do
 
     json.threads do
       json.array! subforum.threads_for_user(current_user).includes(:created_by).order(updated_at: :desc).limit(3) do |thread|
-        json.extract! thread, :id, :title, :slug, :highest_post_number, :last_post_number_read
+        json.extract! thread, :id, :title, :slug, :highest_post_number, :last_post_number_read, :pinned
         json.updated_at thread.updated_at.to_i
         json.last_posted_to_by thread.posts.last.author.name
         json.unread thread.unread?
