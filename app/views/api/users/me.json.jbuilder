@@ -2,6 +2,8 @@ json.partial! 'user', user: current_user
 
 json.welcome_message WelcomeMessage.for(current_user).try(:message)
 
+json.roles current_user.roles.map(&:name)
+
 notifications = current_user.notifications.unread.map do |n|
   n.to_builder.attributes!
 end

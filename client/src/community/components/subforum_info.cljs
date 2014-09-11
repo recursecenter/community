@@ -54,7 +54,7 @@
          [:div.title
           [:p {:class (when nowrap? "nowrap-text")}
            (when (:pinned thread)
-             [:i.fa.fa-thumb-tack.pinned])
+             [:i.fa.fa-thumb-tack.pinned-icon])
            (link-to (routes :thread thread) {:style {:color ui-color}}
                     (if unread [:strong title] title))]]
          [:div.created-by.meta.hidden-xs

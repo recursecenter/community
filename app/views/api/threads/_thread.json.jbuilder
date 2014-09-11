@@ -1,4 +1,4 @@
-json.extract! thread, :id, :title, :slug
+json.extract! thread, :id, :title, :slug, :pinned
 json.ui_color thread.subforum.ui_color
 json.n_subscribers thread.subscribers.count
 json.posts do

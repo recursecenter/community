@@ -36,6 +36,8 @@ Rails.application.routes.draw do
           resources :threads do
             post :subscribe, on: :member
             post :unsubscribe, on: :member
+            post :pin, on: :member
+            post :unpin, on: :member
             resources :posts
           end
         end

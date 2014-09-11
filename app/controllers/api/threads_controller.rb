@@ -36,6 +36,16 @@ class Api::ThreadsController < Api::ApiController
     end
   end
 
+  def pin
+    @thread.update(pinned: true)
+    render 200, json: {}
+  end
+
+  def unpin
+    @thread.update(pinned: false)
+    render 200, json: {}
+  end
+
 private
   def create_params
     subforum = Subforum.find(params[:subforum_id])

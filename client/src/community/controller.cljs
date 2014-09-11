@@ -207,6 +207,13 @@
   (swap! app-state assoc-in [:current-user :welcome-message] nil)
   (api/mark-welcome-message-as-read))
 
+(defn handle-toggle-thread-pinned [app-state thread]
+  (let [pinned? (not (:pinned thread))]
+    (swap! app-state assoc-in [:thread :pinned] pinned?)
+    (if pinned?
+      (api/pin-thread thread)
+      (api/unpin-thread thread))))
+
 ;;; Main loop
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -219,7 +226,8 @@
                   :update-post handle-update-post
                   :new-post handle-new-post
                   :notifications-read handle-notifications-read
-                  :welcome-message-read handle-welcome-message-read)]
+                  :welcome-message-read handle-welcome-message-read
+                  :toggle-thread-pinned handle-toggle-thread-pinned)]
     (apply handler app-state args)))
 
 (defn start-loop! [app-state]

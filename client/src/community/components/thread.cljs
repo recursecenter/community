@@ -113,7 +113,7 @@
                          (- 100))]
       (.scrollTo js/window 0 scroll-pos))))
 
-(defcomponent thread [{:keys [thread route-data]} owner]
+(defcomponent thread [{:keys [thread route-data current-user]} owner]
   (display-name [_] "Thread")
 
   (init-state [_]
@@ -132,7 +132,15 @@
       (html
         [:div#thread-view
          [:div.t-title
-          [:h3 (:title thread)]]
+          [:h3
+           (when (:pinned thread) [:i.fa.fa-thumb-tack.pinned-icon])
+           (:title thread)]
+          (when (models/admin? current-user)
+            [:button.btn.btn-link.btn-xs
+             {:onClick #(controller/dispatch :toggle-thread-pinned @thread)}
+             (if (:pinned thread)
+               "unpin"
+               [:span [:i.fa.fa-thumb-tack] "pin"])])]
 
          [:div.row.no-side-margin
           [:div.subscribe (shared/->subscription-info (:subscription thread))]
