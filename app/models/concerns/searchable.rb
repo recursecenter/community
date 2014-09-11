@@ -3,18 +3,7 @@ module Searchable
 
   included do
     include Elasticsearch::Model
-    after_commit :upsert_search_index!
-
-    # Override this method to change the search mapping for this model
-    def to_search_mapping
-      { index: { _id: id, data: __elasticsearch__.as_indexed_json } }
-    end
-
-    # Insert/update a single row instance
-    # TODO: Wrap it with begin-rescue
-    def upsert_search_index!
-      self.class.where(id: id).import transform: lambda {|item| item.to_search_mapping }
-    end
+    after_commit :upsert_to_search_index!
 
     # Reset search index for the entire model 50 rows at a time
     def self.reset_search_index!
@@ -27,5 +16,14 @@ module Searchable
     end
   end
 
+  # Override this method to change the search mapping for this model
+  def to_search_mapping
+    { index: { _id: id, data: __elasticsearch__.as_indexed_json } }
+  end
+
+  # Insert/update a single row instance
+  # TODO: Wrap it with begin-rescue
+  def upsert_to_search_index!
+    self.class.where(id: id).import transform: lambda {|item| item.to_search_mapping }
   end
 end
