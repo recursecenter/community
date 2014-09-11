@@ -3,7 +3,7 @@ json.subforum_group_name subforum.subforum_group.name
 json.n_subscribers subforum.subscribers.count
 json.threads do
   json.array! threads do |thread|
-    json.extract! thread, :id, :title, :slug, :highest_post_number, :last_post_number_read
+    json.extract! thread, :id, :title, :slug, :highest_post_number, :last_post_number_read, :pinned
     json.n_subscribers thread.subscribers.count
     json.updated_at thread.updated_at.to_i
     json.last_posted_to_by thread.posts.last.author.name

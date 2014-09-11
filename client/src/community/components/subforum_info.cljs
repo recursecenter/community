@@ -53,6 +53,8 @@
           [:span.user-name (:last-posted-to-by thread)]]
          [:div.title
           [:p {:class (when nowrap? "nowrap-text")}
+           (when (:pinned thread)
+             [:i.fa.fa-thumb-tack.pinned])
            (link-to (routes :thread thread) {:style {:color ui-color}}
                     (if unread [:strong title] title))]]
          [:div.created-by.meta.hidden-xs
