@@ -39,8 +39,6 @@ SQL
   end
 
   def down
-    remove_column :discussion_threads, :pinned
-
     execute <<-SQL
 DROP VIEW threads_with_visited_status;
 
@@ -73,5 +71,7 @@ CREATE VIEW threads_with_visited_status AS
             users) thread_users
    LEFT JOIN visited_statuses ON (((thread_users.id = visited_statuses.thread_id) AND ((thread_users.user_id = visited_statuses.user_id) OR (visited_statuses.user_id IS NULL)))));
 SQL
+
+    remove_column :discussion_threads, :pinned
   end
 end
