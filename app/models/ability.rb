@@ -13,7 +13,7 @@ class Ability
     alias_action :subscribe, :unsubscribe, to: :read
     can [:create, :read], DiscussionThread
 
-    if user.satisfies_roles?(Role.admin)
+    if user.is_admin?
       can [:pin, :unpin], DiscussionThread
     end
 
