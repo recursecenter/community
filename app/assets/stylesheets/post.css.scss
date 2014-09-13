@@ -98,3 +98,12 @@
   min-height: 150px;
   max-width: 100%;
 }
+
+.post-preview {
+  min-height: 200px;
+  border-top: 0;
+
+  .post-body {
+    width: 100%;
+  }
+}
