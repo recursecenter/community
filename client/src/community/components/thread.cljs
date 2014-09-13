@@ -14,7 +14,7 @@
             [clojure.string :as str])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
-(defcomponent post-form [{:keys [post index autocomplete-users broadcast-groups]} owner]
+(defcomponent post-form [{:keys [post autocomplete-users broadcast-groups]} owner]
   (display-name [_] "PostForm")
 
   (init-state [_]
@@ -30,7 +30,7 @@
                            (.preventDefault e)
                            (when-not (:submitting? @post)
                              (if (:persisted? @post)
-                               (controller/dispatch :update-post @post index)
+                               (controller/dispatch :update-post @post)
                                (controller/dispatch :new-post @post))))}
         [:div.post-form-body
          (when (not (:persisted? post))
@@ -68,7 +68,7 @@
 (defn post-number-id [n]
   (str "post-number-" n))
 
-(defcomponent post [{:keys [post index autocomplete-users highlight?]} owner]
+(defcomponent post [{:keys [post autocomplete-users highlight?]} owner]
   (display-name [_] "Post")
 
   (render [_]
@@ -90,7 +90,6 @@
         [:div.post-content
          (if (:editing? post)
            (->post-form {:post post
-                         :index index
                          :autocomplete-users autocomplete-users})
            [:div
             [:div.post-body
@@ -154,10 +153,9 @@
           [:div.t-threads
            [:div.t-top-bar {:style {:background-color (:ui-color thread)}}]
            [:ol.list-unstyled
-            (for [[i post] (map-indexed vector (:posts thread))]
+            (for [post (:posts thread)]
               (->post {:post post
                        :autocomplete-users autocomplete-users
-                       :index i
                        :highlight? (= (str (:post-number post)) (:post-number route-data))}
                       {:react-key (:id post)}))]]]
 

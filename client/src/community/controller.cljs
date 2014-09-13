@@ -183,22 +183,23 @@
       (finally
         (swap! app-state assoc-in [:thread :submitting?] false)))))
 
-(defn handle-update-post [app-state post index]
-  (go
-    (try
-      (swap! app-state assoc-in [:thread :posts index :submitting?] true)
-      (let [autocomplete-users (-> @app-state :thread :autocomplete-users)
-            post-with-mentions (models/with-mentions post autocomplete-users)
-            updated-post (<? (api/update-post post-with-mentions))]
-        (append-or-update-post! app-state updated-post)
-        (remove-errors! app-state [:thread :posts index])
-        (swap! app-state assoc-in [:thread :posts index :editing?] false))
+(defn handle-update-post [app-state post]
+  (let [index (dec (:post-number post))]
+    (go
+      (try
+        (swap! app-state assoc-in [:thread :posts index :submitting?] true)
+        (let [autocomplete-users (-> @app-state :thread :autocomplete-users)
+              post-with-mentions (models/with-mentions post autocomplete-users)
+              updated-post (<? (api/update-post post-with-mentions))]
+          (append-or-update-post! app-state updated-post)
+          (remove-errors! app-state [:thread :posts index])
+          (swap! app-state assoc-in [:thread :posts index :editing?] false))
 
-      (catch ExceptionInfo e
-        (add-error! app-state [:thread :posts index] e))
+        (catch ExceptionInfo e
+          (add-error! app-state [:thread :posts index] e))
 
-      (finally
-        (swap! app-state assoc-in [:thread :posts index :submitting?] false)))))
+        (finally
+          (swap! app-state assoc-in [:thread :posts index :submitting?] false))))))
 
 (defn handle-notifications-read [app-state notifications]
   (api/mark-notifications-as-read notifications))
