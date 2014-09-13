@@ -126,6 +126,29 @@
   }
 }
 
+.post.post-in-series {
+  border-top-color: $gray-lighter;
+  margin-bottom: 0;
+  padding-bottom: 0;
+
+  .post-author-image {
+    visibility: hidden;
+    height: 0;
+  }
+
+  .author-name, .batch-name {
+    display: none;
+  }
+
+  .timestamp {
+    color: $gray-light;
+  }
+}
+
+.post.post-in-series.post-highlight {
+  border-top-color: $brand-primary-muted;
+}
+
 .post-highlight {
   border-top: 2px dashed $brand-primary-muted;
   padding-top: 1.5em;

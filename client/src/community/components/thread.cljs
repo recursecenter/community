@@ -68,13 +68,14 @@
 (defn post-number-id [n]
   (str "post-number-" n))
 
-(defcomponent post [{:keys [post autocomplete-users highlight?]} owner]
+(defcomponent post [{:keys [post autocomplete-users highlight? in-series?]} owner]
   (display-name [_] "Post")
 
   (render [_]
     (html
       [:li.post {:id (post-number-id (:post-number post))
-                 :class (when highlight? "post-highlight")}
+                 :class [(when highlight? "post-highlight")
+                         (when in-series? "post-in-series")]}
        [:div.row
         [:div.post-author-image
          [:a {:href (routes/hs-route :person (:author post))}
@@ -83,9 +84,9 @@
             :width "50"       ;TODO: request different image sizes
             }]]]
         [:div.post-metadata
-         [:a {:href (routes/hs-route :person (:author post))}
+         [:a.author-name {:href (routes/hs-route :person (:author post))}
           (-> post :author :name)]
-         [:div (-> post :author :batch-name)]
+         [:div.batch-name (-> post :author :batch-name)]
          [:div.timestamp (util/human-format-time (:created-at post))]]
         [:div.post-content
          (if (:editing? post)
@@ -153,11 +154,15 @@
           [:div.t-threads
            [:div.t-top-bar {:style {:background-color (:ui-color thread)}}]
            [:ol.list-unstyled
-            (for [post (:posts thread)]
-              (->post {:post post
-                       :autocomplete-users autocomplete-users
-                       :highlight? (= (str (:post-number post)) (:post-number route-data))}
-                      {:react-key (:id post)}))]]]
+            (for [[last-post post] (map vector (cons nil (:posts thread))
+                                               (:posts thread))]
+              (let [in-series? (= (:id (:author last-post))
+                                  (:id (:author post)))]
+                (->post {:post post
+                         :autocomplete-users autocomplete-users
+                         :highlight? (= (str (:post-number post)) (:post-number route-data))
+                         :in-series? in-series?}
+                        {:react-key (:id post)})))]]]
 
          [:div.row.no-side-margin
           [:div.new-post
