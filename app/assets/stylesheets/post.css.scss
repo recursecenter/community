@@ -42,6 +42,11 @@
       font-size: 1em;
       color: #555;
     }
+
+    table {
+      @extend .table;
+      @extend .table-striped;
+    }
   }
 
   // Smaller than a medium screen
