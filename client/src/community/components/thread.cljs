@@ -55,14 +55,14 @@
                       :data-new-anchor true
                       :placeholder "Compose your post..."}}})])]
         [:div.post-form-controls
-         [:button.btn.btn-default.btn-sm {:type "submit"
-                                          :disabled (:submitting? post)}
+         [:button.post-update {:type "submit"
+                               :disabled (:submitting? post)}
           (if (:persisted? post) "Update" "Post")]
          (when (:persisted? post)
-           [:button.btn.btn-link.btn-sm {:type "button"
-                                         :onClick (fn [e]
-                                                    (om/update! post :body (om/get-state owner :original-post-body))
-                                                    (om/update! post :editing? false))}
+           [:button.post-cancel-update {:type "button"
+                                        :onClick (fn [e]
+                                                   (om/update! post :body (om/get-state owner :original-post-body))
+                                                   (om/update! post :editing? false))}
             "Cancel"])]]])))
 
 (defn post-number-id [n]
@@ -92,17 +92,17 @@
            (->post-form {:post post
                          :index index
                          :autocomplete-users autocomplete-users})
-           [:div.row
+           [:div
             [:div.post-body
              (partials/html-from-markdown
               (partials/wrap-mentions (:body post) autocomplete-users))]
             [:div.post-controls
              (when (and (:editable post) (not (:editing? post)))
-               [:button.btn.btn-default.btn-sm
+               [:button.post-edit
                 {:onClick (fn [e]
                             (.preventDefault e)
                             (om/update! post :editing? true))}
-                "Edit"])]])]]])))
+                [:span [:i.fa.fa-pencil] " Edit"]])]])]]])))
 
 (defn scroll-to-post-number [post-number]
   (when post-number

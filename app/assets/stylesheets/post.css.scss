@@ -14,6 +14,7 @@
 
   .post-content {
     @include make-sm-column(9);
+    padding-left: 0;
   }
 
   .post-body, .post-form-body {
@@ -28,7 +29,51 @@
     @include make-sm-column(1.5);
   }
 
+  .post-controls {
+    text-align: center;
+
+    .post-edit, .post-edit:hover {
+      @extend .btn;
+      @extend .btn-link;
+      @extend .btn-xs;
+
+      color: $gray-light;
+    }
+    .post-edit:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .post-form-controls {
+    text-align: center;
+
+    .post-update, .post-update:hover {
+      @extend .btn;
+      @extend .btn-link;
+      @extend .btn-xs;
+
+      color: $brand-primary-muted;
+      border: 1px solid $brand-primary-muted;
+    }
+    .post-update:hover {
+      text-decoration: underline;
+    }
+
+    .post-cancel-update, .post-cancel-update:hover {
+      @extend .btn;
+      @extend .btn-link;
+      @extend .btn-xs;
+
+      color: $brand-danger;
+    }
+    .post-cancel-update:hover {
+      text-decoration: underline;
+    }
+  }
+
   .post-body {
+    padding: 0;
+
     ul, ol {
       margin: 10px 0;
     }
@@ -102,6 +147,7 @@
 .post-preview {
   min-height: 200px;
   border-top: 0;
+  padding: 0 15px;
 
   .post-body {
     width: 100%;
