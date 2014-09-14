@@ -15,6 +15,11 @@
   .post-content {
     @include make-sm-column(9);
     padding-left: 0;
+
+    // Small screen only
+    @media (max-width: $screen-sm-min) {
+      padding-left: 15px;
+    }
   }
 
   .post-body, .post-form-body {
@@ -126,22 +131,25 @@
   }
 }
 
-.post.post-in-series {
-  border-top-color: $gray-lighter;
-  margin-bottom: 0;
-  padding-bottom: 0;
+// Bigger than a small screen
+@media (min-width: $screen-sm-max) {
+  .post.post-in-series {
+    border-top-color: $gray-lighter;
+    margin-bottom: 0;
+    padding-bottom: 0;
 
-  .post-author-image {
-    visibility: hidden;
-    height: 0;
-  }
+    .post-author-image {
+      visibility: hidden;
+      height: 0;
+    }
 
-  .author-name, .batch-name {
-    display: none;
-  }
+    .author-name, .batch-name {
+      display: none;
+    }
 
-  .timestamp {
-    color: $gray-light;
+    .timestamp {
+      color: $gray-light;
+    }
   }
 }
 
