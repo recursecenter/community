@@ -1,6 +1,6 @@
 require 'elasticsearch/model'
 ENV['ELASTICSEARCH_HOST'] ||= 'localhost'
-ENV['ELASTICSEARCH_PORT'] ||= 9200
+ENV['ELASTICSEARCH_PORT'] ||= '9200'
 
 enable_logging = Rails.env.development? ? true : false
 
