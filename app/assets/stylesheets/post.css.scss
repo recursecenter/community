@@ -71,7 +71,7 @@
       border: 1px solid $brand-primary-muted;
     }
     .post-update:hover {
-      text-decoration: underline;
+      background-color: $super-light-gray;
     }
 
     .post-cancel-update, .post-cancel-update:hover {
@@ -82,7 +82,7 @@
       color: $brand-danger;
     }
     .post-cancel-update:hover {
-      text-decoration: underline;
+      color: $brand-danger-dark;
     }
 
     // Small screen only
