@@ -201,7 +201,7 @@
         [:div.row
          [:div#main-content
           (cond loading?
-                (partials/loading-icon)
+                (partials/loading-icon (:ui-color app))
 
                 (and current-user route-data)
                 (om/build (routes/dispatch route-data) app))]]]
