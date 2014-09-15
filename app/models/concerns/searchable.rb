@@ -7,7 +7,7 @@ module Searchable
 
     # Reset search index for the entire model 50 rows at a time
     def self.reset_search_index!
-      self.import force: true, batch_size: 50, transform: lambda {|item| item.to_search_mapping }
+      self.import force: true, batch_size: 50, transform: lambda { |item| item.to_search_mapping }
     end
 
     def self.search(query)
@@ -24,6 +24,6 @@ module Searchable
   # Insert/update a single row instance
   # TODO: Wrap it with begin-rescue
   def upsert_to_search_index!
-    self.class.where(id: id).import transform: lambda {|item| item.to_search_mapping }
+    self.class.where(id: id).import transform: lambda { |item| item.to_search_mapping }
   end
 end
