@@ -10,6 +10,7 @@
 - Postgres 9.3.4
 - redis
 - leiningen
+- Elasticsearch
 
 ### Installing dependencies on OS X using rvm, Homebrew, and Postgres.app
 
@@ -29,9 +30,8 @@ $ gem install foreman
 
 ```sh
 $ brew update
-$ brew install leiningen
-$ brew install redis
-# follow the printed instructions to have redis start automatically on boot
+$ brew install leiningen redis elasticsearch
+# follow the printed instructions to have redis and elasticsearch start automatically on boot
 ```
 
 ## Configuration
