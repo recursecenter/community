@@ -47,6 +47,16 @@
     .post-edit:hover {
       color: $gray;
     }
+
+    // Small screen only
+    @media (max-width: $screen-sm-min) {
+      text-align: left;
+      padding-left: 0;
+
+      .post-edit, .post-edit:hover {
+        padding: 0;
+      }
+    }
   }
 
   .post-form-controls {
@@ -73,6 +83,12 @@
     }
     .post-cancel-update:hover {
       text-decoration: underline;
+    }
+
+    // Small screen only
+    @media (max-width: $screen-sm-min) {
+      text-align: left;
+      padding-left: 0;
     }
   }
 
