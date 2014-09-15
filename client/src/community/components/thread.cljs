@@ -55,15 +55,21 @@
                       :data-new-anchor true
                       :placeholder "Compose your post..."}}})])]
         [:div.post-form-controls
-         [:button.post-update {:type "submit"
-                               :disabled (:submitting? post)}
-          (if (:persisted? post) "Update" "Post")]
-         (when (:persisted? post)
-           [:button.post-cancel-update {:type "button"
-                                        :onClick (fn [e]
-                                                   (om/update! post :body (om/get-state owner :original-post-body))
-                                                   (om/update! post :editing? false))}
-            "Cancel"])]]])))
+         (if (:persisted? post)
+           [:div
+            [:button.post-update
+             {:type "submit"
+              :disabled (:submitting? post)}
+             "Update"]
+            [:button.post-cancel-update
+             {:type "button"
+              :onClick (fn [e]
+                         (om/update! post :body (om/get-state owner :original-post-body))
+                         (om/update! post :editing? false))}
+             "Cancel"]]
+           [:button.btn.btn-default.btn-sm {:type "submit"
+                                            :disabled (:submitting? post)}
+             "Post"])]]])))
 
 (defn post-number-id [n]
   (str "post-number-" n))

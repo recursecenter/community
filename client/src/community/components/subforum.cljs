@@ -51,8 +51,8 @@
                  :passthrough {:id "post-body"
                                :class ["form-control" "post-textarea"]
                                :placeholder "Compose your post..."}}})]
-       [:button.btn.btn-default {:type "submit"
-                                 :disabled submitting?}
+       [:button.btn.btn-default.btn-sm {:type "submit"
+                                        :disabled submitting?}
         "Create thread"]])))
 
 (defn thread-post-preview [subforum]
