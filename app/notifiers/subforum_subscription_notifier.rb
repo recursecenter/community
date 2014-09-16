@@ -11,9 +11,10 @@ class SubforumSubscriptionNotifier < Notifier
   end
 
   def notify(email_recipients)
-    unless email_recipients.empty?
-      BatchNotificationSender.delay.deliver(:new_thread_in_subscribed_subforum_email, recipient_variables(email_recipients, first_post), email_recipients.map(&:id), thread)
-    end
+    subscribed_to_thread, not_subscribed_to_thread = email_recipients.partition(&:subscribe_new_thread_in_subscribed_subforum)
+
+    send(:new_subscribed_thread_in_subscribed_subforum_email, subscribed_to_thread)
+    send(:new_thread_in_subscribed_subforum_email, not_subscribed_to_thread)
   end
 
   def possible_recipients
@@ -24,6 +25,13 @@ class SubforumSubscriptionNotifier < Notifier
         to_set
     else
       Set.new
+    end
+  end
+
+private
+  def send(method, recipients)
+    if recipients.present?
+      BatchNotificationSender.delay.deliver(method, recipient_variables(recipients, first_post), recipients.map(&:id), thread)
     end
   end
 end

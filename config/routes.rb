@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   get '/t/:slug/:thread_id/:post_number' => 'pages#index', as: 'post'
 
   get '/threads/:id/unsubscribe' => 'threads#unsubscribe', as: :unsubscribe_thread
+  get '/threads/:id/subscribe' => 'threads#subscribe', as: :subscribe_thread
 
   # sudo for development only
   namespace :admin do

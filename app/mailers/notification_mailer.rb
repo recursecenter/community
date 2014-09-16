@@ -56,6 +56,15 @@ class NotificationMailer < ActionMailer::Base
   end
 
   def new_thread_in_subscribed_subforum_email(user_ids, thread)
+    thread_subscription_email(user_ids, thread)
+  end
+
+  def new_subscribed_thread_in_subscribed_subforum_email(user_ids, thread)
+    thread_subscription_email(user_ids, thread)
+  end
+
+private
+  def thread_subscription_email(user_ids, thread)
     users = User.where(id: user_ids)
     @thread = thread
 

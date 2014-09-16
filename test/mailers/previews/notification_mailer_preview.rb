@@ -15,4 +15,8 @@ class NotificationMailerPreview < ActionMailer::Preview
   def new_thread_in_subscribed_subforum_email
     NotificationMailer.new_thread_in_subscribed_subforum_email([User.first.id], DiscussionThread.first)
   end
+
+  def new_subscribed_thread_in_subscribed_subforum_email
+    NotificationMailer.new_subscribed_thread_in_subscribed_subforum_email([User.first.id], DiscussionThread.first)
+  end
 end
