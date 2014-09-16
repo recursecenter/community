@@ -15,6 +15,6 @@ class ThreadsController < ApplicationController
   def subscribe
     @thread.subscription_for(current_user).subscribe
 
-    render plain: "You are receiving emails because you subscribed to this thread."
+    render plain: "You've been subscribed to '#{@thread.title}.'"
   end
 end
