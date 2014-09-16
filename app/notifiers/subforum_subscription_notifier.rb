@@ -13,8 +13,8 @@ class SubforumSubscriptionNotifier < Notifier
   def notify(email_recipients)
     subscribed_to_thread, not_subscribed_to_thread = email_recipients.partition(&:subscribe_new_thread_in_subscribed_subforum)
 
-    send(:new_subscribed_thread_in_subscribed_subforum_email, subscribed_to_thread)
-    send(:new_thread_in_subscribed_subforum_email, not_subscribed_to_thread)
+    send_emails(:new_subscribed_thread_in_subscribed_subforum_email, subscribed_to_thread)
+    send_emails(:new_thread_in_subscribed_subforum_email, not_subscribed_to_thread)
   end
 
   def possible_recipients
@@ -29,7 +29,7 @@ class SubforumSubscriptionNotifier < Notifier
   end
 
 private
-  def send(method, recipients)
+  def send_emails(method, recipients)
     if recipients.present?
       BatchNotificationSender.delay.deliver(method, recipient_variables(recipients, first_post), recipients.map(&:id), thread)
     end
