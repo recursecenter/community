@@ -43,6 +43,7 @@ private
       "html" => mail.html_part.body.to_s,
       "h:Message-ID" => mail.header["Message-ID"].to_s,
       "h:In-Reply-To" => mail.header["In-Reply-To"].to_s,
+      "h:List-Id" => mail.header["List-Id"].to_s,
       "h:Reply-To" => reply_to_post_address("%recipient.reply_info%"),
       "v:reply_info" => "%recipient.reply_info%",
       "recipient-variables" => JSON.generate(recipient_variables))

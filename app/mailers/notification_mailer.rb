@@ -17,11 +17,11 @@ class NotificationMailer < ActionMailer::Base
     end
 
     mail(message_id: @post.message_id,
-         to: list_address(@post.thread.subforum),
-         bcc: @user.email,
+         to: @user.email,
          from: @mentioned_by.display_email,
          reply_to: reply_to_post_address(reply_info),
-         subject: subforum_thread_subject(@post.thread))
+         subject: subforum_thread_subject(@post.thread),
+         "List-Id" => list_id(@post.thread.subforum))
   end
 
   def broadcast_email(user_ids, post)
@@ -37,7 +37,8 @@ class NotificationMailer < ActionMailer::Base
          to: list_address(@post.thread.subforum),
          bcc: users.map(&:email),
          from: @post.author.display_email,
-         subject: subforum_thread_subject(@post.thread))
+         subject: subforum_thread_subject(@post.thread),
+         "List-Id" => list_id(@post.thread.subforum))
   end
 
   def new_post_in_subscribed_thread_email(user_ids, post)
@@ -52,7 +53,8 @@ class NotificationMailer < ActionMailer::Base
          to: list_address(@post.thread.subforum),
          bcc: users.map(&:email),
          from: @post.author.display_email,
-         subject: subforum_thread_subject(@post.thread))
+         subject: subforum_thread_subject(@post.thread),
+         "List-Id" => list_id(@post.thread.subforum))
   end
 
   def new_thread_in_subscribed_subforum_email(user_ids, thread)
@@ -72,6 +74,7 @@ private
          to: list_address(@thread.subforum),
          bcc: users.map(&:email),
          from: @thread.created_by.display_email,
-         subject: subforum_thread_subject(@thread))
+         subject: subforum_thread_subject(@thread),
+         "List-Id" => list_id(@thread.subforum))
   end
 end

@@ -12,4 +12,8 @@ module EmailFields
   def subforum_thread_subject(thread)
     "[Community - #{thread.subforum.name}] #{thread.title}"
   end
+
+  def list_id(subforum)
+    "<#{subforum.name.downcase.gsub(/\s+/, '-')}.community.hackerschool.com>"
+  end
 end
