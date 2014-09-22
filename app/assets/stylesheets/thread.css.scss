@@ -1,4 +1,5 @@
 #thread-view {
+
   .subscribe {
     @include make-sm-column-offset(2.5);
     @include make-sm-column(8);
@@ -7,6 +8,23 @@
   .new-post {
     @include make-sm-column-offset(2.5);
     @include make-sm-column(9.5);
+
+    .post-form-controls {
+      @include make-sm-column(8); 
+      padding-left: 0px;
+      padding-right: 0px;
+    }
+  
+    .markdown-help {
+      @include make-sm-column(4);
+      padding-right: 0px;
+      margin-top: 5px        ;
+
+      .help-link {
+        font-size: 12px;      
+        float: right;
+      }
+    } 
   }
 
   .t-title {

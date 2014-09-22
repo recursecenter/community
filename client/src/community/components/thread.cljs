@@ -54,22 +54,25 @@
                       :name "post[body]"
                       :data-new-anchor true
                       :placeholder "Compose your post..."}}})])]
-        [:div.post-form-controls
-         (if (:persisted? post)
-           [:div
-            [:button.post-update
-             {:type "submit"
-              :disabled (:submitting? post)}
-             "Update"]
-            [:button.post-cancel-update
-             {:type "button"
-              :onClick (fn [e]
-                         (om/update! post :body (om/get-state owner :original-post-body))
-                         (om/update! post :editing? false))}
-             "Cancel"]]
-           [:button.btn.btn-default.btn-sm {:type "submit"
-                                            :disabled (:submitting? post)}
-             "Post"])]]])))
+        [:div.row.no-side-margin.post-form-bottom-row
+         [:div.post-form-controls
+          (if (:persisted? post)
+            [:div
+             [:button.post-update
+              {:type "submit"
+               :disabled (:submitting? post)}
+              "Update"]
+             [:button.post-cancel-update
+              {:type "button"
+               :onClick (fn [e]
+                          (om/update! post :body (om/get-state owner :original-post-body))
+                          (om/update! post :editing? false))}
+              "Cancel"]]
+            [:button.btn.btn-default.btn-sm {:type "submit"
+                                             :disabled (:submitting? post)}
+             "Post"]
+            )]
+         [:div.markdown-help [:a.help-link {:target "_blank" :href "https://guides.github.com/features/mastering-markdown/"} "Parsed as Markdown"]]]]])))
 
 (defn post-number-id [n]
   (str "post-number-" n))
