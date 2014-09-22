@@ -17,7 +17,7 @@
     (println -source)
     (html
       [:div.row.col-md-offset-1.col-md-9.search-result
-       [:div.row.search-header 
+       [:div.row.header 
         [:div.col-md-8 (link-to (routes :thread {:id (:thread -source)
                                                  :slug (:thread-slug -source)
                                                  :post-number (:post-number -source)})
@@ -29,8 +29,8 @@
                                 [:h5 (:subforum-group-name -source)
                                      " / "
                                      (:subforum-name -source)])]]
-      [:div.search-body (:body -source)]
-      [:div.row.search-footer 
+      [:div.body (:body -source)]
+      [:div.row.footer 
        [:div.col-md-10 (:author-name -source)]
        [:div.col-md-2  (link-to (routes :thread {:id (:thread -source)
                                                  :slug (:thread-slug -source)
