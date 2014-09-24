@@ -1,5 +1,4 @@
 require 'digest'
-require 'set'
 
 class User < ActiveRecord::Base
   has_many :threads, foreign_key: 'created_by_id', class_name: 'DiscussionThread'
@@ -12,56 +11,6 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :roles
 
   scope :ordered_by_first_name, -> { order(first_name: :asc) }
-
-  def self.create_or_update_from_api_data(user_data)
-    user = where(hacker_school_id: user_data["id"]).first_or_initialize
-
-    user.hacker_school_id = user_data["id"]
-    user.first_name = user_data["first_name"]
-    user.last_name = user_data["last_name"]
-    user.email = user_data["email"]
-    user.avatar_url = user_data["image"] if user_data["has_photo"]
-    user.batch_name = user_data["batch"]["name"]
-    user.groups = [Group.everyone, Group.for_batch_api_data(user_data["batch"])]
-
-    autosubscribe_subforum_names = []
-
-    if user_data["is_hacker_schooler"] && user.new_record?
-      autosubscribe_subforum_names += ["Welcome", "Housing"]
-    end
-
-    if user_data["currently_at_hacker_school"]
-      user.groups += [Group.current_hacker_schoolers]
-      autosubscribe_subforum_names += ["New York", "455 Broadway"]
-    end
-
-    if user_data["is_faculty"]
-      user.groups += [Group.faculty]
-    end
-
-    roles = user.roles.to_set
-
-    roles << Role.everyone
-
-    if (Date.parse(user_data["batch"]["start_date"]) - 1.day).past?
-      roles << Role.full_hacker_schooler
-    end
-
-    if user_data["is_faculty"]
-      roles |= [Role.everyone, Role.full_hacker_schooler, Role.admin]
-    end
-
-    user.roles = roles.to_a
-
-    user.save!
-
-    subforums = autosubscribe_subforum_names.map { |name| Subforum.where(name: name).first! }
-    subforums.each do |subforum|
-      user.subscribe_to_unless_existing(subforum, "You are receiving emails because you were auto-subscribed at the beginning of your batch.")
-    end
-
-    user
-  end
 
   def name
     "#{first_name} #{last_name}"
