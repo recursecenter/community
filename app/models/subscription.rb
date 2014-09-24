@@ -2,6 +2,7 @@ class Subscription < ActiveRecord::Base
   belongs_to :subscribable, polymorphic: true
   belongs_to :user
 
+  validates :user, :subscribable, presence: true
   validate :unique_for_subscribable_and_user, on: :create
 
   def subscribe
