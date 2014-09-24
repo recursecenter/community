@@ -9,9 +9,8 @@ subforum_groups = {
                       ["Welcome",       "#008C9E",          [:everyone],
                        "Welcome to Hacker School! Introductions, questions, and announcements for those preparing to attend Hacker School."],
                       ["Housing",       "#08A39B",          [:everyone],
-                       "Resources, tips, and listings for Hacker Schoolers in NYC."]],
-
-  "Programming" =>   [["General",       "rgb(153,191,107)", [:everyone, :full_hacker_schooler],
+                       "Resources, tips, and listings for Hacker Schoolers in NYC."],
+                      ["Programming",       "rgb(153,191,107)", [:everyone, :full_hacker_schooler],
                        "Programming, becoming a better programmer, and other things related to programming."]],
 
   "Regions" =>       [["New York",      "rgb(167,106,185)", [:everyone, :full_hacker_schooler],
