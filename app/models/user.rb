@@ -24,8 +24,15 @@ class User < ActiveRecord::Base
     user.batch_name = user_data["batch"]["name"]
     user.groups = [Group.everyone, Group.for_batch_api_data(user_data["batch"])]
 
+    autosubscribe_subforum_names = []
+
+    if user_data["is_hacker_schooler"] && user.new_record?
+      autosubscribe_subforum_names += ["Welcome", "Housing"]
+    end
+
     if user_data["currently_at_hacker_school"]
       user.groups += [Group.current_hacker_schoolers]
+      autosubscribe_subforum_names += ["New York", "455 Broadway"]
     end
 
     if user_data["is_faculty"]
@@ -48,11 +55,9 @@ class User < ActiveRecord::Base
 
     user.save!
 
-    if user_data["currently_at_hacker_school"]
-      subforums = ["New York", "455 Broadway"].map { |name| Subforum.where(name: name).first! }
-      subforums.each do |subforum|
-        user.subscribe_to_unless_existing(subforum, "You are receiving emails because you were auto-subscribed at the beginning of your batch.")
-      end
+    subforums = autosubscribe_subforum_names.map { |name| Subforum.where(name: name).first! }
+    subforums.each do |subforum|
+      user.subscribe_to_unless_existing(subforum, "You are receiving emails because you were auto-subscribed at the beginning of your batch.")
     end
 
     user
