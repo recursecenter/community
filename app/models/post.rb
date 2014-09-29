@@ -60,6 +60,45 @@ class Post < ActiveRecord::Base
     }
   end
 
+  def self.query_dsl(query)
+    # match query for exact matches, terms
+    exact_match_query = {
+      multi_match: {
+        query: query,
+        boost: 100,
+        fields: [:thread_title, :body]
+      }
+    }
+
+    # match query for phrase prefixes
+    phrase_match_query = {
+      multi_match: {
+        query: query,
+        boost: 10,
+        fields: [:thread_title, :body],
+        type: :phrase_prefix
+      }
+    }
+
+    # Combine exact match and prefix queries
+    query_dsl = {
+      bool: {
+        should: [exact_match_query, phrase_match_query]
+      }
+    }
+
+    return query_dsl
+  end
+
+  def self.highlight_fields
+    {
+      fields: {
+        thread_title: {},
+        body: {}
+      }
+    }
+  end
+
 private
   def format_message_id(thread_id, post_number)
     "<thread-#{thread_id}/post-#{post_number}@community.hackerschool.com>"
