@@ -43,7 +43,7 @@ class Post < ActiveRecord::Base
         data: {
           body: body,
           author: author.id,
-          author_name: author.first_name,
+          author_name: author.name,
           author_email: author.email,
           thread: thread.id,
           thread_title: thread.title,
