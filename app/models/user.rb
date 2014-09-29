@@ -97,4 +97,15 @@ class User < ActiveRecord::Base
   def last_read_welcome_message_at
     super || Time.zone.at(0).to_datetime # Unix Epoch start
   end
+
+  def to_search_mapping
+    user_data = __elasticsearch__.as_indexed_json
+    user_data["suggest"] = {
+      input: [name, email, first_name, last_name],
+      output: name,
+      payload: {id: id, email: email}
+    }
+
+    { index: { _id: id, data: user_data } }
+  end
 end
