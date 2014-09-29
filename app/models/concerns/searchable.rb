@@ -10,9 +10,19 @@ module Searchable
       self.import force: true, batch_size: 50, transform: lambda { |item| item.to_search_mapping }
     end
 
+    # Search method to query the index for this particular model
     def self.search(query)
-      #TODO: Do some complex query parsing and discover intent here
-      __elasticsearch__.search(query).results
+      __elasticsearch__.search(query: self.query_dsl(query), highlight: self.highlight_fields)
+    end
+
+    # Override this method to change the DSL for querying the including model
+    def self.query_dsl(query)
+      return query
+    end
+
+    # Override this method to change the fields to highlight when this model is queried
+    def self.highlight_fields
+      return {}
     end
   end
 
