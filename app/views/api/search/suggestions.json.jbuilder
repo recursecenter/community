@@ -1,0 +1,1 @@
+json.results @suggestions.to_a

@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   namespace :api, format: false, defaults: {format: 'json'} do
     post 'welcome_message/read' => 'welcome_messages#read'
     get 'search' => 'search#query'
+    get 'suggestions' => 'search#suggestions'
 
     resources :users do
       get :me, on: :collection
