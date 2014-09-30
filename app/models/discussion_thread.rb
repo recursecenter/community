@@ -33,7 +33,7 @@ class DiscussionThread < ActiveRecord::Base
     thread_data["suggest"] = {
       input: [title.split(" ")],
       output: title,
-      payload: {id: id}
+      payload: {id: id, slug: slug}
     }
 
     { index: { _id: id, data: thread_data } }

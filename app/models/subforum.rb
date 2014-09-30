@@ -19,7 +19,7 @@ class Subforum < ActiveRecord::Base
     subforum_data["suggest"] = {
       input: [name.split(" ")],
       output: name,
-      payload: {id: id}
+      payload: {id: id, slug: slug}
     }
 
     { index: { _id: id, data: subforum_data } }
