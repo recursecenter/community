@@ -62,6 +62,7 @@ class Post < ActiveRecord::Base
 
   def self.query_dsl(query)
     query_without_filters = self.strip_filters(query)
+
     # match query for exact matches, terms
     exact_match_query = {
       multi_match: {
@@ -90,7 +91,7 @@ class Post < ActiveRecord::Base
         clauses.push({ term: { key => value } })
       end
 
-      return { filtered: { filter: { bool: { must: clauses } } } }
+      filtered_query = { filtered: { filter: { bool: { must: clauses } } } }
     end
 
     # Combine exact match and prefix queries
@@ -99,6 +100,9 @@ class Post < ActiveRecord::Base
         should: [exact_match_query, phrase_match_query]
       }
     }
+
+    # Add filtered query as a must only when its available
+    query_dsl[:bool][:must] = filtered_query unless filtered_query.blank?
 
     return query_dsl
   end
@@ -112,7 +116,7 @@ class Post < ActiveRecord::Base
     }
   end
 
-  def self.allowed_filter_keys
+  def self.allowed_filter_fields
     return ["thread", "subforum", "subforum_group", "author"]
   end
 
