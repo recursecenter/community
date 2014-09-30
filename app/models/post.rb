@@ -42,18 +42,18 @@ class Post < ActiveRecord::Base
         _id: id,
         data: {
           body: body,
-          author: author.id,
-          author_name: author.name,
+          author: author.name,
+          author_id: author.id,
           author_email: author.email,
-          thread: thread.id,
-          thread_title: thread.title,
+          thread: thread.title,
+          thread_id: thread.id,
           thread_slug: thread.slug,
           post_number: post_number,
-          subforum: thread.subforum.id,
-          subforum_name: thread.subforum.name,
+          subforum: thread.subforum.name,
+          subforum_id: thread.subforum.id,
           subforum_slug: thread.subforum.slug,
-          subforum_group: thread.subforum.subforum_group.id,
-          subforum_group_name: thread.subforum.subforum_group.name,
+          subforum_group: thread.subforum.subforum_group.name,
+          subforum_group_id: thread.subforum.subforum_group.id,
           ui_color: thread.subforum.ui_color
         }
       }
@@ -61,6 +61,7 @@ class Post < ActiveRecord::Base
   end
 
   def self.query_dsl(query)
+    query_without_filters = self.strip_filters(query)
     # match query for exact matches, terms
     exact_match_query = {
       multi_match: {
@@ -80,6 +81,18 @@ class Post < ActiveRecord::Base
       }
     }
 
+    # filtered query for filters
+    filters = self.filters(query)
+    filtered_query = nil
+    unless filters.blank?
+      clauses = Array.new
+      filters.each do |key, value|
+        clauses.push({ term: { key => value } })
+      end
+
+      return { filtered: { filter: { bool: { must: clauses } } } }
+    end
+
     # Combine exact match and prefix queries
     query_dsl = {
       bool: {
@@ -97,6 +110,10 @@ class Post < ActiveRecord::Base
         body: {}
       }
     }
+  end
+
+  def self.allowed_filter_keys
+    return ["thread", "subforum", "subforum_group", "author"]
   end
 
 private

@@ -3,6 +3,7 @@ class DiscussionThread < ActiveRecord::Base
   include Subscribable
 
   include Slug
+  include Searchable
   has_slug_for :title
 
   has_many :visited_statuses, foreign_key: 'thread_id'
@@ -25,5 +26,16 @@ class DiscussionThread < ActiveRecord::Base
 
   def resource_name
     "thread"
+  end
+
+  def to_search_mapping
+    thread_data = Hash.new
+    thread_data["suggest"] = {
+      input: [title],
+      output: title,
+      payload: {id: id}
+    }
+
+    { index: { _id: id, data: thread_data } }
   end
 end
