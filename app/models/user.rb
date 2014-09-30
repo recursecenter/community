@@ -103,7 +103,7 @@ class User < ActiveRecord::Base
     user_data["suggest"] = {
       input: [name, email, first_name, last_name],
       output: name,
-      payload: {id: id, email: email, first_name: first_name, last_name: last_name, name: name, hacker_school_id: hacker_school_id}
+      payload: {id: id, email: email, first_name: first_name, last_name: last_name, name: name}
     }
 
     { index: { _id: id, data: user_data } }

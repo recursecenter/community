@@ -44,6 +44,7 @@ class Post < ActiveRecord::Base
           body: body,
           author: author.name,
           author_id: author.id,
+          author_hacker_school_id: author.hacker_school_id,
           author_email: author.email,
           thread: thread.title,
           thread_id: thread.id,
