@@ -31,7 +31,7 @@ class DiscussionThread < ActiveRecord::Base
   def to_search_mapping
     thread_data = Hash.new
     thread_data["suggest"] = {
-      input: [title],
+      input: [title.split(" ")],
       output: title,
       payload: {id: id}
     }

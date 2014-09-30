@@ -17,7 +17,7 @@ class Subforum < ActiveRecord::Base
   def to_search_mapping
     subforum_data = Hash.new
     subforum_data["suggest"] = {
-      input: [name],
+      input: [name.split(" ")],
       output: name,
       payload: {id: id}
     }
