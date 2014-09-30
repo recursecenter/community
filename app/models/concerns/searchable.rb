@@ -26,7 +26,7 @@ module Searchable
     # Suggest methods to return suggestions for this particular model
     def suggest(query)
        suggest = { suggestions: { text: query, completion: { field: "suggest" } } }
-      __elasticsearch__.client.suggest(index: self.table_name, body: suggest)
+      __elasticsearch__.client.suggest(index: self.table_name, body: suggest)["suggestions"].first["options"]
     end
 
     # Override this method to customize the DSL for querying the including model
