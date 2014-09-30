@@ -5,6 +5,8 @@ class Api::SearchController < Api::ApiController
   end
 
   def suggestions
-    @suggestions = User.suggest(params[:q])
+    @users = User.suggest(params[:q])
+    @threads = DiscussionThread.suggest(params[:q])
+    @subforums = Subforum.suggest(params[:q])
   end
 end

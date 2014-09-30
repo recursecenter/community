@@ -1,1 +1,3 @@
-json.results @suggestions.to_a
+json.users @users["suggestions"]
+json.threads @threads["suggestions"]
+json.subforums @subforums["suggestions"]
