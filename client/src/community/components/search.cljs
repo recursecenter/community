@@ -29,9 +29,11 @@
                                 [:h5 (:subforum-group -source)
                                      " / "
                                      (:subforum -source)])]]
-      [:div.body (:body -source)]
+      [:div.body (partials/html-from-markdown (:body -source))]
       [:div.row.footer 
-       [:div.col-md-10 (:author -source)]
+       [:div.col-md-10 [:a {:href (routes/hs-route 
+                                    :person {:hacker-school-id (:hacker-school-id -source)})}
+                           (:author -source)]]
        [:div.col-md-2  (link-to (routes :thread {:id (:thread-id -source)
                                                  :slug (:thread-slug -source)
                                                  })
