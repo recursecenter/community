@@ -210,6 +210,10 @@
   (swap! app-state assoc-in [:current-user :welcome-message] nil)
   (api/mark-welcome-message-as-read))
 
+(defn handle-update-search-suggestions [app-state query]
+  (go (let [results (<? (api/suggestions query))]
+        (swap! app-state assoc :suggestions results))))
+
 ;;; Main loop
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -222,7 +226,8 @@
                   :update-post handle-update-post
                   :new-post handle-new-post
                   :notifications-read handle-notifications-read
-                  :welcome-message-read handle-welcome-message-read)]
+                  :welcome-message-read handle-welcome-message-read
+                  :update-search-suggestions handle-update-search-suggestions)]
     (apply handler app-state args)))
 
 (defn start-loop! [app-state]

@@ -5,6 +5,7 @@
             [community.components.shared :as shared]
             [community.util :as util :refer-macros [<? p]]
             [community.partials :as partials]
+            [community.components.search :as search]
             [om.core :as om]
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :refer-macros [html]])
@@ -164,22 +165,6 @@
              [:li.active (:title thread)]]))
         [:div]))))
 
-(defn search [app owner]
-  (let [input (om/get-node owner "search-query")
-        query (-> input .-value)]
-    (routes/redirect-to (routes :search {:query query}))))
-
-(defcomponent search-box [app owner]
-  (display-name [_] "Search Box")
-
-  (render [_]
-    (html
-      [:form.form-inline 
-        {:name "search-form"
-         :onSubmit (fn [e]
-                     (.preventDefault e)
-                     (search app owner))}
-          [:input.form-control {:ref "search-query" :type "text" :style {:height "26px"}} ]])))
 
 (defcomponent navbar [{:as app :keys [current-user ui-color]} owner]
   (display-name [_] "NavBar")
@@ -196,7 +181,7 @@
         [:div.breadcrumbs-container.hidden-xs (->breadcrumbs app)]
         (when current-user
           [:ul.community-nav.list-inline
-           [:li.hidden-xs (->search-box app)]
+           [:li.hidden-xs (search/->search-box app)]
            [:li.hidden-xs [:p.navbar-text "Hi, " (:first-name current-user) "!"]]
            [:li.hidden-xs (->notifications-dropdown current-user)]
            [:li (partials/link-to (routes :settings)

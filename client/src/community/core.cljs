@@ -18,7 +18,7 @@
 (defmethod routes/dispatch :settings       [_] settings/settings)
 (defmethod routes/dispatch :subforum       [_] subforum/subforum)
 (defmethod routes/dispatch :thread         [_] thread/thread)
-(defmethod routes/dispatch :search         [_] search/search)
+(defmethod routes/dispatch :search         [_] search/search-results)
 (defmethod routes/dispatch :page-not-found [_] shared/page-not-found)
 (defmethod routes/dispatch :default        [_] shared/page-not-found)
 

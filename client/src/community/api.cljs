@@ -120,6 +120,9 @@
 (def search
   (make-api-fn (fn [query] (GET (str "/search?q=" query)))))
 
+(def suggestions
+  (make-api-fn (fn [query] (GET (str "/suggestions?q=" query)))))
+
 (defn validate-post [post]
   (when (empty? (:body post))
     "The body of a post cannot be empty."))
