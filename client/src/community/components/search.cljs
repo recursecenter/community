@@ -7,9 +7,11 @@
             [community.util :as util :refer-macros [<? p]]
             [community.partials :as partials :refer [link-to]]
             [om.core :as om]
+            [om.dom :as dom]
+            [cljs.core.async :as async :refer [chan <! >! close!]]
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :refer-macros [html]])
-  (:require-macros [cljs.core.async.macros :refer [go]]))
+  (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
   
 (def key->facet {:none :none :users :author :threads :thread :subforums :subforum})
 
@@ -26,8 +28,7 @@
                         (str "Narrow to thread: " text)
                       :subforum
                         (str "Narrow to subforum: " text))]
-      ;{:facet facet :text display-text :id id :slug slug}
-      display-text))
+      {:facet facet :text display-text :id id :slug slug}))
 
 (defn results->display-list
   "Given all results from the suggestions endpoint, return list of things to show in the autocomplete menu"
@@ -74,33 +75,47 @@
 
 
 (defn search [owner]
-  (let [_ (println "I am being called")
-        input (om/get-node owner "search-query")
+  (let [input (om/get-node owner "search-query")
         query (-> input .-value)]
     (routes/redirect-to (routes :search {:query query}))))
 
-(defn suggest [query]
-  (controller/dispatch :update-search-suggestions query))
+(defn handle-input-change [query owner state]
+  (do
+    (controller/dispatch :update-search-suggestions query)   
+    (om/set-state! owner :input query)))
+
+(defcomponent suggestions [suggestions owner]
+  (display-name [_] "Search suggestions")
+  (render-state [_ {:keys [input]}]
+    (let [results (results->display-list input suggestions)]
+    (html
+      [:div.list-group {:id "suggestions"}
+        (map (fn [data] [:a {:href "#"
+            :class "list-group-item"} (:text data)]) results)]))))
 
 (defcomponent search-box [app owner]
   (display-name [_] "Search Box")
+  
+  (init-state [_]
+    {:input ""})
 
-  (render [_]
+  (render-state [_ {:keys [input] :as state}]
     (html
-      [:form.form-inline 
-        {:name "search-form"
-         :onSubmit (fn [e]
-                     (.preventDefault e)
-                     (search owner))}
-          [:input.form-control {:ref "search-query" 
-                                :type "text" 
-                                :style {:height "26px"}
-                                :onKeyUp (fn [e] (suggest (.. e -target -value)))}]])))
+      [:div
+        [:form.form-inline 
+          {:name "search-form"
+           :onSubmit (fn [e]
+                       (.preventDefault e)
+                       (search owner))}
+            [:input.form-control {:ref "search-query" 
+                                  :type "text" 
+                                  :style {:height "26px"}
+                                  :value input
+                                  :onChange (fn [e] (handle-input-change 
+                                                      (.. e -target -value) owner state))}]]
+        (->suggestions (:suggestions app) {:init-state state})])))
 
-(defcomponent suggestions [app owner]
-  (display-name [_] "Search suggestions")
-  (render [_]
-    (println app)))
+
 
 (defcomponent search-results [{:keys [search] :as app} owner]
   (display-name [_] "Search Results")
