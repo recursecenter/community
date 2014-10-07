@@ -39,9 +39,59 @@
                     (when (not (empty? result-set))
                       (map
                         (fn [result] 
-                          (result->display-item key (:text result) (:payload result))) result-set)))
+                          (result->display-item key (:text result) (:payload result))) 
+                        result-set)))
                   (keys results) (vals results))]
     (conj display always-display)))
+
+(defcomponent suggestions-view [{:keys [query suggestions]} owner]
+  (display-name [_] "Search suggestions")
+  (render-state [_ {:keys [input]}]
+    (let [results (results->display-list query suggestions)]
+    (html
+      [:div.list-group {:id "suggestions" :ref "suggestions"}
+        (map (fn [data] [:a {:href "#"
+            :class "list-group-item"} (:text data)]) results)]))))
+
+(defn search [owner]
+  (let [input (om/get-node owner "search-query")
+        query (-> input .-value)]
+    (routes/redirect-to (routes :search {:query query}))))
+
+(defn handle-input-change [query owner state]
+  (do
+    (controller/dispatch :update-search-suggestions query)   
+    (om/set-state! owner :input query)))
+
+(defcomponent input-view [app owner]
+  (display-name [_] "Search Input")
+  
+  (render-state [_ {:keys [input] :as state}]
+    (html
+      [:div
+        [:form.form-inline 
+          {:name "search-form"
+           :onSubmit (fn [e]
+                       (.preventDefault e)
+                       (search owner))}
+            [:input.form-control {:ref "search-query" 
+                                  :type "text" 
+                                  :style {:height "26px"}
+                                  :value input
+                                  :onChange (fn [e] (handle-input-change 
+                                                      (.. e -target -value) owner input))}]]])))
+
+(defcomponent autocomplete [app owner]
+  (display-name [_] "Autocomplete")
+
+  (init-state [_]
+    {:input ""})
+
+  (render-state [_ state]
+    (html
+      [:div
+        (->input-view app {:init-state state}) 
+        (->suggestions-view app {:init-state state})])))
 
 (defcomponent result [{:keys [-source] :as result}]
   (display-name [_] "Result")
@@ -72,51 +122,6 @@
                                 {:style {:color (:ui-color -source)}}          
                                 "View thread ->")]]])))
 
-
-
-(defn search [owner]
-  (let [input (om/get-node owner "search-query")
-        query (-> input .-value)]
-    (routes/redirect-to (routes :search {:query query}))))
-
-(defn handle-input-change [query owner state]
-  (do
-    (controller/dispatch :update-search-suggestions query)   
-    (om/set-state! owner :input query)))
-
-(defcomponent suggestions [suggestions owner]
-  (display-name [_] "Search suggestions")
-  (render-state [_ {:keys [input]}]
-    (let [results (results->display-list input suggestions)]
-    (html
-      [:div.list-group {:id "suggestions"}
-        (map (fn [data] [:a {:href "#"
-            :class "list-group-item"} (:text data)]) results)]))))
-
-(defcomponent search-box [app owner]
-  (display-name [_] "Search Box")
-  
-  (init-state [_]
-    {:input ""})
-
-  (render-state [_ {:keys [input] :as state}]
-    (html
-      [:div
-        [:form.form-inline 
-          {:name "search-form"
-           :onSubmit (fn [e]
-                       (.preventDefault e)
-                       (search owner))}
-            [:input.form-control {:ref "search-query" 
-                                  :type "text" 
-                                  :style {:height "26px"}
-                                  :value input
-                                  :onChange (fn [e] (handle-input-change 
-                                                      (.. e -target -value) owner state))}]]
-        (->suggestions (:suggestions app) {:init-state state})])))
-
-
-
 (defcomponent search-results [{:keys [search] :as app} owner]
   (display-name [_] "Search Results")
 
@@ -130,5 +135,3 @@
           [:div
             [:div.col-md-offset-1 [:h4 "Search Results"]]
             [:div.results (map (partial ->result) results)]])))))
-
- 

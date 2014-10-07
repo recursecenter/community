@@ -212,7 +212,7 @@
 
 (defn handle-update-search-suggestions [app-state query]
   (go (let [results (<? (api/suggestions query))]
-        (swap! app-state assoc :suggestions results))))
+        (swap! app-state assoc :query query :suggestions results))))
 
 ;;; Main loop
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

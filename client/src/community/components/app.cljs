@@ -181,7 +181,7 @@
         [:div.breadcrumbs-container.hidden-xs (->breadcrumbs app)]
         (when current-user
           [:ul.community-nav.list-inline
-           [:li.hidden-xs (search/->search-box app)]
+           [:li.hidden-xs (search/->autocomplete app)]
            [:li.hidden-xs [:p.navbar-text "Hi, " (:first-name current-user) "!"]]
            [:li.hidden-xs (->notifications-dropdown current-user)]
            [:li (partials/link-to (routes :settings)
