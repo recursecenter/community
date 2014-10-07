@@ -5,6 +5,8 @@ class Subforum < ActiveRecord::Base
   include Slug
   has_slug_for :name
 
+  validates :name, uniqueness: { case_sensitive: false }
+
   # we need to specify class_name because we want "thread" to be pluralized,
   # not "status".
   has_many :threads_with_visited_status, class_name: 'ThreadWithVisitedStatus'
