@@ -8,7 +8,7 @@
             [community.partials :as partials :refer [link-to]]
             [om.core :as om]
             [om.dom :as dom]
-            [cljs.core.async :as async :refer [chan <! >! close!]]
+            [cljs.core.async :as async :refer [chan <! >! close! put! alts!]]
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :refer-macros [html]])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
@@ -44,12 +44,30 @@
                   (keys results) (vals results))]
     (conj display always-display)))
 
+(defn display [show]
+  (if show
+    {}
+    {:display "none"}))
+
 (defcomponent suggestions-view [{:keys [query suggestions]} owner]
   (display-name [_] "Search suggestions")
-  (render-state [_ {:keys [input]}]
+
+  (init-state [_]
+    {:hidden true})
+
+  (will-mount [_]
+    (let [hide (om/get-state owner :hide)]
+      (go-loop [] 
+        (let [[v ch] (alts! [hide])]
+          (cond
+            (= ch hide)
+              (om/set-state! owner :hidden v))
+        (recur)))))
+
+  (render-state [_ {:keys [hide hidden]}]
     (let [results (results->display-list query suggestions)]
     (html
-      [:div.list-group {:id "suggestions" :ref "suggestions"}
+      [:div.list-group {:id "suggestions" :ref "suggestions" :style (display (not hidden))}
         (map (fn [data] [:a {:href "#"
             :class "list-group-item"} (:text data)]) results)]))))
 
@@ -58,15 +76,19 @@
         query (-> input .-value)]
     (routes/redirect-to (routes :search {:query query}))))
 
-(defn handle-input-change [query owner state]
+(defn handle-focus [query hide]
+    (if (= query "") (put! hide true) (put! hide false)))
+
+(defn handle-input-change [query owner hide]
   (do
-    (controller/dispatch :update-search-suggestions query)   
-    (om/set-state! owner :input query)))
+    (if (= query "") (put! hide true) (put! hide false))
+    (controller/dispatch :update-search-suggestions query)
+    (om/set-state! owner :query query)))
 
 (defcomponent input-view [app owner]
   (display-name [_] "Search Input")
   
-  (render-state [_ {:keys [input] :as state}]
+  (render-state [_ {:keys [query hide]}]
     (html
       [:div
         [:form.form-inline 
@@ -77,15 +99,18 @@
             [:input.form-control {:ref "search-query" 
                                   :type "text" 
                                   :style {:height "26px"}
-                                  :value input
-                                  :onChange (fn [e] (handle-input-change 
-                                                      (.. e -target -value) owner input))}]]])))
+                                  :value query
+                                  :onFocus (fn [e] (handle-focus (.. e -target -value) hide))
+                                  :onBlur (fn [e] (put! hide true))
+                                  :onChange (fn [e] 
+                                              (handle-input-change 
+                                                (.. e -target -value) owner hide))}]]])))
 
 (defcomponent autocomplete [app owner]
   (display-name [_] "Autocomplete")
 
   (init-state [_]
-    {:input ""})
+    {:query "" :hide (chan)})
 
   (render-state [_ state]
     (html
