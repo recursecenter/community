@@ -28,7 +28,8 @@
                         (str "Narrow to thread: " text)
                       :subforum
                         (str "Narrow to subforum: " text))]
-      {:facet facet :text text :display display-text :id id :slug slug}))
+      {:facet facet :text text :display display-text :id id :slug slug
+       :search-str (str (name facet) ":(" text ")")})) 
 
 (defn results->display-list
   "Given all results from the suggestions endpoint, return list of things to show in the autocomplete menu"
@@ -47,9 +48,9 @@
 (defn display [show]
   (if show {} {:display "none"}))
 
-(defn completion [{:keys [facet text display id slug]}]
+(defn completion [{:keys [facet text display id slug search-str]}]
   (condp = facet
-    :author (routes :search {:query (str "author: " text)}) 
+    :author (routes :search {:query search-str}) 
     :thread (routes :thread {:id id :slug slug})
     :subforum (routes :subforum {:id id :slug slug})
     :none (routes :search {:query text})))
@@ -72,7 +73,8 @@
   (render-state [_ {:keys [hide hidden]}]
     (let [results (results->display-list query suggestions)]
     (html
-      [:div.list-group {:id "suggestions" :ref "suggestions" :style (display (not hidden))}
+      [:div.list-group 
+        {:id "suggestions" :ref "suggestions" :style (display (not hidden))}
         (map 
           (fn [data] 
             (partials/link-to (completion data) {:class "list-group-item"} (:display data)))
@@ -113,11 +115,17 @@
                                               (handle-input-change 
                                                 (.. e -target -value) owner hide))}]]])))
 
+(defn handle-keys-pressed [e]
+  (do  (.log js/console e)))
+
 (defcomponent autocomplete [app owner]
   (display-name [_] "Autocomplete")
 
   (init-state [_]
-    {:query "" :hide (chan)})
+    {:query "" :hide (chan) })
+
+  (will-mount [_]
+    (.addEventListener js/window "keyup" handle-keys-pressed))
 
   (render-state [_ state]
     (html
