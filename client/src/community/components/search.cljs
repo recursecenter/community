@@ -28,7 +28,7 @@
                         (str "Narrow to thread: " text)
                       :subforum
                         (str "Narrow to subforum: " text))]
-      {:facet facet :text display-text :id id :slug slug}))
+      {:facet facet :text text :display display-text :id id :slug slug}))
 
 (defn results->display-list
   "Given all results from the suggestions endpoint, return list of things to show in the autocomplete menu"
@@ -45,9 +45,14 @@
     (conj display always-display)))
 
 (defn display [show]
-  (if show
-    {}
-    {:display "none"}))
+  (if show {} {:display "none"}))
+
+(defn completion [{:keys [facet text display id slug]}]
+  (condp = facet
+    :author (routes :search {:query (str "author: " text)}) 
+    :thread (routes :thread {:id id :slug slug})
+    :subforum (routes :subforum {:id id :slug slug})
+    :none (routes :search {:query text})))
 
 (defcomponent suggestions-view [{:keys [query suggestions]} owner]
   (display-name [_] "Search suggestions")
@@ -68,8 +73,10 @@
     (let [results (results->display-list query suggestions)]
     (html
       [:div.list-group {:id "suggestions" :ref "suggestions" :style (display (not hidden))}
-        (map (fn [data] [:a {:href "#"
-            :class "list-group-item"} (:text data)]) results)]))))
+        (map 
+          (fn [data] 
+            (partials/link-to (completion data) {:class "list-group-item"} (:display data)))
+          results)]))))
 
 (defn search [owner]
   (let [input (om/get-node owner "search-query")
@@ -101,7 +108,7 @@
                                   :style {:height "26px"}
                                   :value query
                                   :onFocus (fn [e] (handle-focus (.. e -target -value) hide))
-                                  :onBlur (fn [e] (put! hide true))
+                                  :onBlur (fn [e] #_(put! hide true))
                                   :onChange (fn [e] 
                                               (handle-input-change 
                                                 (.. e -target -value) owner hide))}]]])))
