@@ -72,7 +72,7 @@
                                              :disabled (:submitting? post)}
              "Post"]
             )]
-         [:div.markdown-help [:a.help-link {:target "_blank" :href "https://guides.github.com/features/mastering-markdown/"} "Parsed as Markdown"]]]]])))
+         [:div.markdown-help [:a.help-link {:target "_blank" :href "https://guides.github.com/features/mastering-markdown/"} "Markdown cheat sheet"]]]]])))
 
 (defn post-number-id [n]
   (str "post-number-" n))

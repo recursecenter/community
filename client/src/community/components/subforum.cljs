@@ -51,9 +51,12 @@
                  :passthrough {:id "post-body"
                                :class ["form-control" "post-textarea"]
                                :placeholder "Compose your post..."}}})]
-       [:button.btn.btn-default.btn-sm {:type "submit"
-                                        :disabled submitting?}
-        "Create thread"]])))
+       [:div.row.no-side-margin.post-form-bottom-row
+        [:div.post-form-controls
+         [:button.btn.btn-default.btn-sm {:type "submit"
+                                          :disabled submitting?}
+          "Create thread"]]
+        [:div.markdown-help [:a.help-link {:target "_blank" :href "https://guides.github.com/features/mastering-markdown/"} "Markdown cheat sheet"]]]])))
 
 (defn thread-post-preview [subforum]
   (shared/->post-preview {:post (:new-thread subforum)

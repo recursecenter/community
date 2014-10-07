@@ -148,6 +148,23 @@
   }
 }
 
+.post-form-controls {
+  @include make-sm-column(8); 
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.markdown-help {
+  @include make-sm-column(4);
+  padding-right: 0px;
+  margin-top: 5px        ;
+
+  .help-link {
+    font-size: 12px;      
+    float: right;
+  }
+} 
+
 // Bigger than a small screen
 @media (min-width: $screen-sm-max) {
   .post.post-in-series {
