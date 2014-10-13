@@ -64,3 +64,11 @@
   [body users]
   (models/replace-mentions body users (fn [name]
                                         (str "<span class=\"at-mention\">" name "</span>"))))
+
+(defn markdown-help []
+  (html
+   [:div.markdown-help
+    [:a.help-link
+     {:target "_blank"
+      :href "https://guides.github.com/features/mastering-markdown/"}
+     "Markdown cheat sheet"]]))

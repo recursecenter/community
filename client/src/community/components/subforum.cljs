@@ -56,7 +56,7 @@
          [:button.btn.btn-default.btn-sm {:type "submit"
                                           :disabled submitting?}
           "Create thread"]]
-        [:div.markdown-help [:a.help-link {:target "_blank" :href "https://guides.github.com/features/mastering-markdown/"} "Markdown cheat sheet"]]]])))
+        (partials/markdown-help)]])))
 
 (defn thread-post-preview [subforum]
   (shared/->post-preview {:post (:new-thread subforum)

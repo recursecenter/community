@@ -70,9 +70,8 @@
               "Cancel"]]
             [:button.btn.btn-default.btn-sm {:type "submit"
                                              :disabled (:submitting? post)}
-             "Post"]
-            )]
-         [:div.markdown-help [:a.help-link {:target "_blank" :href "https://guides.github.com/features/mastering-markdown/"} "Markdown cheat sheet"]]]]])))
+             "Post"])]
+         (partials/markdown-help)]]])))
 
 (defn post-number-id [n]
   (str "post-number-" n))
