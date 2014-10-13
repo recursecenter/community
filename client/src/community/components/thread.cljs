@@ -54,7 +54,7 @@
                       :name "post[body]"
                       :data-new-anchor true
                       :placeholder "Compose your post..."}}})])]
-        [:div.row.no-side-margin.post-form-bottom-row
+        [:div.row.no-side-margin
          [:div.post-form-controls
           (if (:persisted? post)
             [:div
@@ -71,7 +71,9 @@
             [:button.btn.btn-default.btn-sm {:type "submit"
                                              :disabled (:submitting? post)}
              "Post"])]
-         (partials/markdown-help)]]])))
+         ;; only show markdown help for new posts, not when editing
+         (when (not (:persisted? post))
+           (partials/markdown-help))]]])))
 
 (defn post-number-id [n]
   (str "post-number-" n))
