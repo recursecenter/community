@@ -37,5 +37,8 @@
   (.pushState js/history nil nil path)
   (.dispatchEvent js/window (js/Event. "popstate")))
 
-(defn ^:private open-in-new-window? [click-e]
-  (or (.-metaKey click-e) (.-ctrlKey click-e)))
+(defn open-in-new-window? [click-e]
+  (or (.-metaKey click-e)
+      (.-ctrlKey click-e)
+      ;; middle click
+      (= 1 (.-button click-e))))
