@@ -2,6 +2,7 @@
   margin: .5em 0;
   padding: .5em 0;
   border-top: 1px dotted #bbb;
+  word-break: break-word;
 
   .post-author-image {
     @include make-sm-column(1);
