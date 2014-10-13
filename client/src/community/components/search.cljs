@@ -110,7 +110,8 @@
                                   :style {:height "26px"}
                                   :value query
                                   :onFocus (fn [e] (handle-focus (.. e -target -value) hide))
-                                  :onBlur (fn [e] #_(put! hide true))
+                                  :onBlur (fn [e] (println "blur fired") 
+                                            (js/setTimeout #(put! hide true) 100))
                                   :onChange (fn [e] 
                                               (handle-input-change 
                                                 (.. e -target -value) owner hide))}]]])))
