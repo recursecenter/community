@@ -23,3 +23,5 @@ app/assets/javascripts/client-dev
 public/client
 
 .DS_Store
+
+*.swp

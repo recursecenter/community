@@ -74,7 +74,8 @@
     (let [results (results->display-list query suggestions)]
     (html
       [:div.list-group 
-        {:id "suggestions" :ref "suggestions" :style (display (not hidden))}
+        {:id "suggestions" :ref "suggestions" 
+         :style (display (and (not hidden) (not (empty? query))))}
         (map 
           (fn [data] 
             (partials/link-to (completion data) {:class "list-group-item"} (:display data)))
@@ -85,14 +86,9 @@
         query (-> input .-value)]
     (routes/redirect-to (routes :search {:query query}))))
 
-(defn handle-focus [query hide]
-    (if (= query "") (put! hide true) (put! hide false)))
-
-(defn handle-input-change [query owner hide]
-  (do
-    (if (= query "") (put! hide true) (put! hide false))
-    (controller/dispatch :update-search-suggestions query)
-    (om/set-state! owner :query query)))
+(defn handle-input-change [query owner]
+  (controller/dispatch :update-search-suggestions query)
+  (om/set-state! owner :query query))
 
 (defcomponent input-view [app owner]
   (display-name [_] "Search Input")
@@ -109,12 +105,11 @@
                                   :type "text" 
                                   :style {:height "26px"}
                                   :value query
-                                  :onFocus (fn [e] (handle-focus (.. e -target -value) hide))
-                                  :onBlur (fn [e] (println "blur fired") 
-                                            (js/setTimeout #(put! hide true) 100))
+                                  :onFocus (fn [e] (put! hide false))
+                                  :onBlur (fn [e] (js/setTimeout #(put! hide true) 100))
                                   :onChange (fn [e] 
                                               (handle-input-change 
-                                                (.. e -target -value) owner hide))}]]])))
+                                                (.. e -target -value) owner))}]]])))
 
 (defn handle-keys-pressed [e]
   (do  (.log js/console e)))
