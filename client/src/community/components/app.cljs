@@ -207,5 +207,6 @@
                 (om/build (routes/dispatch route-data) app))]]]
        [:footer
         [:ul.inline-links
-         [:li [:a {:href "https://github.com/hackerschool/community"} [:i.fa.fa-code-fork] " Source"]]
+         [:li [:a {:href "https://github.com/hackerschool/community"} [:i.fa.fa-github-alt] " Code"]]
+         [:li [:a {:href "https://github.com/hackerschool/community/issues"} [:i.fa.fa-exclamation-circle] " Issues"]]
          [:li "Made with " [:i.fa.fa-heart {:style {:color "red"}}] " at " [:a {:href "https://www.hackerschool.com"} "Hacker School"]]]]])))
