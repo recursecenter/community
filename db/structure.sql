@@ -23,7 +23,42 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
+--
+-- Name: pg_stat_statements; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS pg_stat_statements WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION pg_stat_statements; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION pg_stat_statements IS 'track execution statistics of all SQL statements executed';
+
+
 SET search_path = public, pg_catalog;
+
+--
+-- Name: first_of_two(anyelement, anyelement); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION first_of_two(anyelement, anyelement) RETURNS anyelement
+    LANGUAGE sql IMMUTABLE STRICT
+    AS $_$
+              SELECT $1;
+      $_$;
+
+
+--
+-- Name: first(anyelement); Type: AGGREGATE; Schema: public; Owner: -
+--
+
+CREATE AGGREGATE first(anyelement) (
+    SFUNC = first_of_two,
+    STYPE = anyelement
+);
+
 
 SET default_tablespace = '';
 
@@ -471,7 +506,7 @@ CREATE VIEW threads_with_visited_status AS
             users.id AS user_id
            FROM discussion_threads,
             users) thread_users
-   LEFT JOIN visited_statuses ON (((thread_users.id = visited_statuses.thread_id) AND ((thread_users.user_id = visited_statuses.user_id) OR (visited_statuses.user_id IS NULL)))));
+     LEFT JOIN visited_statuses ON (((thread_users.id = visited_statuses.thread_id) AND ((thread_users.user_id = visited_statuses.user_id) OR (visited_statuses.user_id IS NULL)))));
 
 
 --
@@ -895,4 +930,6 @@ INSERT INTO schema_migrations (version) VALUES ('20140909190021');
 INSERT INTO schema_migrations (version) VALUES ('20140911152147');
 
 INSERT INTO schema_migrations (version) VALUES ('20140911192911');
+
+INSERT INTO schema_migrations (version) VALUES ('20141014175857');
 
