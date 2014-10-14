@@ -5,6 +5,7 @@
             [community.routes :as routes :refer [routes]]
             [community.components.shared :as shared]
             [community.util :as util :refer-macros [<? p]]
+            [community.util.selection-list :as sl]
             [community.partials :as partials :refer [link-to]]
             [om.core :as om]
             [om.dom :as dom]
@@ -12,14 +13,6 @@
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :refer-macros [html]])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
-
-(def ENTER 13)
-(def UP_ARROW 38)
-(def DOWN_ARROW 40)
-(def TAB 9)
-(def ESC 27)
-
-(def KEYS #{UP_ARROW DOWN_ARROW ENTER TAB ESC})
 
 (def key->search-filter {:none :none :users :author :threads :thread :subforums :subforum})
 
@@ -63,31 +56,17 @@
     :subforum (routes :subforum {:id id :slug slug})
     :none (routes :search {:query text})))
 
-(defcomponent suggestions-view [{:keys [query suggestions]} owner]
+(defcomponent suggestions-view [{:keys [query]} owner]
   (display-name [_] "Search suggestions")
 
-  (init-state [_]
-    {:hidden true})
-
-  (will-mount [_]
-    (let [hide (om/get-state owner :hide)]
-      (go-loop []
-        (let [[v ch] (alts! [hide])]
-          (cond
-            (= ch hide)
-              (om/set-state! owner :hidden v))
-        (recur)))))
-
-  (render-state [_ {:keys [hide hidden]}]
-    (let [results (results->display-list query suggestions)]
+  (render-state [_ {:keys [suggestions show-suggestions?]}]
     (html
-      [:div.list-group
-        {:id "suggestions" :ref "suggestions"
-         :style (display (and (not hidden) (not (empty? query))))}
-        (map
-          (fn [data]
-            (partials/link-to (completion data) {:class "list-group-item"} (:display data)))
-          results)]))))
+     [:ol
+      {:id "suggestions" :ref "suggestions"
+       :style (display (and show-suggestions? (not (empty? query))))}
+      (for [{:keys [selected? value] :as suggestion} suggestions]
+        [:li {:class (when selected? "selected")}
+         (partials/link-to (completion value) (:display value))])])))
 
 (defn search [owner]
   (let [input (om/get-node owner "search-query")
@@ -98,72 +77,91 @@
   (controller/dispatch :update-search-suggestions query)
   (om/set-state! owner :query query))
 
-(defn handle-key-down []
+(def ENTER 13)
+(def UP_ARROW 38)
+(def DOWN_ARROW 40)
+(def TAB 9)
+(def ESC 27)
 
-  )
 (defcomponent input-view [app owner]
   (display-name [_] "Search Input")
 
-  (render-state [_ {:keys [query hide]}]
+  (render-state [_ {:keys [query show-suggestions! select! selected]}]
     (html
       [:div
-        [:form.form-inline
-          {:name "search-form"
-           :onSubmit (fn [e]
-                       (.preventDefault e)
-                       (search owner))}
-            [:input.form-control {:ref "search-query"
-                                  :type "text"
-                                  :style {:height "26px"}
-                                  :value query
-                                  :onFocus (fn [e] (put! hide false))
-                                  :onBlur (fn [e] (js/setTimeout #(put! hide true) 100))
-                                  :onKeyDown (fn [e] (handle-key-down e))
-                                  :onChange (fn [e]
-                                              (handle-input-change
-                                                (.. e -target -value) owner))}]]])))
+       [:form.form-inline
+        {:name "search-form"
+         :onSubmit (fn [e]
+                     (.preventDefault e)
+                     (search owner))}
+        [:input.form-control {:ref "search-query"
+                              :type "text"
+                              :style {:height "26px"}
+                              :value query
+                              :onFocus #(show-suggestions! true)
+                              ;; TODO: do we need this timeout without core.async?
+                              :onBlur (fn [e] (js/setTimeout #(show-suggestions! false) 100))
+                              :onChange (fn [e]
+                                          (handle-input-change
+                                           (.. e -target -value) owner))
+                              :onKeyDown (fn [e]
+                                           (let [keycode (.-keyCode e)]
+                                             (when (contains? #{UP_ARROW DOWN_ARROW ENTER} keycode)
+                                               (.preventDefault e)
+                                               (condp = keycode
+                                                 DOWN_ARROW (select! :next)
+                                                 UP_ARROW (select! :prev)
+                                                 ENTER (routes/redirect-to (completion selected))))))}]]])))
 
-(defn handle-keys-pressed [e]
-  (do  (.log js/console e)))
+(defn suggestion-sl [suggestions q]
+  (->> suggestions
+       (results->display-list q)
+       sl/selection-list))
 
 (defcomponent autocomplete [app owner]
   (display-name [_] "Autocomplete")
 
   (init-state [_]
-    {:query "" :hide (chan) })
+    {:query ""
+     :show-suggestions? false
+     :suggestions (suggestion-sl (:suggestions app) (:query app))})
 
-  (will-mount [_]
-    (.addEventListener js/window "keyup" handle-keys-pressed))
+  (will-receive-props [_ next-props]
+    (when (not= (:suggestions next-props) (om/get-props owner :suggestions))
+      (om/set-state! owner
+                     :suggestions (suggestion-sl (:suggestions next-props) (:query next-props)))))
 
-  (render-state [_ state]
+  (render-state [_ {:as state :keys [suggestions]}]
     (html
-      [:div
-        (->input-view app {:init-state state})
-        (->suggestions-view app {:init-state state})])))
+     [:div
+      (->input-view app {:state {:show-suggestions! #(om/set-state! owner :show-suggestions? %)
+                                 :select! #(om/set-state! owner :suggestions (sl/select % suggestions))
+                                 :selected (sl/selected suggestions)}})
+      (->suggestions-view app {:state state})])))
 
 (defcomponent result [{:keys [-source] :as result}]
   (display-name [_] "Result")
 
   (render [_]
     (html
-      [:div.row.col-md-offset-1.col-md-9.search-result
-       [:div.row.header
-        [:div.col-md-8 (link-to (routes :thread {:id (:thread-id -source)
-                                                 :slug (:thread-slug -source)
-                                                 :post-number (:post-number -source)})
-                                {:style {:color (:ui-color -source)}}
-                                [:h4.thread-title (:thread -source)])]
-        [:div.col-md-4 (link-to (routes :subforum {:id (:subforum-id -source)
-                                                   :slug (:subforum-slug -source)})
-                                {:style {:color (:ui-color -source)}}
-                                [:h5 (:subforum-group -source)
-                                     " / "
-                                     (:subforum -source)])]]
+     [:div.row.col-md-offset-1.col-md-9.search-result
+      [:div.row.header
+       [:div.col-md-8 (link-to (routes :thread {:id (:thread-id -source)
+                                                :slug (:thread-slug -source)
+                                                :post-number (:post-number -source)})
+                               {:style {:color (:ui-color -source)}}
+                               [:h4.thread-title (:thread -source)])]
+       [:div.col-md-4 (link-to (routes :subforum {:id (:subforum-id -source)
+                                                  :slug (:subforum-slug -source)})
+                               {:style {:color (:ui-color -source)}}
+                               [:h5 (:subforum-group -source)
+                                " / "
+                                (:subforum -source)])]]
       [:div.body (partials/html-from-markdown (:body -source))]
       [:div.row.footer
        [:div.col-md-10 [:a {:href (routes/hs-route
-                                    :person {:hacker-school-id (:hacker-school-id -source)})}
-                           (:author -source)]]
+                                   :person {:hacker-school-id (:hacker-school-id -source)})}
+                        (:author -source)]]
        [:div.col-md-2  (link-to (routes :thread {:id (:thread-id -source)
                                                  :slug (:thread-slug -source)
                                                  })
@@ -177,9 +175,9 @@
     (let [results (:results search)]
       (if (empty? results)
         (html
-          [:div
-           "Sorry, there were no matching results for this search."])
+         [:div
+          "Sorry, there were no matching results for this search."])
         (html
-          [:div
-            [:div.col-md-offset-1 [:h4 "Search Results"]]
-            [:div.results (map (partial ->result) results)]])))))
+         [:div
+          [:div.col-md-offset-1 [:h4 "Search Results"]]
+          [:div.results (map (partial ->result) results)]])))))

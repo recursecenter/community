@@ -17,8 +17,17 @@
   }
 }
 
-#suggestions{
+#suggestions {
   width: 300px;
   position: absolute;
   z-index: 10001;
+  list-style: none;
+  background-color: white;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #ccc;
+
+  .selected {
+    background-color: #ccc;
+  }
 }
