@@ -13,6 +13,14 @@
             [sablono.core :refer-macros [html]])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
   
+(def ENTER 13)
+(def UP_ARROW 38)
+(def DOWN_ARROW 40)
+(def TAB 9)
+(def ESC 27)
+
+(def KEYS #{UP_ARROW DOWN_ARROW ENTER TAB ESC})
+
 (def key->facet {:none :none :users :author :threads :thread :subforums :subforum})
 
 (defn result->display-item
@@ -90,6 +98,9 @@
   (controller/dispatch :update-search-suggestions query)
   (om/set-state! owner :query query))
 
+(defn handle-key-down []
+  
+  )
 (defcomponent input-view [app owner]
   (display-name [_] "Search Input")
   
@@ -107,6 +118,7 @@
                                   :value query
                                   :onFocus (fn [e] (put! hide false))
                                   :onBlur (fn [e] (js/setTimeout #(put! hide true) 100))
+                                  :onKeyDown (fn [e] (handle-key-down e))
                                   :onChange (fn [e] 
                                               (handle-input-change 
                                                 (.. e -target -value) owner))}]]])))
