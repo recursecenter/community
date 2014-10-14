@@ -21,11 +21,7 @@ class Api::ThreadsController < Api::ApiController
     @autocomplete_users = User.select(:id, :first_name, :last_name).ordered_by_first_name
     @valid_broadcast_groups = valid_broadcast_groups
 
-    NotificationCoordinator.new(
-      MentionNotifier.new(@post, mentioned_users),
-      SubforumSubscriptionNotifier.new(@post.thread),
-      BroadcastNotifier.new(@post)
-    ).notify
+    Delayed::Job.enqueue NewThreadNotificationJob.new(@post, mentioned_user_ids)
 
     if @thread.created_by.subscribe_on_create
       @thread.created_by.subscribe_to(@thread, "You are receiving emails because you created this thread.")

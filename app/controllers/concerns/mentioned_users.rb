@@ -1,12 +1,8 @@
 module MentionedUsers
   extend ActiveSupport::Concern
 
-  def mentioned_users
-    if mention_params[:mentions].present?
-      User.where(id: mention_params[:mentions])
-    else
-      []
-    end
+  def mentioned_user_ids
+    mention_params[:mentions] || []
   end
 
   def mention_params
