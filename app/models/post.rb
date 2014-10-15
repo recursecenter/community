@@ -61,13 +61,11 @@ class Post < ActiveRecord::Base
     }
   end
 
-  def self.query_dsl(query)
-    query_without_filters = self.strip_filters(query)
-
+  def self.query_dsl(search_string, filters)
     # match query for exact matches, terms
     exact_match_query = {
       multi_match: {
-        query: query,
+        query: search_string,
         boost: 100,
         fields: [:thread_title, :body]
       }
@@ -76,45 +74,35 @@ class Post < ActiveRecord::Base
     # match query for phrase prefixes
     phrase_match_query = {
       multi_match: {
-        query: query,
+        query: search_string,
         boost: 10,
         fields: [:thread_title, :body],
         type: :phrase_prefix
       }
     }
 
-    # filtered query for filters
-    filters = self.filters(query)
-    filtered_query = nil
+    # Combine exact match and prefix queries and match all if query was empty
+    if query.blank?
+      query_dsl = { match_all: {} }
+    else
+      query_dsl = { bool: { should: [exact_match_query, phrase_match_query] } }
+    end
+
+    # create filtered query for filters
     unless filters.blank?
       clauses = Array.new
       filters.each do |key, value|
         clauses.push({ term: { key => value } })
       end
 
-      filtered_query = { filtered: { filter: { bool: { must: clauses } } } }
+      query_dsl = { filtered: { query: query_dsl, filter: { bool: { must: clauses } } } }
     end
-
-    # Combine exact match and prefix queries
-    query_dsl = {
-      bool: {
-        should: [exact_match_query, phrase_match_query]
-      }
-    }
-
-    # Add filtered query as a must only when its available
-    query_dsl[:bool][:must] = filtered_query unless filtered_query.blank?
 
     return query_dsl
   end
 
   def self.highlight_fields
-    {
-      fields: {
-        thread_title: {},
-        body: {}
-      }
-    }
+    { fields: { thread_title: {}, body: {} } }
   end
 
   def self.allowed_filter_fields
