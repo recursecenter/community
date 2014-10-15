@@ -36,6 +36,17 @@ class Post < ActiveRecord::Base
     end
   end
 
+  # Additional indexer settings for posts
+  settings index: { number_of_shards: 1 } do
+    mappings dynamic: 'true' do
+      indexes :author, type: :string, index: "not_analyzed"
+      indexes :author_email, type: :string, index: "not_analyzed"
+      indexes :thread, type: :string, index: "not_analyzed"
+      indexes :subforum, type: :string, index: "not_analyzed"
+    end
+  end
+
+  # Search document format for posts
   def to_search_mapping
     {
       index: {
