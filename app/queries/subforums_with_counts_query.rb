@@ -1,10 +1,11 @@
 class SubforumsWithCountsQuery < Query
-  def initialize(subforums)
+  def initialize(subforums, user)
     @subforums = subforums
+    @user = user
   end
 
   def each(&block)
-    @subforums.select(<<-SQL).each(&block)
+    select_sql = <<-SQL
       subforums.*,
       (
           SELECT COUNT(*)
@@ -19,5 +20,10 @@ class SubforumsWithCountsQuery < Query
           WHERE discussion_threads.subforum_id = subforums.id
       ) AS thread_count
     SQL
+
+    @subforums.
+      select(select_sql).
+      for_user(@user).
+      each(&block)
   end
 end

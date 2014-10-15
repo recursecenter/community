@@ -499,7 +499,10 @@ CREATE VIEW threads_with_visited_status AS
              JOIN users ON ((posts.author_id = users.id)))
           WHERE (posts.thread_id = thread_users.id)
           ORDER BY posts.post_number DESC
-         LIMIT 1) AS last_author_name
+         LIMIT 1) AS last_author_name,
+    ( SELECT (((users.first_name)::text || ' '::text) || (users.last_name)::text)
+           FROM users
+          WHERE (thread_users.created_by_id = users.id)) AS creator_name
    FROM (( SELECT discussion_threads.id,
             discussion_threads.title,
             discussion_threads.subforum_id,
@@ -940,4 +943,6 @@ INSERT INTO schema_migrations (version) VALUES ('20140911192911');
 INSERT INTO schema_migrations (version) VALUES ('20141014175857');
 
 INSERT INTO schema_migrations (version) VALUES ('20141015164429');
+
+INSERT INTO schema_migrations (version) VALUES ('20141015212555');
 

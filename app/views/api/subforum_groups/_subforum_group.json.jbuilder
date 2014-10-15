@@ -1,5 +1,5 @@
 json.extract! subforum_group, :name, :id
-json.subforums SubforumsWithCountsQuery.new(subforum_group.subforums) do |subforum|
+json.subforums SubforumsWithCountsQuery.new(subforum_group.subforums, current_user) do |subforum|
   json.extract! subforum, :id, :name, :slug, :ui_color, :description
   json.n_subscribers subforum.subscriber_count
   json.n_threads subforum.thread_count
@@ -15,7 +15,7 @@ json.subforums SubforumsWithCountsQuery.new(subforum_group.subforums) do |subfor
     end
 
     json.created_by do
-      json.extract! thread.created_by, :name
+      json.name thread.creator_name
     end
   end
 end

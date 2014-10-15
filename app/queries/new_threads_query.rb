@@ -13,7 +13,6 @@ class NewThreadsQuery < Query
   def threads
     @subforum.
       threads_for_user(@user).
-      includes(:created_by).
       order(last_post_created_at: :desc).
       limit(3)
   end
