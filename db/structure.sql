@@ -483,9 +483,9 @@ CREATE VIEW threads_with_visited_status AS
     thread_users.created_at,
     thread_users.updated_at,
     thread_users.highest_post_number,
-    thread_users.user_id,
     thread_users.pinned,
     thread_users.last_post_created_at,
+    thread_users.user_id,
         CASE
             WHEN (visited_statuses.last_post_number_read IS NULL) THEN 0
             ELSE visited_statuses.last_post_number_read
@@ -493,7 +493,13 @@ CREATE VIEW threads_with_visited_status AS
         CASE
             WHEN (visited_statuses.last_post_number_read IS NULL) THEN true
             ELSE (visited_statuses.last_post_number_read < thread_users.highest_post_number)
-        END AS unread
+        END AS unread,
+    ( SELECT (((users.first_name)::text || ' '::text) || (users.last_name)::text)
+           FROM (posts
+             JOIN users ON ((posts.author_id = users.id)))
+          WHERE (posts.thread_id = thread_users.id)
+          ORDER BY posts.post_number DESC
+         LIMIT 1) AS last_author_name
    FROM (( SELECT discussion_threads.id,
             discussion_threads.title,
             discussion_threads.subforum_id,
@@ -932,4 +938,6 @@ INSERT INTO schema_migrations (version) VALUES ('20140911152147');
 INSERT INTO schema_migrations (version) VALUES ('20140911192911');
 
 INSERT INTO schema_migrations (version) VALUES ('20141014175857');
+
+INSERT INTO schema_migrations (version) VALUES ('20141015164429');
 
