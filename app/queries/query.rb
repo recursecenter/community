@@ -1,4 +1,6 @@
 class Query
+  include Enumerable
+
   def execute(sql)
     res = ActiveRecord::Base.connection.exec_query(sql)
 
