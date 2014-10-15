@@ -93,7 +93,7 @@ class Post < ActiveRecord::Base
     }
 
     # Combine exact match and prefix queries and match all if query was empty
-    if query.blank?
+    if search_string.blank?
       query_dsl = { match_all: {} }
     else
       query_dsl = { bool: { should: [exact_match_query, phrase_match_query] } }
