@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '2.1.2'
+ruby '2.1.3'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.1.6'
@@ -15,7 +15,9 @@ gem 'memcachier' # this just sets environmental variables
 gem 'delayed_job_active_record'
 
 gem 'newrelic_rpm'
-gem 'skylight'
+
+# Commented out for memory testing
+# gem 'skylight'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.3'
