@@ -1,4 +1,4 @@
-class NewThreadsQuery < Query
+class RecentThreadsQuery < Query
   def initialize(subforum, user)
     @subforum = subforum
     @user = user

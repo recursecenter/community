@@ -4,7 +4,7 @@ json.subforums SubforumsWithCountsQuery.new(subforum_group.subforums, current_us
   json.n_subscribers subforum.subscriber_count
   json.n_threads subforum.thread_count
 
-  json.threads NewThreadsQuery.new(subforum, current_user) do |thread|
+  json.threads RecentThreadsQuery.new(subforum, current_user) do |thread|
     json.extract! thread, :id, :title, :slug, :highest_post_number, :last_post_number_read, :pinned
     json.last_post_created_at thread.last_post_created_at.to_i
     json.last_posted_to_by thread.last_author_name
