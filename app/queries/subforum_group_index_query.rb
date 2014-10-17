@@ -21,7 +21,7 @@ private
     # we need to limit the results, so we collect subforums and
     # threads separately and then associate them in a delegate class.
 
-    subforums = Subforum.for_user(@user).with_counts
+    subforums = Subforum.for_user(@user).with_counts.to_a
     return [] if subforums.empty?
 
     from_sql = <<-SQL
