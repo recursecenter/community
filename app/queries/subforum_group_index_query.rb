@@ -19,7 +19,7 @@ private
   def subforums_with_recent_threads
     # We can't just includes(:threads_with_visited_statuses) because
     # we need to limit the results, so we collect subforums and
-    # threads separately and then associate them manually.
+    # threads separately and then associate them in a delegate class.
 
     subforums = Subforum.for_user(@user).with_counts
 
