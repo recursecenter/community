@@ -4,16 +4,24 @@ class SubforumGroupIndexQuery < Query
   end
 
   def relation
-    subforum_groups
+    groups_and_subforums
   end
 
-  private
+private
 
-  def subforum_groups
+  def groups_and_subforums
+    subforums_by_group_id = subforums_with_recent_threads.group_by(&:subforum_group_id)
     groups = SubforumGroup.for_user(@user)
-    subforums = Subforum.for_user(@user).with_counts
 
-    subforums_by_group_id = subforums.group_by(&:subforum_group_id)
+    groups.map { |g| [g, subforums_by_group_id[g.id]] }
+  end
+
+  def subforums_with_recent_threads
+    # We can't just includes(:threads_with_visited_statuses) because
+    # we need to limit the results, so we collect subforums and
+    # threads separately and then associate them manually.
+
+    subforums = Subforum.for_user(@user).with_counts
 
     from_sql = <<-SQL
       (
@@ -30,6 +38,8 @@ class SubforumGroupIndexQuery < Query
       includes(:created_by, :last_post_created_by).
       group_by(&:subforum_id)
 
+    # XXX: This is using private ActiveRecord APIs that we probably
+    # shouldn't rely on.
     subforums.each do |sf|
       threads = threads_by_subforum_id[sf.id]
 
@@ -39,6 +49,6 @@ class SubforumGroupIndexQuery < Query
       threads.each { |t| association.set_inverse_instance(t) }
     end
 
-    groups.map { |g| [g, subforums_by_group_id[g.id]] }
+    subforums
   end
 end
