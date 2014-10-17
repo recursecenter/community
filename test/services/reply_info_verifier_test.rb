@@ -33,6 +33,6 @@ class ReplyInfoVerifierTest < ActiveSupport::TestCase
     info = ReplyInfoVerifier.generate(user, thread)
     info.slice!("v2--")
 
-    assert_equal [@user, thread.posts.last], ReplyInfoVerifier.verify(info)
+    assert_equal [@user, thread.posts.by_number.last], ReplyInfoVerifier.verify(info)
   end
 end
