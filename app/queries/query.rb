@@ -1,6 +1,12 @@
 class Query
   include Enumerable
 
+  def each(&block)
+    return to_enum unless block_given?
+
+    relation.each(&block)
+  end
+
   def execute(sql)
     res = ActiveRecord::Base.connection.exec_query(sql)
 
