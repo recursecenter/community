@@ -39,27 +39,6 @@ COMMENT ON EXTENSION pg_stat_statements IS 'track execution statistics of all SQ
 
 SET search_path = public, pg_catalog;
 
---
--- Name: first_of_two(anyelement, anyelement); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION first_of_two(anyelement, anyelement) RETURNS anyelement
-    LANGUAGE sql IMMUTABLE STRICT
-    AS $_$
-              SELECT $1;
-      $_$;
-
-
---
--- Name: first(anyelement); Type: AGGREGATE; Schema: public; Owner: -
---
-
-CREATE AGGREGATE first(anyelement) (
-    SFUNC = first_of_two,
-    STYPE = anyelement
-);
-
-
 SET default_tablespace = '';
 
 SET default_with_oids = false;
@@ -1000,4 +979,6 @@ INSERT INTO schema_migrations (version) VALUES ('20141016193002');
 INSERT INTO schema_migrations (version) VALUES ('20141016200108');
 
 INSERT INTO schema_migrations (version) VALUES ('20141017154222');
+
+INSERT INTO schema_migrations (version) VALUES ('20141017213409');
 
