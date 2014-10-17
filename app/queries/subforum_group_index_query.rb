@@ -22,6 +22,7 @@ private
     # threads separately and then associate them in a delegate class.
 
     subforums = Subforum.for_user(@user).with_counts
+    return [] if subforums.empty?
 
     from_sql = <<-SQL
       (
