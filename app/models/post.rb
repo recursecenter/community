@@ -6,13 +6,17 @@ class Post < ActiveRecord::Base
 
   validates :body, :author, :thread, presence: {allow_blank: false}
 
-  before_create :add_and_increment_post_number
+  before_create :update_thread_data
 
-  def add_and_increment_post_number
+  scope :by_number, -> { order(post_number: :asc) }
+
+  def update_thread_data
     DistributedLock.new("thread_#{thread.id}").synchronize do
       next_post_number = thread.highest_post_number + 1
       self.post_number = next_post_number
-      thread.update(highest_post_number: next_post_number, last_post_created_at: created_at)
+      thread.update(highest_post_number: next_post_number,
+                    last_post_created_at: created_at,
+                    last_post_created_by: author)
     end
   end
 

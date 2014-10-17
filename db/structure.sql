@@ -116,7 +116,8 @@ CREATE TABLE discussion_threads (
     updated_at timestamp without time zone,
     highest_post_number integer DEFAULT 0,
     pinned boolean DEFAULT false,
-    last_post_created_at timestamp without time zone
+    last_post_created_at timestamp without time zone,
+    last_post_created_by_id integer
 );
 
 
@@ -485,6 +486,7 @@ CREATE VIEW threads_with_visited_status AS
             thread_users.highest_post_number,
             thread_users.pinned,
             thread_users.last_post_created_at,
+            thread_users.last_post_created_by_id,
             thread_users.user_id,
             visited_statuses.last_post_number_read,
             (visited_statuses.last_post_number_read < thread_users.highest_post_number) AS unread
@@ -497,6 +499,7 @@ CREATE VIEW threads_with_visited_status AS
                     discussion_threads.highest_post_number,
                     discussion_threads.pinned,
                     discussion_threads.last_post_created_at,
+                    discussion_threads.last_post_created_by_id,
                     users.id AS user_id
                    FROM discussion_threads,
                     users) thread_users
@@ -511,6 +514,7 @@ UNION
             thread_users.highest_post_number,
             thread_users.pinned,
             thread_users.last_post_created_at,
+            thread_users.last_post_created_by_id,
             thread_users.user_id,
             0 AS last_post_number_read,
             true AS unread
@@ -523,6 +527,7 @@ UNION
                     discussion_threads.highest_post_number,
                     discussion_threads.pinned,
                     discussion_threads.last_post_created_at,
+                    discussion_threads.last_post_created_by_id,
                     users.id AS user_id
                    FROM discussion_threads,
                     users) thread_users
@@ -809,6 +814,13 @@ CREATE INDEX index_discussion_threads_on_created_by_id ON discussion_threads USI
 
 
 --
+-- Name: index_discussion_threads_on_last_post_created_by_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_discussion_threads_on_last_post_created_by_id ON discussion_threads USING btree (last_post_created_by_id);
+
+
+--
 -- Name: index_discussion_threads_on_subforum_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -986,4 +998,6 @@ INSERT INTO schema_migrations (version) VALUES ('20141016192618');
 INSERT INTO schema_migrations (version) VALUES ('20141016193002');
 
 INSERT INTO schema_migrations (version) VALUES ('20141016200108');
+
+INSERT INTO schema_migrations (version) VALUES ('20141017154222');
 
