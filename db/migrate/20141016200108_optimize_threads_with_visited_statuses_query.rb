@@ -7,36 +7,19 @@ CREATE VIEW threads_with_visited_status AS
 (
  SELECT thread_users.*,
         visited_statuses.last_post_number_read,
-        (visited_statuses.last_post_number_read < thread_users.highest_post_number) AS unread,
-    ( SELECT (((users.first_name)::text || ' '::text) || (users.last_name)::text)
-       FROM (posts JOIN users ON (posts.author_id = users.id))
-      WHERE (posts.thread_id = thread_users.id)
-      ORDER BY posts.post_number DESC
-     LIMIT 1) AS last_author_name,
-    ( SELECT (((users.first_name)::text || ' '::text) || (users.last_name)::text)
-       FROM users
-      WHERE (thread_users.created_by_id = users.id)) AS creator_name
-   FROM (( SELECT discussion_threads.*, users.id AS user_id
-           FROM discussion_threads,
-            users) thread_users
-   INNER JOIN visited_statuses ON
-    (thread_users.id = visited_statuses.thread_id AND thread_users.user_id = visited_statuses.user_id))
+        (visited_statuses.last_post_number_read < thread_users.highest_post_number) AS unread
+   FROM ( SELECT discussion_threads.*, users.id AS user_id FROM discussion_threads, users) thread_users
+   INNER JOIN visited_statuses
+   ON thread_users.id = visited_statuses.thread_id AND thread_users.user_id = visited_statuses.user_id
 )
 UNION
 (
  SELECT thread_users.*,
         0 AS last_post_number_read,
-        TRUE AS unread,
-    ( SELECT (((users.first_name)::text || ' '::text) || (users.last_name)::text)
-       FROM (posts JOIN users ON (posts.author_id = users.id))
-      WHERE (posts.thread_id = thread_users.id)
-      ORDER BY posts.post_number DESC
-     LIMIT 1) AS last_author_name,
-    ( SELECT (((users.first_name)::text || ' '::text) || (users.last_name)::text)
-       FROM users
-      WHERE (thread_users.created_by_id = users.id)) AS creator_name
+        TRUE AS unread
    FROM ( SELECT discussion_threads.*, users.id AS user_id FROM discussion_threads, users) thread_users
-   LEFT JOIN visited_statuses ON thread_users.id = visited_statuses.thread_id AND thread_users.user_id = visited_statuses.user_id
+   LEFT JOIN visited_statuses
+   ON thread_users.id = visited_statuses.thread_id AND thread_users.user_id = visited_statuses.user_id
    WHERE visited_statuses.id IS NULL
 );
     SQL

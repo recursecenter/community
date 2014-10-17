@@ -487,16 +487,7 @@ CREATE VIEW threads_with_visited_status AS
             thread_users.last_post_created_at,
             thread_users.user_id,
             visited_statuses.last_post_number_read,
-            (visited_statuses.last_post_number_read < thread_users.highest_post_number) AS unread,
-            ( SELECT (((users.first_name)::text || ' '::text) || (users.last_name)::text)
-                   FROM (posts
-              JOIN users ON ((posts.author_id = users.id)))
-             WHERE (posts.thread_id = thread_users.id)
-             ORDER BY posts.post_number DESC
-            LIMIT 1) AS last_author_name,
-            ( SELECT (((users.first_name)::text || ' '::text) || (users.last_name)::text)
-                   FROM users
-                  WHERE (thread_users.created_by_id = users.id)) AS creator_name
+            (visited_statuses.last_post_number_read < thread_users.highest_post_number) AS unread
            FROM (( SELECT discussion_threads.id,
                     discussion_threads.title,
                     discussion_threads.subforum_id,
@@ -522,16 +513,7 @@ UNION
             thread_users.last_post_created_at,
             thread_users.user_id,
             0 AS last_post_number_read,
-            true AS unread,
-            ( SELECT (((users.first_name)::text || ' '::text) || (users.last_name)::text)
-                   FROM (posts
-              JOIN users ON ((posts.author_id = users.id)))
-             WHERE (posts.thread_id = thread_users.id)
-             ORDER BY posts.post_number DESC
-            LIMIT 1) AS last_author_name,
-            ( SELECT (((users.first_name)::text || ' '::text) || (users.last_name)::text)
-                   FROM users
-                  WHERE (thread_users.created_by_id = users.id)) AS creator_name
+            true AS unread
            FROM (( SELECT discussion_threads.id,
                     discussion_threads.title,
                     discussion_threads.subforum_id,
