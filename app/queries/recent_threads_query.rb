@@ -6,30 +6,14 @@ class RecentThreadsQuery < Query
 
   def each(&block)
     threads.map do |t|
-      ThreadWithLastAuthor.new(t, creator_for(t), last_author_for(t))
+      ThreadWithLastAuthor.new(t, last_author_for(t))
     end.each(&block)
   end
 
   private
 
-  def creator_for(thread)
-    creators[thread.id]
-  end
-
   def last_author_for(thread)
     last_authors[thread.id]
-  end
-
-  def creators
-    return @creators if defined? @creators
-
-    creator_map = User.select(:id, :first_name, :last_name).where(id: threads.map(&:created_by_id)).map do |u|
-      [u.id, u]
-    end.to_h
-
-    @creators = threads.map do |t|
-      [t.id, creator_map[t.created_by_id].name]
-    end.to_h
   end
 
   def last_authors
@@ -55,6 +39,7 @@ class RecentThreadsQuery < Query
   def threads
     @threads ||= @subforum.
       threads_for_user(@user).
+      includes(:created_by).
       order(last_post_created_at: :desc).
       limit(3)
   end

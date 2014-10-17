@@ -13,7 +13,7 @@ json.threads threads do |thread|
   end
 
   json.created_by do
-    json.name thread.creator_name
+    json.name thread.created_by.name
   end
 end
 

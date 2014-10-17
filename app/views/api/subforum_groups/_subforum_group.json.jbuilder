@@ -15,7 +15,7 @@ json.subforums SubforumsWithCountsQuery.new(subforum_group.subforums, current_us
     end
 
     json.created_by do
-      json.name thread.creator_name
+      json.name thread.created_by.name
     end
   end
 end
