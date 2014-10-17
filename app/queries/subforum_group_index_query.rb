@@ -38,17 +38,6 @@ private
       includes(:created_by, :last_post_created_by).
       group_by(&:subforum_id)
 
-    # XXX: This is using private ActiveRecord APIs that we probably
-    # shouldn't rely on.
-    subforums.each do |sf|
-      threads = threads_by_subforum_id[sf.id]
-
-      association = sf.association(:threads_with_visited_status)
-      association.loaded!
-      association.target.concat(threads)
-      threads.each { |t| association.set_inverse_instance(t) }
-    end
-
-    subforums
+    subforums.map { |s| SubforumWithRecentThreads.new(s, threads_by_subforum_id[s.id]) }
   end
 end
