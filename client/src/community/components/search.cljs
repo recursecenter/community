@@ -122,9 +122,6 @@
                              :when value]
                          (str (name filter-name) "=" value))
                        (str/join "&"))]
-    (prn (str (routes :search {:query (:text query)})
-                             "?" query-str))
-
     (routes/redirect-to (str (routes :search {:query (:text query)})
                              "?" query-str))))
 
