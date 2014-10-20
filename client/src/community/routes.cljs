@@ -11,6 +11,7 @@
     (r/route :subforum ["f" :slug :id])
     (r/route :thread   ["t" :slug :id :post-number])
     (r/route :thread   ["t" :slug :id])
+    (r/route :search   ["s"])
     (r/route :search   ["s" :query])))
 
 (defmulti dispatch :route)

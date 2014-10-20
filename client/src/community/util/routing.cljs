@@ -1,5 +1,6 @@
 (ns community.util.routing
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [goog.Uri]))
 
 (def Separator "/")
 
@@ -67,6 +68,11 @@
          (remove nil?)
          first)))
 
+(defn parse-query-params [query-params-str]
+  (let [query-data (goog.Uri.QueryData. query-params-str)]
+    (zipmap (map keyword (.getKeys query-data))
+            (.getValues query-data))))
+
 (defn routes
   [& routes]
   (Routes. routes))
@@ -104,12 +110,15 @@
       ;;Generate a string from route name
       (this string-or-route-name {})
       ;;Try matching this route
-      (let [components (->> (str/split string-or-route-name (re-pattern Separator))
+      (let [[path query-params] (str/split string-or-route-name #"\?")
+            components (->> (str/split path (re-pattern Separator))
                             (remove str/blank?))
-            [params req] (parse this {:components components})]
+            [params {:as req :keys [query-params]}] (parse this {:components components :query-params query-params})]
         ;;Route only matches when all components have been consumed
         (when (empty? (:components req))
-          params))))
+          (if query-params
+            (assoc params :query-params (parse-query-params query-params))
+            params)))))
 
   (-invoke
     [this route-name params]
@@ -121,3 +130,11 @@
   ([name bits]
      (assert (not (string? name)) "Routes cannot be named with strings; please use a keyword.")
      (Route. name bits)))
+
+
+(routes :search {:filters {:author "Zach Allaun"}
+                 :query "foo bar baz"})
+;; =>
+"/api/search?q=foo bar baz&filters[author]=Zach Allaun"
+
+"/s/foo bar baz?author=Zach Allaun"

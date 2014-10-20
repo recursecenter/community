@@ -29,8 +29,7 @@
                         (str "Narrow to thread: " text)
                       :subforum
                         (str "Narrow to subforum: " text))]
-      {:search-filter search-filter :text text :display display-text :id id :slug slug
-       :search-str (str (name search-filter) ":(" text ")")}))
+      {:search-filter search-filter :text text :display display-text :id id :slug slug}))
 
 (defn results->display-list
   "Given all results from the suggestions endpoint, return list of things to show in the autocomplete menu"
@@ -49,9 +48,9 @@
 (defn display [show]
   (if show {} {:display "none"}))
 
-(defn completion [{:keys [search-filter text display id slug search-str]}]
+(defn completion [{:keys [search-filter text display id slug]}]
   (condp = search-filter
-    :author (routes :search {:query search-str})
+    :author (str (routes :search) "?author=" text)
     :thread (routes :thread {:id id :slug slug})
     :subforum (routes :subforum {:id id :slug slug})
     :none (routes :search {:query text})))

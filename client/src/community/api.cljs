@@ -3,6 +3,7 @@
             [community.util :as util :refer-macros [<? p]]
             [cljs.core.async :as async]
             [clojure.walk :refer [postwalk]]
+            [clojure.string :as str]
             [community.util.ajax :as ajax])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
@@ -118,7 +119,12 @@
     :res-transform (partial models/api->model :thread)))
 
 (def search
-  (make-api-fn (fn [query] (GET (str "/search?q=" query)))))
+  (make-api-fn (fn [query filters]
+                 (->> (for [[k v] filters]
+                        (str "filters[" (name k) "]=" v))
+                      (str/join "&")
+                      (str "/search?q=" query "&")
+                      (GET)))))
 
 (def suggestions
   (make-api-fn (fn [query] (GET (str "/suggestions?q=" query)))))
