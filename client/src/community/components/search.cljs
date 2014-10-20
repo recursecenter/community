@@ -11,7 +11,8 @@
             [om.dom :as dom]
             [cljs.core.async :as async :refer [chan <! >! close! put! alts!]]
             [om-tools.core :refer-macros [defcomponent]]
-            [sablono.core :refer-macros [html]])
+            [sablono.core :refer-macros [html]]
+            [clojure.string :as str])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
 (def key->search-filter {:none :none :users :author :threads :thread :subforums :subforum})
@@ -67,75 +68,95 @@
         [:li {:class (when selected? "selected")}
          (partials/link-to (completion value) (:display value))])])))
 
-(defn search [owner]
-  (let [input (om/get-node owner "search-query")
-        query (-> input .-value)]
-    (routes/redirect-to (routes :search {:query query}))))
-
-(defn handle-input-change [query owner]
-  (controller/dispatch :update-search-suggestions query)
-  (om/set-state! owner :query query))
-
 (def ENTER 13)
 (def UP_ARROW 38)
 (def DOWN_ARROW 40)
 (def TAB 9)
 (def ESC 27)
 
-(defcomponent input-view [app owner]
+(defcomponent input-view [{:keys [query show-suggestions! select! complete! query-text-change! complete-and-search!]}
+                          owner]
   (display-name [_] "Search Input")
 
-  (render-state [_ {:keys [query show-suggestions! select! selected]}]
+  (render [_]
     (html
       [:div
        [:form.form-inline
         {:name "search-form"
          :onSubmit (fn [e]
                      (.preventDefault e)
-                     (search owner))}
+                     (complete-and-search!))}
         [:input.form-control {:ref "search-query"
                               :type "text"
                               :style {:height "26px"}
-                              :value query
+                              :value (:text query)
                               :onFocus #(show-suggestions! true)
                               ;; TODO: do we need this timeout without core.async?
                               :onBlur (fn [e] (js/setTimeout #(show-suggestions! false) 100))
                               :onChange (fn [e]
-                                          (handle-input-change
-                                           (.. e -target -value) owner))
+                                          (query-text-change! (.. e -target -value)))
                               :onKeyDown (fn [e]
                                            (let [keycode (.-keyCode e)]
-                                             (when (contains? #{UP_ARROW DOWN_ARROW ENTER} keycode)
+                                             (when (contains? #{UP_ARROW DOWN_ARROW TAB ENTER} keycode)
                                                (.preventDefault e)
                                                (condp = keycode
                                                  DOWN_ARROW (select! :next)
                                                  UP_ARROW (select! :prev)
-                                                 ENTER (routes/redirect-to (completion selected))))))}]]])))
+                                                 TAB (complete!)
+                                                 ENTER (complete-and-search!)))))}]]])))
 
 (defn suggestion-sl [suggestions q]
   (->> suggestions
        (results->display-list q)
        sl/selection-list))
 
+(defn complete-suggestion [query suggestion]
+  (if (= :none (:search-filter suggestion))
+    query
+    (-> query
+        (assoc-in [:filters (:search-filter suggestion)] (:text suggestion))
+        (assoc :text ""))))
+
+(defn search! [query]
+  (let [query-str (->> (for [[filter-name value] (:filters query)
+                             :when value]
+                         (str (name filter-name) "=" value))
+                       (str/join "&"))]
+    (prn (str (routes :search {:query (:text query)})
+                             "?" query-str))
+
+    (routes/redirect-to (str (routes :search {:query (:text query)})
+                             "?" query-str))))
+
 (defcomponent autocomplete [app owner]
   (display-name [_] "Autocomplete")
 
   (init-state [_]
-    {:query ""
+    {:query {:text ""
+             :filters {:author nil :subforum nil :thread nil}}
      :show-suggestions? false
      :suggestions (suggestion-sl (:suggestions app) (:query app))})
 
   (will-receive-props [_ next-props]
-    (when (not= (:suggestions next-props) (om/get-props owner :suggestions))
+    (when (not= (:suggestions next-props) (:suggestions (om/get-props owner)))
       (om/set-state! owner
                      :suggestions (suggestion-sl (:suggestions next-props) (:query next-props)))))
 
-  (render-state [_ {:as state :keys [suggestions]}]
+  (render-state [_ {:as state :keys [query suggestions]}]
     (html
      [:div
-      (->input-view app {:state {:show-suggestions! #(om/set-state! owner :show-suggestions? %)
-                                 :select! #(om/set-state! owner :suggestions (sl/select % suggestions))
-                                 :selected (sl/selected suggestions)}})
+      (prn-str query)
+      (->input-view {:query query
+                     :show-suggestions! #(om/set-state! owner :show-suggestions? %)
+                     :select! #(om/set-state! owner :suggestions (sl/select % suggestions))
+                     :complete! (fn []
+                                  (let [s (sl/selected suggestions)]
+                                    (om/set-state! owner :query (complete-suggestion query s))))
+                     :query-text-change! (fn [text]
+                                           (controller/dispatch :update-search-suggestions text)
+                                           (om/update-state! owner :query #(assoc % :text text)))
+                     :complete-and-search! (fn []
+                                             (search! (complete-suggestion query (sl/selected suggestions))))})
       (->suggestions-view app {:state state})])))
 
 (defcomponent result [{:keys [-source] :as result}]
