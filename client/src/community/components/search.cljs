@@ -17,34 +17,23 @@
 
 (def key->search-filter {:none :none :users :author :threads :thread :subforums :subforum})
 
-(defn result->display-item
-  "Given a suggestions result, convert to valid display item in the autocomplete menu"
-  [key text {:keys [id slug] :or {id nil :slug nil}}]
-  (let [search-filter (key->search-filter key)
-        display-text (condp = search-filter
-                      :none
-                        (str "Search for " text)
-                      :author
-                        (str "Posts by: " text)
-                      :thread
-                        (str "Thread: " text)
-                      :subforum
-                        (str "Subforum: " text))]
-      {:search-filter search-filter :text text :display display-text :id id :slug slug}))
+(defn first-suggestion [query-str]
+  {:search-filter :none :text query-str})
 
-(defn results->display-list
-  "Given all results from the suggestions endpoint, return list of things to show in the autocomplete menu"
-  [query-str results]
-  (let [always-display (result->display-item :none query-str nil)
-        display (mapcat
-                  (fn [key result-set]
-                    (when (not (empty? result-set))
-                      (map
-                        (fn [result]
-                          (result->display-item key (:text result) (:payload result)))
-                        result-set)))
-                  (keys results) (vals results))]
-    (conj display always-display)))
+(defn result-set->suggestion-data [search-filter result-set]
+  (map (fn [{:as result :keys [text payload]}]
+         {:search-filter search-filter :text text :id (:id payload) :slug (:slug payload)})
+       result-set))
+
+(defn results->suggestions-display [query-str results]
+  (let [first-suggestion (first-suggestion query-str)
+        filter-suggestions (mapcat (fn [key result-set]
+                                      (when (not (empty? result-set))
+                                        (let [search-filter (key->search-filter key)
+                                              suggestion-data (result-set->suggestion-data search-filter result-set)]
+                                         suggestion-data)))
+                                (keys results) (vals results))]
+        (conj filter-suggestions first-suggestion)))
 
 (def ENTER 13)
 (def UP_ARROW 38)
@@ -55,7 +44,7 @@
 (defn display [show]
   (if show {} {:display "none"}))
 
-(defn jump-to-page [{:keys [search-filter text display id slug]}]
+(defn jump-to-page [{:keys [search-filter text id slug]}]
   (routes/redirect-to 
     (condp = search-filter
       :thread (routes :thread {:id id :slug slug})
@@ -86,18 +75,18 @@
 
 (defcomponent suggestions-view [app owner]
   (display-name [_] "Search suggestions")
-
   (render-state [_ {:keys [query-data suggestions show-suggestions?]}]
     (html
      [:ol
       {:id "suggestions" :ref "suggestions"
        :style (display (and show-suggestions? (not (empty? (:text query-data)))))}
-      (for [{:keys [selected? value] :as suggestion} suggestions]
-        [:li {:class (when selected? "selected")
-              :onClick (fn [e]
-                             (.preventDefault e)
-                             (complete-and-respond! query-data value))} 
-                  (:display value)])])))
+        (for [{:keys [selected? value] :as suggestion} suggestions]
+          [:li {:class (when selected? "selected")
+                :onClick (fn [e]
+                               (.preventDefault e)
+                               (complete-and-respond! query-data value))
+                :data-search-filter (name (:search-filter value))} 
+            (:text value)])])))
 
 (defcomponent input-view [{:keys [query-data show-suggestions! select! complete! query-text-change! complete-and-respond!]}
                           owner]
@@ -131,7 +120,7 @@
 
 (defn suggestion-sl [suggestions query-str]
   (->> suggestions
-       (results->display-list query-str)
+       (results->suggestions-display query-str)
        sl/selection-list))
 
 (defcomponent autocomplete [app owner]
@@ -189,8 +178,7 @@
                                    :person {:hacker-school-id (:hacker-school-id -source)})}
                         (:author -source)]]
        [:div.col-md-2  (link-to (routes :thread {:id (:thread-id -source)
-                                                 :slug (:thread-slug -source)
-                                                 })
+                                                 :slug (:thread-slug -source)})
                                 {:style {:color (:ui-color -source)}}
                                 "View thread ->")]]])))
 
