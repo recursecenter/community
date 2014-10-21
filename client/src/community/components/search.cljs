@@ -62,45 +62,44 @@
       :subforum (routes :subforum {:id id :slug slug})
       nil)))
 
-(defn complete-suggestion [query suggestion]
+(defn complete-suggestion [query-data suggestion]
   (if (= :none (:search-filter suggestion))
-    query
-    (-> query
+    query-data
+    (-> query-data
         (assoc-in [:filters (:search-filter suggestion)] (:text suggestion))
         (assoc :text ""))))
 
-(defn search! [query]
-  (let [query-str (->> (for [[filter-name value] (:filters query)
+(defn search! [query-data]
+  (let [query-param-str (->> (for [[filter-name value] (:filters query-data)
                              :when value]
                          (str (name filter-name) "=" value))
                        (str/join "&"))]
-    (routes/redirect-to (str (routes :search {:query (:text query)})
-                             "?" query-str))))
+    (routes/redirect-to (str (routes :search {:query (:text query-data)})
+                             "?" query-param-str))))
 
-(defn complete-and-respond! [query selected]
+(defn complete-and-respond! [query-data selected]
   (cond 
     (contains? #{:author :none} (:search-filter selected))
-      (search! (complete-suggestion query selected))    
+      (search! (complete-suggestion query-data selected))    
     (contains? #{:thread :subforum} (:search-filter selected))
       (jump-to-page selected)))
 
 (defcomponent suggestions-view [app owner]
   (display-name [_] "Search suggestions")
 
-  (render-state [_ {:keys [query suggestions show-suggestions?]}]
-    (prn query)
+  (render-state [_ {:keys [query-data suggestions show-suggestions?]}]
     (html
      [:ol
       {:id "suggestions" :ref "suggestions"
-       :style (display (and show-suggestions? (not (empty? query))))}
+       :style (display (and show-suggestions? (not (empty? (:text query-data)))))}
       (for [{:keys [selected? value] :as suggestion} suggestions]
         [:li {:class (when selected? "selected")}
              [:a {:onClick (fn [e]
                              (.preventDefault e)
-                             (complete-and-respond! query value))} 
+                             (complete-and-respond! query-data value))} 
                   (:display value)]])])))
 
-(defcomponent input-view [{:keys [query show-suggestions! select! complete! query-text-change! complete-and-respond!]}
+(defcomponent input-view [{:keys [query-data show-suggestions! select! complete! query-text-change! complete-and-respond!]}
                           owner]
   (display-name [_] "Search Input")
 
@@ -114,7 +113,7 @@
         [:input.form-control {:ref "search-query"
                               :type "search"
                               :id "search-box"
-                              :value (:text query)
+                              :value (:text query-data)
                               :onFocus #(show-suggestions! true)
                               ;; TODO: do we need this timeout without core.async?
                               :onBlur (fn [e] (js/setTimeout #(show-suggestions! false) 100))
@@ -135,37 +134,35 @@
        (results->display-list q)
        sl/selection-list))
 
-
-
 (defcomponent autocomplete [app owner]
   (display-name [_] "Autocomplete")
 
   (init-state [_]
-    {:query {:text ""
-             :filters {:author nil :subforum nil :thread nil}}
+    {:query-data {:text ""
+                  :filters {:author nil :subforum nil :thread nil}}
      :show-suggestions? false
-     :suggestions (suggestion-sl (:suggestions app) (:query app))})
+     :suggestions (suggestion-sl (:suggestions app) (:query-str app))})
 
   (will-receive-props [_ next-props]
-    (when (not= (:query next-props) (:query (om/get-props owner)))
+    (when (not= (:query-str next-props) (:query-str (om/get-props owner)))
       (om/set-state! owner
-                     :suggestions (suggestion-sl (:suggestions next-props) (:query next-props)))))
+                     :suggestions (suggestion-sl (:suggestions next-props) (:query-str next-props)))))
 
-  (render-state [_ {:as state :keys [query suggestions]}]
+  (render-state [_ {:as state :keys [query-data suggestions]}]
     (html
      [:div {:id "search"}
-      (->input-view {:query query
+      (->input-view {:query-data query-data
                      :show-suggestions! #(om/set-state! owner :show-suggestions? %)
                      :select! #(om/set-state! owner :suggestions (sl/select % suggestions))
                      :complete! (fn []
                                   (let [s (sl/selected suggestions)]
-                                    (om/set-state! owner :query (complete-suggestion query s))))
+                                    (om/set-state! owner :query-data (complete-suggestion query-data s))))
                      :query-text-change! (fn [text]
-                                           (om/update-state! owner :query #(assoc % :text text))
+                                           (om/update-state! owner :query-data #(assoc % :text text))
                                            (controller/dispatch :update-search-suggestions text))
                      :complete-and-respond! (fn []
                                               (when-let [selected (sl/selected suggestions)]
-                                                (complete-and-respond! query selected)))})
+                                                (complete-and-respond! query-data selected)))})
       (->suggestions-view app {:state state})])))
 
 (defcomponent result [{:keys [-source] :as result}]
