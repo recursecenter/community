@@ -51,7 +51,7 @@
 
 (defn completion [{:keys [search-filter text display id slug]}]
   (condp = search-filter
-    :author (str (routes :search) "?author=" text)
+    :author nil
     :thread (routes :thread {:id id :slug slug})
     :subforum (routes :subforum {:id id :slug slug})
     :none (routes :search {:query text})))
@@ -74,7 +74,7 @@
 (def TAB 9)
 (def ESC 27)
 
-(defcomponent input-view [{:keys [query show-suggestions! select! complete! query-text-change! complete-and-search!]}
+(defcomponent input-view [{:keys [query show-suggestions! select! complete! query-text-change! complete-and-respond!]}
                           owner]
   (display-name [_] "Search Input")
 
@@ -84,7 +84,7 @@
         {:name "search-form"
          :onSubmit (fn [e]
                      (.preventDefault e)
-                     (complete-and-search!))}
+                     (complete-and-respond!))}
         [:input.form-control {:ref "search-query"
                               :type "search"
                               :id "search-box"
@@ -102,12 +102,14 @@
                                                  DOWN_ARROW (select! :next)
                                                  UP_ARROW (select! :prev)
                                                  TAB (complete!)
-                                                 ENTER (complete-and-search!)))))}]])))
+                                                 ENTER (complete-and-respond!)))))}]])))
 
 (defn suggestion-sl [suggestions q]
   (->> suggestions
        (results->display-list q)
        sl/selection-list))
+
+
 
 (defn complete-suggestion [query suggestion]
   (if (= :none (:search-filter suggestion))
@@ -150,8 +152,11 @@
                      :query-text-change! (fn [text]
                                            (om/update-state! owner :query #(assoc % :text text))
                                            (controller/dispatch :update-search-suggestions text))
-                     :complete-and-search! (fn []
-                                             (search! (complete-suggestion query (sl/selected suggestions))))})
+                     :complete-and-respond! (fn []
+                                              (let [selected (sl/selected suggestions)]
+                                                (if (= (:search-filter selected) :author)
+                                                  (search! (complete-suggestion query selected))    
+                                                  (routes/redirect-to (completion selected)))))})
       (->suggestions-view app {:state state})])))
 
 (defcomponent result [{:keys [-source] :as result}]
