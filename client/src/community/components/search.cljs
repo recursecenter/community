@@ -25,11 +25,11 @@
                       :none
                         (str "Search for " text)
                       :author
-                        (str "Narrow to posts by: " text)
+                        (str "Posts by: " text)
                       :thread
-                        (str "Narrow to thread: " text)
+                        (str "Thread: " text)
                       :subforum
-                        (str "Narrow to subforum: " text))]
+                        (str "Subforum: " text))]
       {:search-filter search-filter :text text :display display-text :id id :slug slug}))
 
 (defn results->display-list
@@ -80,15 +80,14 @@
 
   (render [_]
     (html
-      [:div
-       [:form.form-inline
+       [:form
         {:name "search-form"
          :onSubmit (fn [e]
                      (.preventDefault e)
                      (complete-and-search!))}
         [:input.form-control {:ref "search-query"
-                              :type "text"
-                              :style {:height "26px"}
+                              :type "search"
+                              :id "search-box"
                               :value (:text query)
                               :onFocus #(show-suggestions! true)
                               ;; TODO: do we need this timeout without core.async?
@@ -103,7 +102,7 @@
                                                  DOWN_ARROW (select! :next)
                                                  UP_ARROW (select! :prev)
                                                  TAB (complete!)
-                                                 ENTER (complete-and-search!)))))}]]])))
+                                                 ENTER (complete-and-search!)))))}]])))
 
 (defn suggestion-sl [suggestions q]
   (->> suggestions
@@ -141,8 +140,7 @@
 
   (render-state [_ {:as state :keys [query suggestions]}]
     (html
-     [:div
-      (prn-str query)
+     [:div {:id "search"}
       (->input-view {:query query
                      :show-suggestions! #(om/set-state! owner :show-suggestions? %)
                      :select! #(om/set-state! owner :suggestions (sl/select % suggestions))
@@ -150,8 +148,9 @@
                                   (let [s (sl/selected suggestions)]
                                     (om/set-state! owner :query (complete-suggestion query s))))
                      :query-text-change! (fn [text]
-                                           (controller/dispatch :update-search-suggestions text)
-                                           (om/update-state! owner :query #(assoc % :text text)))
+                                           (prn "Hey " text)
+                                           (om/update-state! owner :query #(assoc % :text text))
+                                           (controller/dispatch :update-search-suggestions text))
                      :complete-and-search! (fn []
                                              (search! (complete-suggestion query (sl/selected suggestions))))})
       (->suggestions-view app {:state state})])))

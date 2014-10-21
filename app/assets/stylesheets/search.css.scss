@@ -1,3 +1,18 @@
+.search-bar {
+  display: block;
+  text-align: center;
+  margin-top: 5px;
+}
+
+#search {
+  width: 50%;
+  margin: 0 auto;
+}
+
+#search-box {
+  height: 28px;
+}
+
 .search-result {
   border: 1px solid #f8f8f8;
   padding: 2px;
@@ -18,16 +33,24 @@
 }
 
 #suggestions {
-  width: 300px;
+  width: inherit;
+  text-align: left;
   position: absolute;
   z-index: 10001;
   list-style: none;
   background-color: white;
   margin: 0;
-  padding: 0;
-  border: 1px solid #ccc;
+  padding: 5px 10px;
+  border: 1px solid #eee;
+  font-size: 0.875em;
 
   .selected {
-    background-color: #ccc;
+    background-color: #eee;
   }
+
+  li {
+    padding: 5px 0px;
+  }
+
 }
+
