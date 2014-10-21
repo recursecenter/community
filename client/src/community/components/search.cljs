@@ -34,8 +34,8 @@
 
 (defn results->display-list
   "Given all results from the suggestions endpoint, return list of things to show in the autocomplete menu"
-  [q results]
-  (let [always-display (result->display-item :none q nil)
+  [query-str results]
+  (let [always-display (result->display-item :none query-str nil)
         display (mapcat
                   (fn [key result-set]
                     (when (not (empty? result-set))
@@ -129,9 +129,9 @@
                                                  TAB (complete!)
                                                  ENTER (complete-and-respond!)))))}]])))
 
-(defn suggestion-sl [suggestions q]
+(defn suggestion-sl [suggestions query-str]
   (->> suggestions
-       (results->display-list q)
+       (results->display-list query-str)
        sl/selection-list))
 
 (defcomponent autocomplete [app owner]
