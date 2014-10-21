@@ -134,7 +134,7 @@
      :suggestions (suggestion-sl (:suggestions app) (:query app))})
 
   (will-receive-props [_ next-props]
-    (when (not= (:suggestions next-props) (:suggestions (om/get-props owner)))
+    (when (not= (:query next-props) (:query (om/get-props owner)))
       (om/set-state! owner
                      :suggestions (suggestion-sl (:suggestions next-props) (:query next-props)))))
 
@@ -148,7 +148,6 @@
                                   (let [s (sl/selected suggestions)]
                                     (om/set-state! owner :query (complete-suggestion query s))))
                      :query-text-change! (fn [text]
-                                           (prn "Hey " text)
                                            (om/update-state! owner :query #(assoc % :text text))
                                            (controller/dispatch :update-search-suggestions text))
                      :complete-and-search! (fn []
