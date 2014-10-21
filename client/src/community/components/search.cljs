@@ -93,11 +93,11 @@
       {:id "suggestions" :ref "suggestions"
        :style (display (and show-suggestions? (not (empty? (:text query-data)))))}
       (for [{:keys [selected? value] :as suggestion} suggestions]
-        [:li {:class (when selected? "selected")}
-             [:a {:onClick (fn [e]
+        [:li {:class (when selected? "selected")
+              :onClick (fn [e]
                              (.preventDefault e)
                              (complete-and-respond! query-data value))} 
-                  (:display value)]])])))
+                  (:display value)])])))
 
 (defcomponent input-view [{:keys [query-data show-suggestions! select! complete! query-text-change! complete-and-respond!]}
                           owner]

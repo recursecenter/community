@@ -50,7 +50,11 @@
 
   li {
     padding: 5px 0px;
+    cursor: pointer;
   }
 
+  li:hover {
+    background-color: #eee;
+  }
 }
 
