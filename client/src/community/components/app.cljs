@@ -178,7 +178,6 @@
           [:span
            [:img {:src (om/get-shared owner :logo-url)}]
            [:span.brand-text {:style {:color ui-color}} "Community"]])
-        [:div.breadcrumbs-container.hidden-xs (->breadcrumbs app)]
         (when current-user
           [:ul.community-nav.list-inline
            [:li.hidden-xs [:p.navbar-text "Hi, " (:first-name current-user) "!"]]
