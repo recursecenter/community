@@ -56,5 +56,22 @@
   li:hover {
     background-color: #eee;
   }
+  
+  
+  li[data-search-filter="none"]::before{
+    content: "Search For"
+  }
+
+  li[data-search-filter="author"]::before{
+    content: "Posts by"
+  }
+
+  li[data-search-filter="thread"]::before{
+    content: "Thread"
+  }
+
+  li[data-search-filter="subforum"]::before{
+    content: "Subforum"
+  }
 }
 

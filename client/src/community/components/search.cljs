@@ -18,12 +18,16 @@
 (def key->search-filter {:none :none :users :author :threads :thread :subforums :subforum})
 
 (defn first-suggestion [query-str]
-  {:search-filter :none :text query-str})
+  {:search-filter :none :text query-str :count 0})
 
 (defn result-set->suggestion-data [search-filter result-set]
-  (map (fn [{:as result :keys [text payload]}]
-         {:search-filter search-filter :text text :id (:id payload) :slug (:slug payload)})
-       result-set))
+  (map (fn [{:as result :keys [text payload]} counter]
+         {:search-filter search-filter 
+          :text text 
+          :id (:id payload) 
+          :slug (:slug payload) 
+          :count counter})
+       result-set (range (count result-set))))
 
 (defn results->suggestions-display [query-str results]
   (let [first-suggestion (first-suggestion query-str)
@@ -85,10 +89,11 @@
                 :onClick (fn [e]
                                (.preventDefault e)
                                (complete-and-respond! query-data value))
-                :data-search-filter (name (:search-filter value))} 
+                :data-search-filter (when (= 0 (:count value)) (name (:search-filter value)))} 
             (:text value)])])))
 
-(defcomponent input-view [{:keys [query-data show-suggestions! select! complete! query-text-change! complete-and-respond!]}
+(defcomponent input-view 
+  [{:keys [query-data show-suggestions! select! complete! query-text-change! complete-and-respond!]}
                           owner]
   (display-name [_] "Search Input")
 
