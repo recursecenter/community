@@ -51,12 +51,19 @@
   li {
     padding: 5px 0px;
     cursor: pointer;
+    margin-left: 70px;
   }
 
   li:hover {
     background-color: #eee;
   }
   
+  li::before{
+    display:inline-block;
+    width: 70px;
+    margin-left: -70px;
+    color: green;
+  }
   
   li[data-search-filter="none"]::before{
     content: "Search For"
