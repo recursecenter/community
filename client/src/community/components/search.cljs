@@ -15,10 +15,7 @@
             [clojure.string :as str])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
-(def key->search-filter {:none :none :users :author :threads :thread :subforums :subforum})
-
-(defn first-suggestion [query-str]
-  {:search-filter :none :text query-str :count 0})
+(def key->search-filter {:users :author :threads :thread :subforums :subforum})
 
 (defn result-set->suggestion-data [search-filter result-set]
   (map (fn [{:as result :keys [text payload]} counter]
@@ -30,14 +27,14 @@
        result-set (range (count result-set))))
 
 (defn results->suggestions-display [query-str results]
-  (let [first-suggestion (first-suggestion query-str)
-        filter-suggestions (mapcat (fn [key result-set]
-                                      (when (not (empty? result-set))
-                                        (let [search-filter (key->search-filter key)
-                                              suggestion-data (result-set->suggestion-data search-filter result-set)]
-                                         suggestion-data)))
-                                (keys results) (vals results))]
-        (conj filter-suggestions first-suggestion)))
+  (let [filter-suggestions 
+          (mapcat (fn [key result-set]
+            (when (not (empty? result-set))
+              (let [search-filter (key->search-filter key)
+                    suggestion-data (result-set->suggestion-data search-filter result-set)]
+                   suggestion-data)))
+            (keys results) (vals results))]
+        filter-suggestions))
 
 (def ENTER 13)
 (def UP_ARROW 38)
@@ -56,11 +53,9 @@
       nil)))
 
 (defn complete-suggestion [query-data suggestion]
-  (if (= :none (:search-filter suggestion))
-    query-data
-    (-> query-data
-        (assoc-in [:filters (:search-filter suggestion)] (:text suggestion))
-        (assoc :text ""))))
+  (-> query-data
+      (assoc-in [:filters (:search-filter suggestion)] (:text suggestion))
+      (assoc :text "")))
 
 (defn search! [query-data]
   (let [query-param-str (->> (for [[filter-name value] (:filters query-data)
@@ -72,7 +67,7 @@
 
 (defn complete-and-respond! [query-data selected]
   (cond 
-    (contains? #{:author :none} (:search-filter selected))
+    (= :author (:search-filter selected))
       (search! (complete-suggestion query-data selected))    
     (contains? #{:thread :subforum} (:search-filter selected))
       (jump-to-page selected)))
@@ -83,7 +78,8 @@
     (html
      [:ol
       {:id "suggestions" :ref "suggestions"
-       :style (display (and show-suggestions? (not (empty? (:text query-data)))))}
+       :style (display (and show-suggestions? (not (empty? (:text query-data)))
+                                              (not (empty? suggestions))))}
         (for [{:keys [selected? value] :as suggestion} suggestions]
           [:li {:class (when selected? "selected")
                 :onClick (fn [e]
@@ -100,10 +96,13 @@
   (render [_]
     (html
        [:form
-        {:name "search-form"
+        {:id "search-form"
+         :name "search-form"
          :onSubmit (fn [e]
                      (.preventDefault e)
                      (complete-and-respond!))}
+        [:div {:id "search-icon"}
+          [:i {:class "fa fa-search"}]]
         [:input.form-control {:ref "search-query"
                               :type "search"
                               :id "search-box"

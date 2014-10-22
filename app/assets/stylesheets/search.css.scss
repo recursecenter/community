@@ -5,8 +5,23 @@
 }
 
 #search {
-  width: 50%;
   margin: 0 auto;
+  width: 50%;
+}
+
+#search-form {
+  display: inline-table;
+  width: 100%;
+  margin-bottom: 0;
+}
+
+#search-icon {
+  width: 28px;
+  background-color: #eee;
+  display: table-cell;  
+  vertical-align: middle;
+  border: 1px solid #ccc;
+  border-right: none;
 }
 
 #search-box {
@@ -43,42 +58,42 @@
   padding: 5px 10px;
   border: 1px solid #eee;
   font-size: 0.875em;
+  box-shadow: 0px 2px 5px 1px #ccc;
 
   .selected {
-    background-color: #eee;
+    background-color: #f8fcef;
   }
 
   li {
-    padding: 5px 0px;
+    padding: 5px;
     cursor: pointer;
-    margin-left: 70px;
+    margin-left: 80px;
   }
 
   li:hover {
-    background-color: #eee;
+    background-color: #f8fcef;
   }
   
   li::before{
-    display:inline-block;
-    width: 70px;
-    margin-left: -70px;
-    color: green;
+    display: inline-block;
+    width: 80px;
+    margin-left: -80px;
+    color: #77d102;
+    text-align: right;
+    padding-right: 10px;
+    padding-left: 0px;
+    font-weight: bold;
   }
   
-  li[data-search-filter="none"]::before{
-    content: "Search For"
-  }
-
   li[data-search-filter="author"]::before{
     content: "Posts by"
   }
 
   li[data-search-filter="thread"]::before{
-    content: "Thread"
+    content: "Threads"
   }
 
   li[data-search-filter="subforum"]::before{
-    content: "Subforum"
+    content: "Subforums"
   }
 }
-
