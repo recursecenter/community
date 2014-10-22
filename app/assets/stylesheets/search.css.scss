@@ -30,7 +30,7 @@
 }
 
 #suggestions {
-  width: inherit;
+  width: 48.5%;
   text-align: left;
   position: absolute;
   z-index: 10001;
@@ -101,7 +101,7 @@
     font-size: $font-size-small;
   }
 
-  .author, .thread-link {
+  .author {
     a {
       color: #555; 
     }
@@ -109,10 +109,6 @@
     a:hover {
       color: black;
     }
-  }
-
-  .thread-link {
-    display: none;
   }
 
   .subforum {

@@ -172,11 +172,7 @@
         (link-to (routes :subforum {:id (:subforum-id -source)
                                     :slug (:subforum-slug -source)})
                          {:style {:color (:ui-color -source)}}
-                         (:subforum-group -source) " / " (:subforum -source))]
-       [:div.thread-link 
-        (link-to (routes :thread {:id (:thread-id -source)
-                                  :slug (:thread-slug -source)})
-                         "View thread")]]
+                         (:subforum-group -source) " / " (:subforum -source))]]
       [:div.result
        [:div.title
         (link-to (routes :thread {:id (:thread-id -source)
