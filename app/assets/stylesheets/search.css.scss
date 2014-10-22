@@ -7,6 +7,7 @@
 #search {
   margin: 0 auto;
   width: 50%;
+  height: 28px;
 }
 
 #search-form {
@@ -26,25 +27,6 @@
 
 #search-box {
   height: 28px;
-}
-
-.search-result {
-  border: 1px solid #f8f8f8;
-  padding: 2px;
-  margin-top: 5px;
-  margin-bottom: 5px;
-
-  .header{
-  }
-
-  .body {
-  }
-
-  .footer {
-    margin-top: 10px;
-    font-size: 12px;
-    font-style: italic;
-  }
 }
 
 #suggestions {
@@ -74,7 +56,7 @@
     background-color: #f8fcef;
   }
   
-  li::before{
+  li::before {
     display: inline-block;
     width: 80px;
     margin-left: -80px;
@@ -85,15 +67,73 @@
     font-weight: bold;
   }
   
-  li[data-search-filter="author"]::before{
+  li[data-search-filter="author"]::before {
     content: "Posts by"
   }
 
-  li[data-search-filter="thread"]::before{
+  li[data-search-filter="thread"]::before {
     content: "Threads"
   }
 
-  li[data-search-filter="subforum"]::before{
+  li[data-search-filter="subforum"]::before {
     content: "Subforums"
   }
+}
+
+#search-results-view {
+  .query {
+    @include make-sm-column-offset(2.5);
+    @include make-sm-column(9.5);
+    margin-bottom: 1.5em;
+    font-size: 14px;
+    font-weight: bold;
+  }
+}
+
+.search-result {
+  border-bottom: 1px dashed #77d102;
+  padding: 2px;
+  margin: 1em 0;
+
+  .metadata {
+    @include make-sm-column(2.5);
+    text-align: right;
+    font-size: $font-size-small;
+  }
+
+  .author, .thread-link {
+    a {
+      color: #555; 
+    }
+
+    a:hover {
+      color: black;
+    }
+  }
+
+  .thread-link {
+    display: none;
+  }
+
+  .subforum {
+  }
+
+  .result {
+    @include make-sm-column(9.5);
+  }
+
+  .title {
+     margin-bottom: 0.5em;
+     h4 {
+       margin: 0px;
+     } 
+  }
+
+  .body {
+    em {
+      font-style: normal; 
+      background-color: #fafad2;
+    }
+  }
+
 }

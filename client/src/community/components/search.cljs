@@ -158,33 +158,34 @@
                                                 (complete-and-respond! query-data selected)))})
       (->suggestions-view app {:state state})])))
 
-(defcomponent result [{:keys [-source] :as result}]
+(defcomponent result [{:keys [-source highlight] :as result}]
   (display-name [_] "Result")
 
   (render [_]
     (html
-     [:div.row.col-md-offset-1.col-md-9.search-result
-      [:div.row.header
-       [:div.col-md-8 (link-to (routes :thread {:id (:thread-id -source)
-                                                :slug (:thread-slug -source)
-                                                :post-number (:post-number -source)})
-                               {:style {:color (:ui-color -source)}}
-                               [:h4.thread-title (:thread -source)])]
-       [:div.col-md-4 (link-to (routes :subforum {:id (:subforum-id -source)
-                                                  :slug (:subforum-slug -source)})
-                               {:style {:color (:ui-color -source)}}
-                               [:h5 (:subforum-group -source)
-                                " / "
-                                (:subforum -source)])]]
-      [:div.body (partials/html-from-markdown (:body -source))]
-      [:div.row.footer
-       [:div.col-md-10 [:a {:href (routes/hs-route
-                                   :person {:hacker-school-id (:hacker-school-id -source)})}
-                        (:author -source)]]
-       [:div.col-md-2  (link-to (routes :thread {:id (:thread-id -source)
-                                                 :slug (:thread-slug -source)})
-                                {:style {:color (:ui-color -source)}}
-                                "View thread ->")]]])))
+     [:div.row.search-result
+      [:div.metadata {:data-ui-color (:ui-color -source)}
+       [:div.author 
+        [:a {:href (routes/hs-route :person {:hacker-school-id (:hacker-school-id -source)})}
+            (:author -source)]]
+       [:div.subforum 
+        (link-to (routes :subforum {:id (:subforum-id -source)
+                                    :slug (:subforum-slug -source)})
+                         {:style {:color (:ui-color -source)}}
+                         (:subforum-group -source) " / " (:subforum -source))]
+       [:div.thread-link 
+        (link-to (routes :thread {:id (:thread-id -source)
+                                  :slug (:thread-slug -source)})
+                         "View thread")]]
+      [:div.result
+       [:div.title
+        (link-to (routes :thread {:id (:thread-id -source)
+                                  :slug (:thread-slug -source)
+                                  :post-number (:post-number -source)})
+                         {:style {:color (:ui-color -source)}}
+                         [:h4 (:thread -source)])]
+       [:div.body 
+        (partials/html-from-markdown (first (:body highlight)))]]])))
 
 (defcomponent search-results [{:keys [search] :as app} owner]
   (display-name [_] "Search Results")
@@ -196,6 +197,6 @@
          [:div
           "Sorry, there were no matching results for this search."])
         (html
-         [:div
-          [:div.col-md-offset-1 [:h4 "Search Results"]]
+         [:div {:id "search-results-view"}
+          [:div.query "Search Results for :" ]
           [:div.results (map (partial ->result) results)]])))))
