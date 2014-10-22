@@ -185,7 +185,7 @@
            [:li (partials/link-to (routes :settings)
                   [:div [:i.fa.fa-cog] [:span.visible-xs-inline " " (:first-name current-user)]])]
            [:li.hidden-xs [:a {:href "/logout"} [:i.fa.fa-sign-out]]]])
-        [:div.search-bar.hidden-xs (search/->autocomplete app)]]])))
+        [:div.hidden-xs {:id "search-bar"} (search/->autocomplete app)]]])))
 
 (defcomponent app [{:as app :keys [current-user route-data errors loading?]}
                    owner]

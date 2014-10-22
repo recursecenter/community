@@ -1,13 +1,8 @@
-.search-bar {
-  display: block;
-  text-align: center;
-  margin-top: 5px;
-}
-
 #search {
-  margin: 0 auto;
+  margin: 5px auto 0 auto;
   width: 50%;
   height: 28px;
+  text-align: center;
 }
 
 #search-form {
@@ -18,9 +13,9 @@
 
 #search-icon {
   width: 28px;
-  background-color: #eee;
   display: table-cell;  
   vertical-align: middle;
+  background-color: #eee;
   border: 1px solid #ccc;
   border-right: none;
 }
@@ -31,18 +26,18 @@
 
 #suggestions {
   width: 48.5%;
-  text-align: left;
   position: absolute;
   z-index: 10001;
-  list-style: none;
-  background-color: white;
   margin: 0;
   padding: 5px 10px;
+  text-align: left;
+  list-style: none;
+  background-color: white;
   border: 1px solid #eee;
-  font-size: 0.875em;
   box-shadow: 0px 2px 5px 1px #ccc;
+  font-size: 0.875em;
 
-  .selected {
+  .selected, li:hover {
     background-color: #f8fcef;
   }
 
@@ -52,18 +47,13 @@
     margin-left: 80px;
   }
 
-  li:hover {
-    background-color: #f8fcef;
-  }
-  
   li::before {
-    display: inline-block;
     width: 80px;
-    margin-left: -80px;
+    display: inline-block;
     color: #77d102;
     text-align: right;
-    padding-right: 10px;
-    padding-left: 0px;
+    margin-left: -80px;
+    padding: 0 10px 0 0;
     font-weight: bold;
   }
   
@@ -99,37 +89,33 @@
     @include make-sm-column(2.5);
     text-align: right;
     font-size: $font-size-small;
-  }
 
-  .author {
-    a {
-      color: #555; 
+    .author {
+      a {
+        color: #555; 
+      }
+
+      a:hover {
+        color: black;
+      }
     }
-
-    a:hover {
-      color: black;
-    }
-  }
-
-  .subforum {
   }
 
   .result {
     @include make-sm-column(9.5);
-  }
 
-  .title {
-     margin-bottom: 0.5em;
-     h4 {
-       margin: 0px;
-     } 
-  }
+    .title {
+       margin-bottom: 0.5em;
+       h4 {
+         margin: 0px;
+       } 
+    }
 
-  .body {
-    em {
-      font-style: normal; 
-      background-color: #fafad2;
+    .body {
+      em {
+        font-style: normal; 
+        background-color: #fafad2;
+      }
     }
   }
-
 }
