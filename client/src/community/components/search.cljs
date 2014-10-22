@@ -154,8 +154,10 @@
                                            (om/update-state! owner :query-data #(assoc % :text text))
                                            (controller/dispatch :update-search-suggestions text))
                      :complete-and-respond! (fn []
-                                              (when-let [selected (sl/selected suggestions)]
-                                                (complete-and-respond! query-data selected)))})
+                                              (if (empty? suggestions)
+                                                (search! query-data)
+                                                (when-let [selected (sl/selected suggestions)]
+                                                  (complete-and-respond! query-data selected))))})
       (->suggestions-view app {:state state})])))
 
 (defcomponent result [{:keys [-source highlight] :as result}]
