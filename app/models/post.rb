@@ -113,7 +113,7 @@ class Post < ActiveRecord::Base
   end
 
   def self.highlight_fields
-    { fields: { thread_title: {}, body: {} } }
+    { fields: { thread_title: {no_match_size: 150}, body: {no_match_size: 150} } }
   end
 
   def self.allowed_filter_fields
