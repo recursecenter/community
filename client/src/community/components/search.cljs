@@ -83,8 +83,8 @@
         (for [{:keys [selected? value] :as suggestion} suggestions]
           [:li {:class (when selected? "selected")
                 :onClick (fn [e]
-                               (.preventDefault e)
-                               (complete-and-respond! query-data value))
+                           (.preventDefault e)
+                           (complete-and-respond! query-data value))
                 :data-search-filter (when (= 0 (:count value)) (name (:search-filter value)))} 
             (:text value)])])))
 
@@ -166,7 +166,7 @@
      [:div.row.search-result
       [:div.metadata {:data-ui-color (:ui-color -source)}
        [:div.author 
-        [:a {:href (routes/hs-route :person {:hacker-school-id (:hacker-school-id -source)})}
+        [:a {:href (routes/hs-route :person {:hacker-school-id (:author-hacker-school-id -source)})}
             (:author -source)]]
        [:div.subforum 
         (link-to (routes :subforum {:id (:subforum-id -source)
