@@ -26,7 +26,7 @@
           :count counter})
        result-set (range (count result-set))))
 
-(defn results->suggestions-display [query-str results]
+(defn results->suggestions-display [results query-str]
   (let [filter-suggestions 
           (mapcat (fn [key result-set]
             (when (not (empty? result-set))
@@ -123,9 +123,9 @@
                                                  ENTER (complete-and-respond!)))))}]])))
 
 (defn suggestion-sl [suggestions query-str]
-  (->> suggestions
+  (-> suggestions
        (results->suggestions-display query-str)
-       sl/selection-list))
+       (sl/selection-list true)))
 
 (defcomponent autocomplete [app owner]
   (display-name [_] "Autocomplete")
@@ -154,10 +154,9 @@
                                            (om/update-state! owner :query-data #(assoc % :text text))
                                            (controller/dispatch :update-search-suggestions text))
                      :complete-and-respond! (fn []
-                                              (if (empty? suggestions)
-                                                (search! query-data)
-                                                (when-let [selected (sl/selected suggestions)]
-                                                  (complete-and-respond! query-data selected))))})
+                                                (if-let [selected (sl/selected suggestions)]
+                                                  (complete-and-respond! query-data selected)
+                                                  (search! query-data)))})
       (->suggestions-view app {:state state})])))
 
 (defcomponent result [{:keys [-source highlight] :as result}]
