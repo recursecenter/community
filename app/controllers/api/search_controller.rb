@@ -1,7 +1,8 @@
 class Api::SearchController < Api::ApiController
   skip_authorization_check only: [:query, :suggestions]
   def query
-    @results = Post.search(params[:q], params[:filters])
+    @page = params[:page].to_i
+    @results = Post.search(params[:q], params[:filters], @page)
   end
 
   def suggestions
