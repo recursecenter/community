@@ -31,11 +31,11 @@
 (deftype SelectionList [data selected-index]
   IGetSelected
   (-get-selected [_]
-    (nth data selected-index))
+    (if selected-index (nth data selected-index) nil))
 
   ISelectNextOrPrev
   (-select-next-or-prev [_ next?]
-    (let [next-index (+ selected-index (if next? 1 -1))]
+    (let [next-index (+ (if selected-index selected-index -1) (if next? 1 -1))]
       (SelectionList. data (wrapped-index next-index data))))
 
   ISeqable
@@ -44,8 +44,11 @@
      (map-indexed (fn [i el] {:selected? (= i selected-index) :value el})
                   data))))
 
-(defn selection-list [data]
-  (->SelectionList data 0))
+(defn selection-list 
+  ([data] (selection-list data false))
+  ([data no-default-select?] (if no-default-select?
+                                (->SelectionList data nil)
+                                (->SelectionList data 0))))
 
 (defn select [next-or-prev selection-list]
   (condp = next-or-prev
