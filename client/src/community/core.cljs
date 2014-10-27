@@ -34,6 +34,8 @@
 
   (controller/start-loop! app-state)
 
+  (.initializeTouchEvents js/React true)
+
   (let [route-changed! (fn []
                          (let [uri (goog.Uri/parse (.toString (.-location js/document)))
                                path-and-query (str (.getPath uri) "?" (.getQuery uri))

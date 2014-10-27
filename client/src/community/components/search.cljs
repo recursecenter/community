@@ -85,9 +85,8 @@
                           (not (empty? suggestions))))}
     (for [{:keys [selected? value] :as suggestion} suggestions]
       [:li {:class (when selected? "selected")
-            :onClick (fn [e]
-                       (.preventDefault e)
-                       (complete-and-respond! query-data value))
+            :onMouseDown #(complete-and-respond! query-data value)
+            :onTouchStart #(complete-and-respond! query-data value)
             :data-search-filter (when (= 0 (:count value)) (name (:search-filter value)))}
        (:text value)])]))
 
