@@ -38,8 +38,9 @@
         (assoc posts i post)))))
 
 (defn append-or-update-post! [app-state post]
-  (swap! app-state update-in [:thread :posts]
-    append-or-update-post (models/api->model :post post)))
+  (when (= (:thread-id post) (get-in @app-state [:thread :id]))
+    (swap! app-state update-in [:thread :posts]
+           append-or-update-post (models/api->model :post post))))
 
 (defn add-notification! [app-state notification]
   (swap! app-state update-in [:current-user :notifications]
