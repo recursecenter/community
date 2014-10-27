@@ -14,7 +14,7 @@ json.results @records do |record|
     json.subforum_group_name record.thread.subforum.subforum_group.name
   end
 
-  json.highlight @highlights.fetch(record.id.to_s)
+  json.highlight @highlights.fetch(record.id.to_s).first
 end
 
 json.metadata do
