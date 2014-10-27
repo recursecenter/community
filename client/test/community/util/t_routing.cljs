@@ -1,5 +1,6 @@
 (ns community.util.t-routing
-  (:require [community.util.routing :as routing])
+  (:require [community.util.routing :as routing]
+            [jasmine.core])
   (:require-macros [jasmine.core :refer [context test is all-are throws]]))
 
 (context "community.util.routing"

@@ -1,6 +1,7 @@
 (ns community.t-controller
   (:require [community.controller :as controller]
-            [cljs.core.async :as async :refer [<!]])
+            [cljs.core.async :as async :refer [<!]]
+            [jasmine.core])
   (:require-macros [jasmine.core :refer [context test is]]
                    [cljs.core.async.macros :refer [go]]))
 

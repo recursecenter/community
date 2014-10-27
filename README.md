@@ -106,33 +106,6 @@ $ bin/rake jasmine
 # Refresh the page to re-run the tests.
 ```
 
-## Getting a ClojureScript REPL up and running
-
-Community supports a ClojureScript REPL so long as you're running the development build. To connect, start an nREPL server and connect to it using your preferred client. If you're using Emacs, that probably means [cider](https://github.com/clojure-emacs/cider). If you're using Vim, that probably means [vim-fireplace](https://github.com/tpope/vim-fireplace). Otherwise, `cd` into `client` and run `lein repl`.
-
-Once in the REPL:
-
-```clj
-user=> (browser-repl)
-<< started Weasel server on ws://127.0.0.1:9001 >>
-Type `:cljs/quit` to stop the ClojureScript REPL
-nil
-cljs.user=>
-```
-
-Open your dev site and run the following in the JS console:
-
-```js
-community.dev.repl_connect()
-// if successful, you'll see "Opened Websocket REPL connection" printed
-```
-
-Back in your ClojureScript REPL:
-
-```clj
-cljs.user=> (js/alert "hello, browser!")
-```
-
 # License
 
 Copyright © 2014 Hacker School
