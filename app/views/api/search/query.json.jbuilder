@@ -20,7 +20,7 @@ end
 json.metadata do
   json.current_page @current_page
   json.total_pages @total_pages
-  json.took @took
+  json.hits @hits
   json.query @query
   json.filters @filters
 end

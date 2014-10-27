@@ -14,8 +14,8 @@ class Api::SearchController < Api::ApiController
     @highlights = Hash[response.collect {|response| [response.id, response.highlight.body]}]
 
     # Search metadata
+    @hits = response.results.total
     @total_pages = (response.results.total / Post::RESULTS_PER_PAGE) + 1
-    @took = response.took
   end
 
   def suggestions
