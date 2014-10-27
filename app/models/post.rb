@@ -7,6 +7,8 @@ class Post < ActiveRecord::Base
   validates :body, :author, :thread, presence: {allow_blank: false}
 
   before_create :update_thread_data
+  after_create :publish_created_post
+  after_update :publish_updated_post
 
   scope :by_number, -> { order(post_number: :asc) }
 
@@ -41,5 +43,13 @@ class Post < ActiveRecord::Base
 private
   def format_message_id(thread_id, post_number)
     "<thread-#{thread_id}/post-#{post_number}@community.hackerschool.com>"
+  end
+
+  def publish_created_post
+    PubSub.publish :created, :post, self
+  end
+
+  def publish_updated_post
+    PubSub.publish :updated, :post, self
   end
 end

@@ -143,12 +143,13 @@ private
       @event = event
       @type = type
       @resource = resource
+      @redis_pub = RedisCache.redis
     end
 
     def publish
       json = JSON.dump(emitter: emitter, event: event, feed: feed, id: resource.id)
 
-      $redis.publish :pubsub, json
+      @redis_pub.publish :pubsub, json
     end
 
     def feed

@@ -9,11 +9,6 @@ class MentionNotifier < Notifier
   end
 
   def notify(email_recipients=possible_recipients)
-    possible_recipients.each do |user|
-      mention = user.mention_for_post(post)
-      PubSub.publish :created, :notification, mention
-    end
-
     email_recipients.each do |user|
       if user.subscribe_when_mentioned?
         user.subscribe_to(post.thread, "You are receiving emails because you were @mentioned in this thread.")
