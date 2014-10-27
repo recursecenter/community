@@ -106,10 +106,6 @@ class Post < ActiveRecord::Base
     { fields: { thread_title: {no_match_size: 150}, body: {no_match_size: 150} } }
   end
 
-  def self.allowed_filter_fields
-    return ["thread", "subforum", "subforum_group", "author"]
-  end
-
 private
   def format_message_id(thread_id, post_number)
     "<thread-#{thread_id}/post-#{post_number}@community.hackerschool.com>"

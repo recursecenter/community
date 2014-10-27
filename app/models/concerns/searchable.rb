@@ -45,11 +45,6 @@ module Searchable
     def highlight_fields
       return Hash.new
     end
-
-    # Override this method in the corresponding model to enable allowed filter keys
-    def allowed_filter_fields
-      return Array.new
-    end
   end
 
   module InstanceMethods
