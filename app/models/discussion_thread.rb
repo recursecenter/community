@@ -29,11 +29,12 @@ class DiscussionThread < ActiveRecord::Base
   end
 
   def to_search_mapping
-    thread_data = Hash.new
-    thread_data["suggest"] = {
-      input: [title.split(" ")],
-      output: title,
-      payload: {id: id, slug: slug}
+    thread_data = {
+      suggest: {
+        input: [title.split(" ")],
+        output: title,
+        payload: {id: id, slug: slug}
+      }
     }
 
     { index: { _id: id, data: thread_data } }

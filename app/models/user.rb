@@ -99,11 +99,12 @@ class User < ActiveRecord::Base
   end
 
   def to_search_mapping
-    user_data = Hash.new
-    user_data["suggest"] = {
-      input: [name, email, first_name, last_name],
-      output: name,
-      payload: {id: id, email: email, first_name: first_name, last_name: last_name, name: name}
+    user_data = {
+      suggest:
+        input: [name, email, first_name, last_name],
+        output: name,
+        payload: {id: id, email: email, first_name: first_name, last_name: last_name, name: name}
+      }
     }
 
     { index: { _id: id, data: user_data } }

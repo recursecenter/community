@@ -54,19 +54,9 @@ class Post < ActiveRecord::Base
         data: {
           body: body,
           author: author.name,
-          author_id: author.id,
-          author_hacker_school_id: author.hacker_school_id,
           author_email: author.email,
           thread: thread.title,
-          thread_id: thread.id,
-          thread_slug: thread.slug,
-          post_number: post_number,
-          subforum: thread.subforum.name,
-          subforum_id: thread.subforum.id,
-          subforum_slug: thread.subforum.slug,
-          subforum_group: thread.subforum.subforum_group.name,
-          subforum_group_id: thread.subforum.subforum_group.id,
-          ui_color: thread.subforum.ui_color
+          subforum: thread.subforum.name
         }
       }
     }
