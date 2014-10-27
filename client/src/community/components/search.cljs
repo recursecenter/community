@@ -19,15 +19,15 @@
 
 (defn result-set->suggestion-data [search-filter result-set]
   (map (fn [{:as result :keys [text payload]} counter]
-         {:search-filter search-filter 
-          :text text 
-          :id (:id payload) 
-          :slug (:slug payload) 
+         {:search-filter search-filter
+          :text text
+          :id (:id payload)
+          :slug (:slug payload)
           :count counter})
        result-set (range (count result-set))))
 
 (defn results->suggestions-display [results query-str]
-  (let [filter-suggestions 
+  (let [filter-suggestions
           (mapcat (fn [key result-set]
             (when (not (empty? result-set))
               (let [search-filter (key->search-filter key)
@@ -46,7 +46,7 @@
   (if show {} {:display "none"}))
 
 (defn jump-to-page [{:keys [search-filter text id slug]}]
-  (routes/redirect-to 
+  (routes/redirect-to
     (condp = search-filter
       :thread (routes :thread {:id id :slug slug})
       :subforum (routes :subforum {:id id :slug slug})
@@ -66,62 +66,61 @@
                              "?" query-param-str))))
 
 (defn complete-and-respond! [query-data selected]
-  (cond 
+  (cond
     (nil? selected)
       (search! query-data)
     (= :author (:search-filter selected))
-      (search! (complete-suggestion query-data selected))    
+      (search! (complete-suggestion query-data selected))
     (contains? #{:thread :subforum} (:search-filter selected))
       (jump-to-page selected)))
 
+(def initial-query-state {:text ""
+                          :filters {:author nil :subforum nil :thread nil}})
+
 (defn suggestions-dropdown [{:keys [query-data suggestions show-suggestions?]}]
- (html
+  (html
    [:ol
     {:id "suggestions" :ref "suggestions"
      :style (display (and show-suggestions? (not (empty? (:text query-data)))
-                                            (not (empty? suggestions))))}
-      (for [{:keys [selected? value] :as suggestion} suggestions]
-        [:li {:class (when selected? "selected")
-              :onClick (fn [e]
-                         (.preventDefault e)
-                         (complete-and-respond! query-data value))
-              :data-search-filter (when (= 0 (:count value)) (name (:search-filter value)))} 
-          (:text value)])]))
+                          (not (empty? suggestions))))}
+    (for [{:keys [selected? value] :as suggestion} suggestions]
+      [:li {:class (when selected? "selected")
+            :onClick (fn [e]
+                       (.preventDefault e)
+                       (complete-and-respond! query-data value))
+            :data-search-filter (when (= 0 (:count value)) (name (:search-filter value)))}
+       (:text value)])]))
 
-(defcomponent input-view 
-  [{:keys [query-data show-suggestions! select! complete! query-text-change! complete-and-respond! ]}
-   owner]
-  (display-name [_] "Search Input")
-
-  (render [_]
+(defn search-input-box [{:keys [query-data suggestions]} owner]
+  (letfn [(select! [direction]
+            (om/set-state! owner :suggestions (sl/select direction suggestions)))
+          (query-text-change! [e]
+            (let [text (.. e -target -value)]
+              (om/update-state! owner :query-data #(assoc % :text text))
+              (controller/dispatch :update-search-suggestions text)))]
     (html
-       [:form
-        {:id "search-form"
-         :name "search-form"}
-        [:i {:id "search-icon" :class "fa fa-search"}]
-        [:input.form-control {:ref "search-query"
-                              :type "search"
-                              :id "search-box"
-                              :value (:text query-data)
-                              :onFocus #(show-suggestions! true)
-                              ;; TODO: do we need this timeout without core.async?
-                              :onBlur (fn [e] (js/setTimeout #(show-suggestions! false) 100))
-                              :onChange (fn [e]
-                                          (query-text-change! (.. e -target -value)))
-                              :onKeyDown (fn [e]
-                                           (let [keycode (.-keyCode e)]
-                                             (prn query-data)
-                                             (when (contains? #{UP_ARROW DOWN_ARROW ENTER ESC} keycode)
-                                               (.preventDefault e)
-                                               (condp = keycode
-                                                 DOWN_ARROW (select! :next)
-                                                 UP_ARROW (select! :prev)
-                                                 ENTER (do 
-                                                         (complete-and-respond!)
-                                                         (.blur (om/get-node owner "search-query")))
-                                                 ESC (if )))))}]])))
-(def initial-query-state {:text ""
-                          :filters {:author nil :subforum nil :thread nil}})
+     [:form
+      {:id "search-form"
+       :name "search-form"}
+      [:i {:id "search-icon" :class "fa fa-search"}]
+      [:input.form-control {:ref "search-query"
+                            :type "search"
+                            :id "search-box"
+                            :value (:text query-data)
+                            :onFocus #(om/set-state! owner :show-suggestions? true)
+                            :onBlur #(om/set-state! owner :show-suggestions? false)
+                            :onChange query-text-change!
+                            :onKeyDown (fn [e]
+                                         (let [keycode (.-keyCode e)]
+                                           (when (contains? #{UP_ARROW DOWN_ARROW ENTER ESC} keycode)
+                                             (.preventDefault e)
+                                             (condp = keycode
+                                               DOWN_ARROW (select! :next)
+                                               UP_ARROW (select! :prev)
+                                               ENTER (do
+                                                       (complete-and-respond! query-data (sl/selected suggestions))
+                                                       (.blur (om/get-node owner "search-query")))
+                                               ESC nil))))}]])))
 
 (defn suggestion-sl [suggestions query-str]
   (-> suggestions
@@ -132,7 +131,7 @@
   (display-name [_] "Autocomplete")
 
   (init-state [_]
-    {:query-data initial-query-state 
+    {:query-data initial-query-state
      :show-suggestions? false
      :suggestions (suggestion-sl (:suggestions app) (:query-str app))})
 
@@ -144,19 +143,8 @@
   (render-state [_ {:as state :keys [query-data suggestions]}]
     (html
      [:div {:id "search"}
-      (->input-view {:query-data query-data
-                     :show-suggestions! #(om/set-state! owner :show-suggestions? %)
-                     :select! #(om/set-state! owner :suggestions (sl/select % suggestions))
-                     :complete! (fn []
-                                  (let [s (sl/selected suggestions)]
-                                    (om/set-state! owner :query-data (complete-suggestion query-data s))))
-                     :query-text-change! (fn [text]
-                                           (om/update-state! owner :query-data #(assoc % :text text))
-                                           (controller/dispatch :update-search-suggestions text))
-                     :complete-and-respond! (fn []
-                                                (let [selected (sl/selected suggestions)]
-                                                  (complete-and-respond! query-data selected)))})
-      (->suggestions-view app {:state state})])))
+      (search-input-box state owner)
+      (suggestions-dropdown state)])))
 
 (defcomponent result [{:keys [post author thread subforum highlight] :as result}]
   (display-name [_] "Result")
@@ -165,10 +153,10 @@
     (html
      [:div.row.search-result
       [:div.metadata {:data-ui-color (:ui-color subforum)}
-       [:div.author 
+       [:div.author
         [:a {:href (routes/hs-route :person {:hacker-school-id (:hacker-school-id author)})}
             (:name author)]]
-       [:div.subforum 
+       [:div.subforum
         (link-to (routes :subforum {:id (:id subforum)
                                     :slug (:slug subforum)})
                          {:style {:color (:ui-color subforum)}}
@@ -180,7 +168,7 @@
                                   :post-number (:post-number post)})
                          {:style {:color (:ui-color subforum)}}
                          [:h4 (:title thread)])]
-       [:div.body 
+       [:div.body
         (partials/html-from-markdown highlight)]]])))
 
 (defn query->display [{:keys [author]} query]
@@ -201,7 +189,7 @@
           "Sorry, there were no matching results for this search."])
         (html
          [:div {:id "search-results-view"}
-          [:div.query (str "Search Results for - " 
+          [:div.query (str "Search Results for - "
                            (query->display filters query)
                            " - Fetched n" result-count " results "
                            "in " took " ms.")]
