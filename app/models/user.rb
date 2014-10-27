@@ -100,7 +100,7 @@ class User < ActiveRecord::Base
 
   def to_search_mapping
     user_data = {
-      suggest:
+      suggest: {
         input: [name, email, first_name, last_name],
         output: name,
         payload: {id: id, email: email, first_name: first_name, last_name: last_name, name: name}
