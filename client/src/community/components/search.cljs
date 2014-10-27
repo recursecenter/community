@@ -175,26 +175,16 @@
        [:div.body
         (partials/html-from-markdown highlight)]]])))
 
-(defn query->display [{:keys [author]} query]
-  (str
-    (if-not (empty? author) (str "Author: " author) "")
-    "|"
-    (if-not (empty? query) (str "Query: " query) "")))
-
 (defcomponent search-results [{:keys [search] :as app} owner]
   (display-name [_] "Search Results")
 
   (render [_]
     (let [results (:results search)
-          {:keys [result-count took query filters]} (:metadata search)]
-      (if (empty? results)
-        (html
-         [:div
-          "Sorry, there were no matching results for this search."])
-        (html
-         [:div {:id "search-results-view"}
-          [:div.query (str "Search Results for - "
-                           (query->display filters query)
-                           " - Fetched n" result-count " results "
-                           "in " took " ms.")]
-          [:div.results (map (partial ->result) results)]])))))
+          {:keys [hits took query filters]} (:metadata search)]
+      (html
+       [:div {:id "search-results-view"}
+        [:div.query (if (:author filters)
+                      (str (util/pluralize hits "post") " by " (:author filters) ".")
+                      (str (util/pluralize hits "post") " matching \"" query "\"."))]
+        (when-not (empty? results)
+          [:div.results (map (partial ->result) results)])]))))
