@@ -6,7 +6,7 @@ json.results @records do |record|
     json.extract! record.author, :email, :hacker_school_id, :name
   end
   json.thread do
-    json.extract! record.thread, :id, :slug
+    json.extract! record.thread, :id, :slug, :title
   end
 
   json.subforum do
