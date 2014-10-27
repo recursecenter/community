@@ -5,9 +5,8 @@
 
                  [om "0.7.3"]
                  [com.facebook/react "0.11.2"]
-
-                 [sablono "0.2.17"]
-                 [prismatic/om-tools "0.2.2"]]
+                 [sablono "0.2.22"]
+                 [prismatic/om-tools "0.3.6"]]
 
   :jvm-opts ^:replace ["-Xmx512m" "-server"]
 
