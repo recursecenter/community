@@ -7,6 +7,9 @@
   (test "seq of an empty selection-list is nil"
     (is = (seq (sl/selection-list [])) nil))
 
+  (test "can create a selection list without a selected element"
+    (is = (sl/selected (sl/selection-list [0 1 2] nil)) nil))
+
   (let [selection-list (sl/selection-list ["foo" "bar" "baz"])]
     (test "can seq-ify a selection-list"
       (is = (seq selection-list)
@@ -32,4 +35,7 @@
          {:selected? false :value "baz"}]))
 
     (test "can get selected element"
-      (is = (sl/selected selection-list) "foo"))))
+      (is = (sl/selected selection-list) "foo"))
+
+    (test "can unselect"
+      (is = (sl/selected (sl/unselect selection-list)) nil))))

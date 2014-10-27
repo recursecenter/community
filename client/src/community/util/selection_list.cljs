@@ -3,6 +3,9 @@
 (defprotocol ISelectNextOrPrev
   (-select-next-or-prev [this next?]))
 
+(defprotocol IUnselect
+  (-unselect [this]))
+
 (defprotocol IGetSelected
   (-get-selected [this]))
 
@@ -38,22 +41,27 @@
     (let [next-index (+ (if selected-index selected-index -1) (if next? 1 -1))]
       (SelectionList. data (wrapped-index next-index data))))
 
+  IUnselect
+  (-unselect [_]
+    (SelectionList. data nil))
+
   ISeqable
   (-seq [_]
     (seq
      (map-indexed (fn [i el] {:selected? (= i selected-index) :value el})
                   data))))
 
-(defn selection-list 
-  ([data] (selection-list data false))
-  ([data no-default-select?] (if no-default-select?
-                                (->SelectionList data nil)
-                                (->SelectionList data 0))))
+(defn selection-list
+  ([data] (selection-list data 0))
+  ([data selected-index] (->SelectionList data selected-index)))
 
 (defn select [next-or-prev selection-list]
   (condp = next-or-prev
     :next (-select-next-or-prev selection-list true)
     :prev (-select-next-or-prev selection-list false)))
+
+(defn unselect [selection-list]
+  (-unselect selection-list))
 
 (defn selected [selection-list]
   (-get-selected selection-list))

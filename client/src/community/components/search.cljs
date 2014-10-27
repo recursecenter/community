@@ -97,7 +97,22 @@
           (query-text-change! [e]
             (let [text (.. e -target -value)]
               (om/update-state! owner :query-data #(assoc % :text text))
-              (controller/dispatch :update-search-suggestions text)))]
+              (controller/dispatch :update-search-suggestions text)))
+          (blur! []
+            (.blur (om/get-node owner "search-query")))
+          (handle-key-down! [e]
+            (let [keycode (.-keyCode e)]
+              (when (contains? #{UP_ARROW DOWN_ARROW ENTER ESC} keycode)
+                (.preventDefault e)
+                (condp = keycode
+                  DOWN_ARROW (select! :next)
+                  UP_ARROW (select! :prev)
+                  ENTER (do
+                          (complete-and-respond! query-data (sl/selected suggestions))
+                          (blur!))
+                  ESC (if (sl/selected suggestions)
+                        (om/set-state! owner :suggestions (sl/unselect suggestions))
+                        (blur!))))))]
     (html
      [:form
       {:id "search-form"
@@ -110,22 +125,12 @@
                             :onFocus #(om/set-state! owner :show-suggestions? true)
                             :onBlur #(om/set-state! owner :show-suggestions? false)
                             :onChange query-text-change!
-                            :onKeyDown (fn [e]
-                                         (let [keycode (.-keyCode e)]
-                                           (when (contains? #{UP_ARROW DOWN_ARROW ENTER ESC} keycode)
-                                             (.preventDefault e)
-                                             (condp = keycode
-                                               DOWN_ARROW (select! :next)
-                                               UP_ARROW (select! :prev)
-                                               ENTER (do
-                                                       (complete-and-respond! query-data (sl/selected suggestions))
-                                                       (.blur (om/get-node owner "search-query")))
-                                               ESC nil))))}]])))
+                            :onKeyDown handle-key-down!}]])))
 
 (defn suggestion-sl [suggestions query-str]
   (-> suggestions
       (results->suggestions-display query-str)
-      (sl/selection-list true)))
+      (sl/selection-list nil)))
 
 (defcomponent autocomplete [app owner]
   (display-name [_] "Autocomplete")
