@@ -123,24 +123,21 @@
 .paginate {
   @include make-sm-column(12);
   text-align: center;
+  margin: 1.25em auto;
 
   .page-links {
     list-style:none;
     margin: 0;
     padding: 0;
 
-    li:first-child {
-      border-left: 1px solid #ccc; 
-    }
-
     li {
       display: inline;
-      border: 1px solid #ccc;
-      border-left: none;
-      padding: 5px;
+      padding: 0.5em;
+      margin: 0.25em;
     }
 
-    .disabled {
+    .disabled a {
+      color: #555;
       cursor: default;
       pointer-events: none;
     }

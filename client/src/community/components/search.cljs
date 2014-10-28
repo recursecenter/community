@@ -68,7 +68,7 @@
 
 (defn complete-and-respond! [query-data selected]
   (cond
-    (nil? selected)
+    (and (nil? selected) (not (empty? (:text query-data))))
       (search! query-data)
     (= :author (:search-filter selected))
       (search! (complete-suggestion query-data selected))
@@ -182,7 +182,7 @@
       [:ul.page-links
        [:li {:class (when (= current-page 1) "disabled")}
         [:a {:href "#"
-             :onClick (page-click (dec current-page))} "<"]]
+             :onClick (page-click (dec current-page))} "Previous"]]
        (for [page (range total-pages)]
           [:li {:class (when (= (inc page) current-page) "active")} 
            [:a {:href "#"
@@ -190,7 +190,7 @@
             (inc page)]])
        [:li {:class (when (= current-page total-pages) "disabled")}
         [:a {:href "#"
-             :onClick (page-click (inc current-page))} ">"]]])))
+             :onClick (page-click (inc current-page))} "Next"]]])))
 
 (defcomponent search-results [{:keys [search] :as app} owner]
   (display-name [_] "Search Results")
