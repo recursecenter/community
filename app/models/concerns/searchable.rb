@@ -25,7 +25,7 @@ module Searchable
       __elasticsearch__.search(
         query: self.query_dsl(search_string, filters),
         highlight: self.highlight_fields,
-        from: page * RESULTS_PER_PAGE,
+        from: (page - 1) * RESULTS_PER_PAGE,
         size: RESULTS_PER_PAGE
       )
     end
