@@ -1,72 +1,78 @@
 #search {
+
+  @include make-sm-column(12);
+
   margin: 5px auto 0 auto;
-  width: 50%;
-  height: 28px;
   text-align: center;
-}
 
-#search-form {
-  display: inline-table;
-  width: 100%;
-  margin-bottom: 0;
-}
+  #search-form {
+    display: inline-table;
+    margin-bottom: 0;
 
-#search-icon {
-  width: 28px;
-  display: table-cell;  
-  vertical-align: middle;
-  background-color: #eee;
-  border: 1px solid #ccc;
-  border-right: none;
-}
+    #search-icon {
+      width: 28px;
+      display: table-cell;  
+      vertical-align: middle;
+      background-color: #eee;
+      border: 1px solid #ccc;
+      border-right: none;
+    }
 
-#search-box {
-  height: 28px;
-}
-
-#suggestions {
-  width: 48.5%;
-  position: absolute;
-  z-index: 10001;
-  margin: 0;
-  padding: 5px 10px;
-  text-align: left;
-  list-style: none;
-  background-color: white;
-  border: 1px solid #eee;
-  box-shadow: 0px 2px 5px 1px #ccc;
-  font-size: 0.875em;
-
-  .selected, li:hover {
-    background-color: #f8fcef;
+    #search-box {
+      height: 28px;
+    }
   }
 
-  li {
-    padding: 5px;
-    cursor: pointer;
-    margin-left: 80px;
+  @media (min-width: $screen-sm-min) and (max-width: $screen-md-max) {
+
+    #search-form {
+    }
   }
 
-  li::before {
-    width: 80px;
-    display: inline-block;
-    color: #77d102;
-    text-align: right;
-    margin-left: -80px;
-    padding: 0 10px 0 0;
-    font-weight: bold;
-  }
-  
-  li[data-search-filter="author"]::before {
-    content: "Posts by"
-  }
+  #suggestions {
+    width: inherit;
+    position: absolute;
+    z-index: 10001;
+    margin: 0;
+    padding: 5px 10px;
+    text-align: left;
+    list-style: none;
+    background-color: white;
+    border: 1px solid #eee;
+    box-shadow: 0px 2px 5px 1px #ccc;
+    font-size: 0.875em;
 
-  li[data-search-filter="thread"]::before {
-    content: "Threads"
-  }
+    .selected, li:hover {
+      background-color: #f8fcef;
+    }
 
-  li[data-search-filter="subforum"]::before {
-    content: "Subforums"
+    li {
+      padding: 5px;
+      cursor: pointer;
+      margin-left: 80px;
+    }
+
+    li::before {
+      width: 80px;
+      display: inline-block;
+      color: #77d102;
+      text-align: right;
+      margin-left: -80px;
+      padding: 0 10px 0 0;
+      font-weight: bold;
+    }
+    
+    li[data-search-filter="author"]::before {
+      content: "Posts by"
+    }
+
+    li[data-search-filter="thread"]::before {
+      content: "Threads"
+    }
+
+    li[data-search-filter="subforum"]::before {
+      content: "Subforums"
+    }
   }
 }
 
