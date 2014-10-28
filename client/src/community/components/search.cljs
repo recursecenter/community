@@ -62,7 +62,8 @@
                              :when value]
                          (str (name filter-name) "=" value))
                        (str/join "&"))]
-    (routes/redirect-to (str (routes :search {:query (:text query-data)})
+    (routes/redirect-to (str (routes :search {:query (:text query-data)
+                                              :page (if-let [page (:page query-data)] page 1)})
                              "?" query-param-str))))
 
 (defn complete-and-respond! [query-data selected]
@@ -150,41 +151,57 @@
       (search-input-box state owner)
       (suggestions-dropdown state)])))
 
-(defcomponent result [{:keys [post author thread subforum highlight] :as result}]
-  (display-name [_] "Result")
+(defn result [{:keys [post author thread subforum highlight]}]
+  (html
+   [:div.row.search-result
+    [:div.metadata {:data-ui-color (:ui-color subforum)}
+     [:div.author
+      [:a {:href (routes/hs-route :person {:hacker-school-id (:hacker-school-id author)})}
+          (:name author)]]
+     [:div.subforum
+      (link-to (routes :subforum {:id (:id subforum)
+                                  :slug (:slug subforum)})
+                       {:style {:color (:ui-color subforum)}}
+                       (:subforum-group-name subforum) " / " (:name subforum))]]
+    [:div.result
+     [:div.title
+      (link-to (routes :thread {:id (:id thread)
+                                :slug (:slug thread)
+                                :post-number (:post-number post)})
+                       {:style {:color (:ui-color subforum)}}
+                       [:h4 (:title thread)])]
+     [:div.body
+      (partials/html-from-markdown highlight)]]]))
 
-  (render [_]
+(defn load-page [query filters page]
+  #(search! (assoc {} :page page :text query :filters @filters)))
+
+(defn pages [{:keys [current-page total-pages _ query filters]}]
+  (letfn [(page-click [page] (load-page query filters page))]
     (html
-     [:div.row.search-result
-      [:div.metadata {:data-ui-color (:ui-color subforum)}
-       [:div.author
-        [:a {:href (routes/hs-route :person {:hacker-school-id (:hacker-school-id author)})}
-            (:name author)]]
-       [:div.subforum
-        (link-to (routes :subforum {:id (:id subforum)
-                                    :slug (:slug subforum)})
-                         {:style {:color (:ui-color subforum)}}
-                         (:subforum-group-name subforum) " / " (:name subforum))]]
-      [:div.result
-       [:div.title
-        (link-to (routes :thread {:id (:id thread)
-                                  :slug (:slug thread)
-                                  :post-number (:post-number post)})
-                         {:style {:color (:ui-color subforum)}}
-                         [:h4 (:title thread)])]
-       [:div.body
-        (partials/html-from-markdown highlight)]]])))
+      [:ul.pagination
+       [:li [:a {:href "#"
+                 :onClick (page-click (dec current-page))} "<"]]
+       (for [page (range total-pages)]
+          [:li {:class (when (= (inc page) current-page) "active")} 
+           [:a {:href "#"
+                :onClick (page-click (inc page))} 
+            (inc page)]])
+       [:li [:a {:href "#"
+                 :onClick (page-click (inc current-page))} ">"]]])))
 
 (defcomponent search-results [{:keys [search] :as app} owner]
   (display-name [_] "Search Results")
 
   (render [_]
     (let [results (:results search)
-          {:keys [hits took query filters]} (:metadata search)]
+          {:as metadata :keys [hits took query filters]} (:metadata search)]
       (html
        [:div {:id "search-results-view"}
         [:div.query (if (:author filters)
                       (str (util/pluralize hits "post") " by " (:author filters) ".")
                       (str (util/pluralize hits "post") " matching \"" query "\"."))]
         (when-not (empty? results)
-          [:div.results (map (partial ->result) results)])]))))
+          [:div
+            [:div.results (map (partial result) results)]
+            [:div.paginate (pages metadata)]])]))))
