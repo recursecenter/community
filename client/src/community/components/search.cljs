@@ -174,21 +174,23 @@
       (partials/html-from-markdown highlight)]]]))
 
 (defn load-page [query filters page]
-  #(search! (assoc {} :page page :text query :filters @filters)))
+  #(search! (assoc {} :page page :text query :filters (if filters @filters nil))))
 
 (defn pages [{:keys [current-page total-pages _ query filters]}]
   (letfn [(page-click [page] (load-page query filters page))]
     (html
-      [:ul.pagination
-       [:li [:a {:href "#"
-                 :onClick (page-click (dec current-page))} "<"]]
+      [:ul.page-links
+       [:li {:class (when (= current-page 1) "disabled")}
+        [:a {:href "#"
+             :onClick (page-click (dec current-page))} "<"]]
        (for [page (range total-pages)]
           [:li {:class (when (= (inc page) current-page) "active")} 
            [:a {:href "#"
                 :onClick (page-click (inc page))} 
             (inc page)]])
-       [:li [:a {:href "#"
-                 :onClick (page-click (inc current-page))} ">"]]])))
+       [:li {:class (when (= current-page total-pages) "disabled")}
+        [:a {:href "#"
+             :onClick (page-click (inc current-page))} ">"]]])))
 
 (defcomponent search-results [{:keys [search] :as app} owner]
   (display-name [_] "Search Results")
