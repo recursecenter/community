@@ -177,15 +177,16 @@
           {:class "header-link"}
           [:span
            [:img {:src (om/get-shared owner :logo-url)}]
-           [:span.brand-text {:style {:color ui-color}} "Community"]])
+           [:span.brand-text {:style {:color ui-color}} "Community"]])]
+        [:div.hidden-xs {:id "search-bar"} (search/->autocomplete app)]
         (when current-user
-          [:ul.community-nav.list-inline
-           [:li.hidden-xs [:p.navbar-text "Hi, " (:first-name current-user) "!"]]
-           [:li.hidden-xs (->notifications-dropdown current-user)]
-           [:li (partials/link-to (routes :settings)
-                  [:div [:i.fa.fa-cog] [:span.visible-xs-inline " " (:first-name current-user)]])]
-           [:li.hidden-xs [:a {:href "/logout"} [:i.fa.fa-sign-out]]]])
-        [:div.hidden-xs {:id "search-bar"} (search/->autocomplete app)]]])))
+          [:div {:id "util-bar"}
+           [:ul.community-nav.list-inline
+            [:li.hidden-xs [:p.navbar-text "Hi, " (:first-name current-user) "!"]]
+            [:li.hidden-xs (->notifications-dropdown current-user)]
+            [:li (partials/link-to (routes :settings)
+                   [:div [:i.fa.fa-cog] [:span.visible-xs-inline " " (:first-name current-user)]])]
+            [:li.hidden-xs [:a {:href "/logout"} [:i.fa.fa-sign-out]]]]])])))
 
 (defcomponent app [{:as app :keys [current-user route-data errors loading?]}
                    owner]

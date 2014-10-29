@@ -1,11 +1,10 @@
 #search {
 
-  @include make-sm-column(12);
-
-  margin: 5px auto 0 auto;
+  margin-top: 5px; 
   text-align: center;
 
   #search-form {
+    width: 100%;
     display: inline-table;
     margin-bottom: 0;
 
@@ -23,14 +22,8 @@
     }
   }
 
-  @media (min-width: $screen-sm-min) and (max-width: $screen-md-max) {
-
-    #search-form {
-    }
-  }
-
   #suggestions {
-    width: inherit;
+    width: 100%;
     position: absolute;
     z-index: 10001;
     margin: 0;

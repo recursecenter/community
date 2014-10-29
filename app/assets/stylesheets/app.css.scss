@@ -20,6 +20,8 @@
 }
 
 #navbar-community {
+  @include make-sm-column(12);
+
   border-radius: 0;
   border-top: 5px solid $brand-primary;
   border-bottom: 1px dotted $brand-primary;
@@ -28,10 +30,7 @@
   padding: 0 20px;
 
   .navbar-header {
-    width: 100%;
-
-    .header-link { float: left }
-    .breadcrumbs-container { float: left }
+    @include make-sm-column(3);
 
     img {
       width: 24px;
@@ -56,13 +55,21 @@
     }
   }
 
-  .community-nav {
-    float: right;
-    list-style: none;
-    margin-top: 10px;
+  #search-bar {
+    @include make-sm-column(6);
+    padding: 0;
+  }
 
-    li {
-      display: inline-block;
+  #util-bar {
+    @include make-sm-column(3);
+    text-align: right;
+
+    .community-nav {
+      list-style: none;
+      margin-top: 10px;
+    }
+
+   .community-nav > li {
       vertical-align: top;
       padding: 0 15px;
 
@@ -88,6 +95,10 @@
     box-shadow: none;
     padding: 0;
     border: 1px solid #eee;
+  }
+
+  .dropdown-menu-right {
+    right: -1em;
   }
 
   .dropdown-menu > li > a {
@@ -166,8 +177,8 @@
 .unread-count-icon {
   z-index: 1000;
   position: absolute;
-  top: 8px;
-  left: 26px;
+  top: -6px;
+  left: 10px;
   padding: 0.2em 0.4em;
   font-size: 10px;
   background-color: red;
