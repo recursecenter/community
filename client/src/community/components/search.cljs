@@ -143,8 +143,6 @@
      :suggestions (suggestion-sl (:suggestions app) (:query-str app))})
 
   (will-receive-props [_ next-props]
-    (prn (:query-str next-props) "next")
-    (prn (:query-str (om/get-props owner) " owner"))
     (when (not= (:query-str next-props) (:query-str (om/get-props owner)))
       (om/set-state! owner
                      :suggestions (suggestion-sl (:suggestions next-props) (:query-str next-props)))))
