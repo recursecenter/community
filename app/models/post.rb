@@ -96,13 +96,14 @@ class Post < ActiveRecord::Base
     end
 
     # Initialize filters
-    filters = {} if filters.blank?
+    filters_with_permissions = filters.clone
+    filters_with_permissions = {} if filters_with_permissions.blank?
 
     # filter only subforums limited to the user
-    filters['subforum_id'] = Subforum.for_user(user).map {|subforum| subforum.id }
+    filters_with_permissions['subforum_id'] = Subforum.for_user(user).map {|subforum| subforum.id }
 
     # create filtered query for available filter
-    clauses = filters.map do |k, v|
+    clauses = filters_with_permissions.map do |k, v|
       if v.kind_of?(Array)
         {terms: {k => v}}
       else
