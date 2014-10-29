@@ -141,7 +141,7 @@ a:hover {
 .visible-xs-inline {
   display: none !important;
 
-  @media (min-width: $screen-sm-max) {
+  @media (max-width: $screen-xs-max) {
     display: inline !important;
   }
 }
