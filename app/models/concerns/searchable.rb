@@ -8,6 +8,7 @@ module Searchable
     include Elasticsearch::Model
     after_commit :upsert_to_search_index!
 
+    # Configure index to searve completion suggestions.
     settings index: { number_of_shards: 1 } do
       mappings dynamic: 'true' do
         indexes :suggest, type: :completion, index_analyzer: :whitespace, search_analyzer: :whitespace, payloads: true
@@ -48,15 +49,13 @@ module Searchable
     end
   end
 
-  module InstanceMethods
-    # Override this method to change the search mapping for this model
-    def to_search_mapping
-      { index: { _id: id, data: __elasticsearch__.as_indexed_json } }
-    end
+  # Override this method to change the search mapping for the included model
+  def to_search_mapping
+    { index: { _id: id, data: __elasticsearch__.as_indexed_json } }
+  end
 
-    # Insert/update a single row instance
-    def upsert_to_search_index!
-      self.class.where(id: id).import transform: lambda { |item| item.to_search_mapping }
-    end
+  # Insert/update a single row instance
+  def upsert_to_search_index!
+    self.class.where(id: id).import transform: lambda { |item| item.to_search_mapping }
   end
 end

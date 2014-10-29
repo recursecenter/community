@@ -11,7 +11,7 @@ class Api::SearchController < Api::ApiController
     @records = response.records.includes({thread: [{subforum: :subforum_group}]}, :author)
 
     # Collect highlights for every record
-    @highlights = Hash[response.collect {|response| [response.id, response.highlight.body]}]
+    @highlights = response.map { |result| [result.id, result.highlight.body] }.to_h
 
     # Search metadata
     @hits = response.results.total

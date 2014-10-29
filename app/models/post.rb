@@ -36,7 +36,8 @@ class Post < ActiveRecord::Base
     end
   end
 
-  # Additional indexer settings for posts
+  # Additional indexer settings for posts to serve filtered queries.
+  # We don't want them analyzed because we want them to be exact matches.
   settings index: { number_of_shards: 1 } do
     mappings dynamic: 'true' do
       indexes :author, type: :string, index: "not_analyzed"
@@ -91,11 +92,7 @@ class Post < ActiveRecord::Base
 
     # create filtered query for filters
     unless filters.blank?
-      clauses = Array.new
-      filters.each do |key, value|
-        clauses.push({ term: { key => value } })
-      end
-
+      clauses = filters.map { |k, v| {term: {k => v}} }
       query_dsl = { filtered: { query: query_dsl, filter: { bool: { must: clauses } } } }
     end
 
