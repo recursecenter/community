@@ -23,9 +23,9 @@ module Searchable
     end
 
     # Search method to query the index for this particular model
-    def search(search_string, filters, page)
+    def search(user, search_string, filters, page)
       __elasticsearch__.search(
-        query: self.query_dsl(search_string, filters),
+        query: self.query_dsl(user, search_string, filters),
         highlight: self.highlight_fields,
         from: (page - 1) * RESULTS_PER_PAGE,
         size: RESULTS_PER_PAGE
@@ -34,7 +34,7 @@ module Searchable
 
     # Suggest methods to return suggestions for this particular model
     def suggest(search_string)
-       suggest_query = { suggestions: { text: search_string, completion: { field: "suggest" } } }
+      suggest_query = { suggestions: { text: search_string, completion: { field: "suggest" } } }
       __elasticsearch__.client.suggest(index: self.table_name, body: suggest_query)["suggestions"].first["options"]
     end
 

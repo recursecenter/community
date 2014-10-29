@@ -61,13 +61,14 @@ class Post < ActiveRecord::Base
           author: author.name,
           author_email: author.email,
           thread: thread.title,
-          subforum: thread.subforum.name
+          subforum: thread.subforum.name,
+          subforum_id: thread.subforum.id
         }
       }
     }
   end
 
-  def self.query_dsl(search_string, filters)
+  def self.query_dsl(user, search_string, filters)
     # match query for exact matches, terms
     exact_match_query = {
       multi_match: {
@@ -94,11 +95,22 @@ class Post < ActiveRecord::Base
       query_dsl = { bool: { should: [exact_match_query, phrase_match_query] } }
     end
 
-    # create filtered query for filters
-    unless filters.blank?
-      clauses = filters.map { |k, v| {term: {k => v}} }
-      query_dsl = { filtered: { query: query_dsl, filter: { bool: { must: clauses } } } }
+    # Initialize filters
+    filters = {} if filters.blank?
+
+    # filter only subforums limited to the user
+    filters['subforum_id'] = Subforum.for_user(user).map {|subforum| subforum.id }
+
+    # create filtered query for available filter
+    clauses = filters.map do |k, v|
+      if v.kind_of?(Array)
+        {terms: {k => v}}
+      else
+        {term: {k => v}}
+      end
     end
+
+    query_dsl = { filtered: { query: query_dsl, filter: { bool: { must: clauses } } } }
 
     return query_dsl
   end

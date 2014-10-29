@@ -5,7 +5,7 @@ class Api::SearchController < Api::ApiController
     @query = params[:q]
     @filters = params[:filters]
 
-    response = Post.search(params[:q], params[:filters], @current_page)
+    response = Post.search(current_user, @query, @filters, @current_page)
 
     # Eager load everything related to a post that we need
     @posts = response.records.includes({thread: [{subforum: :subforum_group}]}, :author)
