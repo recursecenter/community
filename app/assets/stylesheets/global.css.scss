@@ -97,6 +97,7 @@ a:hover {
 
 .loading {
   text-align: center;
+  color: $brand-primary-muted;
 }
 
 .no-side-margin {
@@ -143,4 +144,8 @@ a:hover {
   @media (min-width: $screen-sm-max) {
     display: inline !important;
   }
+}
+
+.pinned-icon {
+  padding-right: 5px;
 }

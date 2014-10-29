@@ -1,15 +1,19 @@
 module EmailFields
   extend ActiveSupport::Concern
 
-  def from_field(user)
-    %{"#{user.name}" <#{user.email}>}
-  end
-
-  def reply_to_field(reply_info)
+  def reply_to_post_address(reply_info)
     "Community <reply-#{reply_info}@mail.community.hackerschool.com>"
   end
 
-  def subject_field(thread)
+  def list_address(subforum)
+    "#{subforum.name.downcase.gsub(/\s+/, '-')}@lists.community.hackerschool.com"
+  end
+
+  def subforum_thread_subject(thread)
     "[Community - #{thread.subforum.name}] #{thread.title}"
+  end
+
+  def list_id(subforum)
+    "<#{subforum.name.downcase.gsub(/\s+/, '-')}.community.hackerschool.com>"
   end
 end

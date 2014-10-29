@@ -9,9 +9,8 @@ subforum_groups = {
                       ["Welcome",       "#008C9E",          [:everyone],
                        "Welcome to Hacker School! Introductions, questions, and announcements for those preparing to attend Hacker School."],
                       ["Housing",       "#08A39B",          [:everyone],
-                       "Resources, tips, and listings for Hacker Schoolers in NYC."]],
-
-  "Programming" =>   [["General",       "rgb(153,191,107)", [:everyone, :full_hacker_schooler],
+                       "Resources, tips, and listings for Hacker Schoolers in NYC."],
+                      ["Programming",       "rgb(153,191,107)", [:everyone, :full_hacker_schooler],
                        "Programming, becoming a better programmer, and other things related to programming."]],
 
   "Regions" =>       [["New York",      "rgb(167,106,185)", [:everyone, :full_hacker_schooler],
@@ -33,6 +32,25 @@ roles = [:everyone, :full_hacker_schooler, :admin]
 
 roles.each do |role|
   Role.create(name: role)
+end
+
+groups = ["Everyone", "Current Hacker Schoolers", "Faculty"]
+groups.each do |group|
+  Group.create(name: group)
+end
+
+users = [
+  {first_name: "Carl", last_name: "Sagan", email: "carl@palebluedot.com"},
+  {first_name: "Albert", last_name: "Einstein", email: "albert@relativity.net"},
+  {first_name: "Marie", last_name: "Curie", email: "marie@halflife.org"},
+  {first_name: "Aung", last_name: "San Sui", email: "aungsui@liberation.org"}
+]
+
+users.each do |user|
+  user = User.create user
+  user.groups = [Group.everyone, Group.current_hacker_schoolers, Group.faculty]
+  user.roles << Role.all
+  user.save!
 end
 
 subforum_groups.each do |subforum_group_name, subforums|

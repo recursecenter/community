@@ -41,6 +41,15 @@
   }
 }
 
+// Medium and smaller
+@media (max-width: $screen-md-min) {
+  .subforum-info-header {
+    h3 {
+      font-size: 18px;
+    }
+  }
+}
+
 .subforum-info {
   .subforum-top-bar {
     height: 5px;

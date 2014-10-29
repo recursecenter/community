@@ -18,12 +18,14 @@ class NotificationMailer < ActionMailer::Base
 
     mail(message_id: @post.message_id,
          to: @user.email,
-         from: from_field(@mentioned_by),
-         reply_to: reply_to_field(reply_info),
-         subject: subject_field(@post.thread))
+         from: @mentioned_by.display_email,
+         reply_to: reply_to_post_address(reply_info),
+         subject: subforum_thread_subject(@post.thread),
+         "List-Id" => list_id(@post.thread.subforum))
   end
 
-  def broadcast_email(users, post)
+  def broadcast_email(user_ids, post)
+    users = User.where(id: user_ids)
     @post = post
     @group_names = post.broadcast_groups.map(&:name)
 
@@ -32,12 +34,15 @@ class NotificationMailer < ActionMailer::Base
     end
 
     mail(message_id: @post.message_id,
-         to: users.map(&:email),
-         from: from_field(@post.author),
-         subject: subject_field(@post.thread))
+         to: list_address(@post.thread.subforum),
+         bcc: users.map(&:email),
+         from: @post.author.display_email,
+         subject: subforum_thread_subject(@post.thread),
+         "List-Id" => list_id(@post.thread.subforum))
   end
 
-  def new_post_in_subscribed_thread_email(users, post)
+  def new_post_in_subscribed_thread_email(user_ids, post)
+    users = User.where(id: user_ids)
     @post = post
 
     if @post.previous_message_id
@@ -45,17 +50,31 @@ class NotificationMailer < ActionMailer::Base
     end
 
     mail(message_id: @post.message_id,
-         to: users.map(&:email),
-         from: from_field(@post.author),
-         subject: subject_field(@post.thread))
+         to: list_address(@post.thread.subforum),
+         bcc: users.map(&:email),
+         from: @post.author.display_email,
+         subject: subforum_thread_subject(@post.thread),
+         "List-Id" => list_id(@post.thread.subforum))
   end
 
-  def new_thread_in_subscribed_subforum_email(users, thread)
+  def new_thread_in_subscribed_subforum_email(user_ids, thread)
+    thread_subscription_email(user_ids, thread)
+  end
+
+  def new_subscribed_thread_in_subscribed_subforum_email(user_ids, thread)
+    thread_subscription_email(user_ids, thread)
+  end
+
+private
+  def thread_subscription_email(user_ids, thread)
+    users = User.where(id: user_ids)
     @thread = thread
 
     mail(message_id: @thread.posts.first.message_id,
-         to: users.map(&:email),
-         from: from_field(@thread.created_by),
-         subject: subject_field(@thread))
+         to: list_address(@thread.subforum),
+         bcc: users.map(&:email),
+         from: @thread.created_by.display_email,
+         subject: subforum_thread_subject(@thread),
+         "List-Id" => list_id(@thread.subforum))
   end
 end

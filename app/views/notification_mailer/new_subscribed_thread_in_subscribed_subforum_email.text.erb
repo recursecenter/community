@@ -1,0 +1,6 @@
+<%= @thread.posts.first.body %>
+
+---
+You received this message because you are subscribed to the subforum "<%= @thread.subforum.name %>." Unsubscribe from this thread: <%= unsubscribe_thread_url(@thread) %>
+
+Reply to this email or view the thread on Community: <%= thread_url(slug: @thread.slug, id: @thread.id) %>

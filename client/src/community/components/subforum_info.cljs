@@ -49,10 +49,12 @@
        [:li.thread
         [:div.row
          [:div.last-updated-info.meta
-          [:span.timestamp (util/human-format-time (:updated-at thread))]
+          [:span.timestamp (util/human-format-time (:last-post-created-at thread))]
           [:span.user-name (:last-posted-to-by thread)]]
          [:div.title
           [:p {:class (when nowrap? "nowrap-text")}
+           (when (:pinned thread)
+             [:i.fa.fa-thumb-tack.pinned-icon])
            (link-to (routes :thread thread) {:style {:color ui-color}}
                     (if unread [:strong title] title))]]
          [:div.created-by.meta.hidden-xs

@@ -11,10 +11,11 @@
  * file per style scope.
  *
  *= require highlight/github
- *= require font-awesome
  *
  */
 
 @import "bootstrap";
 @import "block-grid";
+@import "font-awesome-sprockets";
+@import "font-awesome";
 @import "*";

@@ -8,6 +8,12 @@ class SubforumGroup < ActiveRecord::Base
       order("subforums.id ASC")
   end
 
+  scope :for_user, ->(user) do
+    joins(:subforums).
+      where("subforums.required_role_ids <@ '{?}'", user.role_ids).
+      uniq
+  end
+
   has_many :subforums
 
   before_create do

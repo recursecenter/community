@@ -11,7 +11,7 @@ class ThreadSubscriptionNotifier < Notifier
 
   def notify(email_recipients=possible_recipients)
     unless email_recipients.empty?
-      BatchNotificationSender.delay.deliver(:new_post_in_subscribed_thread_email, recipient_variables(email_recipients, post), email_recipients, post)
+      BatchNotificationSender.delay.deliver(:new_post_in_subscribed_thread_email, recipient_variables(email_recipients, post), email_recipients.map(&:id), post)
     end
   end
 

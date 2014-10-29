@@ -15,6 +15,15 @@ Rails.application.routes.draw do
   get '/s/*query' => 'pages#index', as: 'search'
 
   get '/threads/:id/unsubscribe' => 'threads#unsubscribe', as: :unsubscribe_thread
+  get '/threads/:id/subscribe' => 'threads#subscribe', as: :subscribe_thread
+
+  # sudo for development only
+  namespace :admin do
+    if Rails.env.development?
+      get 'su' => 'su#index'
+      post 'su' => 'su#create'
+    end
+  end
 
   namespace :api, format: false, defaults: {format: 'json'} do
     post 'welcome_message/read' => 'welcome_messages#read'
@@ -40,6 +49,8 @@ Rails.application.routes.draw do
           resources :threads do
             post :subscribe, on: :member
             post :unsubscribe, on: :member
+            post :pin, on: :member
+            post :unpin, on: :member
             resources :posts
           end
         end

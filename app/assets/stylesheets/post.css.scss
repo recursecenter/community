@@ -2,6 +2,7 @@
   margin: .5em 0;
   padding: .5em 0;
   border-top: 1px dotted #bbb;
+  word-break: break-word;
 
   .post-author-image {
     @include make-sm-column(1);
@@ -14,6 +15,12 @@
 
   .post-content {
     @include make-sm-column(9);
+    padding-left: 0;
+
+    // Small screen only
+    @media (max-width: $screen-sm-min) {
+      padding-left: 15px;
+    }
   }
 
   .post-body, .post-form-body {
@@ -28,12 +35,85 @@
     @include make-sm-column(1.5);
   }
 
+  .post-controls {
+    text-align: center;
+
+    .post-edit, .post-edit:hover {
+      @extend .btn;
+      @extend .btn-link;
+      @extend .btn-xs;
+
+      color: $gray-light;
+    }
+    .post-edit:hover {
+      color: $gray;
+    }
+
+    // Small screen only
+    @media (max-width: $screen-sm-min) {
+      text-align: left;
+      padding-left: 0;
+
+      .post-edit, .post-edit:hover {
+        padding: 0;
+      }
+    }
+  }
+
+  .post-form-controls {
+    text-align: center;
+
+    .post-update, .post-update:hover {
+      @extend .btn;
+      @extend .btn-link;
+      @extend .btn-xs;
+
+      color: $brand-primary-muted;
+      border: 1px solid $brand-primary-muted;
+    }
+    .post-update:hover {
+      background-color: $super-light-gray;
+    }
+
+    .post-cancel-update, .post-cancel-update:hover {
+      @extend .btn;
+      @extend .btn-link;
+      @extend .btn-xs;
+
+      color: $brand-danger;
+    }
+    .post-cancel-update:hover {
+      color: $brand-danger-dark;
+    }
+
+    // Small screen only
+    @media (max-width: $screen-sm-min) {
+      text-align: left;
+      padding-left: 0;
+    }
+  }
+
   .post-body {
+    padding: 0;
+
     ul, ol {
       margin: 10px 0;
     }
+
     img {
       max-width: 100%;
+    }
+
+    blockquote {
+      margin: 10px 0;
+      font-size: 1em;
+      font-style: italic;
+      color: #555;
+    }
+
+    table {
+      @extend .table;
+      @extend .table-striped;
     }
   }
 
@@ -69,6 +149,51 @@
   }
 }
 
+.post-form-controls {
+  @include make-xs-column(8);
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.markdown-help {
+  @include make-xs-column(4);
+  padding-right: 0px;
+
+  .help-link {
+    @extend .btn;
+    @extend .btn-link;
+    @extend .btn-xs;
+    float: right;
+    padding: 5px 0;
+  }
+}
+
+// Bigger than a small screen
+@media (min-width: $screen-sm-max) {
+  .post.post-in-series {
+    border-top-color: $gray-lighter;
+    margin-bottom: 0;
+    padding-bottom: 0;
+
+    .post-author-image {
+      visibility: hidden;
+      height: 0;
+    }
+
+    .author-name, .batch-name {
+      display: none;
+    }
+
+    .timestamp {
+      color: $gray-light;
+    }
+  }
+}
+
+.post.post-in-series.post-highlight {
+  border-top-color: $brand-primary-muted;
+}
+
 .post-highlight {
   border-top: 2px dashed $brand-primary-muted;
   padding-top: 1.5em;
@@ -85,4 +210,14 @@
 .post-textarea {
   min-height: 150px;
   max-width: 100%;
+}
+
+.post-preview {
+  min-height: 200px;
+  border-top: 0;
+  padding: 0 15px;
+
+  .post-body {
+    width: 100%;
+  }
 }

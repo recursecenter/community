@@ -33,7 +33,7 @@ class ReplyInfoVerifier
       if v2
         [User.find(user_id), Post.find(resource_id)]
       else
-        [User.find(user_id), DiscussionThread.find(resource_id).posts.last]
+        [User.find(user_id), DiscussionThread.find(resource_id).posts.by_number.last]
       end
     else
       raise InvalidSignature

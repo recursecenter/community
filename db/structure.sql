@@ -79,7 +79,10 @@ CREATE TABLE discussion_threads (
     created_by_id integer,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    highest_post_number integer DEFAULT 0
+    highest_post_number integer DEFAULT 0,
+    pinned boolean DEFAULT false,
+    last_post_created_at timestamp without time zone,
+    last_post_created_by_id integer
 );
 
 
@@ -439,33 +442,62 @@ CREATE TABLE visited_statuses (
 --
 
 CREATE VIEW threads_with_visited_status AS
- SELECT thread_users.id,
-    thread_users.title,
-    thread_users.subforum_id,
-    thread_users.created_by_id,
-    thread_users.created_at,
-    thread_users.updated_at,
-    thread_users.highest_post_number,
-    thread_users.user_id,
-        CASE
-            WHEN (visited_statuses.last_post_number_read IS NULL) THEN 0
-            ELSE visited_statuses.last_post_number_read
-        END AS last_post_number_read,
-        CASE
-            WHEN (visited_statuses.last_post_number_read IS NULL) THEN true
-            ELSE (visited_statuses.last_post_number_read < thread_users.highest_post_number)
-        END AS unread
-   FROM (( SELECT discussion_threads.id,
-            discussion_threads.title,
-            discussion_threads.subforum_id,
-            discussion_threads.created_by_id,
-            discussion_threads.created_at,
-            discussion_threads.updated_at,
-            discussion_threads.highest_post_number,
-            users.id AS user_id
-           FROM discussion_threads,
-            users) thread_users
-   LEFT JOIN visited_statuses ON (((thread_users.id = visited_statuses.thread_id) AND ((thread_users.user_id = visited_statuses.user_id) OR (visited_statuses.user_id IS NULL)))));
+         SELECT thread_users.id,
+            thread_users.title,
+            thread_users.subforum_id,
+            thread_users.created_by_id,
+            thread_users.created_at,
+            thread_users.updated_at,
+            thread_users.highest_post_number,
+            thread_users.pinned,
+            thread_users.last_post_created_at,
+            thread_users.last_post_created_by_id,
+            thread_users.user_id,
+            visited_statuses.last_post_number_read,
+            (visited_statuses.last_post_number_read < thread_users.highest_post_number) AS unread
+           FROM (( SELECT discussion_threads.id,
+                    discussion_threads.title,
+                    discussion_threads.subforum_id,
+                    discussion_threads.created_by_id,
+                    discussion_threads.created_at,
+                    discussion_threads.updated_at,
+                    discussion_threads.highest_post_number,
+                    discussion_threads.pinned,
+                    discussion_threads.last_post_created_at,
+                    discussion_threads.last_post_created_by_id,
+                    users.id AS user_id
+                   FROM discussion_threads,
+                    users) thread_users
+      JOIN visited_statuses ON (((thread_users.id = visited_statuses.thread_id) AND (thread_users.user_id = visited_statuses.user_id))))
+UNION
+         SELECT thread_users.id,
+            thread_users.title,
+            thread_users.subforum_id,
+            thread_users.created_by_id,
+            thread_users.created_at,
+            thread_users.updated_at,
+            thread_users.highest_post_number,
+            thread_users.pinned,
+            thread_users.last_post_created_at,
+            thread_users.last_post_created_by_id,
+            thread_users.user_id,
+            0 AS last_post_number_read,
+            true AS unread
+           FROM (( SELECT discussion_threads.id,
+                    discussion_threads.title,
+                    discussion_threads.subforum_id,
+                    discussion_threads.created_by_id,
+                    discussion_threads.created_at,
+                    discussion_threads.updated_at,
+                    discussion_threads.highest_post_number,
+                    discussion_threads.pinned,
+                    discussion_threads.last_post_created_at,
+                    discussion_threads.last_post_created_by_id,
+                    users.id AS user_id
+                   FROM discussion_threads,
+                    users) thread_users
+      LEFT JOIN visited_statuses ON (((thread_users.id = visited_statuses.thread_id) AND (thread_users.user_id = visited_statuses.user_id))))
+     WHERE (visited_statuses.id IS NULL);
 
 
 --
@@ -747,6 +779,13 @@ CREATE INDEX index_discussion_threads_on_created_by_id ON discussion_threads USI
 
 
 --
+-- Name: index_discussion_threads_on_last_post_created_by_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_discussion_threads_on_last_post_created_by_id ON discussion_threads USING btree (last_post_created_by_id);
+
+
+--
 -- Name: index_discussion_threads_on_subforum_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -775,6 +814,20 @@ CREATE INDEX index_notifications_on_user_id ON notifications USING btree (user_i
 
 
 --
+-- Name: index_posts_on_author_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_posts_on_author_id ON posts USING btree (author_id);
+
+
+--
+-- Name: index_posts_on_thread_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_posts_on_thread_id ON posts USING btree (thread_id);
+
+
+--
 -- Name: index_roles_users_on_role_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -800,6 +853,13 @@ CREATE INDEX index_subscriptions_on_subscribable_id_and_subscribable_type ON sub
 --
 
 CREATE INDEX index_users_on_hacker_school_id ON users USING btree (hacker_school_id);
+
+
+--
+-- Name: index_visited_statuses_on_thread_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_visited_statuses_on_thread_id ON visited_statuses USING btree (thread_id);
 
 
 --
@@ -885,4 +945,26 @@ INSERT INTO schema_migrations (version) VALUES ('20140903171050');
 INSERT INTO schema_migrations (version) VALUES ('20140904163524');
 
 INSERT INTO schema_migrations (version) VALUES ('20140909190021');
+
+INSERT INTO schema_migrations (version) VALUES ('20140911152147');
+
+INSERT INTO schema_migrations (version) VALUES ('20140911192911');
+
+INSERT INTO schema_migrations (version) VALUES ('20141014175857');
+
+INSERT INTO schema_migrations (version) VALUES ('20141015164429');
+
+INSERT INTO schema_migrations (version) VALUES ('20141015212555');
+
+INSERT INTO schema_migrations (version) VALUES ('20141016191008');
+
+INSERT INTO schema_migrations (version) VALUES ('20141016192618');
+
+INSERT INTO schema_migrations (version) VALUES ('20141016193002');
+
+INSERT INTO schema_migrations (version) VALUES ('20141016200108');
+
+INSERT INTO schema_migrations (version) VALUES ('20141017154222');
+
+INSERT INTO schema_migrations (version) VALUES ('20141017213409');
 

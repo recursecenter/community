@@ -195,3 +195,9 @@
 (def unsubscribe
   (make-api-fn (fn [{:keys [subscribable-id resource-name]}]
                  (POST (str "/" resource-name "s/" subscribable-id "/unsubscribe")))))
+
+(def pin-thread
+  (make-api-fn (fn [{:keys [id]}] (POST (str "/threads/" id "/pin")))))
+
+(def unpin-thread
+  (make-api-fn (fn [{:keys [id]}] (POST (str "/threads/" id "/unpin")))))

@@ -14,7 +14,7 @@
             [clojure.string :as str])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
-(defcomponent post-form [{:keys [post index autocomplete-users broadcast-groups]} owner]
+(defcomponent post-form [{:keys [post autocomplete-users broadcast-groups]} owner]
   (display-name [_] "PostForm")
 
   (init-state [_]
@@ -30,7 +30,7 @@
                            (.preventDefault e)
                            (when-not (:submitting? @post)
                              (if (:persisted? @post)
-                               (controller/dispatch :update-post @post index)
+                               (controller/dispatch :update-post @post)
                                (controller/dispatch :new-post @post))))}
         [:div.post-form-body
          (when (not (:persisted? post))
@@ -54,27 +54,38 @@
                       :name "post[body]"
                       :data-new-anchor true
                       :placeholder "Compose your post..."}}})])]
-        [:div.post-form-controls
-         [:button.btn.btn-default.btn-sm {:type "submit"
-                                          :disabled (:submitting? post)}
-          (if (:persisted? post) "Update" "Post")]
-         (when (:persisted? post)
-           [:button.btn.btn-link.btn-sm {:type "button"
-                                         :onClick (fn [e]
-                                                    (om/update! post :body (om/get-state owner :original-post-body))
-                                                    (om/update! post :editing? false))}
-            "Cancel"])]]])))
+        [:div.row.no-side-margin
+         [:div.post-form-controls
+          (if (:persisted? post)
+            [:div
+             [:button.post-update
+              {:type "submit"
+               :disabled (:submitting? post)}
+              "Update"]
+             [:button.post-cancel-update
+              {:type "button"
+               :onClick (fn [e]
+                          (om/update! post :body (om/get-state owner :original-post-body))
+                          (om/update! post :editing? false))}
+              "Cancel"]]
+            [:button.btn.btn-default.btn-sm {:type "submit"
+                                             :disabled (:submitting? post)}
+             "Post"])]
+         ;; only show markdown help for new posts, not when editing
+         (when (not (:persisted? post))
+           (partials/markdown-help))]]])))
 
 (defn post-number-id [n]
   (str "post-number-" n))
 
-(defcomponent post [{:keys [post index autocomplete-users highlight?]} owner]
+(defcomponent post [{:keys [post autocomplete-users highlight? in-series?]} owner]
   (display-name [_] "Post")
 
   (render [_]
     (html
       [:li.post {:id (post-number-id (:post-number post))
-                 :class (when highlight? "post-highlight")}
+                 :class [(when highlight? "post-highlight")
+                         (when in-series? "post-in-series")]}
        [:div.row
         [:div.post-author-image
          [:a {:href (routes/hs-route :person (:author post))}
@@ -83,26 +94,25 @@
             :width "50"       ;TODO: request different image sizes
             }]]]
         [:div.post-metadata
-         [:a {:href (routes/hs-route :person (:author post))}
+         [:a.author-name {:href (routes/hs-route :person (:author post))}
           (-> post :author :name)]
-         [:div (-> post :author :batch-name)]
+         [:div.batch-name (-> post :author :batch-name)]
          [:div.timestamp (util/human-format-time (:created-at post))]]
         [:div.post-content
          (if (:editing? post)
            (->post-form {:post post
-                         :index index
                          :autocomplete-users autocomplete-users})
-           [:div.row
+           [:div
             [:div.post-body
              (partials/html-from-markdown
               (partials/wrap-mentions (:body post) autocomplete-users))]
             [:div.post-controls
              (when (and (:editable post) (not (:editing? post)))
-               [:button.btn.btn-default.btn-sm
+               [:button.post-edit
                 {:onClick (fn [e]
                             (.preventDefault e)
                             (om/update! post :editing? true))}
-                "Edit"])]])]]])))
+                [:span [:i.fa.fa-pencil] " Edit"]])]])]]])))
 
 (defn scroll-to-post-number [post-number]
   (when post-number
@@ -113,7 +123,7 @@
                          (- 100))]
       (.scrollTo js/window 0 scroll-pos))))
 
-(defcomponent thread [{:keys [thread route-data]} owner]
+(defcomponent thread [{:keys [thread route-data current-user]} owner]
   (display-name [_] "Thread")
 
   (init-state [_]
@@ -132,7 +142,15 @@
       (html
         [:div#thread-view
          [:div.t-title
-          [:h3 (:title thread)]]
+          [:h3
+           (when (:pinned thread) [:i.fa.fa-thumb-tack.pinned-icon])
+           (:title thread)]
+          (when (models/admin? current-user)
+            [:button.btn.btn-link.btn-xs
+             {:onClick #(controller/dispatch :toggle-thread-pinned @thread)}
+             (if (:pinned thread)
+               "unpin"
+               [:span [:i.fa.fa-thumb-tack] "pin"])])]
 
          [:div.row.no-side-margin
           [:div.subscribe (shared/->subscription-info (:subscription thread))]
@@ -146,12 +164,15 @@
           [:div.t-threads
            [:div.t-top-bar {:style {:background-color (:ui-color thread)}}]
            [:ol.list-unstyled
-            (for [[i post] (map-indexed vector (:posts thread))]
-              (->post {:post post
-                       :autocomplete-users autocomplete-users
-                       :index i
-                       :highlight? (= (str (:post-number post)) (:post-number route-data))}
-                      {:react-key (:id post)}))]]]
+            (for [[last-post post] (map vector (cons nil (:posts thread))
+                                               (:posts thread))]
+              (let [in-series? (= (:id (:author last-post))
+                                  (:id (:author post)))]
+                (->post {:post post
+                         :autocomplete-users autocomplete-users
+                         :highlight? (= (str (:post-number post)) (:post-number route-data))
+                         :in-series? in-series?}
+                        {:react-key (:id post)})))]]]
 
          [:div.row.no-side-margin
           [:div.new-post

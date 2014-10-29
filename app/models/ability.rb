@@ -13,6 +13,10 @@ class Ability
     alias_action :subscribe, :unsubscribe, to: :read
     can [:create, :read], DiscussionThread
 
+    if user.is_admin?
+      can [:pin, :unpin], DiscussionThread
+    end
+
     can [:create, :update], Subscription, user: user
 
     can [:create, :read], Post

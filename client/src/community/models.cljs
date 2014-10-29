@@ -24,6 +24,9 @@
 
 (deftransformer api->model)
 
+(deftransform api->model :roles roles
+  (set roles))
+
 (deftransform api->model :thread thread
   (assoc thread
     :new-post (empty-post (:id thread))))
@@ -58,3 +61,8 @@
 (defn replace-mentions [body users replace-fn]
   (let [regexp (names->mention-regexp (map :name users))]
     (.replace body regexp replace-fn)))
+
+;;; User roles
+
+(defn admin? [user]
+  (contains? (:roles user) "admin"))

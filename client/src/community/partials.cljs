@@ -54,13 +54,21 @@
                                    (.focus (.querySelector js/document "[data-new-anchor]")))})
         button-text])))
 
-(defn loading-icon []
+(defn loading-icon [color]
   (html
     [:div.push-down.loading
-     [:i.fa.fa-circle-o-notch.fa-spin.fa-2x]]))
+     [:i.fa.fa-spinner.fa-spin.fa-2x {:style {:color color}}]]))
 
 (defn wrap-mentions
   "Wraps @mentions in a post body in <span class=\"at-mention\">"
   [body users]
   (models/replace-mentions body users (fn [name]
                                         (str "<span class=\"at-mention\">" name "</span>"))))
+
+(defn markdown-help []
+  (html
+   [:div.markdown-help
+    [:a.help-link
+     {:target "_blank"
+      :href "https://guides.github.com/features/mastering-markdown/"}
+     "Markdown cheat sheet"]]))

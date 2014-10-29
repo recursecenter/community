@@ -189,22 +189,23 @@
       (finally
         (swap! app-state assoc-in [:thread :submitting?] false)))))
 
-(defn handle-update-post [app-state post index]
-  (go
-    (try
-      (swap! app-state assoc-in [:thread :posts index :submitting?] true)
-      (let [autocomplete-users (-> @app-state :thread :autocomplete-users)
-            post-with-mentions (models/with-mentions post autocomplete-users)
-            updated-post (<? (api/update-post post-with-mentions))]
-        (append-or-update-post! app-state updated-post)
-        (remove-errors! app-state [:thread :posts index])
-        (swap! app-state assoc-in [:thread :posts index :editing?] false))
+(defn handle-update-post [app-state post]
+  (let [index (dec (:post-number post))]
+    (go
+      (try
+        (swap! app-state assoc-in [:thread :posts index :submitting?] true)
+        (let [autocomplete-users (-> @app-state :thread :autocomplete-users)
+              post-with-mentions (models/with-mentions post autocomplete-users)
+              updated-post (<? (api/update-post post-with-mentions))]
+          (append-or-update-post! app-state updated-post)
+          (remove-errors! app-state [:thread :posts index])
+          (swap! app-state assoc-in [:thread :posts index :editing?] false))
 
-      (catch ExceptionInfo e
-        (add-error! app-state [:thread :posts index] e))
+        (catch ExceptionInfo e
+          (add-error! app-state [:thread :posts index] e))
 
-      (finally
-        (swap! app-state assoc-in [:thread :posts index :submitting?] false)))))
+        (finally
+          (swap! app-state assoc-in [:thread :posts index :submitting?] false))))))
 
 (defn handle-notifications-read [app-state notifications]
   (api/mark-notifications-as-read notifications))
@@ -216,6 +217,13 @@
 (defn handle-update-search-suggestions [app-state query-str]
   (go (let [results (<? (api/suggestions query-str))]
         (swap! app-state assoc :query-str query-str :suggestions results))))
+
+(defn handle-toggle-thread-pinned [app-state thread]
+  (let [pinned? (not (:pinned thread))]
+    (swap! app-state assoc-in [:thread :pinned] pinned?)
+    (if pinned?
+      (api/pin-thread thread)
+      (api/unpin-thread thread))))
 
 ;;; Main loop
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -230,7 +238,8 @@
                   :new-post handle-new-post
                   :notifications-read handle-notifications-read
                   :welcome-message-read handle-welcome-message-read
-                  :update-search-suggestions handle-update-search-suggestions)]
+                  :update-search-suggestions handle-update-search-suggestions
+                  :toggle-thread-pinned handle-toggle-thread-pinned)]
     (apply handler app-state args)))
 
 (defn start-loop! [app-state]

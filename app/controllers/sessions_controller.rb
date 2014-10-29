@@ -9,7 +9,7 @@ class SessionsController < ApplicationController
       token = client.auth_code.get_token(params[:code], redirect_uri: login_complete_url)
       user_data = JSON.parse(token.get("/api/v1/people/me").body)
 
-      user = User.create_or_update_from_api_data(user_data)
+      user = AccountImporter.new(user_data).import
 
       login(user)
 
