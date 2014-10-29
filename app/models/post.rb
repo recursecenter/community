@@ -96,8 +96,8 @@ class Post < ActiveRecord::Base
     end
 
     # Initialize filters
+    filters = {} if filters.blank?
     filters_with_permissions = filters.clone
-    filters_with_permissions = {} if filters_with_permissions.blank?
 
     # filter only subforums limited to the user
     filters_with_permissions['subforum_id'] = Subforum.for_user(user).map {|subforum| subforum.id }

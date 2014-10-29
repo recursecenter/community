@@ -34,7 +34,7 @@ module Searchable
 
     # Suggest methods to return suggestions for this particular model
     def suggest(search_string)
-      suggest_query = { suggestions: { text: search_string, completion: { field: "suggest" } } }
+      suggest_query = { suggestions: { text: search_string.downcase, completion: { field: "suggest" } } }
       __elasticsearch__.client.suggest(index: self.table_name, body: suggest_query)["suggestions"].first["options"]
     end
 
