@@ -143,6 +143,8 @@
      :suggestions (suggestion-sl (:suggestions app) (:query-str app))})
 
   (will-receive-props [_ next-props]
+    (prn (:query-str next-props) "next")
+    (prn (:query-str (om/get-props owner) " owner"))
     (when (not= (:query-str next-props) (:query-str (om/get-props owner)))
       (om/set-state! owner
                      :suggestions (suggestion-sl (:suggestions next-props) (:query-str next-props)))))
@@ -182,43 +184,43 @@
   #(search! (assoc {} :page page :text query :filters (if filters @filters nil))))
 
 (defn pages [{:keys [current-page total-pages _ query filters]}]
-  (let [max-inbetween 5 max-displayed 7 radius 2]
+  (let [max-inbetween 5 
+        max-display 7
+        radius 2
+        lower-bound (if (or (<= (- current-page radius) 2) (< total-pages max-display)) 
+                      2
+                      (- current-page radius)) 
+        upper-bound (let [ub (+ lower-bound max-inbetween)]
+                      (if (> ub total-pages) total-pages ub))
+        first-ellipsis? (> lower-bound 2)
+        last-ellipsis? (< upper-bound total-pages)
+        mid-range (range lower-bound upper-bound)]
     (letfn [(page-click [page] (load-page query filters page))
-            (lower-bound [page] (if (> (- page radius) 2) (- page radius) 2))
-            (upper-bound [page] (let [ub (+ (lower-bound page) max-inbetween)]
-                                  (if (> ub total-pages) total-pages ub)))
-            (first-ellipsis? [page] (> (lower-bound page) 2))
-            (last-ellipsis? [page] (< (upper-bound page) total-pages))
-            (mid-range [page] (range (lower-bound page) (upper-bound page)))]
+            (page-number [class-name jump content]
+              [:li {:class class-name}
+               [:a {:onClick (page-click jump)} content]])
+            (ellipsis [display?]
+              [:li {:style {:display (when-not display? "none")}} "..."])]
       (html
         (when (> total-pages 1) 
           [:ul.page-links
-           ;Show Previous
-           [:li {:class (when (= current-page 1) "disabled")}
-            [:a {:onClick (page-click (dec current-page))} "Previous"]]
-
-           ;Show first
-           [:li {:class (when (= current-page 1) "active")}
-            [:a {:onClick (page-click 1)} "1"]]
-
-           ;Show initial ellipsis
-           [:li {:style {:display (when-not (first-ellipsis? current-page) "none")}} "..."]
+           ;Show - Previous, First page, Initial ellipsis
+           (page-number (when (= current-page 1) "disabled") 
+                        (dec current-page)
+                        "Previous")
+           (page-number (when (= current-page 1) "active") 1 "1")
+           (ellipsis first-ellipsis?)
 
            ;Show rest of pages
-           (for [page (mid-range current-page)]
-              [:li {:class (when (= page current-page) "active")} 
-               [:a {:onClick (page-click page)} page]])
+           (for [page mid-range]
+             (page-number (when (= page current-page) "active") page page))
 
-           ;Show final ellipsis
-           [:li {:style {:display (when-not (last-ellipsis? current-page) "none")}} "..."]
-
-           ;Show last
-           [:li {:class (when (= current-page total-pages) "active")}
-            [:a {:onClick (page-click total-pages)} total-pages]]
-
-           ;Show Next
-           [:li {:class (when (= current-page total-pages) "disabled")}
-            [:a {:onClick (page-click (inc current-page))} "Next"]]])))))
+           ;Show - Final ellipsis, Last page, Next
+           (ellipsis last-ellipsis?)
+           (page-number (when (= current-page total-pages) "active") total-pages total-pages)
+           (page-number (when (= current-page total-pages) "disabled") 
+                        (inc current-page)
+                        "Next")])))))
 
 (defcomponent search-results [{:keys [search] :as app} owner]
   (display-name [_] "Search Results")
