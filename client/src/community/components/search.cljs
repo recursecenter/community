@@ -60,10 +60,10 @@
 (defn search! [query-data]
   (let [filter-str (->> (for [[filter-name value] (:filters query-data)
                                     :when value]
-                                (str (name filter-name) "=" value))
-                         (str/join "&"))
+                          (str (name filter-name) "=" value))
+                        (str/join "&"))
         page-str (str "page=" (:page query-data))
-        query-param-str (str page-str (when-not (empty? filter-str) (str "&" filter-str)))]
+        query-param-str (str (when-not (empty? filter-str) (str filter-str "&")) page-str)]
     (routes/redirect-to (str (routes :search {:query (:text query-data)})
                              "?" query-param-str))))
 
@@ -158,8 +158,11 @@
    [:div.row.search-result
     [:div.metadata {:data-ui-color (:ui-color subforum)}
      [:div.author
-      [:a {:href (routes/hs-route :person {:hacker-school-id (:hacker-school-id author)})}
+      [:a {:target "_blank"
+           :href (routes/hs-route :person {:hacker-school-id (:hacker-school-id author)})}
           (:name author)]]
+     [:div.timestamp
+      (util/human-format-time (:created-at post))]
      [:div.subforum
       (link-to (routes :subforum {:id (:id subforum)
                                   :slug (:slug subforum)})
