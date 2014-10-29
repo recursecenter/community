@@ -71,8 +71,8 @@
 
 #search-results-view {
   .query {
-    @include make-sm-column-offset(2.5);
-    @include make-sm-column(9.5);
+    @include make-xs-column-offset(2.5);
+    @include make-xs-column(9.5);
     margin-bottom: 1.5em;
     font-size: 14px;
     font-weight: bold;
@@ -85,10 +85,10 @@
   margin: 1em 0;
 
   .metadata {
-    @include make-sm-column(2.5);
+    @include make-xs-column(2.5);
     text-align: right;
     font-size: $font-size-small;
-
+    word-wrap: break-word;
     .author {
       a {
         color: #555; 
@@ -101,7 +101,7 @@
   }
 
   .result {
-    @include make-sm-column(9.5);
+    @include make-xs-column(9.5);
 
     .title {
        margin-bottom: 0.5em;
@@ -120,7 +120,7 @@
 }
 
 .paginate {
-  @include make-sm-column(12);
+  @include make-xs-column(12);
   text-align: center;
   margin: 1.25em auto;
 
