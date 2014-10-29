@@ -9,7 +9,7 @@ module Searchable
 
     settings index: { number_of_shards: 1 } do
       mappings dynamic: 'true' do
-        indexes :suggest, type: :completion, index_analyzer: :simple, search_analyzer: :simple, payloads: true
+        indexes :suggest, type: :completion, index_analyzer: :whitespace, search_analyzer: :whitespace, payloads: true
       end
     end
   end
@@ -32,8 +32,8 @@ module Searchable
 
     # Suggest methods to return suggestions for this particular model
     def suggest(search_string)
-       suggest = { suggestions: { text: search_string, completion: { field: "suggest" } } }
-      __elasticsearch__.client.suggest(index: self.table_name, body: suggest)["suggestions"].first["options"]
+       suggest_query = { suggestions: { text: search_string, completion: { field: "suggest" } } }
+      __elasticsearch__.client.suggest(index: self.table_name, body: suggest_query)["suggestions"].first["options"]
     end
 
     # Override this method to customize the DSL for querying the including model
@@ -43,7 +43,7 @@ module Searchable
 
     # Override this method to change the fields to highlight when this model is queried
     def highlight_fields
-      return Hash.new
+      {}
     end
   end
 

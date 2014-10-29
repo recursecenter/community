@@ -17,7 +17,7 @@ class Subforum < ActiveRecord::Base
   def to_search_mapping
     subforum_data = {
       suggest: {
-        input: [name.split(" ")],
+        input: [name.downcase, name.downcase.split(" ")],
         output: name,
         payload: {id: id, slug: slug}
       }
