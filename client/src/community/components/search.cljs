@@ -177,20 +177,35 @@
   #(search! (assoc {} :page page :text query :filters (if filters @filters nil))))
 
 (defn pages [{:keys [current-page total-pages _ query filters]}]
-  (letfn [(page-click [page] (load-page query filters page))]
-    (html
-      [:ul.page-links
-       [:li {:class (when (= current-page 1) "disabled")}
-        [:a {:href "#"
-             :onClick (page-click (dec current-page))} "Previous"]]
-       (for [page (range total-pages)]
-          [:li {:class (when (= (inc page) current-page) "active")} 
-           [:a {:href "#"
-                :onClick (page-click (inc page))} 
-            (inc page)]])
-       [:li {:class (when (= current-page total-pages) "disabled")}
-        [:a {:href "#"
-             :onClick (page-click (inc current-page))} "Next"]]])))
+  (let [max-inbetween 5 max-displayed 7 radius 2]
+    (letfn [(page-click [page] (load-page query filters page))
+            (lower-bound [page] (if (> (- page radius) 2) (- page radius) 2))
+            (upper-bound [page] (let [ub (+ (lower-bound page) max-inbetween)]
+                                  (if (> ub total-pages) total-pages ub)))
+            (first-ellipsis? [page] (> (lower-bound page) 2))
+            (last-ellipsis? [page] (< (upper-bound page) total-pages))
+            (mid-range [page] (range (lower-bound page) (upper-bound page)))]
+      (html
+        (when (> total-pages 1) 
+          [:ul.page-links
+           [:li {:class (when (= current-page 1) "disabled")}
+            [:a {:href "#"
+                 :onClick (page-click (dec current-page))} "Previous"]]
+           [:li {:class "first"}
+            [:a {:href "#"
+                 :onClick (page-click 1)} "1"]]
+           [:li {:style {:display (when-not (first-ellipsis? current-page) "none")}} "..."]
+           (for [page (mid-range current-page)]
+              [:li {:class (when (= page current-page) "active")} 
+               [:a {:href "#"
+                    :onClick (page-click page)} page]])
+           [:li {:style {:display (when-not (last-ellipsis? current-page) "none")}} "..."]
+           [:li {:class "last"}
+            [:a {:href "#"
+                 :onClick (page-click total-pages)} total-pages]]
+           [:li {:class (when (= current-page total-pages) "disabled")}
+            [:a {:href "#"
+                 :onClick (page-click (inc current-page))} "Next"]]])))))
 
 (defcomponent search-results [{:keys [search] :as app} owner]
   (display-name [_] "Search Results")
