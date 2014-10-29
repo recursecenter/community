@@ -191,7 +191,7 @@
            [:li {:class (when (= current-page 1) "disabled")}
             [:a {:href "#"
                  :onClick (page-click (dec current-page))} "Previous"]]
-           [:li {:class "first"}
+           [:li {:class (when (= current-page 1) "active")}
             [:a {:href "#"
                  :onClick (page-click 1)} "1"]]
            [:li {:style {:display (when-not (first-ellipsis? current-page) "none")}} "..."]
@@ -200,7 +200,7 @@
                [:a {:href "#"
                     :onClick (page-click page)} page]])
            [:li {:style {:display (when-not (last-ellipsis? current-page) "none")}} "..."]
-           [:li {:class "last"}
+           [:li {:class (when (= current-page total-pages) "active")}
             [:a {:href "#"
                  :onClick (page-click total-pages)} total-pages]]
            [:li {:class (when (= current-page total-pages) "disabled")}
