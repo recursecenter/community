@@ -2,7 +2,7 @@ module Searchable
   extend ActiveSupport::Concern
 
   # default number of results per page
-  RESULTS_PER_PAGE = 10
+  RESULTS_PER_PAGE = 25
 
   included do
     include Elasticsearch::Model
