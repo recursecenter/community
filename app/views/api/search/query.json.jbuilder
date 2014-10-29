@@ -1,6 +1,7 @@
 json.results @posts do |post|
   json.post do
     json.extract! post, :id, :body, :post_number
+    json.created_at post.created_at.to_i
   end
   json.author do
     json.extract! post.author, :email, :hacker_school_id, :name
