@@ -1,20 +1,20 @@
-json.results @records do |record|
+json.results @posts do |post|
   json.post do
-    json.extract! record, :id, :body, :post_number
+    json.extract! post, :id, :body, :post_number
   end
   json.author do
-    json.extract! record.author, :email, :hacker_school_id, :name
+    json.extract! post.author, :email, :hacker_school_id, :name
   end
   json.thread do
-    json.extract! record.thread, :id, :slug, :title
+    json.extract! post.thread, :id, :slug, :title
   end
 
   json.subforum do
-    json.extract! record.thread.subforum, :id, :slug, :ui_color, :name
-    json.subforum_group_name record.thread.subforum.subforum_group.name
+    json.extract! post.thread.subforum, :id, :slug, :ui_color, :name
+    json.subforum_group_name post.thread.subforum.subforum_group.name
   end
 
-  json.highlight @highlights.fetch(record.id.to_s).first
+  json.highlight @highlights.[post.id.to_s].first
 end
 
 json.metadata do

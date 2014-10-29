@@ -8,7 +8,7 @@ class Api::SearchController < Api::ApiController
     response = Post.search(params[:q], params[:filters], @current_page)
 
     # Eager load everything related to a post that we need
-    @records = response.records.includes({thread: [{subforum: :subforum_group}]}, :author)
+    @posts = response.records.includes({thread: [{subforum: :subforum_group}]}, :author)
 
     # Collect highlights for every record
     @highlights = response.map { |result| [result.id, result.highlight.body] }.to_h
