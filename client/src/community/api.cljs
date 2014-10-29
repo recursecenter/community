@@ -119,7 +119,7 @@
     :res-transform (partial models/api->model :thread)))
 
 (def search
-  (make-api-fn (fn [page query filters]
+  (make-api-fn (fn [query filters page]
                  (->> (for [[k v] filters]
                         (str "filters[" (name k) "]=" v))
                       (str/join "&")

@@ -144,5 +144,9 @@
     .active {
       background-color: #fafad2;
     }
+
+    li > a {
+      cursor: pointer;
+    }
   }
 }

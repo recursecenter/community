@@ -143,9 +143,9 @@
 
 (defmethod update-route-data :search [app-state route-data]
   (load-from-api app-state route-data :search
-                 #(api/search (:page route-data)
-                              (:query route-data) 
-                              (:query-params route-data))))
+                 #(api/search (:query route-data) 
+                              (dissoc (:query-params route-data) :page)
+                              (get-in route-data [:query-params :page]))))
 
 (defmethod update-route-data :page-not-found [app-state route-data]
   (swap! app-state assoc

@@ -58,12 +58,13 @@
       (assoc :text "")))
 
 (defn search! [query-data]
-  (let [query-param-str (->> (for [[filter-name value] (:filters query-data)
-                             :when value]
-                         (str (name filter-name) "=" value))
-                       (str/join "&"))]
-    (routes/redirect-to (str (routes :search {:query (:text query-data)
-                                              :page (if-let [page (:page query-data)] page 1)})
+  (let [filter-str (->> (for [[filter-name value] (:filters query-data)
+                                    :when value]
+                                (str (name filter-name) "=" value))
+                         (str/join "&"))
+        page-str (str "page=" (:page query-data))
+        query-param-str (str page-str (when-not (empty? filter-str) (str "&" filter-str)))]
+    (routes/redirect-to (str (routes :search {:query (:text query-data)})
                              "?" query-param-str))))
 
 (defn complete-and-respond! [query-data selected]
@@ -76,6 +77,7 @@
       (jump-to-page selected)))
 
 (def initial-query-state {:text ""
+                          :page 1
                           :filters {:author nil :subforum nil :thread nil}})
 
 (defn suggestions-dropdown [{:keys [query-data suggestions show-suggestions?]}]
@@ -188,24 +190,32 @@
       (html
         (when (> total-pages 1) 
           [:ul.page-links
+           ;Show Previous
            [:li {:class (when (= current-page 1) "disabled")}
-            [:a {:href "#"
-                 :onClick (page-click (dec current-page))} "Previous"]]
+            [:a {:onClick (page-click (dec current-page))} "Previous"]]
+
+           ;Show first
            [:li {:class (when (= current-page 1) "active")}
-            [:a {:href "#"
-                 :onClick (page-click 1)} "1"]]
+            [:a {:onClick (page-click 1)} "1"]]
+
+           ;Show initial ellipsis
            [:li {:style {:display (when-not (first-ellipsis? current-page) "none")}} "..."]
+
+           ;Show rest of pages
            (for [page (mid-range current-page)]
               [:li {:class (when (= page current-page) "active")} 
-               [:a {:href "#"
-                    :onClick (page-click page)} page]])
+               [:a {:onClick (page-click page)} page]])
+
+           ;Show final ellipsis
            [:li {:style {:display (when-not (last-ellipsis? current-page) "none")}} "..."]
+
+           ;Show last
            [:li {:class (when (= current-page total-pages) "active")}
-            [:a {:href "#"
-                 :onClick (page-click total-pages)} total-pages]]
+            [:a {:onClick (page-click total-pages)} total-pages]]
+
+           ;Show Next
            [:li {:class (when (= current-page total-pages) "disabled")}
-            [:a {:href "#"
-                 :onClick (page-click (inc current-page))} "Next"]]])))))
+            [:a {:onClick (page-click (inc current-page))} "Next"]]])))))
 
 (defcomponent search-results [{:keys [search] :as app} owner]
   (display-name [_] "Search Results")
