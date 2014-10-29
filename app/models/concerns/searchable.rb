@@ -1,11 +1,12 @@
 module Searchable
   extend ActiveSupport::Concern
 
+  # default number of results per page
+  RESULTS_PER_PAGE = 10
+
   included do
     include Elasticsearch::Model
     after_commit :upsert_to_search_index!
-
-    RESULTS_PER_PAGE = 10
 
     settings index: { number_of_shards: 1 } do
       mappings dynamic: 'true' do
