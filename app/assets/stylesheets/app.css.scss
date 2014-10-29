@@ -2,11 +2,42 @@
   @include make-sm-column(12);
 }
 
-// Small screen only
-@media (max-width: $screen-sm-min) {
+//Below 480 px - mobile phones only
+@media (max-width: $screen-xs-min) {
+  #search-bar {
+    display: none;
+  }  
+
+  #navbar-header {
+    @include make-xs-column(10);    
+  }
+
+  #util-bar {
+    @include make-xs-column(2);    
+  }
+}
+
+// Extra small (between 480 and 768 px) only
+@media (min-width: $screen-xs-min) and (max-width: $screen-xs-max) {
   #main-content {
     padding-left: 0;
     padding-right: 0;
+  }
+
+  #navbar-community {
+    @include make-xs-column(12);
+
+    #navbar-header {
+      @include make-xs-column(5);    
+    }
+
+    #search-bar {
+      @include make-xs-column(6);    
+    }
+
+    #util-bar {
+      @include make-xs-column(1);    
+    }
   }
 }
 
@@ -27,9 +58,9 @@
   border-bottom: 1px dotted $brand-primary;
   height: 45px;
   margin-bottom: 1em;
-  padding: 0 20px;
+  padding: 0 10px;
 
-  .navbar-header {
+  #navbar-header {
     @include make-sm-column(3);
 
     img {
@@ -63,6 +94,7 @@
   #util-bar {
     @include make-sm-column(3);
     text-align: right;
+    padding: 0 5px;
 
     .community-nav {
       list-style: none;
