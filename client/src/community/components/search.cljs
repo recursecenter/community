@@ -28,13 +28,13 @@
 
 (defn results->suggestions-display [results query-str]
   (let [filter-suggestions
-          (mapcat (fn [key result-set]
-            (when (not (empty? result-set))
-              (let [search-filter (key->search-filter key)
-                    suggestion-data (result-set->suggestion-data search-filter result-set)]
-                   suggestion-data)))
-            (keys results) (vals results))]
-        filter-suggestions))
+        (mapcat (fn [key result-set]
+                  (when (not (empty? result-set))
+                    (let [search-filter (key->search-filter key)
+                          suggestion-data (result-set->suggestion-data search-filter result-set)]
+                      suggestion-data)))
+                (keys results) (vals results))]
+    filter-suggestions))
 
 (def ENTER 13)
 (def UP_ARROW 38)
@@ -59,7 +59,7 @@
 
 (defn search! [query-data]
   (let [filter-str (->> (for [[filter-name value] (:filters query-data)
-                                    :when value]
+                              :when value]
                           (str (name filter-name) "=" value))
                         (str/join "&"))
         page-str (str "page=" (:page query-data))
@@ -68,13 +68,14 @@
                              "?" query-param-str))))
 
 (defn complete-and-respond! [query-data selected]
-  (cond
-    (and (nil? selected) (not (empty? (:text query-data))))
-      (search! query-data)
-    (= :author (:search-filter selected))
-      (search! (complete-suggestion query-data selected))
-    (contains? #{:thread :subforum} (:search-filter selected))
-      (jump-to-page selected)))
+  (cond (and (nil? selected) (not (empty? (:text query-data))))
+        (search! query-data)
+
+        (= :author (:search-filter selected))
+        (search! (complete-suggestion query-data selected))
+
+        (contains? #{:thread :subforum} (:search-filter selected))
+        (jump-to-page selected)))
 
 (def initial-query-state {:text ""
                           :page 1
@@ -82,16 +83,17 @@
 
 (defn suggestions-dropdown [{:keys [query-data suggestions show-suggestions?]}]
   (html
-   [:ol
-    {:id "suggestions" :ref "suggestions"
-     :style (display (and show-suggestions? (not (empty? (:text query-data)))
-                          (not (empty? suggestions))))}
-    (for [{:keys [selected? value] :as suggestion} suggestions]
-      [:li {:class (when selected? "selected")
-            :onMouseDown #(complete-and-respond! query-data value)
-            :onTouchStart #(complete-and-respond! query-data value)
-            :data-search-filter (when (= 0 (:count value)) (name (:search-filter value)))}
-       (:text value)])]))
+    [:ol
+     {:id "suggestions" :ref "suggestions"
+      :style (display (and show-suggestions? 
+                           (not (empty? (:text query-data)))
+                           (not (empty? suggestions))))}
+     (for [{:keys [selected? value] :as suggestion} suggestions]
+       [:li {:class (when selected? "selected")
+             :onMouseDown #(complete-and-respond! query-data value)
+             :onTouchStart #(complete-and-respond! query-data value)
+             :data-search-filter (when (= 0 (:count value)) (name (:search-filter value)))}
+        (:text value)])]))
 
 (defn search-input-box [{:keys [query-data suggestions]} owner]
   (letfn [(select! [direction]
@@ -116,18 +118,18 @@
                         (om/set-state! owner :suggestions (sl/unselect suggestions))
                         (blur!))))))]
     (html
-     [:form
-      {:id "search-form"
-       :name "search-form"}
-      [:i {:id "search-icon" :class "fa fa-search"}]
-      [:input.form-control {:ref "search-query"
-                            :type "search"
-                            :id "search-box"
-                            :value (:text query-data)
-                            :onFocus #(om/set-state! owner :show-suggestions? true)
-                            :onBlur #(om/set-state! owner :show-suggestions? false)
-                            :onChange query-text-change!
-                            :onKeyDown handle-key-down!}]])))
+      [:form
+       {:id "search-form"
+        :name "search-form"}
+       [:i {:id "search-icon" :class "fa fa-search"}]
+       [:input.form-control {:ref "search-query"
+                             :type "search"
+                             :id "search-box"
+                             :value (:text query-data)
+                             :onFocus #(om/set-state! owner :show-suggestions? true)
+                             :onBlur #(om/set-state! owner :show-suggestions? false)
+                             :onChange query-text-change!
+                             :onKeyDown handle-key-down!}]])))
 
 (defn suggestion-sl [suggestions query-str]
   (-> suggestions
@@ -149,34 +151,34 @@
 
   (render-state [_ {:as state :keys [query-data suggestions]}]
     (html
-     [:div {:id "search"}
-      (search-input-box state owner)
-      (suggestions-dropdown state)])))
+      [:div {:id "search"}
+       (search-input-box state owner)
+       (suggestions-dropdown state)])))
 
 (defn result [{:keys [post author thread subforum highlight]}]
   (html
-   [:div.row.search-result
-    [:div.metadata {:data-ui-color (:ui-color subforum)}
-     [:div.author
-      [:a {:target "_blank"
-           :href (routes/hs-route :person {:hacker-school-id (:hacker-school-id author)})}
-          (:name author)]]
-     [:div.timestamp
-      (util/human-format-time (:created-at post))]
-     [:div.subforum
-      (link-to (routes :subforum {:id (:id subforum)
-                                  :slug (:slug subforum)})
-                       {:style {:color (:ui-color subforum)}}
-                       (:subforum-group-name subforum) " / " (:name subforum))]]
-    [:div.result
-     [:div.title
-      (link-to (routes :thread {:id (:id thread)
-                                :slug (:slug thread)
-                                :post-number (:post-number post)})
-                       {:style {:color (:ui-color subforum)}}
-                       [:h4 (:title thread)])]
-     [:div.body
-      (partials/html-from-markdown highlight)]]]))
+    [:div.row.search-result
+     [:div.metadata {:data-ui-color (:ui-color subforum)}
+      [:div.author
+       [:a {:target "_blank"
+            :href (routes/hs-route :person {:hacker-school-id (:hacker-school-id author)})}
+        (:name author)]]
+      [:div.timestamp
+       (util/human-format-time (:created-at post))]
+      [:div.subforum
+       (link-to (routes :subforum {:id (:id subforum)
+                                   :slug (:slug subforum)})
+                {:style {:color (:ui-color subforum)}}
+                (:subforum-group-name subforum) " / " (:name subforum))]]
+     [:div.result
+      [:div.title
+       (link-to (routes :thread {:id (:id thread)
+                                 :slug (:slug thread)
+                                 :post-number (:post-number post)})
+                {:style {:color (:ui-color subforum)}}
+                [:h4 (:title thread)])]
+      [:div.body
+       (partials/html-from-markdown highlight)]]]))
 
 (defn load-page [query filters page]
   #(search! (assoc {} :page page :text query :filters (if filters @filters nil))))
@@ -227,11 +229,11 @@
     (let [results (:results search)
           {:as metadata :keys [hits took query filters]} (:metadata search)]
       (html
-       [:div {:id "search-results-view"}
-        [:div.query (if (:author filters)
-                      (str (util/pluralize hits "post") " by " (:author filters) ".")
-                      (str (util/pluralize hits "post") " matching \"" query "\"."))]
-        (when-not (empty? results)
-          [:div
+        [:div {:id "search-results-view"}
+         [:div.query (if (:author filters)
+                       (str (util/pluralize hits "post") " by " (:author filters) ".")
+                       (str (util/pluralize hits "post") " matching \"" query "\"."))]
+         (when-not (empty? results)
+           [:div
             [:div.results (map (partial result) results)]
             [:div.paginate (pages metadata)]])]))))
