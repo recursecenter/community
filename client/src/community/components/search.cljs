@@ -77,9 +77,6 @@
         (contains? #{:thread :subforum} (:search-filter selected))
         (jump-to-page selected)))
 
-(def initial-query-state {:text ""
-                          :page 1
-                          :filters {:author nil :subforum nil :thread nil}})
 
 (defn suggestions-dropdown [{:keys [query-data suggestions show-suggestions?]}]
   (html
@@ -135,6 +132,11 @@
   (-> suggestions
       (results->suggestions-display query-str)
       (sl/selection-list nil)))
+
+(def initial-query-state
+  {:text ""
+   :page 1
+   :filters {:author nil :subforum nil :thread nil}})
 
 (defcomponent autocomplete [app owner]
   (display-name [_] "Autocomplete")
