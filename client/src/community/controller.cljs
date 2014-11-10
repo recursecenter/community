@@ -143,7 +143,7 @@
 
 (defmethod update-route-data :search [app-state route-data]
   (load-from-api app-state route-data :search
-                 #(api/search (:query route-data) 
+                 #(api/search (:query route-data)
                               (dissoc (:query-params route-data) :page)
                               (get-in route-data [:query-params :page]))))
 
@@ -215,8 +215,10 @@
   (api/mark-welcome-message-as-read))
 
 (defn handle-update-search-suggestions [app-state query-str]
+  (swap! app-state assoc :query-str query-str)
   (go (let [results (<? (api/suggestions query-str))]
-        (swap! app-state assoc :query-str query-str :suggestions results))))
+        (when (= query-str (:query-str @app-state))
+          (swap! app-state assoc :suggestions results)))))
 
 (defn handle-toggle-thread-pinned [app-state thread]
   (let [pinned? (not (:pinned thread))]
