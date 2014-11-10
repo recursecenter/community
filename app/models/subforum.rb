@@ -43,7 +43,7 @@ class Subforum < ActiveRecord::Base
       suggest: {
         input: [name.downcase, name.downcase.split(" ")],
         output: name,
-        payload: {id: id, slug: slug}
+        payload: {id: id, slug: slug, required_role_ids: self.required_role_ids}
       }
     }
 

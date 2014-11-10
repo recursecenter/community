@@ -63,7 +63,7 @@ class User < ActiveRecord::Base
       suggest: {
         input: [name.downcase, email, first_name.downcase, last_name.downcase],
         output: name,
-        payload: {id: id, email: email, first_name: first_name, last_name: last_name, name: name}
+        payload: {id: id, email: email, first_name: first_name, last_name: last_name, name: name, required_role_ids: []}
       }
     }
 

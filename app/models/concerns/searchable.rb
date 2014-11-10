@@ -33,9 +33,14 @@ module Searchable
     end
 
     # Suggest methods to return suggestions for this particular model
-    def suggest(search_string)
+    def suggest(user, search_string)
       suggest_query = { suggestions: { text: search_string.downcase, completion: { field: "suggest" } } }
-      __elasticsearch__.client.suggest(index: self.table_name, body: suggest_query)["suggestions"].first["options"]
+
+      suggestions = __elasticsearch__.client.suggest(index: self.table_name, body: suggest_query)["suggestions"]
+
+      suggestions.first["options"].select do |suggestion|
+        suggestion["payload"]["required_role_ids"] - user.role_ids == []
+      end
     end
 
     # Override this method to customize the DSL for querying the including model

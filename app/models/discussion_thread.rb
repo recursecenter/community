@@ -33,7 +33,7 @@ class DiscussionThread < ActiveRecord::Base
       suggest: {
         input: [title.downcase, title.downcase.split(" ")],
         output: title,
-        payload: {id: id, slug: slug}
+        payload: {id: id, slug: slug, required_role_ids: self.subforum.required_role_ids}
       }
     }
 
