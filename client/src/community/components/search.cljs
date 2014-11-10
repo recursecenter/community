@@ -85,7 +85,7 @@
   (html
     [:ol
      {:id "suggestions" :ref "suggestions"
-      :style (display (and show-suggestions? 
+      :style (display (and show-suggestions?
                            (not (empty? (:text query-data)))
                            (not (empty? suggestions))))}
      (for [{:keys [selected? value] :as suggestion} suggestions]
@@ -181,44 +181,45 @@
        (partials/html-from-markdown highlight)]]]))
 
 (defn load-page [query filters page]
-  #(search! (assoc {} :page page :text query :filters (if filters @filters nil))))
+  (search! (assoc {} :page page :text query :filters (if filters @filters nil))))
 
-(defn pages [{:keys [current-page total-pages _ query filters]}]
-  (let [max-inbetween 5 
+(defn pagination [{:keys [current-page total-pages query filters]}]
+  (let [max-inbetween 5
         max-display 7
         radius 2
-        lower-bound (if (or (<= (- current-page radius) 2) (< total-pages max-display)) 
+        lower-bound (if (or (<= (- current-page radius) 2) (< total-pages max-display))
                       2
-                      (- current-page radius)) 
+                      (- current-page radius))
         upper-bound (let [ub (+ lower-bound max-inbetween)]
                       (if (> ub total-pages) total-pages ub))
         first-ellipsis? (> lower-bound 2)
         last-ellipsis? (< upper-bound total-pages)
         mid-range (range lower-bound upper-bound)]
-    (letfn [(page-click [page] (load-page query filters page))
-            (page-number [class-name jump content]
+    (letfn [(page-number [class-name jump content]
               [:li {:class class-name}
-               [:a {:onClick (page-click jump)} content]])
-            (ellipsis [display?]
-              [:li {:style {:display (when-not display? "none")}} "..."])]
+               ;;TODO: Use link-to here instead (this might require
+               ;;refactoring/adding behavior to link-to)
+               [:a {:onClick #(load-page query filters jump)} content]])]
       (html
-        (when (> total-pages 1) 
+        (when (> total-pages 1)
           [:ul.page-links
-           ;Show - Previous, First page, Initial ellipsis
-           (page-number (when (= current-page 1) "disabled") 
+           ;;Show - Previous, First page, Initial ellipsis
+           (page-number (when (= current-page 1) "disabled")
                         (dec current-page)
                         "Previous")
            (page-number (when (= current-page 1) "active") 1 "1")
-           (ellipsis first-ellipsis?)
+           (when first-ellipsis?
+             [:li "…"])
 
-           ;Show rest of pages
+           ;;Show rest of pages
            (for [page mid-range]
              (page-number (when (= page current-page) "active") page page))
 
-           ;Show - Final ellipsis, Last page, Next
-           (ellipsis last-ellipsis?)
+           ;;Show - Final ellipsis, Last page, Next
+           (when last-ellipsis?
+             [:li "…"])
            (page-number (when (= current-page total-pages) "active") total-pages total-pages)
-           (page-number (when (= current-page total-pages) "disabled") 
+           (page-number (when (= current-page total-pages) "disabled")
                         (inc current-page)
                         "Next")])))))
 
@@ -236,4 +237,4 @@
          (when-not (empty? results)
            [:div
             [:div.results (map (partial result) results)]
-            [:div.paginate (pages metadata)]])]))))
+            [:div.paginate (pagination metadata)]])]))))
