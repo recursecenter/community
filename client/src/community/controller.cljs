@@ -215,10 +215,10 @@
   (api/mark-welcome-message-as-read))
 
 (defn handle-update-search-suggestions [app-state query-str]
-  (swap! app-state assoc :query-str query-str)
+  (swap! app-state assoc :in-process-query-str query-str)
   (go (let [results (<? (api/suggestions query-str))]
-        (when (= query-str (:query-str @app-state))
-          (swap! app-state assoc :suggestions results)))))
+        (when (= query-str (:in-process-query-str @app-state))
+          (swap! app-state assoc :suggestions results :query-str query-str)))))
 
 (defn handle-toggle-thread-pinned [app-state thread]
   (let [pinned? (not (:pinned thread))]

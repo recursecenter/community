@@ -157,7 +157,7 @@
       (om/set-state! owner
                      :suggestions (suggestion-sl (:suggestions next-props) (:query-str next-props)))))
 
-  (render-state [_ {:as state :keys [query-data suggestions]}]
+  (render-state [_ state]
     (html
       [:div {:id "search"}
        (search-input-box state owner)
