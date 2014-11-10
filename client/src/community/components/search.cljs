@@ -96,9 +96,15 @@
   (letfn [(select! [direction]
             (om/set-state! owner :suggestions (sl/select direction suggestions)))
           (query-text-change! [e]
-            (let [text (.. e -target -value)]
+            (let [target (.-target e)
+                  text (.-value target)]
               (om/update-state! owner :query-data #(assoc % :text text))
-              (controller/dispatch :update-search-suggestions text)))
+              ;; Only update search suggestions if the query text
+              ;; hasn't changed for 100ms
+              (js/setTimeout
+               #(when (= text (.-value target))
+                  (controller/dispatch :update-search-suggestions text))
+               100)))
           (blur! []
             (.blur (om/get-node owner "search-query")))
           (handle-key-down! [e]
