@@ -110,7 +110,7 @@
             (.blur (om/get-node owner "search-query")))
           (handle-key-down! [e]
             (let [keycode (.-keyCode e)]
-              (when (contains? #{UP_ARROW DOWN_ARROW ENTER ESC} keycode)
+              (when (contains? #{UP_ARROW DOWN_ARROW ENTER TAB ESC} keycode)
                 (.preventDefault e)
                 (condp = keycode
                   DOWN_ARROW (select! :next)
@@ -118,6 +118,7 @@
                   ENTER (do
                           (complete-and-respond! query-data (sl/selected suggestions))
                           (blur!))
+                  TAB (select! :next)
                   ESC (if (sl/selected suggestions)
                         (om/set-state! owner :suggestions (sl/unselect suggestions))
                         (blur!))))))]
