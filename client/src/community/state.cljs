@@ -1,4 +1,5 @@
-(ns community.state)
+(ns community.state
+  (:require [clojure.set :as set]))
 
 (def app-state
   (atom
@@ -43,5 +44,5 @@
 
 (defn remove-errors! [category]
   (if-let [errors (get errors category)]
-    (swap! app-state update-in [:errors] clojure.set/difference (vals errors))
+    (swap! app-state update-in [:errors] set/difference (vals errors))
     (throw (str "Invalid error category " category))))

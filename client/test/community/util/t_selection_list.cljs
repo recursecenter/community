@@ -1,5 +1,6 @@
 (ns community.util.t-selection-list
-  (:require [community.util.selection-list :as sl])
+  (:require [community.util.selection-list :as sl]
+            [jasmine.core])
   (:require-macros [jasmine.core :refer [context test is all-are]]))
 
 (context "community.util.selection-list"

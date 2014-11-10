@@ -1,5 +1,6 @@
 (ns community.util.t-autocomplete
-  (:require [community.util.autocomplete :as ac])
+  (:require [community.util.autocomplete :as ac]
+            [jasmine.core])
   (:require-macros [jasmine.core :refer [context test is all-are throws]]))
 
 (defn autocompleter

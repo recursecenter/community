@@ -1,5 +1,6 @@
 (ns community.util.t-transform
-  (:require [community.util.transform :as t :refer-macros [deftransformer deftransform]])
+  (:require [community.util.transform :as t :refer-macros [deftransformer deftransform]]
+            [jasmine.core])
   (:require-macros [jasmine.core :refer [context test is all-are throws]]))
 
 (context "community.util.transform"
