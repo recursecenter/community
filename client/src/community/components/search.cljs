@@ -101,10 +101,11 @@
               (om/update-state! owner :query-data #(assoc % :text text))
               ;; Only update search suggestions if the query text
               ;; hasn't changed for 100ms
-              (js/setTimeout
-               #(when (= text (.-value target))
-                  (controller/dispatch :update-search-suggestions text))
-               100)))
+              (when (not= "" text)
+                (js/setTimeout
+                 #(when (= text (.-value target))
+                    (controller/dispatch :update-search-suggestions text))
+                 100))))
           (blur! []
             (.blur (om/get-node owner "search-query")))
           (handle-key-down! [e]
