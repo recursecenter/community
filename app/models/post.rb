@@ -58,6 +58,7 @@ class Post < ActiveRecord::Base
         _id: id,
         data: {
           body: body,
+          created_at: created_at,
           author: author.name,
           author_email: author.email,
           thread: thread.title,

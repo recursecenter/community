@@ -23,12 +23,14 @@ module Searchable
     end
 
     # Search method to query the index for this particular model
-    def search(user, search_string, filters, page)
+    def search(user, search_string, filters, page, opts={})
       __elasticsearch__.search(
-        query: self.query_dsl(user, search_string, filters),
-        highlight: self.highlight_fields,
-        from: (page - 1) * RESULTS_PER_PAGE,
-        size: RESULTS_PER_PAGE
+        opts.merge({
+          query: self.query_dsl(user, search_string, filters),
+          highlight: self.highlight_fields,
+          from: (page - 1) * RESULTS_PER_PAGE,
+          size: RESULTS_PER_PAGE
+        })
       )
     end
 

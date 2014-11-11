@@ -5,7 +5,12 @@ class Api::SearchController < Api::ApiController
     @query = params[:q]
     @filters = params[:filters]
 
-    response = Post.search(current_user, @query, @filters, @current_page)
+    # TODO: This might have to change when we are able to compose queries/filters.
+    if @filters[:author].present? && @query.blank?
+      response = Post.search(current_user, @query, @filters, @current_page, sort: {created_at: :desc})
+    else
+      response = Post.search(current_user, @query, @filters, @current_page)
+    end
 
     # Eager load everything related to a post that we need
     @posts = response.records.includes({thread: [{subforum: :subforum_group}]}, :author)
