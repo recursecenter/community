@@ -157,6 +157,8 @@
 (defn handle-route-changed [app-state route-data]
   (when-let [push-unsubscribe! (-> @app-state :route-data :push-unsubscribe!)]
     (push-unsubscribe!))
+  (when (not= :search (:route route-data))
+    (swap! app-state assoc :search-query (search-util/query-from-text "")))
   (update-route-data app-state route-data))
 
 (defn handle-new-thread [app-state new-thread]
