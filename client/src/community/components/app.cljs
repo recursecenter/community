@@ -5,7 +5,7 @@
             [community.components.shared :as shared]
             [community.util :as util :refer-macros [<? p]]
             [community.partials :as partials]
-            [community.components.search :as search]
+            [community.components.search-bar :refer [->search-bar]]
             [om.core :as om]
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :refer-macros [html]])
@@ -178,7 +178,7 @@
           [:span
            [:img {:src (om/get-shared owner :logo-url)}]
            [:span.brand-text {:style {:color ui-color}} "Community"]])]
-        [:div {:id "search-bar"} (search/->autocomplete app)]
+        [:div {:id "search-bar"} (->search-bar app)]
         (when current-user
           [:div {:id "util-bar"}
            [:ul.community-nav.list-inline
