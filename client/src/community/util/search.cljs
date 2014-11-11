@@ -2,6 +2,7 @@
   (:require [community.routes :as routes :refer [routes]]
             [clojure.string :as str]))
 
+
 (defn search! [query-data]
   (let [filter-str (->> (for [[filter-name value] (:filters query-data)
                               :when value]

@@ -6,6 +6,7 @@
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :refer-macros [html]]))
 
+
 (defn result [{:keys [post author thread subforum highlight]}]
   (html
     [:div.row.search-result
@@ -31,8 +32,10 @@
       [:div.body
        (partials/html-from-markdown highlight)]]]))
 
+
 (defn load-page [query filters page]
   (search! (assoc {} :page page :text query :filters (if filters @filters nil))))
+
 
 (defn pagination [{:keys [current-page total-pages query filters]}]
   (let [max-inbetween 5
@@ -74,6 +77,7 @@
                         (inc current-page)
                         "Next")])))))
 
+
 (defcomponent search-results [{:keys [search] :as app} owner]
   (display-name [_] "Search Results")
 
@@ -81,11 +85,11 @@
     (let [results (:results search)
           {:as metadata :keys [hits took query filters]} (:metadata search)]
       (html
-        [:div {:id "search-results-view"}
+        [:div#search-results-view
          [:div.query (if (:author filters)
                        (str (util/pluralize hits "post") " by " (:author filters) ".")
                        (str (util/pluralize hits "post") " matching \"" query "\"."))]
          (when-not (empty? results)
            [:div
-            [:div.results (map (partial result) results)]
+            [:div.results (map result results)]
             [:div.paginate (pagination metadata)]])]))))

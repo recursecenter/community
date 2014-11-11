@@ -7,26 +7,6 @@
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :refer-macros [html]]))
 
-(def key->search-filter {:users :author :threads :thread :subforums :subforum})
-
-(defn result-set->suggestion-data [search-filter result-set]
-  (map (fn [{:as result :keys [text payload]} counter]
-         {:search-filter search-filter
-          :text text
-          :id (:id payload)
-          :slug (:slug payload)
-          :count counter})
-       result-set (range (count result-set))))
-
-(defn results->suggestions-display [results query-str]
-  (let [filter-suggestions
-        (mapcat (fn [key result-set]
-                  (when (not (empty? result-set))
-                    (let [search-filter (key->search-filter key)
-                          suggestion-data (result-set->suggestion-data search-filter result-set)]
-                      suggestion-data)))
-                (keys results) (vals results))]
-    filter-suggestions))
 
 (def ENTER 13)
 (def UP_ARROW 38)
@@ -34,8 +14,27 @@
 (def TAB 9)
 (def ESC 27)
 
-(defn display [show]
-  (if show {} {:display "none"}))
+
+(def key->search-filter {:users :author :threads :thread :subforums :subforum})
+
+
+(defn result-set->suggestion-data [search-filter result-set]
+  (map-indexed (fn [i {:keys [text payload]}]
+                 {:search-filter search-filter
+                  :text text
+                  :id (:id payload)
+                  :slug (:slug payload)
+                  :count i})
+               result-set))
+
+
+(defn results->suggestions-display [results query-str]
+  (mapcat (fn [[key result-set]]
+            (when (not (empty? result-set))
+              (let [search-filter (key->search-filter key)]
+                (result-set->suggestion-data search-filter result-set))))
+          results))
+
 
 (defn jump-to-page [{:keys [search-filter text id slug]}]
   (routes/redirect-to
@@ -43,6 +42,7 @@
       :thread (routes :thread {:id id :slug slug})
       :subforum (routes :subforum {:id id :slug slug})
       nil)))
+
 
 (defn complete-suggestion [query-data suggestion]
   (-> query-data
@@ -65,15 +65,18 @@
   (html
     [:ol
      {:id "suggestions" :ref "suggestions"
-      :style (display (and show-suggestions?
-                           (not (empty? (:text query-data)))
-                           (not (empty? suggestions))))}
+      :style (when-not (and show-suggestions?
+                            (not (empty? (:text query-data)))
+                            (not (empty? suggestions)))
+               {:display "none"})}
      (for [{:keys [selected? value] :as suggestion} suggestions]
        [:li {:class (when selected? "selected")
              :onMouseDown #(complete-and-respond! query-data value)
              :onTouchStart #(complete-and-respond! query-data value)
-             :data-search-filter (when (= 0 (:count value)) (name (:search-filter value)))}
+             :data-search-filter (when (= 0 (:count value))
+                                   (name (:search-filter value)))}
         (:text value)])]))
+
 
 (defn search-input-box [{:keys [query-data suggestions]} owner]
   (letfn [(select! [direction]
@@ -119,15 +122,18 @@
                              :onChange query-text-change!
                              :onKeyDown handle-key-down!}]])))
 
+
 (defn suggestion-sl [suggestions query-str]
   (-> suggestions
       (results->suggestions-display query-str)
       (sl/selection-list nil)))
 
+
 (def initial-query-state
   {:text ""
    :page 1
    :filters {:author nil :subforum nil :thread nil}})
+
 
 (defcomponent search-bar [app owner]
   (display-name [_] "Autocomplete")
