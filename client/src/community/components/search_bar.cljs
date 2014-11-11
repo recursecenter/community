@@ -123,18 +123,16 @@
                       (om/set-state! owner :suggestions (sl/unselect suggestions))
                       (blur!))))))]
       (html
-       [:form
-        {:id "search-form"
-         :name "search-form"}
-        [:i {:id "search-icon" :class "fa fa-search"}]
-        [:input.form-control {:ref "search-box"
-                              :type "search"
-                              :id "search-box"
-                              :value (:text search-query)
-                              :onFocus #(om/set-state! owner :show-suggestions? true)
-                              :onBlur #(om/set-state! owner :show-suggestions? false)
-                              :onChange query-text-change!
-                              :onKeyDown handle-key-down!}]]))))
+       [:form#search-form
+        [:i#search-icon.fa.fa-search]
+        [:input#search-box.form-control
+         {:ref "search-box"
+          :type "search"
+          :value (:text search-query)
+          :onFocus #(om/set-state! owner :show-suggestions? true)
+          :onBlur #(om/set-state! owner :show-suggestions? false)
+          :onChange query-text-change!
+          :onKeyDown handle-key-down!}]]))))
 
 
 (defn suggestion-sl [suggestions]
@@ -156,6 +154,6 @@
 
   (render-state [_ state]
     (html
-      [:div {:id "search"}
+      [:div#search
        (search-input-box app owner)
        (suggestions-dropdown app owner)])))
