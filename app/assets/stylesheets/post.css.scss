@@ -94,27 +94,7 @@
   }
 
   .post-body {
-    padding: 0;
-
-    ul, ol {
-      margin: 10px 0;
-    }
-
-    img {
-      max-width: 100%;
-    }
-
-    blockquote {
-      margin: 10px 0;
-      font-size: 1em;
-      font-style: italic;
-      color: #555;
-    }
-
-    table {
-      @extend .table;
-      @extend .table-striped;
-    }
+    @extend .post-body-mixin;
   }
 
   // Smaller than a medium screen
@@ -219,5 +199,29 @@
 
   .post-body {
     width: 100%;
+  }
+}
+
+.post-body-mixin {
+  padding: 0;
+
+  ul, ol {
+    margin: 10px 0;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  blockquote {
+    margin: 10px 0;
+    font-size: 1em;
+    font-style: italic;
+    color: #555;
+  }
+
+  table {
+    @extend .table;
+    @extend .table-striped;
   }
 }

@@ -1,6 +1,6 @@
 #search {
 
-  margin-top: 5px; 
+  margin-top: 5px;
   text-align: center;
 
   #search-form {
@@ -10,7 +10,7 @@
 
     #search-icon {
       width: 28px;
-      display: table-cell;  
+      display: table-cell;
       vertical-align: middle;
       background-color: #eee;
       border: 1px solid #ccc;
@@ -54,7 +54,7 @@
       padding: 0 10px 0 0;
       font-weight: bold;
     }
-    
+
     li[data-search-filter="author"]::before {
       content: "Posts by"
     }
@@ -91,7 +91,7 @@
     word-wrap: break-word;
     .author {
       a {
-        color: #555; 
+        color: #555;
       }
 
       a:hover {
@@ -107,12 +107,14 @@
        margin-bottom: 0.5em;
        h4 {
          margin: 0px;
-       } 
+       }
     }
 
     .body {
+      @extend .post-body-mixin;
+
       .highlight {
-        font-style: normal; 
+        font-style: normal;
         background-color: #fafad2;
       }
     }
@@ -140,7 +142,7 @@
       cursor: default;
       pointer-events: none;
     }
-    
+
     .active {
       background-color: #fafad2;
     }
