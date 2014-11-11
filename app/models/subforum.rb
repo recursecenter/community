@@ -28,7 +28,7 @@ class Subforum < ActiveRecord::Base
     SQL
   end
 
-  validates :name, uniqueness: { case_sensitive: false }
+  validates :name, uniqueness: {case_sensitive: false}
 
   # we need to specify class_name because we want "thread" to be pluralized,
   # not "status".
@@ -48,7 +48,7 @@ class Subforum < ActiveRecord::Base
         }
       }
 
-      { index: { _id: id, data: subforum_data } }
+      {index: {_id: id, data: subforum_data}}
     end
   end
 end

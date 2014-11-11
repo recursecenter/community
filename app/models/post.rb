@@ -44,7 +44,7 @@ class Post < ActiveRecord::Base
     included do
       # Additional indexer settings for posts to serve filtered queries.
       # We don't want them analyzed because we want them to be exact matches.
-      settings index: { number_of_shards: 1 } do
+      settings index: {number_of_shards: 1} do
         mappings dynamic: 'true' do
           indexes :author, type: :string, index: "not_analyzed"
           indexes :author_email, type: :string, index: "not_analyzed"
@@ -79,9 +79,9 @@ class Post < ActiveRecord::Base
 
         # Combine exact match and prefix queries and match all if query was empty
         if search_string.blank?
-          subquery = { match_all: {} }
+          subquery = {match_all: {}}
         else
-          subquery = { bool: { should: [exact_match_query, phrase_match_query] } }
+          subquery = {bool: {should: [exact_match_query, phrase_match_query]}}
         end
 
         filters_with_permissions = filters.try(:dup) || {}
@@ -98,7 +98,7 @@ class Post < ActiveRecord::Base
           end
         end
 
-        { filtered: { query: subquery, filter: { bool: { must: clauses } } } }
+        {filtered: {query: subquery, filter: {bool: {must: clauses}}}}
       end
 
       def self.highlight_fields
@@ -110,7 +110,8 @@ class Post < ActiveRecord::Base
           post_tags: ["</span>"],
           encoder: 'html'
         }
-        { fields: { thread_title: highlight_options, body: highlight_options } }
+
+        {fields: {thread_title: highlight_options, body: highlight_options}}
       end
     end
 

@@ -72,7 +72,7 @@ class User < ActiveRecord::Base
         }
       }
 
-      { index: { _id: id, data: user_data } }
+      {index: {_id: id, data: user_data}}
     end
   end
 end

@@ -9,7 +9,7 @@ module Searchable
     after_commit :upsert_to_search_index!
 
     # Configure index to serve completion suggestions.
-    settings index: { number_of_shards: 1 } do
+    settings index: {number_of_shards: 1} do
       mappings dynamic: 'true' do
         indexes :suggest, type: :completion, index_analyzer: :whitespace, search_analyzer: :whitespace, payloads: true
       end
@@ -36,7 +36,7 @@ module Searchable
 
     # Suggest methods to return suggestions for this particular model
     def suggest(user, search_string)
-      suggest_query = { suggestions: { text: search_string.downcase, completion: { field: "suggest" } } }
+      suggest_query = {suggestions: {text: search_string.downcase, completion: {field: "suggest"}}}
 
       suggestions = __elasticsearch__.client.suggest(index: table_name, body: suggest_query)["suggestions"]
 

@@ -38,7 +38,7 @@ class DiscussionThread < ActiveRecord::Base
         }
       }
 
-      { index: { _id: id, data: thread_data } }
+      {index: {_id: id, data: thread_data}}
     end
   end
 end
