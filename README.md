@@ -50,19 +50,15 @@ HACKER_SCHOOL_CLIENT_SECRET=your_client_secret
 
 JASMINE_CONFIG_PATH=test/javascripts/support/jasmine.yml
 
-# If you want to develop against a local copy of the Hacker School API, add:
-HACKER_SCHOOL_SITE=http://localhost:5000
-
 # If you want to import accounts from Hacker School
 # (You won't be able to do this unless you are Hacker School faculty)
-HACKER_SCHOOL_API_SECRET_TOKEN=hacker_school_api_secret
+# HACKER_SCHOOL_API_SECRET_TOKEN=hacker_school_api_secret
+
+# If you want to develop against a local copy of the Hacker School API, add:
+# HACKER_SCHOOL_SITE=http://localhost:5000
 
 # Needed for batch mail sending in production
-MAILGUN_API_KEY=your_mailgun_api_key
-
-# Configure your ElasticCache port
-ELASTICSEARCH_HOST=localhost
-ELASTICSEARCH_PORT=9200
+# MAILGUN_API_KEY=your_mailgun_api_key
 ```
 
 To generate a Hacker School client id and secret, go to your [Hacker School settings page](https://www.hackerschool.com/settings) and make a new OAuth app. The redirect url should be `http://localhost:5001/login/complete` (or your development host name if you don't develop off of localhost).
