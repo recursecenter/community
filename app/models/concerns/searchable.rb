@@ -8,7 +8,7 @@ module Searchable
     include Elasticsearch::Model
     after_commit :upsert_to_search_index!
 
-    # Configure index to searve completion suggestions.
+    # Configure index to serve completion suggestions.
     settings index: { number_of_shards: 1 } do
       mappings dynamic: 'true' do
         indexes :suggest, type: :completion, index_analyzer: :whitespace, search_analyzer: :whitespace, payloads: true
@@ -19,15 +19,15 @@ module Searchable
   module ClassMethods
     # Reset search index for the entire model 50 rows at a time
     def reset_search_index!
-      self.import force: true, batch_size: 50, transform: lambda { |item| item.to_search_mapping }
+      import force: true, batch_size: 50, transform: lambda { |item| item.to_search_mapping }
     end
 
     # Search method to query the index for this particular model
     def search(user, search_string, filters, page, opts={})
       __elasticsearch__.search(
         opts.merge({
-          query: self.query_dsl(user, search_string, filters),
-          highlight: self.highlight_fields,
+          query: generate_query(user, search_string, filters),
+          highlight: highlight_fields,
           from: (page - 1) * RESULTS_PER_PAGE,
           size: RESULTS_PER_PAGE
         })
@@ -38,7 +38,7 @@ module Searchable
     def suggest(user, search_string)
       suggest_query = { suggestions: { text: search_string.downcase, completion: { field: "suggest" } } }
 
-      suggestions = __elasticsearch__.client.suggest(index: self.table_name, body: suggest_query)["suggestions"]
+      suggestions = __elasticsearch__.client.suggest(index: table_name, body: suggest_query)["suggestions"]
 
       suggestions.first["options"].select do |suggestion|
         suggestion["payload"]["required_role_ids"] - user.role_ids == []
@@ -46,8 +46,8 @@ module Searchable
     end
 
     # Override this method to customize the DSL for querying the including model
-    def query_dsl(search_string, filters)
-      return search_string
+    def generate_query(user, search_string, filters)
+      raise NotImplementedError, "You must define #{name}.generate_query(user, search_string, filters)"
     end
 
     # Override this method to change the fields to highlight when this model is queried
@@ -58,7 +58,7 @@ module Searchable
 
   # Override this method to change the search mapping for the included model
   def to_search_mapping
-    { index: { _id: id, data: __elasticsearch__.as_indexed_json } }
+    raise NotImplementedError, "You must define #{self.class.name}#to_search_mapping"
   end
 
   # Insert/update a single row instance

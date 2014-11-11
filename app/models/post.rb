@@ -69,7 +69,7 @@ class Post < ActiveRecord::Base
     }
   end
 
-  def self.query_dsl(user, search_string, filters)
+  def self.generate_query(user, search_string, filters)
     # match query for exact matches, terms
     exact_match_query = {
       multi_match: {
@@ -91,17 +91,15 @@ class Post < ActiveRecord::Base
 
     # Combine exact match and prefix queries and match all if query was empty
     if search_string.blank?
-      query_dsl = { match_all: {} }
+      subquery = { match_all: {} }
     else
-      query_dsl = { bool: { should: [exact_match_query, phrase_match_query] } }
+      subquery = { bool: { should: [exact_match_query, phrase_match_query] } }
     end
 
-    # Initialize filters
-    filters = {} if filters.blank?
-    filters_with_permissions = filters.clone
+    filters_with_permissions = filters.try(:dup) || {}
 
     # filter only subforums limited to the user
-    filters_with_permissions['subforum_id'] = Subforum.for_user(user).map {|subforum| subforum.id }
+    filters_with_permissions['subforum_id'] = Subforum.for_user(user).pluck(:id)
 
     # create filtered query for available filter
     clauses = filters_with_permissions.map do |k, v|
@@ -112,9 +110,7 @@ class Post < ActiveRecord::Base
       end
     end
 
-    query_dsl = { filtered: { query: query_dsl, filter: { bool: { must: clauses } } } }
-
-    return query_dsl
+    { filtered: { query: subquery, filter: { bool: { must: clauses } } } }
   end
 
   def self.highlight_fields
