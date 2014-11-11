@@ -34,7 +34,7 @@ class DiscussionThread < ActiveRecord::Base
         suggest: {
           input: prefix_phrases(title),
           output: title,
-          payload: {id: id, slug: slug, required_role_ids: self.subforum.required_role_ids}
+          payload: {id: id, slug: slug, required_role_ids: subforum.required_role_ids}
         }
       }
 
