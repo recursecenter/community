@@ -61,7 +61,7 @@ class User < ActiveRecord::Base
   def to_search_mapping
     user_data = {
       suggest: {
-        input: [name.downcase, email, first_name.downcase, last_name.downcase],
+        input: prefix_phrases(name) + [email],
         output: name,
         payload: {id: id, email: email, first_name: first_name, last_name: last_name, name: name, required_role_ids: []}
       }

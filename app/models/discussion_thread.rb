@@ -31,7 +31,7 @@ class DiscussionThread < ActiveRecord::Base
   def to_search_mapping
     thread_data = {
       suggest: {
-        input: [title.downcase, title.downcase.split(" ")],
+        input: prefix_phrases(title),
         output: title,
         payload: {id: id, slug: slug, required_role_ids: self.subforum.required_role_ids}
       }

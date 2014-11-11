@@ -65,4 +65,14 @@ module Searchable
   def upsert_to_search_index!
     self.class.where(id: id).import transform: lambda { |item| item.to_search_mapping }
   end
+
+private
+
+  def prefix_phrases(s)
+    words = s.downcase.split
+
+    words.size.times.map do |i|
+      words[i..-1].join(" ")
+    end
+  end
 end
