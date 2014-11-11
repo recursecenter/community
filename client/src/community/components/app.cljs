@@ -172,15 +172,15 @@
   (render [_]
     (html
       [:nav#navbar-community {:role "navigation" :style {:border-color ui-color}}
-       [:div {:id "navbar-header"}
+       [:div#navbar-header
         (partials/link-to "/"
           {:class "header-link"}
           [:span
            [:img {:src (om/get-shared owner :logo-url)}]
            [:span.brand-text {:style {:color ui-color}} "Community"]])]
-        [:div {:id "search-bar"} (->search-bar app)]
+        [:div#search-bar (->search-bar app)]
         (when current-user
-          [:div {:id "util-bar"}
+          [:div#util-bar
            [:ul.community-nav.list-inline
             [:li.hidden-xs [:p.navbar-text "Hi, " (:first-name current-user) "!"]]
             [:li.hidden-xs (->notifications-dropdown current-user)]
