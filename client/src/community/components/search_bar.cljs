@@ -85,6 +85,7 @@
         search-query (:search-query app)]
     (letfn [(select! [direction]
               (om/set-state! owner :suggestions (sl/select direction suggestions)))
+
             (query-text-change! [e]
               (let [target (.-target e)
                     text (.-value target)]
@@ -93,11 +94,13 @@
                 ;; hasn't changed for 100ms
                 (when (not= "" text)
                   (js/setTimeout
-                   #(when (= text (.-value target))
+                   #(when (= text (get-in @app [:search-query :text]))
                       (controller/dispatch :update-search-suggestions text))
                    100))))
+
             (blur! []
               (.blur (om/get-node owner "search-box")))
+
             (handle-key-down! [e]
               (let [keycode (.-keyCode e)]
                 (when (contains? #{UP_ARROW DOWN_ARROW ENTER TAB ESC} keycode)
@@ -142,7 +145,7 @@
 
 
 (defcomponent search-bar [app owner]
-  (display-name [_] "Autocomplete")
+  (display-name [_] "SearchBar")
 
   (init-state [_]
     {:show-suggestions? false
