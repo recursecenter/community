@@ -40,89 +40,97 @@ class Post < ActiveRecord::Base
     end
   end
 
-  # Additional indexer settings for posts to serve filtered queries.
-  # We don't want them analyzed because we want them to be exact matches.
-  settings index: { number_of_shards: 1 } do
-    mappings dynamic: 'true' do
-      indexes :author, type: :string, index: "not_analyzed"
-      indexes :author_email, type: :string, index: "not_analyzed"
-      indexes :thread, type: :string, index: "not_analyzed"
-      indexes :subforum, type: :string, index: "not_analyzed"
-    end
-  end
+  concerning :Searchable do
+    included do
+      # Additional indexer settings for posts to serve filtered queries.
+      # We don't want them analyzed because we want them to be exact matches.
+      settings index: { number_of_shards: 1 } do
+        mappings dynamic: 'true' do
+          indexes :author, type: :string, index: "not_analyzed"
+          indexes :author_email, type: :string, index: "not_analyzed"
+          indexes :thread, type: :string, index: "not_analyzed"
+          indexes :subforum, type: :string, index: "not_analyzed"
+        end
+      end
 
-  # Search document format for posts
-  def to_search_mapping
-    {
-      index: {
-        _id: id,
-        data: {
-          body: body,
-          created_at: created_at,
-          author: author.name,
-          author_email: author.email,
-          thread: thread.title,
-          subforum: thread.subforum.name,
-          subforum_id: thread.subforum.id
+      # TODO: once Module::Concerning supports `class_methods { ... }`, get these out of `included`.
+      # See:
+      # - https://github.com/basecamp/concerning/pull/2
+      # - https://github.com/rails/rails/issues/13942
+      def self.generate_query(user, search_string, filters)
+        # match query for exact matches, terms
+        exact_match_query = {
+          multi_match: {
+            query: search_string,
+            boost: 100,
+            fields: [:thread_title, :body]
+          }
         }
-      }
-    }
-  end
 
-  def self.generate_query(user, search_string, filters)
-    # match query for exact matches, terms
-    exact_match_query = {
-      multi_match: {
-        query: search_string,
-        boost: 100,
-        fields: [:thread_title, :body]
-      }
-    }
+        # match query for phrase prefixes
+        phrase_match_query = {
+          multi_match: {
+            query: search_string,
+            boost: 10,
+            fields: [:thread_title, :body],
+            type: :phrase_prefix
+          }
+        }
 
-    # match query for phrase prefixes
-    phrase_match_query = {
-      multi_match: {
-        query: search_string,
-        boost: 10,
-        fields: [:thread_title, :body],
-        type: :phrase_prefix
-      }
-    }
+        # Combine exact match and prefix queries and match all if query was empty
+        if search_string.blank?
+          subquery = { match_all: {} }
+        else
+          subquery = { bool: { should: [exact_match_query, phrase_match_query] } }
+        end
 
-    # Combine exact match and prefix queries and match all if query was empty
-    if search_string.blank?
-      subquery = { match_all: {} }
-    else
-      subquery = { bool: { should: [exact_match_query, phrase_match_query] } }
-    end
+        filters_with_permissions = filters.try(:dup) || {}
 
-    filters_with_permissions = filters.try(:dup) || {}
+        # filter only subforums limited to the user
+        filters_with_permissions['subforum_id'] = Subforum.for_user(user).pluck(:id)
 
-    # filter only subforums limited to the user
-    filters_with_permissions['subforum_id'] = Subforum.for_user(user).pluck(:id)
+        # create filtered query for available filter
+        clauses = filters_with_permissions.map do |k, v|
+          if v.kind_of?(Array)
+            {terms: {k => v}}
+          else
+            {term: {k => v}}
+          end
+        end
 
-    # create filtered query for available filter
-    clauses = filters_with_permissions.map do |k, v|
-      if v.kind_of?(Array)
-        {terms: {k => v}}
-      else
-        {term: {k => v}}
+        { filtered: { query: subquery, filter: { bool: { must: clauses } } } }
+      end
+
+      def self.highlight_fields
+        highlight_options = {
+          no_match_size: 150,
+          fragment_size: 150,
+          number_of_fragments: 1,
+          pre_tags: ["<span class='highlight'>"],
+          post_tags: ["</span>"],
+          encoder: 'html'
+        }
+        { fields: { thread_title: highlight_options, body: highlight_options } }
       end
     end
 
-    { filtered: { query: subquery, filter: { bool: { must: clauses } } } }
-  end
-
-  def self.highlight_fields
-    highlight_options = {
-      no_match_size: 150,
-      fragment_size: 150,
-      number_of_fragments: 1,
-      pre_tags: ["<span class='highlight'>"],
-      post_tags: ["</span>"],
-      encoder: 'html'
-    }
-    { fields: { thread_title: highlight_options, body: highlight_options } }
+    # Search document format for posts
+    def to_search_mapping
+      {
+        index: {
+          _id: id,
+          data: {
+            body: body,
+            created_at: created_at,
+            author: author.name,
+            author_email: author.email,
+            thread: thread.title,
+            subforum: thread.subforum.name,
+            subforum_id: thread.subforum.id
+          }
+        }
+      }
+    end
   end
 
 private

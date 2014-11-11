@@ -38,15 +38,17 @@ class Subforum < ActiveRecord::Base
     threads_with_visited_status.for_user(user)
   end
 
-  def to_search_mapping
-    subforum_data = {
-      suggest: {
-        input: prefix_phrases(name),
-        output: name,
-        payload: {id: id, slug: slug, required_role_ids: self.required_role_ids}
+  concerning :Searchable do
+    def to_search_mapping
+      subforum_data = {
+        suggest: {
+          input: prefix_phrases(name),
+          output: name,
+          payload: {id: id, slug: slug, required_role_ids: self.required_role_ids}
+        }
       }
-    }
 
-    { index: { _id: id, data: subforum_data } }
+      { index: { _id: id, data: subforum_data } }
+    end
   end
 end

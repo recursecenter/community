@@ -58,19 +58,21 @@ class User < ActiveRecord::Base
     super || Time.zone.at(0).to_datetime # Unix Epoch start
   end
 
-  def to_search_mapping
-    user_data = {
-      suggest: {
-        input: prefix_phrases(name) + [email],
-        output: name,
-        payload: {id: id, email: email, first_name: first_name, last_name: last_name, name: name, required_role_ids: []}
-      }
-    }
-
-    { index: { _id: id, data: user_data } }
-  end
-
   def is_admin?
     self.roles.include? Role.admin
+  end
+
+  concerning :Searchable do
+    def to_search_mapping
+      user_data = {
+        suggest: {
+          input: prefix_phrases(name) + [email],
+          output: name,
+          payload: {id: id, email: email, first_name: first_name, last_name: last_name, name: name, required_role_ids: []}
+        }
+      }
+
+      { index: { _id: id, data: user_data } }
+    end
   end
 end

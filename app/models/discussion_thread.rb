@@ -28,15 +28,17 @@ class DiscussionThread < ActiveRecord::Base
     "thread"
   end
 
-  def to_search_mapping
-    thread_data = {
-      suggest: {
-        input: prefix_phrases(title),
-        output: title,
-        payload: {id: id, slug: slug, required_role_ids: self.subforum.required_role_ids}
+  concerning :Searchable do
+    def to_search_mapping
+      thread_data = {
+        suggest: {
+          input: prefix_phrases(title),
+          output: title,
+          payload: {id: id, slug: slug, required_role_ids: self.subforum.required_role_ids}
+        }
       }
-    }
 
-    { index: { _id: id, data: thread_data } }
+      { index: { _id: id, data: thread_data } }
+    end
   end
 end
