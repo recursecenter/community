@@ -40,8 +40,7 @@
   (routes/redirect-to
     (condp = search-filter
       :thread (routes :thread {:id id :slug slug})
-      :subforum (routes :subforum {:id id :slug slug})
-      nil)))
+      :subforum (routes :subforum {:id id :slug slug}))))
 
 
 (defn complete-suggestion [search-query suggestion]
@@ -62,14 +61,14 @@
 
 
 (defn suggestions-dropdown [app owner]
-  (let [{:keys [suggestions show-suggestions?]} (om/get-state owner)
+  (let [{:keys [suggestions focused?]} (om/get-state owner)
         search-query (:search-query app)]
     (html
-     [:ol
-      {:id "suggestions" :ref "suggestions"
-       :style (when-not (and show-suggestions?
-                             (not (empty? (:text search-query)))
-                             (not (empty? suggestions)))
+     [:ol#suggestions
+      {:ref "suggestions"
+       :style (when (or (not focused?)
+                        (empty? (:text search-query))
+                        (empty? suggestions))
                 {:display "none"})}
       (for [{:keys [selected? value] :as suggestion} suggestions]
         [:li {:class (when selected? "selected")
@@ -132,8 +131,8 @@
          {:ref "search-box"
           :type "search"
           :value (:text search-query)
-          :onFocus #(om/set-state! owner :show-suggestions? true)
-          :onBlur #(om/set-state! owner :show-suggestions? false)
+          :onFocus #(om/set-state! owner :focused? true)
+          :onBlur #(om/set-state! owner :focused? false)
           :onChange query-text-change!
           :onKeyDown handle-key-down!}]]))))
 
@@ -148,7 +147,7 @@
   (display-name [_] "SearchBar")
 
   (init-state [_]
-    {:show-suggestions? false
+    {:focused? false
      :suggestions (suggestion-sl (:suggestions app))})
 
   (will-receive-props [_ next-props]
