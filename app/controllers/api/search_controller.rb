@@ -20,7 +20,7 @@ class Api::SearchController < Api::ApiController
 
     # Search metadata
     @hits = response.results.total
-    @total_pages = (response.results.total / Searchable::RESULTS_PER_PAGE) + 1
+    @total_pages = (response.results.total.to_f / Searchable::RESULTS_PER_PAGE).ceil
   end
 
   def suggestions
