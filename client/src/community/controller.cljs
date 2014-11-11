@@ -4,6 +4,7 @@
             [community.api.push :as push-api]
             [community.models :as models]
             [community.util :as util :refer-macros [<?]]
+            [community.util.search :as search-util]
             [community.routes :as routes :refer [routes]]
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async.macros :refer [go]]))
@@ -141,7 +142,8 @@
              :ui-color nil
              :loading? false))))
 
-(defmethod update-route-data :search [app-state route-data]
+(defmethod update-route-data :search [app-state {:as route-data :keys [query-params]}]
+  (swap! app-state assoc :search-query (search-util/query (:query route-data) query-params))
   (load-from-api app-state route-data :search
                  #(api/search (:query route-data)
                               (dissoc (:query-params route-data) :page)
@@ -214,11 +216,11 @@
   (swap! app-state assoc-in [:current-user :welcome-message] nil)
   (api/mark-welcome-message-as-read))
 
-(defn handle-update-search-suggestions [app-state query-str]
-  (swap! app-state assoc :in-process-query-str query-str)
-  (go (let [results (<? (api/suggestions query-str))]
-        (when (= query-str (:in-process-query-str @app-state))
-          (swap! app-state assoc :suggestions results :query-str query-str)))))
+(defn handle-update-search-suggestions [app-state query-text]
+  (go
+    (let [results (<? (api/suggestions query-text))]
+      (when (= query-text (get-in @app-state [:search-query :text]))
+        (swap! app-state assoc :suggestions results)))))
 
 (defn handle-toggle-thread-pinned [app-state thread]
   (let [pinned? (not (:pinned thread))]

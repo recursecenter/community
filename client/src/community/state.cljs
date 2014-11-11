@@ -1,5 +1,6 @@
 (ns community.state
-  (:require [clojure.set :as set]))
+  (:require [community.util.search :as search-util]
+            [clojure.set :as set]))
 
 (def app-state
   (atom
@@ -21,7 +22,9 @@
 
     :thread nil
 
-    :errors #{}}))
+    :errors #{}
+
+    :search-query (search-util/query-from-text "")}))
 
 (def errors
   {:ajax
