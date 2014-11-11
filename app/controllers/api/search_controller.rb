@@ -6,7 +6,7 @@ class Api::SearchController < Api::ApiController
     @filters = params[:filters]
 
     # TODO: This might have to change when we are able to compose queries/filters.
-    if @filters[:author].present? && @query.blank?
+    if @filters.present? && @filters[:author].present? && @query.blank?
       response = Post.search(current_user, @query, @filters, @current_page, sort: {created_at: :desc})
     else
       response = Post.search(current_user, @query, @filters, @current_page)
