@@ -1,4 +1,3 @@
-ENV['ELASTICSEARCH_HOST'] ||= 'localhost'
-ENV['ELASTICSEARCH_PORT'] ||= '9200'
+ENV['ELASTICSEARCH_URL'] ||= ENV['BONSAI_URL'] || 'http://localhost:9200'
 
-Elasticsearch::Model.client = Elasticsearch::Client.new host: ENV['ELASTICSEARCH_HOST'], port: ENV['ELASTICSEARCH_PORT'], log: Rails.env.development?
+Elasticsearch::Model.client = Elasticsearch::Client.new log: Rails.env.development?
