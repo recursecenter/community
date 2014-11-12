@@ -7,30 +7,32 @@
             [sablono.core :refer-macros [html]]))
 
 
-(defn result [{:keys [post author thread subforum highlight]}]
-  (html
-    [:div.row.search-result
-     [:div.metadata {:data-ui-color (:ui-color subforum)}
-      [:div.author
-       [:a {:target "_blank"
-            :href (routes/hs-route :person {:hacker-school-id (:hacker-school-id author)})}
-        (:name author)]]
-      [:div.timestamp
-       (util/human-format-time (:created-at post))]
-      [:div.subforum
-       (link-to (routes :subforum {:id (:id subforum)
-                                   :slug (:slug subforum)})
-                {:style {:color (:ui-color subforum)}}
-                (:subforum-group-name subforum) " / " (:name subforum))]]
-     [:div.result
-      [:div.title
-       (link-to (routes :thread {:id (:id thread)
-                                 :slug (:slug thread)
-                                 :post-number (:post-number post)})
-                {:style {:color (:ui-color subforum)}}
-                [:h4 (:title thread)])]
-      [:div.body
-       (partials/html-from-markdown highlight)]]]))
+(defcomponent result [{:keys [post author thread subforum highlight]} owner]
+  (display-name [_] "SearchResult")
+
+  (render [_]
+    (html
+      [:div.row.search-result
+       [:div.metadata {:data-ui-color (:ui-color subforum)}
+        [:div.author
+         [:a {:target "_blank"
+              :href (routes/hs-route :person {:hacker-school-id (:hacker-school-id author)})}
+          (:name author)]]
+        [:div.timestamp
+         (util/human-format-time (:created-at post))]
+        [:div.subforum
+         (link-to (routes :subforum subforum)
+                  {:style {:color (:ui-color subforum)}}
+                  (:subforum-group-name subforum) " / " (:name subforum))]]
+       [:div.result
+        [:div.title
+         (link-to (routes :thread {:id (:id thread)
+                                   :slug (:slug thread)
+                                   :post-number (:post-number post)})
+                  {:style {:color (:ui-color subforum)}}
+                  [:h4 (:title thread)])]
+        [:div.body
+         (partials/html-from-markdown highlight)]]])))
 
 
 (defn load-page [query filters page]
@@ -49,37 +51,46 @@
         first-ellipsis? (> lower-bound 2)
         last-ellipsis? (< upper-bound total-pages)
         mid-range (range lower-bound upper-bound)]
-    (letfn [(page-number [class-name jump content]
-              [:li {:class class-name}
-               ;;TODO: Use link-to here instead (this might require
-               ;;refactoring/adding behavior to link-to)
-               [:a {:onClick #(load-page query filters jump)} content]])]
+    (letfn [(page-number [page]
+              (let [active? (= current-page page)]
+                ;;TODO: Use link-to here instead (this might require
+                ;;refactoring/adding behavior to link-to)
+                (if active?
+                  [:li.active [:span page]]
+                  [:li [:a {:onClick #(load-page query filters page)} page]])))
+
+            (next-or-previous [direction enabled?]
+              (let [[page text] (condp = direction
+                                  :next [(inc current-page) "Next"]
+                                  :previous [(dec current-page) "Previous"])]
+                [:li
+                 (if enabled?
+                   [:a {:onClick #(load-page query filters page)} text]
+                   text)])) ]
       (html
         (when (> total-pages 1)
           [:ul.page-links
            ;;Show - Previous, First page, Initial ellipsis
-           (page-number (when (= current-page 1) "disabled")
-                        (dec current-page)
-                        "Previous")
-           (page-number (when (= current-page 1) "active") 1 "1")
+           (next-or-previous :previous (not= current-page 1))
+
+           (page-number 1)
            (when first-ellipsis?
              [:li "…"])
 
            ;;Show rest of pages
            (for [page mid-range]
-             (page-number (when (= page current-page) "active") page page))
+             (page-number page))
 
            ;;Show - Final ellipsis, Last page, Next
            (when last-ellipsis?
              [:li "…"])
-           (page-number (when (= current-page total-pages) "active") total-pages total-pages)
-           (page-number (when (= current-page total-pages) "disabled")
-                        (inc current-page)
-                        "Next")])))))
+           (page-number total-pages)
+
+           (next-or-previous :next (not= current-page total-pages))])))))
 
 
 (defcomponent search-results [{:keys [search] :as app} owner]
-  (display-name [_] "Search Results")
+  (display-name [_] "SearchResults")
 
   (render [_]
     (let [results (:results search)
@@ -91,5 +102,5 @@
                        (str (util/pluralize hits "post") " matching \"" query "\"."))]
          (when-not (empty? results)
            [:div
-            [:div.results (map result results)]
+            [:div.results (map ->result results)]
             [:div.paginate (pagination metadata)]])]))))
