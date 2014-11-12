@@ -26,9 +26,7 @@
                   (:subforum-group-name subforum) " / " (:name subforum))]]
        [:div.result
         [:div.title
-         (link-to (routes :thread {:id (:id thread)
-                                   :slug (:slug thread)
-                                   :post-number (:post-number post)})
+         (link-to (routes :thread thread)
                   {:style {:color (:ui-color subforum)}}
                   [:h4 (:title thread)])]
         [:div.body
