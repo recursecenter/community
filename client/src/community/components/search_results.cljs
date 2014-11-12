@@ -57,8 +57,6 @@
           mid-range (range lower-bound upper-bound)]
       (letfn [(page-number [page]
                 (let [active? (= current-page page)]
-                  ;;TODO: Use link-to here instead (this might require
-                  ;;refactoring/adding behavior to link-to)
                   (if active?
                     [:li.active [:span page]]
                     [:li (search-link query page filters page)])))
