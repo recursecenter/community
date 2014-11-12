@@ -4,10 +4,10 @@
 
 ## Dependencies
 
-- Ruby 2.1.2
+- Ruby 2.1.3
   - bundler
   - foreman
-- Postgres 9.3.4
+- Postgres 9.3.5
 - redis
 - leiningen
 - Elasticsearch
@@ -20,8 +20,8 @@ We recommend [Postgres.app](http://postgresapp.com/) if you're on OS X.
 
 ```sh
 $ rvm get head
-$ rvm install ruby-2.1.2
-$ rvm use ruby-2.1.2
+$ rvm install ruby-2.1.3
+$ rvm use ruby-2.1.3
 $ gem install bundler
 $ gem install foreman
 ```
