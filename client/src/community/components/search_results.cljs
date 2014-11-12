@@ -68,25 +68,26 @@
                    [:a {:onClick #(load-page query filters page)} text]
                    text)])) ]
       (html
-        (when (> total-pages 1)
-          [:ul.page-links
-           ;;Show - Previous, First page, Initial ellipsis
-           (next-or-previous :previous (not= current-page 1))
+        [:ul.page-links
+         ;;Show - Previous, First page, Initial ellipsis
+         (next-or-previous :previous (not= current-page 1))
 
-           (page-number 1)
-           (when first-ellipsis?
-             [:li "…"])
+         (page-number 1)
+         (when first-ellipsis?
+           [:li "…"])
 
-           ;;Show rest of pages
-           (for [page mid-range]
-             (page-number page))
+         ;;Show rest of pages
+         (for [page mid-range]
+           (page-number page))
 
-           ;;Show - Final ellipsis, Last page, Next
-           (when last-ellipsis?
-             [:li "…"])
-           (page-number total-pages)
+         ;;Show - Final ellipsis, Last page, Next
+         (when last-ellipsis?
+           [:li "…"])
 
-           (next-or-previous :next (not= current-page total-pages))])))))
+         (when (> total-pages 1)
+           (page-number total-pages))
+
+         (next-or-previous :next (not= current-page total-pages))]))))
 
 
 (defcomponent search-results [{:keys [search] :as app} owner]
