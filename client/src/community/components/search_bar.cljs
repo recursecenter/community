@@ -68,8 +68,8 @@
                 {:display "none"})}
       (for [{:keys [selected? value] :as suggestion} suggestions]
         [:li {:class (when selected? "selected")
-              :onMouseDown #(complete-and-respond! app search-query value)
-              :onTouchStart #(complete-and-respond! app search-query value)
+              :onMouseDown #(complete-and-respond! app @search-query value)
+              :onTouchStart #(complete-and-respond! app @search-query value)
               :data-search-filter (when (= 0 (:count value))
                                     (name (:search-filter value)))}
          (:text value)])])))
