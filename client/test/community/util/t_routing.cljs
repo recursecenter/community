@@ -41,7 +41,11 @@
         (is = (r "/users/10/foo") nil))
       (test "can unparse"
         (is = (r :user {:id 10}) "/users/10")
-        (is = (r :user {}) nil))))
+        (is = (r :user {}) nil))
+      (test "will url encode and decode"
+        (is = (r :user {:id "foo bar"}) "/users/foo%20bar")
+        (is = (r "/users/foo%20bar") {:route :user :id "foo bar"})
+        (is = (r "/users/1?foo%20bar=baz%20qux") {:route :user :id "1" :query-params {(keyword "foo bar") "baz qux"}}))))
 
   (context "a suite of routes"
     (let [r (routing/routes

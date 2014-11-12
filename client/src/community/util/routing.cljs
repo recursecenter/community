@@ -1,6 +1,7 @@
 (ns community.util.routing
   (:require [clojure.string :as str]
-            [goog.Uri]))
+            [goog.Uri]
+            [goog.string]))
 
 (def Separator "/")
 
@@ -98,7 +99,7 @@
       (loop [route-pieces []
              parsers parsers]
         (if (empty? parsers)
-          (str Separator (str/join Separator route-pieces))
+          (str Separator (str/join Separator (map goog.string/urlEncode route-pieces)))
           (let [[p & ps] parsers]
             (when-let [s (unparse p params)]
               (recur (conj route-pieces s) ps)))))))
@@ -112,7 +113,8 @@
       ;;Try matching this route
       (let [[path query-params] (str/split string-or-route-name #"\?")
             components (->> (str/split path (re-pattern Separator))
-                            (remove str/blank?))
+                            (remove str/blank?)
+                            (map goog.string/urlDecode))
             [params {:as req :keys [query-params]}] (parse this {:components components :query-params query-params})]
         ;;Route only matches when all components have been consumed
         (when (empty? (:components req))
@@ -130,11 +132,3 @@
   ([name bits]
      (assert (not (string? name)) "Routes cannot be named with strings; please use a keyword.")
      (Route. name bits)))
-
-
-(routes :search {:filters {:author "Zach Allaun"}
-                 :query "foo bar baz"})
-;; =>
-"/api/search?q=foo bar baz&filters[author]=Zach Allaun"
-
-"/s/foo bar baz?author=Zach Allaun"

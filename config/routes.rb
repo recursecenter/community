@@ -12,7 +12,7 @@ Rails.application.routes.draw do
   get '/t/:slug/:id' => 'pages#index', as: 'thread'
   get '/t/:slug/:thread_id/:post_number' => 'pages#index', as: 'post'
   get '/s' => 'pages#index'
-  get '/s/*query' => 'pages#index', as: 'search'
+  get '/s/:query' => 'pages#index'
 
   get '/threads/:id/unsubscribe' => 'threads#unsubscribe', as: :unsubscribe_thread
   get '/threads/:id/subscribe' => 'threads#subscribe', as: :subscribe_thread
