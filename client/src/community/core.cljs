@@ -10,8 +10,7 @@
             [community.components.search-results :as search-results]
             [community.components.shared :as shared]
             [community.components.settings :as settings]
-            [om.core :as om]
-            [goog.Uri]))
+            [om.core :as om]))
 
 (enable-console-print!)
 
@@ -37,9 +36,7 @@
   (.initializeTouchEvents js/React true)
 
   (let [route-changed! (fn []
-                         (let [uri (goog.Uri/parse (.toString (.-location js/document)))
-                               path-and-query (str (.getPath uri) "?" (.getQuery uri))
-                               route-data (routes path-and-query)]
+                         (let [route-data (routes (str (.-pathname js/location) (.-search js/location)))]
                            (controller/dispatch :route-changed route-data)))]
     (route-changed!)
     (.addEventListener js/window "popstate" route-changed!))
