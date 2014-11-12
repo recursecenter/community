@@ -146,7 +146,7 @@
   (swap! app-state assoc :search-query (search-util/query (:query route-data) query-params))
   (load-from-api app-state route-data :search
                  #(api/search (:query route-data)
-                              (dissoc (:query-params route-data) :page)
+                              (select-keys (:query-params route-data) [:author :subforum :thread])
                               (get-in route-data [:query-params :page]))))
 
 (defmethod update-route-data :page-not-found [app-state route-data]
