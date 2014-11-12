@@ -1,6 +1,7 @@
 class Api::SearchController < Api::ApiController
-  skip_authorization_check only: [:query, :suggestions]
-  def query
+  skip_authorization_check only: [:search, :suggestions]
+
+  def search
     @current_page = [params[:page].to_i, 1].max
     @query = params[:q]
     @filters = params[:filters]
