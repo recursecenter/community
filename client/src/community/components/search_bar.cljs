@@ -42,7 +42,9 @@
       (assoc :text "")))
 
 
-(defn complete-and-respond! [search-query selected]
+(defn complete-and-respond! [app search-query selected]
+  (om/transact! app #(assoc % :search-query search-query :suggestions nil))
+
   (routes/redirect-to
     (cond (and (nil? selected) (not (empty? (:text search-query))))
           (search-util/search-path search-query)
@@ -66,8 +68,8 @@
                 {:display "none"})}
       (for [{:keys [selected? value] :as suggestion} suggestions]
         [:li {:class (when selected? "selected")
-              :onMouseDown #(complete-and-respond! search-query value)
-              :onTouchStart #(complete-and-respond! search-query value)
+              :onMouseDown #(complete-and-respond! app search-query value)
+              :onTouchStart #(complete-and-respond! app search-query value)
               :data-search-filter (when (= 0 (:count value))
                                     (name (:search-filter value)))}
          (:text value)])])))
@@ -85,7 +87,8 @@
                 (om/transact! app :search-query #(assoc % :text text))
                 ;; Only update search suggestions if the query text
                 ;; hasn't changed for 100ms
-                (when (not= "" text)
+                (if (empty? text)
+                  (om/transact! app #(assoc % :suggestions nil))
                   (js/setTimeout
                    #(when (= text (get-in @app [:search-query :text]))
                       (controller/dispatch :update-search-suggestions text))
@@ -107,8 +110,7 @@
 
                     ENTER
                     (let [query (search-util/query-from-text (:text @search-query))]
-                      (om/transact! app #(assoc % :search-query query))
-                      (complete-and-respond! query (sl/selected suggestions))
+                      (complete-and-respond! app query (sl/selected suggestions))
                       (blur!))
 
                     TAB
