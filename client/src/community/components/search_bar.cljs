@@ -2,7 +2,7 @@
   (:require [community.controller :as controller]
             [community.routes :as routes :refer [routes]]
             [community.util.selection-list :as sl]
-            [community.util.search :as search-util :refer [search!]]
+            [community.util.search :as search-util]
             [om.core :as om]
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :refer-macros [html]]))
@@ -36,13 +36,6 @@
           results))
 
 
-(defn jump-to-page [{:keys [search-filter text id slug]}]
-  (routes/redirect-to
-    (condp = search-filter
-      :thread (routes :thread {:id id :slug slug})
-      :subforum (routes :subforum {:id id :slug slug}))))
-
-
 (defn complete-suggestion [search-query suggestion]
   (-> search-query
       (assoc-in [:filters (:search-filter suggestion)] (:text suggestion))
@@ -50,14 +43,15 @@
 
 
 (defn complete-and-respond! [search-query selected]
-  (cond (and (nil? selected) (not (empty? (:text search-query))))
-        (search! search-query)
+  (routes/redirect-to
+    (cond (and (nil? selected) (not (empty? (:text search-query))))
+          (search-util/search-path search-query)
 
-        (= :author (:search-filter selected))
-        (search! (complete-suggestion search-query selected))
+          (= :author (:search-filter selected))
+          (search-util/search-path (complete-suggestion search-query selected))
 
-        (contains? #{:thread :subforum} (:search-filter selected))
-        (jump-to-page selected)))
+          (contains? #{:thread :subforum} (:search-filter selected))
+          (routes (:search-filter selected) selected))))
 
 
 (defn suggestions-dropdown [app owner]

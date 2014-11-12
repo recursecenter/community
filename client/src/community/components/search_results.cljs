@@ -1,7 +1,7 @@
 (ns community.components.search-results
   (:require [community.routes :as routes :refer [routes]]
             [community.util :as util :refer-macros [p]]
-            [community.util.search :refer [search!]]
+            [community.util.search :as search-util]
             [community.partials :as partials :refer [link-to]]
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :refer-macros [html]]))
@@ -35,8 +35,9 @@
          (partials/html-from-markdown highlight)]]])))
 
 
-(defn load-page [query filters page]
-  (search! (assoc {} :page page :text query :filters (if filters @filters nil))))
+(defn search-link [query page filters link-body]
+  (let [query-data {:page page :text query :filters filters}]
+    (link-to (search-util/search-path query-data) link-body)))
 
 
 (defcomponent pagination [{:keys [current-page total-pages query filters]} owner]
@@ -60,7 +61,7 @@
                   ;;refactoring/adding behavior to link-to)
                   (if active?
                     [:li.active [:span page]]
-                    [:li [:a {:onClick #(load-page query filters page)} page]])))
+                    [:li (search-link query page filters page)])))
 
               (next-or-previous [direction enabled?]
                 (let [[page text] (condp = direction
@@ -68,8 +69,8 @@
                                     :previous [(dec current-page) "Previous"])]
                   [:li
                    (if enabled?
-                     [:a {:onClick #(load-page query filters page)} text]
-                     text)])) ]
+                     (search-link query page filters text)
+                     text)]))]
         (html
           [:ul.page-links
            ;;Show - Previous, First page, Initial ellipsis
