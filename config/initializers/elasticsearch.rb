@@ -1,4 +1,3 @@
-require 'elasticsearch/model'
 ENV['ELASTICSEARCH_HOST'] ||= 'localhost'
 ENV['ELASTICSEARCH_PORT'] ||= '9200'
 
