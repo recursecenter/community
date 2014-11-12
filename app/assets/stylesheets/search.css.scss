@@ -1,71 +1,70 @@
 #search {
-
   margin-top: 5px;
   text-align: center;
+}
 
-  #search-form {
-    width: 100%;
-    display: inline-table;
-    margin-bottom: 0;
+#search-form {
+  width: 100%;
+  display: inline-table;
+  margin-bottom: 0;
+}
 
-    #search-icon {
-      width: 28px;
-      display: table-cell;
-      vertical-align: middle;
-      background-color: #eee;
-      border: 1px solid #ccc;
-      border-right: none;
-    }
+#search-icon {
+  width: 28px;
+  display: table-cell;
+  vertical-align: middle;
+  background-color: #eee;
+  border: 1px solid #ccc;
+  border-right: none;
+}
 
-    #search-box {
-      height: 28px;
-    }
+#search-box {
+  height: 28px;
+}
+
+#suggestions {
+  width: 100%;
+  position: absolute;
+  z-index: 10001;
+  margin: 0;
+  padding: 5px 10px;
+  text-align: left;
+  list-style: none;
+  background-color: white;
+  border: 1px solid #eee;
+  box-shadow: 0px 2px 5px 1px #ccc;
+  font-size: 0.875em;
+
+  .selected, li:hover {
+    background-color: #f8fcef;
   }
 
-  #suggestions {
-    width: 100%;
-    position: absolute;
-    z-index: 10001;
-    margin: 0;
-    padding: 5px 10px;
-    text-align: left;
-    list-style: none;
-    background-color: white;
-    border: 1px solid #eee;
-    box-shadow: 0px 2px 5px 1px #ccc;
-    font-size: 0.875em;
+  li {
+    padding: 5px;
+    cursor: pointer;
+    margin-left: 80px;
+  }
 
-    .selected, li:hover {
-      background-color: #f8fcef;
-    }
+  li::before {
+    width: 80px;
+    display: inline-block;
+    color: #77d102;
+    text-align: right;
+    margin-left: -80px;
+    padding: 0 10px 0 0;
+    font-weight: bold;
+  }
 
-    li {
-      padding: 5px;
-      cursor: pointer;
-      margin-left: 80px;
-    }
+  li[data-search-filter="author"]::before {
+    content: "Posts by"
+  }
 
-    li::before {
-      width: 80px;
-      display: inline-block;
-      color: #77d102;
-      text-align: right;
-      margin-left: -80px;
-      padding: 0 10px 0 0;
-      font-weight: bold;
-    }
+  li[data-search-filter="thread"]::before {
+    content: "Threads"
+  }
 
-    li[data-search-filter="author"]::before {
-      content: "Posts by"
-    }
-
-    li[data-search-filter="thread"]::before {
-      content: "Threads"
-    }
-
-    li[data-search-filter="subforum"]::before {
-      content: "Subforums"
-    }
+  li[data-search-filter="subforum"]::before {
+    content: "Subforums"
   }
 }
 
@@ -137,18 +136,8 @@
       margin: 0.25em;
     }
 
-    .disabled a {
-      color: #555;
-      cursor: default;
-      pointer-events: none;
-    }
-
     .active {
       background-color: #fafad2;
-    }
-
-    li > a {
-      cursor: pointer;
     }
   }
 }

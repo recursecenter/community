@@ -2,7 +2,7 @@
   @include make-sm-column(12);
 }
 
-//Below 480 px - mobile phones only
+// Extra small (below 480 px)
 @media (max-width: $screen-xs-min) {
   #search-bar {
     display: none;
@@ -17,25 +17,23 @@
   }
 }
 
-// Extra small (between 480 and 768 px) only
+// Small (between 480 and 768 px)
 @media (min-width: $screen-xs-min) and (max-width: $screen-xs-max) {
   #main-content {
     padding-left: 0;
     padding-right: 0;
   }
 
-  #navbar-community {
-    #navbar-header {
-      @include make-xs-column(5);
-    }
+  #navbar-header {
+    @include make-xs-column(5);
+  }
 
-    #search-bar {
-      @include make-xs-column(6);
-    }
+  #search-bar {
+    @include make-xs-column(6);
+  }
 
-    #util-bar {
-      @include make-xs-column(1);
-    }
+  #util-bar {
+    @include make-xs-column(1);
   }
 }
 
@@ -56,82 +54,6 @@
   margin-bottom: 1em;
   padding: 0 10px;
 
-  #navbar-header {
-    @include make-sm-column(3);
-
-    img {
-      width: 24px;
-      height: auto;
-      padding: 2px;
-      position: relative;
-      top: 3px;
-    }
-
-    .brand-text {
-      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-      font-weight: bold;
-      font-size: 1.3em;
-      margin-left: 5px;
-      position: relative;
-      top: 6px;
-    }
-
-    a:hover {
-      text-decoration: none;
-      color: $brand-primary;
-    }
-  }
-
-  #search-bar {
-    @include make-sm-column(6);
-    padding: 0;
-  }
-
-  #util-bar {
-    @include make-sm-column(3);
-    text-align: right;
-    padding: 0 5px;
-
-    .community-nav {
-      list-style: none;
-      margin-top: 10px;
-    }
-
-   .community-nav > li {
-      display: inline-block;
-      vertical-align: top;
-      padding: 0 15px;
-
-    }
-
-    .navbar-text {
-      font-weight: bold;
-      color: #555;
-      margin: 0;
-    }
-
-    a {
-      color: #555;
-    }
-
-    @media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
-      padding: 0 3px;
-      .community-nav > li {
-        padding: 0 10px;
-      }
-    }
-
-    @media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {
-      padding: 0 2px;
-      .community-nav > li {
-        padding: 0 5px;
-      }
-      .navbar-text {
-        font-size: small;
-        font-weight: normal;
-      }
-    }
-  }
 
   .dropdown-menu {
     margin-top: 5px;
@@ -140,10 +62,6 @@
     box-shadow: none;
     padding: 0;
     border: 1px solid #eee;
-  }
-
-  .dropdown-menu-right {
-    right: -1em;
   }
 
   .dropdown-menu > li > a {
@@ -215,6 +133,83 @@
       content: "/\00a0";
       color: #ccc;
       padding: 0 5px;
+    }
+  }
+}
+
+#navbar-header {
+  @include make-sm-column(3);
+
+  img {
+    width: 24px;
+    height: auto;
+    padding: 2px;
+    position: relative;
+    top: 3px;
+  }
+
+  .brand-text {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: bold;
+    font-size: 1.3em;
+    margin-left: 5px;
+    position: relative;
+    top: 6px;
+  }
+
+  a:hover {
+    text-decoration: none;
+    color: $brand-primary;
+  }
+}
+
+#search-bar {
+  @include make-sm-column(6);
+  padding: 0;
+}
+
+#util-bar {
+  @include make-sm-column(3);
+  text-align: right;
+  padding: 0 5px;
+
+  .community-nav {
+    list-style: none;
+    margin-top: 10px;
+  }
+
+ .community-nav > li {
+    display: inline-block;
+    vertical-align: top;
+    padding: 0 15px;
+
+  }
+
+  .navbar-text {
+    font-weight: bold;
+    color: #555;
+    margin: 0;
+  }
+
+  a {
+    color: #555;
+  }
+
+  @media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+    padding: 0 3px;
+    .community-nav > li {
+      padding: 0 10px;
+    }
+  }
+
+  @media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {
+    padding: 0 2px;
+    .community-nav > li {
+      padding: 0 5px;
+    }
+    .navbar-text {
+      font-size: small;
+      font-weight: normal;
     }
   }
 }
