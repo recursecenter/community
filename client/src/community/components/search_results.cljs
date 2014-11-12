@@ -39,55 +39,58 @@
   (search! (assoc {} :page page :text query :filters (if filters @filters nil))))
 
 
-(defn pagination [{:keys [current-page total-pages query filters]}]
-  (let [max-inbetween 5
-        max-display 7
-        radius 2
-        lower-bound (if (or (<= (- current-page radius) 2) (< total-pages max-display))
-                      2
-                      (- current-page radius))
-        upper-bound (let [ub (+ lower-bound max-inbetween)]
-                      (if (> ub total-pages) total-pages ub))
-        first-ellipsis? (> lower-bound 2)
-        last-ellipsis? (< upper-bound total-pages)
-        mid-range (range lower-bound upper-bound)]
-    (letfn [(page-number [page]
-              (let [active? (= current-page page)]
-                ;;TODO: Use link-to here instead (this might require
-                ;;refactoring/adding behavior to link-to)
-                (if active?
-                  [:li.active [:span page]]
-                  [:li [:a {:onClick #(load-page query filters page)} page]])))
+(defcomponent pagination [{:keys [current-page total-pages query filters]} owner]
+  (display-name [_] "Pagination")
 
-            (next-or-previous [direction enabled?]
-              (let [[page text] (condp = direction
-                                  :next [(inc current-page) "Next"]
-                                  :previous [(dec current-page) "Previous"])]
-                [:li
-                 (if enabled?
-                   [:a {:onClick #(load-page query filters page)} text]
-                   text)])) ]
-      (html
-        [:ul.page-links
-         ;;Show - Previous, First page, Initial ellipsis
-         (next-or-previous :previous (not= current-page 1))
+  (render [_]
+    (let [max-inbetween 5
+          max-display 7
+          radius 2
+          lower-bound (if (or (<= (- current-page radius) 2) (< total-pages max-display))
+                        2
+                        (- current-page radius))
+          upper-bound (let [ub (+ lower-bound max-inbetween)]
+                        (if (> ub total-pages) total-pages ub))
+          first-ellipsis? (> lower-bound 2)
+          last-ellipsis? (< upper-bound total-pages)
+          mid-range (range lower-bound upper-bound)]
+      (letfn [(page-number [page]
+                (let [active? (= current-page page)]
+                  ;;TODO: Use link-to here instead (this might require
+                  ;;refactoring/adding behavior to link-to)
+                  (if active?
+                    [:li.active [:span page]]
+                    [:li [:a {:onClick #(load-page query filters page)} page]])))
 
-         (page-number 1)
-         (when first-ellipsis?
-           [:li "…"])
+              (next-or-previous [direction enabled?]
+                (let [[page text] (condp = direction
+                                    :next [(inc current-page) "Next"]
+                                    :previous [(dec current-page) "Previous"])]
+                  [:li
+                   (if enabled?
+                     [:a {:onClick #(load-page query filters page)} text]
+                     text)])) ]
+        (html
+          [:ul.page-links
+           ;;Show - Previous, First page, Initial ellipsis
+           (next-or-previous :previous (not= current-page 1))
 
-         ;;Show rest of pages
-         (for [page mid-range]
-           (page-number page))
+           (page-number 1)
+           (when first-ellipsis?
+             [:li "…"])
 
-         ;;Show - Final ellipsis, Last page, Next
-         (when last-ellipsis?
-           [:li "…"])
+           ;;Show rest of pages
+           (for [page mid-range]
+             (page-number page))
 
-         (when (> total-pages 1)
-           (page-number total-pages))
+           ;;Show - Final ellipsis, Last page, Next
+           (when last-ellipsis?
+             [:li "…"])
 
-         (next-or-previous :next (not= current-page total-pages))]))))
+           (when (> total-pages 1)
+             (page-number total-pages))
+
+           (next-or-previous :next (not= current-page total-pages))])))))
 
 
 (defcomponent search-results [{:keys [search] :as app} owner]
@@ -104,4 +107,4 @@
          (when-not (empty? results)
            [:div
             [:div.results (map ->result results)]
-            [:div.paginate (pagination metadata)]])]))))
+            [:div.paginate (->pagination metadata)]])]))))
