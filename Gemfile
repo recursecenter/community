@@ -14,8 +14,6 @@ gem 'memcachier' # this just sets environmental variables
 
 gem 'delayed_job_active_record'
 
-gem 'newrelic_rpm'
-
 gem 'skylight'
 
 # Use SCSS for stylesheets
