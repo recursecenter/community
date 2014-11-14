@@ -16,9 +16,6 @@ class Api::SearchController < Api::ApiController
     # Eager load everything related to a post that we need
     @posts = response.records.includes({thread: [{subforum: :subforum_group}]}, :author)
 
-    # Collect highlights for every record
-    @highlights = response.map { |result| [result.id, result.highlight.body] }.to_h
-
     # Search metadata
     @hits = response.results.total
     @total_pages = (response.results.total.to_f / Searchable::RESULTS_PER_PAGE).ceil

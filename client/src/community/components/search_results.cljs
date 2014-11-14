@@ -7,7 +7,7 @@
             [sablono.core :refer-macros [html]]))
 
 
-(defcomponent result [{:keys [post author thread subforum highlight]} owner]
+(defcomponent result [{:keys [post author thread subforum]} owner]
   (display-name [_] "SearchResult")
 
   (render [_]
@@ -30,7 +30,7 @@
                   {:style {:color (:ui-color subforum)}}
                   [:h4 (:title thread)])]
         [:div.body
-         (partials/html-from-markdown highlight)]]])))
+         (partials/html-from-markdown (:body post))]]])))
 
 
 (defn search-link [query page filters link-body]

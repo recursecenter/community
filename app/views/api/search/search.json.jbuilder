@@ -16,8 +16,6 @@ json.results @posts do |post|
     json.extract! post.thread.subforum, :id, :slug, :ui_color, :name
     json.subforum_group_name post.thread.subforum.subforum_group.name
   end
-
-  json.highlight @highlights[post.id.to_s].first
 end
 
 json.metadata do

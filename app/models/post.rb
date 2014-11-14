@@ -100,19 +100,6 @@ class Post < ActiveRecord::Base
 
         {filtered: {query: subquery, filter: {bool: {must: clauses}}}}
       end
-
-      def self.highlight_fields
-        highlight_options = {
-          no_match_size: 150,
-          fragment_size: 150,
-          number_of_fragments: 1,
-          pre_tags: ["<span class='highlight'>"],
-          post_tags: ["</span>"],
-          encoder: 'html'
-        }
-
-        {fields: {thread_title: highlight_options, body: highlight_options}}
-      end
     end
 
     # Search document format for posts
