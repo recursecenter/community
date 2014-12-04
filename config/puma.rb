@@ -17,7 +17,4 @@ on_worker_boot do
     config['reaping_frequency'] = 8
     ActiveRecord::Base.establish_connection(config)
   end
-
-  uri = URI.parse(ENV["REDIS_URL"])
-  $redis = Redis.new(host: uri.host, port: uri.port, password: uri.password)
 end

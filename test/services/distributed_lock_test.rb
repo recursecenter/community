@@ -19,7 +19,7 @@ class DistributedLockTest < ActiveSupport::TestCase
   end
 
   test "cleans up stale values" do
-    $redis.set(:test_distributed_lock, Time.now.to_i - 1)
+    RedisCache.redis.set(:test_distributed_lock, Time.now.to_i - 1)
 
     start = Time.now
     DistributedLock.new(:test_distributed_lock).synchronize do

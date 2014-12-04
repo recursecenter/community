@@ -148,7 +148,7 @@ private
     def publish
       json = JSON.dump(emitter: emitter, event: event, feed: feed, id: resource.id)
 
-      $redis.publish :pubsub, json
+      RedisCache.redis.publish :pubsub, json
     end
 
     def feed

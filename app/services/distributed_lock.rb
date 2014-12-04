@@ -20,7 +20,7 @@
 class DistributedLock
   def initialize(key)
     @key = key
-    @redis = $redis
+    @redis = RedisCache.redis
   end
 
   def synchronize
