@@ -1,4 +1,6 @@
-# community.hackerschool.com
+# Community
+
+Community is a hybrid forum and mailing list server.
 
 ![Travis Build Status](https://travis-ci.org/hackerschool/community.svg?branch=master)
 
