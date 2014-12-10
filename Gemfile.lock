@@ -151,7 +151,7 @@ GEM
     sdoc (0.4.1)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
-    skylight (0.4.3)
+    skylight (0.5.1)
       activesupport (>= 3.0.0)
     slop (3.6.0)
     spring (1.1.3)
