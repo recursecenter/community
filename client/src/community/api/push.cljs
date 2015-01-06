@@ -72,7 +72,9 @@
             ;; been registered yet
             (let [log @!ws-ready-state-log]
               (when-not (or (= log [:connecting :closed]) (= log [:connecting]))
-                (state/add-error! [:websocket :closed]))))))
+                ;; HACK: delay adding the error by a few seconds to
+                ;; avoid the error flashing when you're logging in.
+                (js/setTimeout #(state/add-error! [:websocket :closed]) 3000))))))
   nil)
 
 (defmulti feed-format :feed)
