@@ -141,7 +141,7 @@
                                          (toggle! owner :open?))}
           (if-not (zero? unread-count)
             [:span.badge.unread-count-icon unread-count])
-          [:i.fa.fa-comments]]
+          [:i.fa.fa-bell]]
          (->notifications {:user user :close-dropdown #(om/set-state! owner :open? false)})]))))
 
 (defcomponent breadcrumbs [{:as app :keys [route-data ui-color]} owner]
