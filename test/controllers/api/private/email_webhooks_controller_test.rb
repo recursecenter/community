@@ -52,6 +52,15 @@ class Api::Private::EmailWebhooksControllerTest < ActionController::TestCase
     assert_equal posts(:zach_post_1).post_number + 1, visited_status.last_post_number_read
   end
 
+  test "email opened doesn't update visited status if the thread has been destroyed" do
+    visited_status = VisitedStatus.where(user: users(:dave), thread: posts(:zach_post_1).thread).first_or_create
+
+    posts(:zach_post_1).thread.destroy
+
+    post :opened, mailgun_origin_params.merge({reply_info: @reply_info})
+    assert_response 406
+  end
+
 private
   def mailgun_origin_params
     api_key = ENV["MAILGUN_API_KEY"]

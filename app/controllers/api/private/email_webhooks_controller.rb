@@ -66,7 +66,7 @@ private
   def reply_info
     @reply_info ||= begin
       ReplyInfoVerifier.verify(params['reply_info'])
-    rescue ReplyInfoVerifier::InvalidSignature => e
+    rescue ReplyInfoVerifier::InvalidSignature, ActiveRecord::RecordNotFound => e
       nil
     end
   end
