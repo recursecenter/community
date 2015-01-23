@@ -41,10 +41,6 @@
   (display-name [_]
     "Notification")
 
-  (did-mount [_]
-    (.tooltip (js/jQuery (om/get-node owner "remove-button"))
-              #js {:container "body"}))
-
   (render [_]
     (html
       [:a.list-group-item.notification-item
@@ -57,10 +53,7 @@
                     (.preventDefault e)
                     (on-remove e)
                     false)
-         :data-toggle "tooltip"
-         :data-placement "top"
-         :title "Remove"
-         :ref "remove-button"}
+         :title "Remove"}
         "×"]
        (notification-summary notification)])))
 
@@ -136,12 +129,13 @@
       (html
         [:div.notifications.dropdown {:ref "dropdown" :class (if open? "open")}
          [:a.dropdown-toggle {:href "#"
+                              :title "Notifications"
                               :onClick (fn [e]
                                          (.preventDefault e)
                                          (toggle! owner :open?))}
           (if-not (zero? unread-count)
             [:span.badge.unread-count-icon unread-count])
-          [:i.fa.fa-comments]]
+          [:i.fa.fa-bell]]
          (->notifications {:user user :close-dropdown #(om/set-state! owner :open? false)})]))))
 
 (defcomponent breadcrumbs [{:as app :keys [route-data ui-color]} owner]
@@ -185,8 +179,12 @@
             [:li.hidden-xs [:p.navbar-text "Hi, " (:first-name current-user) "!"]]
             [:li.hidden-xs (->notifications-dropdown current-user)]
             [:li (partials/link-to (routes :settings)
-                   [:div [:i.fa.fa-cog]])]
-            [:li.hidden-xs [:a {:href "/logout"} [:i.fa.fa-sign-out]]]]])])))
+                   {:title "Settings"}
+                   [:div [:i.fa.fa-cog ]])]
+            [:li.hidden-xs
+             [:a {:href "/logout"
+                  :title "Logout"}
+              [:i.fa.fa-sign-out]]]]])])))
 
 (defcomponent app [{:as app :keys [current-user route-data errors loading?]}
                    owner]
