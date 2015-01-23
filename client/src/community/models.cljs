@@ -45,8 +45,13 @@
   (assoc subforum
     :new-thread (empty-thread)))
 
+(defn escape-regexp-chars [s]
+  (.replace s (js/RegExp. "[-[\\]{}()*+?.,\\^$|#\\s]" "g") "\\$&"))
+
 (defn names->mention-regexp [names]
-  (let [names-with-pipes (str/join "|" (map #(str "(" % ")") names))]
+  (let [names-with-pipes (->> names
+                              (map #(str "(" (escape-regexp-chars %) ")"))
+                              (str/join "|"))]
     (js/RegExp. (str "@(" names-with-pipes ")") "gi")))
 
 (defn parse-mentions [{:keys [body]} users]
