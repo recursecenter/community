@@ -61,6 +61,7 @@ class EventMachineSmtpDelivery
       job.updated_at = now
 
       EventMachine.schedule do
+        # TODO: I don't know what this does or why it's necessary
         Fiber.new { pg.query(insert_sql(job)) }.resume
       end
     end
