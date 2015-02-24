@@ -27,8 +27,7 @@ class EventMachineSmtpDelivery
       if attempt_number == 1
         Time.zone.now
       else
-        #(5 + (attempt_number - 1) ** 4).seconds.from_now
-        2.seconds.from_now
+        (5 + (attempt_number - 1) ** 4).seconds.from_now
       end
     end
 
