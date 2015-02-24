@@ -18,35 +18,9 @@ class EventMachineSmtpDelivery
         if max_retries && max_retries > attempt_number
           async_enqueue em_delivery, run_at: delay(attempt_number)
         else
-          failed_job = new_delayed_job(em_delivery)
-          failed_job.failed_at = Time.zone.now
-          failed_job.last_error = e
-          async_insert_job(failed_job)
+          async_insert_failed_job em_delivery, e
         end
       end
-    end
-
-    def ensure_reactor_running
-      Thread.new { EventMachine.run } unless EventMachine.reactor_running?
-      Thread.pass until EventMachine.reactor_running?
-    end
-
-    def pg
-      if defined? @pg
-        return @pg
-      end
-
-      db_config = ActiveRecord::Base.connection_config
-
-      em_db_config = {}
-
-      em_db_config[:dbname]   = db_config[:database]
-      em_db_config[:host]     = db_config[:host]     if db_config[:host]
-      em_db_config[:port]     = db_config[:port]     if db_config[:port]
-      em_db_config[:user]     = db_config[:username] if db_config[:username]
-      em_db_config[:password] = db_config[:password] if db_config[:password]
-
-      @pg = PG::EM::Client.new(em_db_config)
     end
 
     def delay(attempt_number)
@@ -60,6 +34,13 @@ class EventMachineSmtpDelivery
 
     def async_enqueue(payload, options = {})
       async_insert_job(new_delayed_job(payload, options))
+    end
+
+    def async_insert_failed_job(payload, error)
+      failed_job = new_delayed_job(payload)
+      failed_job.failed_at = Time.zone.now
+      failed_job.last_error = error
+      async_insert_job(failed_job)
     end
 
     def new_delayed_job(payload, options = {})
@@ -88,6 +69,29 @@ class EventMachineSmtpDelivery
       insert_manager = record.class.arel_table.create_insert
       insert_manager.insert(record.send(:arel_attributes_with_values_for_create, record.attribute_names))
       insert_manager.to_sql
+    end
+
+    def ensure_reactor_running
+      Thread.new { EventMachine.run } unless EventMachine.reactor_running?
+      Thread.pass until EventMachine.reactor_running?
+    end
+
+    def pg
+      if defined? @pg
+        return @pg
+      end
+
+      db_config = ActiveRecord::Base.connection_config
+
+      em_db_config = {}
+
+      em_db_config[:dbname]   = db_config[:database]
+      em_db_config[:host]     = db_config[:host]     if db_config[:host]
+      em_db_config[:port]     = db_config[:port]     if db_config[:port]
+      em_db_config[:user]     = db_config[:username] if db_config[:username]
+      em_db_config[:password] = db_config[:password] if db_config[:password]
+
+      @pg = PG::EM::Client.new(em_db_config)
     end
   end
 
