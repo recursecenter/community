@@ -1,14 +1,3 @@
-# TODO:
-# - pseudomethod "run_the_query" has not been defined yet.
-# - finish implementing EventMachineSmtpDelivery.pg
-#
-# How to test:
-#
-# Spin up an AWS instance:
-#
-# $ ssh ubuntu@ec2-52-0-170-254.compute-1.amazonaws.com
-# $ sudo smtp-sink -u ubuntu -v :25 1000
-
 require 'eventmachine'
 require 'pg/em'
 
@@ -24,10 +13,15 @@ class EventMachineSmtpDelivery
       smtp = EM::Protocols::SmtpClient.send(em_smtp_options)
 
       smtp.errback do |e|
+        em_delivery = RetryEventMachineSmtpDelivery.new(em_smtp_options, attempt_number + 1, max_retries)
+
         if max_retries && max_retries > attempt_number
-          async_enqueue RetryEventMachineSmtpDelivery.new(em_smtp_options, attempt_number + 1, max_retries), run_at: delay(attempt_number)
+          async_enqueue em_delivery, run_at: delay(attempt_number)
         else
-          insert_failed_job
+          failed_job = new_delayed_job(em_delivery)
+          failed_job.failed_at = Time.zone.now
+          failed_job.last_error = e
+          async_insert_job(failed_job)
         end
       end
     end
@@ -38,18 +32,37 @@ class EventMachineSmtpDelivery
     end
 
     def pg
-      @pg ||= PG::EM::Client.new db_options_from_active_record?
+      if defined? @pg
+        return @pg
+      end
+
+      db_config = ActiveRecord::Base.connection_config
+
+      em_db_config = {}
+
+      em_db_config[:dbname]   = db_config[:database]
+      em_db_config[:host]     = db_config[:host]     if db_config[:host]
+      em_db_config[:port]     = db_config[:port]     if db_config[:port]
+      em_db_config[:user]     = db_config[:username] if db_config[:username]
+      em_db_config[:password] = db_config[:password] if db_config[:password]
+
+      @pg = PG::EM::Client.new(em_db_config)
     end
 
     def delay(attempt_number)
       if attempt_number == 1
         Time.zone.now
       else
-        (5 + (attempt_number - 1) ** 4).seconds.from_now
+        #(5 + (attempt_number - 1) ** 4).seconds.from_now
+        2.seconds.from_now
       end
     end
 
     def async_enqueue(payload, options = {})
+      async_insert_job(new_delayed_job(payload, options))
+    end
+
+    def new_delayed_job(payload, options = {})
       options[:payload_object] = payload
       options[:priority]       ||= Delayed::Worker.default_priority
       options[:queue]          ||= Delayed::Worker.default_queue_name
@@ -58,15 +71,22 @@ class EventMachineSmtpDelivery
         raise ArgumentError, 'Cannot enqueue items which do not respond to perform'
       end
 
-      job = Delayed::Job.new(options)
-
-      # TODO: This doesn't do anything!
-      run_the_query(insert_sql(job))
+      Delayed::Job.new(options)
     end
 
-    def insert_sql(job)
-      insert_manager = job.class.arel_table.create_insert
-      insert_manager.insert(job.send(:arel_attributes_with_values_for_create, job.attribute_names))
+    def async_insert_job(job)
+      now = Time.zone.now
+      job.created_at = now
+      job.updated_at = now
+
+      EventMachine.schedule do
+        Fiber.new { pg.query(insert_sql(job)) }.resume
+      end
+    end
+
+    def insert_sql(record)
+      insert_manager = record.class.arel_table.create_insert
+      insert_manager.insert(record.send(:arel_attributes_with_values_for_create, record.attribute_names))
       insert_manager.to_sql
     end
   end

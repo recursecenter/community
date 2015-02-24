@@ -57,6 +57,9 @@ GEM
     elasticsearch-transport (1.0.5)
       faraday
       multi_json
+    em-pg-client (0.3.4)
+      eventmachine (~> 1.0.0)
+      pg (>= 0.17.0)
     erubis (2.7.0)
     eventmachine (1.0.3)
     execjs (2.2.2)
@@ -186,6 +189,7 @@ DEPENDENCIES
   elasticsearch
   elasticsearch-model
   elasticsearch-rails
+  em-pg-client
   eventmachine
   faye-websocket
   font-awesome-sass
