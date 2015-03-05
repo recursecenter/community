@@ -128,7 +128,7 @@ class EventMachineSmtpDelivery
       raise ConfigurationError, "EventMachineSmtpDelivery only supports :plain authentication"
     end
 
-    options[:from]    = message.from.first
+    options[:from] = message.from.first
 
     if message.header[CUSTOM_RCPT_TO_HEADER]
       options[:to] = [message.header[CUSTOM_RCPT_TO_HEADER].value]
