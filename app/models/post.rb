@@ -9,6 +9,7 @@ class Post < ActiveRecord::Base
   validates :body, :author, :thread, presence: {allow_blank: false}
 
   before_create :update_thread_data
+  before_create :set_message_id
 
   scope :by_number, -> { order(post_number: :asc) }
 
@@ -28,10 +29,6 @@ class Post < ActiveRecord::Base
 
   def mark_as_visited(user)
     thread.mark_post_as_visited(user, self)
-  end
-
-  def message_id
-    format_message_id(thread_id, post_number)
   end
 
   def previous_message_id
@@ -137,5 +134,14 @@ class Post < ActiveRecord::Base
 private
   def format_message_id(thread_id, post_number)
     "<thread-#{thread_id}/post-#{post_number}@community.hackerschool.com>"
+  end
+
+  def set_message_id
+    # message_id will already be set if the post was created by email
+    self.message_id ||= generate_message_id
+  end
+
+  def generate_message_id
+    format_message_id(thread_id, post_number)
   end
 end
