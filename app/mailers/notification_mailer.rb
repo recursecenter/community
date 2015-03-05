@@ -55,7 +55,8 @@ private
       from: post.author.display_email,
       subject: subforum_thread_subject(post.thread),
       reply_to: reply_to_post_address(reply_info),
-      "List-Id" => list_id(post.thread.subforum)
+      "List-Id" => list_id(post.thread.subforum),
+      "X-Mailgun-Variables" => {reply_info: reply_info}.to_json
     )
   end
 
