@@ -7,18 +7,19 @@ class EventMachineSmtpDelivery
   attr_reader :settings
 
   class << self
-    def send_smtp(em_smtp_options, attempt_number, max_retries)
+    def send_smtp(em_smtp_options, attempt_number, max_attempts)
       ensure_reactor_running
 
       smtp = EM::Protocols::SmtpClient.send(em_smtp_options)
 
       smtp.errback do |e|
-        em_delivery = RetryEventMachineSmtpDelivery.new(em_smtp_options, attempt_number + 1, max_retries)
+        em_delivery = RetryEventMachineSmtpDelivery.new(em_smtp_options, attempt_number + 1, max_attempts)
 
-        if max_retries && max_retries > attempt_number
+        if max_attempts && max_attempts > attempt_number
           async_enqueue em_delivery, run_at: delay(attempt_number)
         else
           async_insert_failed_job em_delivery, e
+          Rails.logger.error("EventMachineSmtpDelivery Failure:\nTo: #{em_smtp_options[:to]}\n\n#{em_smtp_options[:content]}")
         end
       end
     end
@@ -103,7 +104,7 @@ class EventMachineSmtpDelivery
       password:             nil,
       authentication:       nil,
       enable_starttls_auto: true,
-      max_retries:          nil
+      max_attempts:          nil
     }.merge!(values)
   end
 
@@ -129,6 +130,6 @@ class EventMachineSmtpDelivery
     options[:to]      = message.to
     options[:content] = "#{message.to_s}\r\n.\r\n"
 
-    self.class.send_smtp(options, 1, settings[:max_retries])
+    self.class.send_smtp(options, 1, settings[:max_attempts])
   end
 end
