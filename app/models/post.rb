@@ -31,9 +31,13 @@ class Post < ActiveRecord::Base
     thread.mark_post_as_visited(user, self)
   end
 
+  def previous_post
+    thread.posts.where(post_number: post_number - 1).first
+  end
+
   def previous_message_id
     if post_number > 1
-      format_message_id(thread_id, post_number-1)
+      previous_post.message_id
     end
   end
 
