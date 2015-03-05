@@ -15,7 +15,13 @@ class ThreadSubscriptionNotifier < Notifier
 
   def possible_recipients
     @possible_recipients ||= if post.broadcast_to_subscribers?
-      post.thread.subscribers.
+      subscribers = post.thread.subscribers
+
+      if post.created_via_email?
+        subscribers = subscribers.where.not(id: post.author)
+      end
+
+      subscribers.
         select { |u| Ability.new(u).can? :read, post }.
         to_set
     else

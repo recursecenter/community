@@ -37,6 +37,14 @@ class Post < ActiveRecord::Base
     end
   end
 
+  def created_via_email?
+    unless message_id
+      raise "Post#created_via_email? only works on persisted posts"
+    end
+
+    message_id != generate_message_id
+  end
+
   concerning :Searchable do
     included do
       # Additional indexer settings for posts to serve filtered queries.

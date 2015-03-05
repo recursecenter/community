@@ -17,7 +17,13 @@ class SubforumSubscriptionNotifier < Notifier
 
   def possible_recipients
     @possible_recipients ||= if first_post.broadcast_to_subscribers?
-      thread.subforum.subscribers.
+      subscribers = thread.subforum.subscribers
+
+      if thread.posts.first.created_via_email?
+        subscribers = subscribers.where.not(id: thread.created_by)
+      end
+
+      subscribers.
         select { |u| Ability.new(u).can? :read, thread }.
         to_set
     else
