@@ -1,8 +1,6 @@
 require 'set'
 
 class SubforumSubscriptionNotifier < Notifier
-  include RecipientVariables
-
   attr_reader :thread, :first_post
 
   def initialize(thread)
@@ -31,7 +29,7 @@ class SubforumSubscriptionNotifier < Notifier
 private
   def send_emails(method, recipients)
     if recipients.present?
-      BatchNotificationSender.delay.deliver(method, recipient_variables(recipients, first_post), recipients.map(&:id), thread)
+      Delayed::Job.enqueue BatchNotificationJob.new(method, recipients, thread)
     end
   end
 end

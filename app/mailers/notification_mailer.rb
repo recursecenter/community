@@ -1,6 +1,8 @@
 class NotificationMailer < ActionMailer::Base
   add_template_helper ApplicationHelper
 
+  RCPT_TO = EventMachineSmtpDelivery::CUSTOM_RCPT_TO_HEADER
+
   include EmailFields
 
   def user_mentioned_email(mention)
@@ -10,22 +12,22 @@ class NotificationMailer < ActionMailer::Base
 
     reply_info = ReplyInfoVerifier.generate(@user, @post)
 
-    headers["X-Mailgun-Variables"] = JSON.generate({reply_info: reply_info})
+    headers[RCPT_TO] = @user.email
 
     if @post.previous_message_id
       headers["In-Reply-To"] = @post.previous_message_id
     end
 
     mail(message_id: @post.message_id,
-         to: @user.email,
+         to: list_address(@post.thread.subforum),
          from: @mentioned_by.display_email,
          reply_to: reply_to_post_address(reply_info),
          subject: subforum_thread_subject(@post.thread),
          "List-Id" => list_id(@post.thread.subforum))
   end
 
-  def broadcast_email(user_ids, post)
-    users = User.where(id: user_ids)
+  def broadcast_email(user, post)
+    @user = user
     @post = post
     @group_names = post.broadcast_groups.map(&:name)
 
@@ -33,17 +35,26 @@ class NotificationMailer < ActionMailer::Base
       headers["In-Reply-To"] = @post.previous_message_id
     end
 
+    reply_info = ReplyInfoVerifier.generate(@user, @post)
+
+    headers[RCPT_TO] = @user.email
+
     mail(message_id: @post.message_id,
          to: list_address(@post.thread.subforum),
-         bcc: users.map(&:email),
          from: @post.author.display_email,
          subject: subforum_thread_subject(@post.thread),
+         reply_to: reply_to_post_address(reply_info),
          "List-Id" => list_id(@post.thread.subforum))
   end
 
-  def new_post_in_subscribed_thread_email(user_ids, post)
-    users = User.where(id: user_ids)
+  def new_post_in_subscribed_thread_email(user, post)
+    @user = user
     @post = post
+
+    reply_info = ReplyInfoVerifier.generate(@user, @post)
+
+
+    headers[RCPT_TO] = @user.email
 
     if @post.previous_message_id
       headers["In-Reply-To"] = @post.previous_message_id
@@ -51,30 +62,34 @@ class NotificationMailer < ActionMailer::Base
 
     mail(message_id: @post.message_id,
          to: list_address(@post.thread.subforum),
-         bcc: users.map(&:email),
          from: @post.author.display_email,
          subject: subforum_thread_subject(@post.thread),
+         reply_to: reply_to_post_address(reply_info),
          "List-Id" => list_id(@post.thread.subforum))
   end
 
-  def new_thread_in_subscribed_subforum_email(user_ids, thread)
-    thread_subscription_email(user_ids, thread)
+  def new_thread_in_subscribed_subforum_email(user, thread)
+    thread_subscription_email(user, thread)
   end
 
-  def new_subscribed_thread_in_subscribed_subforum_email(user_ids, thread)
-    thread_subscription_email(user_ids, thread)
+  def new_subscribed_thread_in_subscribed_subforum_email(user, thread)
+    thread_subscription_email(user, thread)
   end
 
 private
-  def thread_subscription_email(user_ids, thread)
-    users = User.where(id: user_ids)
+  def thread_subscription_email(user, thread)
+    @user = user
     @thread = thread
+
+    reply_info = ReplyInfoVerifier.generate(@user, @thread.posts.first)
+
+    headers[RCPT_TO] = @user.email
 
     mail(message_id: @thread.posts.first.message_id,
          to: list_address(@thread.subforum),
-         bcc: users.map(&:email),
          from: @thread.created_by.display_email,
          subject: subforum_thread_subject(@thread),
+         reply_to: reply_to_post_address(reply_info),
          "List-Id" => list_id(@thread.subforum))
   end
 end
