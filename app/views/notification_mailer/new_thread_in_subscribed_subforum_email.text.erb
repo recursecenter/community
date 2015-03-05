@@ -1,6 +1,6 @@
 <%= @thread.posts.first.body %>
 
 ---
-You received this message because you are subscribed to the subforum "<%= @thread.subforum.name %>." Subscribe to this thread: <%= subscribe_thread_url(@thread) %>
+You received this message because you are subscribed to the subforum "<%= @thread.subforum.name %>." Subscribe to this thread: <%= subscribe_thread_url(token: @reply_info) %>
 
 Reply to this email or view the thread on Community: <%= thread_url(slug: @thread.slug, id: @thread.id) %>
