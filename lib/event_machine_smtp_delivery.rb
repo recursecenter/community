@@ -4,6 +4,8 @@ require 'pg/em'
 class EventMachineSmtpDelivery
   class ConfigurationError < StandardError; end
 
+  CUSTOM_RCPT_TO_HEADER = 'X-EM-SMTP-RCPT-TO'
+
   attr_reader :settings
 
   class << self
@@ -127,7 +129,14 @@ class EventMachineSmtpDelivery
     end
 
     options[:from]    = message.from.first
-    options[:to]      = message.to
+
+    if message.header[CUSTOM_RCPT_TO_HEADER]
+      options[:to] = [message.header[CUSTOM_RCPT_TO_HEADER].value]
+      message.header[CUSTOM_RCPT_TO_HEADER] = nil
+    else
+      options[:to] = message.to
+    end
+
     options[:content] = "#{message.to_s}\r\n.\r\n"
 
     self.class.send_smtp(options, 1, settings[:max_attempts])
