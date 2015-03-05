@@ -60,11 +60,11 @@ class EventMachineSmtpDelivery
       job.updated_at = now
 
       EventMachine.schedule do
-        Fiber.new { pg.query(insert_sql(job)) }.resume
+        Fiber.new { pg.query(to_insert_sql(job)) }.resume
       end
     end
 
-    def insert_sql(record)
+    def to_insert_sql(record)
       insert_manager = record.class.arel_table.create_insert
       insert_manager.insert(record.send(:arel_attributes_with_values_for_create, record.attribute_names))
       insert_manager.to_sql
