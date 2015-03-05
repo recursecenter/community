@@ -42,7 +42,7 @@ class NotificationMailer < ActionMailer::Base
 
 private
   def make_mail(user, post)
-    reply_info = ReplyInfoVerifier.generate(user, post)
+    @reply_info = ReplyInfoVerifier.generate(user, post)
 
     if post.previous_message_id
       headers["In-Reply-To"] = post.previous_message_id
@@ -54,9 +54,9 @@ private
       to: list_address(post.thread.subforum),
       from: post.author.display_email,
       subject: subforum_thread_subject(post.thread),
-      reply_to: reply_to_post_address(reply_info),
+      reply_to: reply_to_post_address(@reply_info),
       "List-Id" => list_id(post.thread.subforum),
-      "X-Mailgun-Variables" => {reply_info: reply_info}.to_json
+      "X-Mailgun-Variables" => {reply_info: @reply_info}.to_json
     )
   end
 

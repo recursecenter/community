@@ -35,6 +35,10 @@ class User < ActiveRecord::Base
     mentions.where(post: post, mentioned_by: post.author).first_or_create
   end
 
+  def subscribed_to?(subscribable)
+    subscriptions.where(subscribed: true, subscribable: subscribable).exists?
+  end
+
   def subscribe_to(subscribable, reason)
     subscription = subscribable.subscription_for(self)
     subscription.subscribed = true
