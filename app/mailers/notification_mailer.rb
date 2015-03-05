@@ -3,8 +3,6 @@ class NotificationMailer < ActionMailer::Base
 
   RCPT_TO = EventMachineSmtpDelivery::CUSTOM_RCPT_TO_HEADER
 
-  include EmailFields
-
   def user_mentioned_email(mention)
     @user = mention.user
     @post = mention.post
