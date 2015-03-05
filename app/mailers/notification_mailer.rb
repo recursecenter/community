@@ -48,9 +48,9 @@ private
       headers["In-Reply-To"] = post.previous_message_id
     end
 
-    headers[RCPT_TO] = user.email
     mail(
       message_id: post.message_id,
+      RCPT_TO => user.email,
       to: list_address(post.thread.subforum),
       from: post.author.display_email,
       subject: subforum_thread_subject(post.thread),
