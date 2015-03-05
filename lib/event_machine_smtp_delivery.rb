@@ -106,7 +106,7 @@ class EventMachineSmtpDelivery
       password:             nil,
       authentication:       nil,
       enable_starttls_auto: true,
-      max_attempts:          nil
+      max_attempts:         nil
     }.merge!(values)
   end
 
