@@ -56,8 +56,6 @@ gem 'puma'
 gem 'faye-websocket'
 gem 'eventmachine'
 
-gem 'em-pg-client'
-
 gem 'thread_safe'
 
 gem 'elasticsearch'

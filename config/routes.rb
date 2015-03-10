@@ -14,10 +14,8 @@ Rails.application.routes.draw do
   get '/s' => 'pages#index'
   get '/s/:query' => 'pages#index'
 
-  get '/threads/:id/unsubscribe' => 'threads#unsubscribe'
-  get '/threads/:id/subscribe'   => 'threads#subscribe'
-  get '/threads/unsubscribe/:token' => 'threads#unsubscribe_with_reply_info', as: :unsubscribe_thread
-  get '/threads/subscribe/:token'   => 'threads#subscribe_with_reply_info',   as: :subscribe_thread
+  get '/threads/:id/unsubscribe' => 'threads#unsubscribe', as: :unsubscribe_thread
+  get '/threads/:id/subscribe' => 'threads#subscribe', as: :subscribe_thread
 
   # sudo for development only
   namespace :admin do

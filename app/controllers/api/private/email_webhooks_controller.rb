@@ -35,7 +35,6 @@ class Api::Private::EmailWebhooksController < Api::ApiController
 
     post.author = current_user
     post.body = params['stripped-text']
-    post.message_id = params["Message-Id"]
 
     unless post.save
       head 406 and return

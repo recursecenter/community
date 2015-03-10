@@ -2,10 +2,5 @@
 
 <div style="border-top: 1px solid #ccc;">
   <p>You received this message because <%= @mentioned_by.first_name %> mentioned you in the post above.</p>
-
-  <% unless @user.subscribed_to?(@post.thread) %>
-    <p><%= link_to "Subscribe to this thread.", subscribe_thread_url(@reply_info) %></p>
-  <% end %>
-
   <p>Reply to this email or <%= link_to "view the post on Community", post_url(slug: @post.thread.slug, thread_id: @post.thread.id, post_number: @post.post_number) %>.</p>
 </div>

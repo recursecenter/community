@@ -1,6 +1,8 @@
 require 'set'
 
 class SubforumSubscriptionNotifier < Notifier
+  include RecipientVariables
+
   attr_reader :thread, :first_post
 
   def initialize(thread)
@@ -17,13 +19,8 @@ class SubforumSubscriptionNotifier < Notifier
 
   def possible_recipients
     @possible_recipients ||= if first_post.broadcast_to_subscribers?
-      subscribers = thread.subforum.subscribers
-
-      if thread.posts.first.created_via_email?
-        subscribers = subscribers.where.not(id: thread.created_by)
-      end
-
-      subscribers.
+      thread.subforum.subscribers.
+        where.not(id: thread.created_by).
         select { |u| Ability.new(u).can? :read, thread }.
         to_set
     else
@@ -34,7 +31,7 @@ class SubforumSubscriptionNotifier < Notifier
 private
   def send_emails(method, recipients)
     if recipients.present?
-      Delayed::Job.enqueue BatchNotificationJob.new(method, recipients, thread)
+      BatchNotificationSender.delay.deliver(method, recipient_variables(recipients, first_post), recipients.map(&:id), thread)
     end
   end
 end

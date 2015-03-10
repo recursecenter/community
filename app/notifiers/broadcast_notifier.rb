@@ -1,6 +1,7 @@
 require 'set'
 
 class BroadcastNotifier < Notifier
+  include RecipientVariables
   include ActionView::Helpers::TextHelper # pluralize
 
   attr_reader :post
@@ -18,7 +19,7 @@ class BroadcastNotifier < Notifier
         return
       end
 
-      Delayed::Job.enqueue BatchNotificationJob.new(:broadcast_email, email_recipients, post)
+      BatchNotificationSender.delay.deliver(:broadcast_email, recipient_variables(email_recipients, post), email_recipients.map(&:id), post)
     end
   end
 

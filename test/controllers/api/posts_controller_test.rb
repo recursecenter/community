@@ -16,7 +16,7 @@ class Api::PostsControllerTest < ActionController::TestCase
 
     mail = ActionMailer::Base.deliveries.first
 
-    assert_equal full_hacker_schooler.email, mail.header[EventMachineSmtpDelivery::CUSTOM_RCPT_TO_HEADER].value
+    assert_equal [full_hacker_schooler.email], mail.bcc
     assert_operator mail.text_part.body.to_s, :=~, /subscribed/
   end
 

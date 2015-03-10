@@ -240,8 +240,7 @@ CREATE TABLE posts (
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
     post_number integer,
-    broadcast_to_subscribers boolean DEFAULT true,
-    message_id character varying(255)
+    broadcast_to_subscribers boolean DEFAULT true
 );
 
 
@@ -982,6 +981,4 @@ INSERT INTO schema_migrations (version) VALUES ('20141016200108');
 INSERT INTO schema_migrations (version) VALUES ('20141017154222');
 
 INSERT INTO schema_migrations (version) VALUES ('20141017213409');
-
-INSERT INTO schema_migrations (version) VALUES ('20150305194727');
 
