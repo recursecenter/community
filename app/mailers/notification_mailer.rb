@@ -1,80 +1,78 @@
 class NotificationMailer < ActionMailer::Base
   add_template_helper ApplicationHelper
 
-  include EmailFields
+  RCPT_TO = EventMachineSmtpDelivery::CUSTOM_RCPT_TO_HEADER
 
   def user_mentioned_email(mention)
-    @post = mention.post
     @user = mention.user
+    @post = mention.post
     @mentioned_by = mention.mentioned_by
 
-    reply_info = ReplyInfoVerifier.generate(@user, @post)
-
-    headers["X-Mailgun-Variables"] = JSON.generate({reply_info: reply_info})
-
-    if @post.previous_message_id
-      headers["In-Reply-To"] = @post.previous_message_id
-    end
-
-    mail(message_id: @post.message_id,
-         to: @user.email,
-         from: @mentioned_by.display_email,
-         reply_to: reply_to_post_address(reply_info),
-         subject: subforum_thread_subject(@post.thread),
-         "List-Id" => list_id(@post.thread.subforum))
+    make_mail(@user, @post)
   end
 
-  def broadcast_email(user_ids, post)
-    users = User.where(id: user_ids)
+  def broadcast_email(user, post)
+    @user = user
     @post = post
     @group_names = post.broadcast_groups.map(&:name)
 
-    if @post.previous_message_id
-      headers["In-Reply-To"] = @post.previous_message_id
-    end
-
-    mail(message_id: @post.message_id,
-         to: list_address(@post.thread.subforum),
-         bcc: users.map(&:email),
-         from: @post.author.display_email,
-         subject: subforum_thread_subject(@post.thread),
-         "List-Id" => list_id(@post.thread.subforum))
+    make_mail(@user, @post)
   end
 
-  def new_post_in_subscribed_thread_email(user_ids, post)
-    users = User.where(id: user_ids)
+  def new_post_in_subscribed_thread_email(user, post)
+    @user = user
     @post = post
 
-    if @post.previous_message_id
-      headers["In-Reply-To"] = @post.previous_message_id
-    end
-
-    mail(message_id: @post.message_id,
-         to: list_address(@post.thread.subforum),
-         bcc: users.map(&:email),
-         from: @post.author.display_email,
-         subject: subforum_thread_subject(@post.thread),
-         "List-Id" => list_id(@post.thread.subforum))
+    make_mail(@user, @post)
   end
 
-  def new_thread_in_subscribed_subforum_email(user_ids, thread)
-    thread_subscription_email(user_ids, thread)
+  def new_thread_in_subscribed_subforum_email(user, thread)
+    @user = user
+    @thread = thread
+
+    make_mail(@user, @thread.posts.first)
   end
 
-  def new_subscribed_thread_in_subscribed_subforum_email(user_ids, thread)
-    thread_subscription_email(user_ids, thread)
+  def new_subscribed_thread_in_subscribed_subforum_email(user, thread)
+    @user = user
+    @thread = thread
+
+    make_mail(@user, @thread.posts.first)
   end
 
 private
-  def thread_subscription_email(user_ids, thread)
-    users = User.where(id: user_ids)
-    @thread = thread
+  def make_mail(user, post)
+    @reply_info = ReplyInfoVerifier.generate(user, post)
 
-    mail(message_id: @thread.posts.first.message_id,
-         to: list_address(@thread.subforum),
-         bcc: users.map(&:email),
-         from: @thread.created_by.display_email,
-         subject: subforum_thread_subject(@thread),
-         "List-Id" => list_id(@thread.subforum))
+    if post.previous_message_id
+      headers["In-Reply-To"] = post.previous_message_id
+    end
+
+    mail(
+      message_id: post.message_id,
+      RCPT_TO => user.email,
+      to: list_address(post.thread.subforum),
+      from: post.author.display_email,
+      subject: subforum_thread_subject(post.thread),
+      reply_to: reply_to_post_address(@reply_info),
+      "List-Id" => list_id(post.thread.subforum),
+      "X-Mailgun-Variables" => {reply_info: @reply_info}.to_json
+    )
+  end
+
+  def reply_to_post_address(reply_info)
+    "Community <reply-#{reply_info}@mail.community.hackerschool.com>"
+  end
+
+  def list_address(subforum)
+    "#{subforum.name.downcase.gsub(/\s+/, '-')}@lists.community.hackerschool.com"
+  end
+
+  def subforum_thread_subject(thread)
+    "[Community - #{thread.subforum.name}] #{thread.title}"
+  end
+
+  def list_id(subforum)
+    "<#{subforum.name.downcase.gsub(/\s+/, '-')}.community.hackerschool.com>"
   end
 end
