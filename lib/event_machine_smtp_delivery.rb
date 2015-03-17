@@ -12,16 +12,18 @@ class EventMachineSmtpDelivery
     def send_smtp(em_smtp_options, attempt_number, max_attempts)
       ensure_reactor_running
 
-      smtp = EM::Protocols::SmtpClient.send(em_smtp_options)
+      EventMachine.schedule do
+        smtp = EventMachine::Protocols::SmtpClient.send(em_smtp_options)
 
-      smtp.errback do |e|
-        em_delivery = RetryEventMachineSmtpDelivery.new(em_smtp_options, attempt_number + 1, max_attempts)
+        smtp.errback do |e|
+          em_delivery = RetryEventMachineSmtpDelivery.new(em_smtp_options, attempt_number + 1, max_attempts)
 
-        if max_attempts && max_attempts > attempt_number
-          async_enqueue em_delivery, run_at: delay(attempt_number)
-        else
-          async_insert_failed_job em_delivery, e
-          Rails.logger.error("EventMachineSmtpDelivery Failure:\nTo: #{em_smtp_options[:to]}\n\n#{em_smtp_options[:content]}")
+          if max_attempts && max_attempts > attempt_number
+            async_enqueue em_delivery, run_at: delay(attempt_number)
+          else
+            async_insert_failed_job em_delivery, e
+            Rails.logger.error("EventMachineSmtpDelivery Failure:\nTo: #{em_smtp_options[:to]}\n\n#{em_smtp_options[:content]}")
+          end
         end
       end
     end
