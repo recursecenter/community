@@ -2,28 +2,28 @@
 # {subforum_group_name => [[subforum_name, ui_color], ...], ...}
 #
 subforum_groups = {
-  "Hacker School" => [["General",       "rgb(121,109,203)", [:everyone, :full_hacker_schooler],
-                       "General-interest discussion about Hacker School or things that Hacker Schoolers might find interesting."],
+  "Recurse Center" => [["General",       "rgb(121,109,203)", [:everyone, :full_hacker_schooler],
+                       "General-interest discussion about the Recurse Center or things that Recursers might find interesting."],
                       ["455 Broadway",  "rgb(91,182,159)",  [:everyone, :full_hacker_schooler],
-                       "Announcements and discussion specific to those currently attending Hacker School."],
+                       "Announcements and discussion specific to those currently attending the Recurse Center."],
                       ["Welcome",       "#008C9E",          [:everyone],
-                       "Welcome to Hacker School! Introductions, questions, and announcements for those preparing to attend Hacker School."],
+                       "Welcome to the Recurse Center! Introductions, questions, and announcements for those preparing to attend the Recurse Center."],
                       ["Housing",       "#08A39B",          [:everyone],
-                       "Resources, tips, and listings for Hacker Schoolers in NYC."],
+                       "Resources, tips, and listings for Recursers in NYC."],
                       ["Programming",       "rgb(153,191,107)", [:everyone, :full_hacker_schooler],
                        "Programming, becoming a better programmer, and other things related to programming."]],
 
   "Regions" =>       [["New York",      "rgb(167,106,185)", [:everyone, :full_hacker_schooler],
-                       "For Hacker Schoolers in NYC. Events, meetups, etc."],
+                       "For Recursers in NYC. Events, meetups, etc."],
                       ["San Francisco", "rgb(187,103,162)", [:everyone, :full_hacker_schooler],
-                       "For Hacker Schoolers in San Francisco. Events, meetups, etc."],
+                       "For Recursers in San Francisco. Events, meetups, etc."],
                       ["Europe",        "rgb(197,93,131)",  [:everyone, :full_hacker_schooler],
-                       "For Hacker Schoolers in Europe. Events, meetups, etc."],
+                       "For Recursers in Europe. Events, meetups, etc."],
                       ["Midwest",       "rgb(230,110,110)", [:everyone, :full_hacker_schooler],
-                       "For Hacker Schoolers in the Midwest. Events, meetups, etc."]],
+                       "For Recursers in the Midwest. Events, meetups, etc."]],
 
   "Community" =>     [["Meta",          "rgb(211,94,76)",   [:everyone, :full_hacker_schooler],
-                       "Discussion about Hacker School's use of Community."],
+                       "Discussion about the Recurse Center's use of Community."],
                       ["Development",   "rgb(225,140,67)",  [:everyone, :full_hacker_schooler],
                        "Discussion about Community's development."]]
 }
@@ -34,7 +34,7 @@ roles.each do |role|
   Role.create(name: role)
 end
 
-groups = ["Everyone", "Current Hacker Schoolers", "Faculty"]
+groups = ["Everyone", "Current Recursers", "Faculty"]
 groups.each do |group|
   Group.create(name: group)
 end
