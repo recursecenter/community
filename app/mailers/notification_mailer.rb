@@ -45,34 +45,58 @@ private
     @reply_info = ReplyInfoVerifier.generate(user, post)
 
     if post.previous_message_id
-      headers["In-Reply-To"] = post.previous_message_id
+      headers["References"] = headers["In-Reply-To"] = post.previous_message_id
     end
 
     mail(
-      message_id: post.message_id,
       RCPT_TO => user.email,
+      message_id: post.message_id,
       to: list_address(post.thread.subforum),
       from: post.author.display_email,
       subject: subforum_thread_subject(post.thread),
-      reply_to: reply_to_post_address(@reply_info),
+      reply_to: reply_to(@reply_info),
+
+      "Precedence" => "list",
       "List-Id" => list_id(post.thread.subforum),
+      "List-Archive" => list_archive(post.thread),
+      "List-Post" => list_post(@reply_info),
+      "List-Unsubscribe" => list_unsubscribe(@reply_info),
+
+      # Mailgun sends these back to us when users reply to a sent email
       "X-Mailgun-Variables" => {reply_info: @reply_info}.to_json
     )
   end
 
+private
+  def subforum_thread_subject(thread)
+    "[Community - #{thread.subforum.name}] #{thread.title}"
+  end
+
+  def reply_to(reply_info)
+    "Community <#{reply_to_post_address(reply_info)}>"
+  end
+
   def reply_to_post_address(reply_info)
-    "Community <reply-#{reply_info}@mail.community.hackerschool.com>"
+    "reply-#{reply_info}@mail.community.hackerschool.com"
   end
 
   def list_address(subforum)
     "#{subforum.name.downcase.gsub(/\s+/, '-')}@lists.community.hackerschool.com"
   end
 
-  def subforum_thread_subject(thread)
-    "[Community - #{thread.subforum.name}] #{thread.title}"
-  end
-
   def list_id(subforum)
     "<#{subforum.name.downcase.gsub(/\s+/, '-')}.community.hackerschool.com>"
+  end
+
+  def list_archive(thread)
+    thread_url(id: thread.id, slug: thread.slug)
+  end
+
+  def list_post(reply_info)
+    "<mailto:#{reply_to_post_address(reply_info)}>"
+  end
+
+  def list_unsubscribe(reply_info)
+    "<#{unsubscribe_thread_url(reply_info)}>"
   end
 end
