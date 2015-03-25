@@ -10,7 +10,7 @@ class Api::Private::EmailWebhooksController < Api::ApiController
   # Mailgun will POST to this endpoint when someone replies to an
   # email with a reply-to of the form:
   #
-  #     reply-(reply_info)@mail.community.hackerschool.com
+  #     reply-(reply_info)@mail.community.recurse.com
   #
   # important params:
   #

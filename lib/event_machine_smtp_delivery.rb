@@ -65,7 +65,7 @@ class EventMachineSmtpDelivery
       job.updated_at = now
 
       EventMachine.schedule do
-        Fiber.new { pg.query(to_insert_sql(job)) }.resume
+        Fiber.new { pg.query_defer(to_insert_sql(job)) }.resume
       end
     end
 

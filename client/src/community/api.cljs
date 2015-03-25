@@ -50,7 +50,7 @@
     [:ajax :generic]))
 
 (defn request
-  "Makes an API request to the Hacker School API with some default
+  "Makes an API request to the Recurse Center API with some default
   options, returning a core.async channel containing either a
   response or an ExceptionInfo error."
   ([request-fn resource]

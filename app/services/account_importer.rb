@@ -64,7 +64,7 @@ class AccountImporter
   def get_groups
     groups = [Group.everyone, Group.for_batch_api_data(user_data["batch"])]
 
-    if currently_at_hacker_school?
+    if currently_at_hacker_school? || faculty?
       groups += [Group.current_hacker_schoolers]
     end
 

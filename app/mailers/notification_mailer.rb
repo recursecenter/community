@@ -77,15 +77,15 @@ private
   end
 
   def reply_to_post_address(reply_info)
-    "reply-#{reply_info}@mail.community.hackerschool.com"
+    "reply-#{reply_info}@mail.community.recurse.com"
   end
 
   def list_address(subforum)
-    "#{subforum.name.downcase.gsub(/\s+/, '-')}@lists.community.hackerschool.com"
+    "#{subforum.name.downcase.gsub(/\s+/, '-')}@lists.community.recurse.com"
   end
 
   def list_id(subforum)
-    "<#{subforum.name.downcase.gsub(/\s+/, '-')}.community.hackerschool.com>"
+    "<#{subforum.name.downcase.gsub(/\s+/, '-')}.community.recurse.com>"
   end
 
   def list_archive(thread)
