@@ -26,7 +26,7 @@ class HackerSchool
     @client_id = ENV['HACKER_SCHOOL_CLIENT_ID']
     @client_secret = ENV['HACKER_SCHOOL_CLIENT_SECRET']
     @secret_token = ENV['HACKER_SCHOOL_API_SECRET_TOKEN']
-    @site = ENV['HACKER_SCHOOL_SITE'] || 'https://www.hackerschool.com'
+    @site = ENV['HACKER_SCHOOL_SITE'] || 'https://www.recurse.com'
   end
 
   def client

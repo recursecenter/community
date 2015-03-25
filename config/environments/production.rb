@@ -83,7 +83,7 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  config.action_mailer.default_url_options = { host: "community.hackerschool.com", protocol: "https" }
+  config.action_mailer.default_url_options = { host: "community.recurse.com", protocol: "https" }
 
   config.action_mailer.eventmachine_smtp_settings = {
     address: ENV["SMTP_SERVER"],
@@ -92,7 +92,7 @@ Rails.application.configure do
     password: ENV["SMTP_PASSWORD"],
     authentication: :plain,
     enable_starttls_auto: true,
-    domain: 'mail.community.hackerschool.com',
+    domain: 'mail.community.recurse.com',
     max_attempts: 5
   }
 

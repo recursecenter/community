@@ -19,7 +19,7 @@
 ;;; HS routes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(def hs-root "https://www.hackerschool.com")
+(def hs-root "https://www.recurse.com")
 
 (def hs-routes
   (r/routes

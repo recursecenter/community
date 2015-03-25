@@ -63,7 +63,7 @@ JASMINE_CONFIG_PATH=test/javascripts/support/jasmine.yml
 # MAILGUN_API_KEY=your_mailgun_api_key
 ```
 
-To generate a Recurse Center client id and secret, go to your [Recurse Center settings page](https://www.hackerschool.com/settings) and make a new OAuth app. The redirect url should be `http://localhost:5001/login/complete` (or your development host name if you don't develop off of localhost).
+To generate a Recurse Center client id and secret, go to your [Recurse Center settings page](https://www.recurse.com/settings) and make a new OAuth app. The redirect url should be `http://localhost:5001/login/complete` (or your development host name if you don't develop off of localhost).
 
 ## Running the code
 

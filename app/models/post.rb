@@ -145,7 +145,7 @@ class Post < ActiveRecord::Base
 
 private
   def format_message_id(thread_id, post_number)
-    "<thread-#{thread_id}/post-#{post_number}@community.hackerschool.com>"
+    "<thread-#{thread_id}/post-#{post_number}@community.recurse.com>"
   end
 
   def set_message_id
