@@ -2,7 +2,7 @@
 
 Community is a hybrid forum and mailing list server.
 
-![Travis Build Status](https://travis-ci.org/hackerschool/community.svg?branch=master)
+![CircleCI Build Status](https://circleci.com/gh/recursecenter/community.png?circle-token=b21bc07728805b01ea238d0585f7de34dd3b23c3)
 
 ## Dependencies
 
