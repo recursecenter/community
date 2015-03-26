@@ -2,7 +2,7 @@
 
 Community is a hybrid forum and mailing list server.
 
-![CircleCI Build Status](https://circleci.com/gh/recursecenter/community.png?circle-token=b21bc07728805b01ea238d0585f7de34dd3b23c3)
+[![CircleCI Build Status](https://circleci.com/gh/recursecenter/community.png?circle-token=b21bc07728805b01ea238d0585f7de34dd3b23c3)](https://circleci.com/gh/recursecenter/community)
 
 ## Dependencies
 
