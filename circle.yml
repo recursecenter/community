@@ -4,3 +4,8 @@ machine:
     - elasticsearch
   environment:
     REDIS_URL: redis://localhost:6379
+    JASMINE_CONFIG_PATH: test/javascripts/support/jasmine.yml
+
+test:
+  pre:
+    - cd client && lein cljsbuild once test
