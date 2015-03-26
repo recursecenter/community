@@ -2,3 +2,5 @@ machine:
   services:
     - redis
     - elasticsearch
+  environment:
+    REDIS_URL: redis://localhost:6379
