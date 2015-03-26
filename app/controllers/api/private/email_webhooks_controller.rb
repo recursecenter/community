@@ -10,7 +10,7 @@ class Api::Private::EmailWebhooksController < Api::ApiController
   # Mailgun will POST to this endpoint when someone replies to an
   # email with a reply-to of the form:
   #
-  #     reply-(reply_info)@mail.community.hackerschool.com
+  #     reply-(reply_info)@mail.community.recurse.com
   #
   # important params:
   #
@@ -35,6 +35,7 @@ class Api::Private::EmailWebhooksController < Api::ApiController
 
     post.author = current_user
     post.body = params['stripped-text']
+    post.message_id = params["Message-Id"]
 
     unless post.save
       head 406 and return

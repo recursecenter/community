@@ -8,7 +8,7 @@ class Group < ActiveRecord::Base
   end
 
   def self.current_hacker_schoolers
-    where(name: "Current Hacker Schoolers").first_or_create!
+    where(name: "Current Recursers").first_or_create!
   end
 
   def self.faculty

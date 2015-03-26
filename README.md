@@ -52,8 +52,8 @@ HACKER_SCHOOL_CLIENT_SECRET=your_client_secret
 
 JASMINE_CONFIG_PATH=test/javascripts/support/jasmine.yml
 
-# If you want to import accounts from Hacker School
-# (You won't be able to do this unless you are Hacker School faculty)
+# If you want to import accounts from the Recurse Center
+# (You won't be able to do this unless you are Recurse Center faculty)
 # HACKER_SCHOOL_API_SECRET_TOKEN=hacker_school_api_secret
 
 # If you want to develop against a local copy of the Hacker School API, add:
@@ -63,7 +63,7 @@ JASMINE_CONFIG_PATH=test/javascripts/support/jasmine.yml
 # MAILGUN_API_KEY=your_mailgun_api_key
 ```
 
-To generate a Hacker School client id and secret, go to your [Hacker School settings page](https://www.hackerschool.com/settings) and make a new OAuth app. The redirect url should be `http://localhost:5001/login/complete` (or your development host name if you don't develop off of localhost).
+To generate a Recurse Center client id and secret, go to your [Recurse Center settings page](https://www.recurse.com/settings) and make a new OAuth app. The redirect url should be `http://localhost:5001/login/complete` (or your development host name if you don't develop off of localhost).
 
 ## Running the code
 
@@ -110,6 +110,6 @@ $ bin/rake jasmine
 
 # License
 
-Copyright © 2014 Hacker School
+Copyright © 2015 the Recurse Center
 
 This software is licensed under the terms of the AGPL, Version 3. The complete license can be found at http://www.gnu.org/licenses/agpl-3.0.html.
