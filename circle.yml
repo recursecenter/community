@@ -6,6 +6,6 @@ machine:
     REDIS_URL: redis://localhost:6379
     JASMINE_CONFIG_PATH: test/javascripts/support/jasmine.yml
 
-test:
-  pre:
+checkout:
+  post:
     - cd client && lein cljsbuild once test
