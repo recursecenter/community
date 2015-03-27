@@ -7,7 +7,7 @@ class BatchNotificationJob
 
   def perform
     User.where(id: @ids).each do |u|
-      NotificationMailer.send(@method, u, *@args).deliver
+      NotificationMailer.send(@method, u, *@args).deliver_now
     end
   end
 end
