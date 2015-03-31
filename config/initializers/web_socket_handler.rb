@@ -31,6 +31,9 @@ private
   end
 
   class Session
+    include ActiveSupport::Configurable
+    include ActionController::RequestForgeryProtection
+
     def initialize(env)
       @env = env
       @ws = nil
@@ -57,8 +60,8 @@ private
 
     def authenticated?
       @req ||= Rack::Request.new(@env)
-      csrf_token = self["_csrf_token"]
-      csrf_token && csrf_token == @req.params["csrf_token"]
+
+      valid_authenticity_token?(self, @req.params["csrf_token"])
     end
 
     def current_user
