@@ -39,5 +39,5 @@ Rails.application.configure do
 
   config.action_mailer.default_url_options = { host: "localhost", port: "5001" }
 
-  config.active_support.test_order = :sorted
+  config.active_support.test_order = :random
 end
