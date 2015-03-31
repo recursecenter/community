@@ -43,6 +43,10 @@ private
       @env["rack.session"][k]
     end
 
+    def []=(k, v)
+      @env["rack.session"][k] = v
+    end
+
     def ws
       unless @ws
         raise "Cannot access Session#ws until after Session#hijack!"
