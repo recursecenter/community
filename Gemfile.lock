@@ -168,7 +168,7 @@ GEM
       thor (>= 0.18.1, < 2.0)
     rake (10.4.2)
     rdoc (4.2.0)
-    redcarpet (3.2.2)
+    redcarpet (3.2.3)
     redis (3.2.1)
     sass (3.4.13)
     sass-rails (5.0.3)
