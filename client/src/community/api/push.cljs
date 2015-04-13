@@ -37,7 +37,6 @@
                       (pubsub/-publish! pubsub (:feed message) message)))]
     (set! (.-onmessage ws) onmessage)))
 
-(def !ws-connection (atom nil))
 (def !ws-ready-state-log (atom []))
 
 (defn log-ready-state! [ws log]

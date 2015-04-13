@@ -1,16 +1,15 @@
 (defproject community "0.1.0-SNAPSHOT"
-  :dependencies [[org.clojure/clojure "1.6.0"]
-                 [org.clojure/clojurescript "0.0-2371"]
+  :dependencies [[org.clojure/clojure "1.7.0-beta1"]
+                 [org.clojure/clojurescript "0.0-3196"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
 
-                 [om "0.7.3"]
-                 [com.facebook/react "0.11.2"]
-                 [sablono "0.2.22"]
-                 [prismatic/om-tools "0.3.6"]]
+                 [org.omcljs/om "0.8.8"]
+                 [sablono "0.3.4"]
+                 [prismatic/om-tools "0.3.11"]]
 
   :jvm-opts ^:replace ["-Xmx512m" "-server"]
 
-  :plugins [[lein-cljsbuild "1.0.3"]]
+  :plugins [[lein-cljsbuild "1.0.5"]]
 
   :profiles {:dev {:source-paths ["src"]}}
 
@@ -32,4 +31,4 @@
                         :compiler {:output-to "../app/assets/javascripts/client-prod.js"
                                    :optimizations :advanced
                                    :pretty-print false
-                                   :externs ["react/externs/react.js" "marked-externs.js" "highlight-externs.js" "bootstrap-tooltip-externs.js"]}}]})
+                                   :externs ["marked-externs.js" "highlight-externs.js" "bootstrap-tooltip-externs.js"]}}]})

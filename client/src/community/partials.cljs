@@ -20,7 +20,8 @@
                                     (.preventDefault e)
                                     (if (routes/open-in-new-window? e)
                                       (window/open path)
-                                      (routes/redirect-to path))))})
+                                      (routes/redirect-to path))
+                                    nil))})
        body])))
 
 ;;; Marked configuration (Markdown parsing/rendering)

@@ -51,8 +51,8 @@
        [:button.close.notification-close
         {:onClick (fn [e]
                     (.preventDefault e)
-                    (on-remove e)
-                    false)
+                    (.stopPropogation e)
+                    (on-remove e))
          :title "Remove"}
         "×"]
        (notification-summary notification)])))

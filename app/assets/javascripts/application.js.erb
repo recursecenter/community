@@ -17,12 +17,6 @@
 //
 //= require bootstrap/dropdown
 
-<% if Community.client_env.production? %>
-   <% require_asset "react-0.11.2.min" %>
-<% else %>
-   <% require_asset "react-0.11.2" %>
-<% end %>
-
 // The development version is in the layout to make source maps work
 <% if Community.client_env.production? %>
     <% require_asset "client-prod" %>

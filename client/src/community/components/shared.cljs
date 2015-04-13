@@ -19,8 +19,8 @@
     (html [:h1 "Page not found"])))
 
 (defcomponent resizing-textarea [{:keys [value]}
-                                           owner
-                                           {:keys [passthrough focus?]}]
+                                 owner
+                                 {:keys [passthrough focus?]}]
   (display-name [_] "ResizingTextArea")
 
   (did-mount [this]
@@ -103,12 +103,12 @@
            [:div.btn-group.full-size {:class [(if menu-showing? "open")
                                               (if should-drop-down? "dropdown" "dropup")]}
             [:ul.dropdown-menu {:ref "dropdown-menu"}
-             (for [{:keys [value selected?]} ac-selections]
+             (for [{selected? :selected? v :value} ac-selections]
                [:li {:class (if selected? "active")}
                 [:a {:href "#" :onClick (fn [e]
                                           (.preventDefault e)
-                                          (insert value))}
-                 value]])]
+                                          (insert v))}
+                 v]])]
             [:textarea (merge passthrough
                               {:value value
                                :ref "textarea"
