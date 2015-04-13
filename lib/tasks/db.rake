@@ -8,7 +8,6 @@ namespace :db do
     if forker.has_fork?
       puts "#{forker.fork_name} already exists. Run `bin/rake db:fork:drop` to drop it."
     elsif forker.fork!
-      system("bin/spring stop >/dev/null")
       puts "#{forker.fork_name} forked from #{forker.base_name}. Remember to restart foreman."
     else
       puts "There was an error while forking #{forker.base_name}"
@@ -29,7 +28,6 @@ namespace :db do
 
       if forker.has_fork?
         if forker.drop_fork!
-          system("bin/spring stop >/dev/null")
           puts "Dropped #{forker.fork_name}"
         else
           puts "There was an error while dropping #{forker.fork_name}."

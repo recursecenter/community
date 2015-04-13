@@ -8,6 +8,8 @@ module Searchable
     include Elasticsearch::Model
     after_commit :upsert_to_search_index!
 
+    index_name "#{table_name}_#{Rails.env}"
+
     # Configure index to serve completion suggestions.
     settings index: {number_of_shards: 1} do
       mappings dynamic: 'true' do
@@ -38,7 +40,7 @@ module Searchable
     def suggest(user, search_string)
       suggest_query = {suggestions: {text: search_string.downcase, completion: {field: "suggest"}}}
 
-      suggestions = __elasticsearch__.client.suggest(index: table_name, body: suggest_query)["suggestions"]
+      suggestions = __elasticsearch__.client.suggest(index: index_name, body: suggest_query)["suggestions"]
 
       suggestions.first["options"].select do |suggestion|
         suggestion["payload"]["required_role_ids"] - user.role_ids == []
