@@ -56,11 +56,9 @@ class Api::Private::EmailWebhooksController < Api::ApiController
       head 406 and return
     end
 
-    if emailed_post.mark_as_visited(current_user)
-      head 200
-    else
-      head 406
-    end
+    emailed_post.mark_as_visited(current_user)
+
+    head 200
   end
 
 private

@@ -45,7 +45,7 @@ class Api::Private::EmailWebhooksControllerTest < ActionController::TestCase
     visited_status.update(last_post_number_read: posts(:zach_post_1).post_number + 1)
 
     post :opened, mailgun_origin_params.merge({reply_info: @reply_info})
-    assert_response 406
+    assert_response 200
 
     visited_status.reload
 
