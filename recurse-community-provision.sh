@@ -36,15 +36,13 @@ su - vagrant -c 'gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275
 su - vagrant -c 'curl -sSL https://get.rvm.io | bash -s stable --ruby'
 su - vagrant -c 'rvm rvmrc warning ignore allGemfiles'
 su - vagrant -c 'rvm install ruby-2.2.2'
-
-#bundler and foreman
-sudo gem install bundler
-sudo gem install foreman
  
 echo "All done installing!
 
 Next steps: type 'vagrant ssh' to log into the machine.
 			type 'cd /vagrant'
 			fix your .env file as described in README.md
+			type 'gem install bundler'
+			type 'gem install foreman'
 			type 'bundle'
 			type 'bin/rake db:setup'"
