@@ -29,13 +29,13 @@ sudo apt-get install -y redis-server
 
 # elasticsearch
 sudo apt-get install elasticsearch
+sudo update-rc.d elasticsearch defaults 95 10
 sudo /etc/init.d/elasticsearch start
  
 # rvm and ruby
 su - vagrant -c 'gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3'
-su - vagrant -c 'curl -sSL https://get.rvm.io | bash -s stable --ruby'
+su - vagrant -c 'curl -sSL https://get.rvm.io | bash -s stable --ruby=2.2.2'
 su - vagrant -c 'rvm rvmrc warning ignore allGemfiles'
-su - vagrant -c 'rvm install ruby-2.2.2'
  
 echo "All done installing!
 
