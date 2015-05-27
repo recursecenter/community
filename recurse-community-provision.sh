@@ -4,6 +4,12 @@ sudo locale-gen en_US.UTF-8
 sudo update-locale LANG=en_US.UTF-8
 sudo update-locale LC_ALL=en_US.UTF-8
  
+sudo apt-get install -y python-software-properties
+sudo add-apt-repository -y ppa:rwky/redis
+
+su - vagrant -c 'wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -'
+su - vagrant -c 'echo "deb http://packages.elastic.co/elasticsearch/1.4/debian stable main" | sudo tee -a /etc/apt/sources.list'
+
 sudo apt-get update
 sudo apt-get install -y build-essential git curl libxslt1-dev libxml2-dev libssl-dev postgresql-9.3 libpq-dev nodejs leiningen
  
@@ -19,15 +25,9 @@ sudo /etc/init.d/postgresql restart
 sudo su - postgres -c 'createuser -s vagrant'
  
 # redis
-sudo apt-get install -y python-software-properties
-sudo add-apt-repository -y ppa:rwky/redis
-sudo apt-get update
 sudo apt-get install -y redis-server
 
 # elasticsearch
-su - vagrant -c 'wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -'
-su - vagrant -c 'echo "deb http://packages.elastic.co/elasticsearch/1.4/debian stable main" | sudo tee -a /etc/apt/sources.list'
-sudo apt-get update
 sudo apt-get install elasticsearch
 sudo /etc/init.d/elasticsearch start
  
