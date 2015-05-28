@@ -34,6 +34,7 @@
   (let [hours (.getHours date)
         mins (.getMinutes date)]
     (cond (= hours 0) (str "12:" (pad-time mins) "am")
+          (= hours 12) (str "12:" (pad-time mins) "pm")
           (> hours 12) (str (- hours 12) ":" (pad-time mins) "pm")
           :else (str hours ":" (pad-time mins) "am"))))
 
