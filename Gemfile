@@ -52,7 +52,7 @@ end
 # Use puma as the app server
 gem 'puma'
 gem 'faye-websocket'
-gem 'eventmachine'
+gem 'eventmachine', git: 'https://github.com/recursecenter/eventmachine.git', branch: 'smtp-client-escape-dots'
 
 gem 'em-pg-client'
 

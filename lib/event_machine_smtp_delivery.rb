@@ -22,7 +22,7 @@ class EventMachineSmtpDelivery
             async_enqueue em_delivery, run_at: delay(attempt_number)
           else
             async_insert_failed_job em_delivery, e
-            Rails.logger.error("EventMachineSmtpDelivery Failure:\nTo: #{em_smtp_options[:to]}\n\n#{em_smtp_options[:content]}")
+            Rails.logger.error("EventMachineSmtpDelivery Failure:\nTo: #{em_smtp_options[:to]}\n\n#{em_smtp_options[:message]}")
           end
         end
       end
@@ -139,7 +139,7 @@ class EventMachineSmtpDelivery
       options[:to] = message.to
     end
 
-    options[:content] = "#{message.to_s}\r\n.\r\n"
+    options[:message] = message.to_s
 
     self.class.send_smtp(options, 1, settings[:max_attempts])
   end

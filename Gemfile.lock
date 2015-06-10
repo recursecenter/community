@@ -1,3 +1,10 @@
+GIT
+  remote: https://github.com/recursecenter/eventmachine.git
+  revision: ba7179b5bad5f6fee1fd23b88c3a9520dbc6636f
+  branch: smtp-client-escape-dots
+  specs:
+    eventmachine (1.0.7)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -71,7 +78,6 @@ GEM
       eventmachine (~> 1.0.0)
       pg (>= 0.17.0)
     erubis (2.7.0)
-    eventmachine (1.0.7)
     execjs (2.4.0)
     faraday (0.9.1)
       multipart-post (>= 1.2, < 3)
@@ -222,7 +228,7 @@ DEPENDENCIES
   elasticsearch-model
   elasticsearch-rails
   em-pg-client
-  eventmachine
+  eventmachine!
   faye-websocket
   font-awesome-sass
   jasmine
