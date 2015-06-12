@@ -1,7 +1,7 @@
 GIT
   remote: https://github.com/recursecenter/eventmachine.git
-  revision: a3d13c70b2aa5f0a2a872fcb870e3f8c3ddd65bd
-  branch: smtp-client-escape-dots
+  revision: 97f977072b7e1939770db86e0b3c686999d11cf4
+  ref: 97f977072b7e1939770db86e0b3c686999d11cf4
   specs:
     eventmachine (1.0.7)
 
