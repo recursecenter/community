@@ -51,7 +51,7 @@
        [:button.close.notification-close
         {:onClick (fn [e]
                     (.preventDefault e)
-                    (.stopPropogation e)
+                    (.stopPropagation e)
                     (on-remove e))
          :title "Remove"}
         "×"]
