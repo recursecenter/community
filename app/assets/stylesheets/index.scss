@@ -1,8 +1,12 @@
 #subforum-index {
   .quick-links {
-    @include make-sm-column(12);
-    margin-top: 0;
-    margin-bottom: 3em;
+    max-width: 600px;
+    margin: 0 auto 3em auto;
+
+    > li {
+      display: inline-block;
+      border-right: none;
+    }
   }
 
   ul.subforums {
