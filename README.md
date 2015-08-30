@@ -6,7 +6,7 @@ Community is a hybrid forum and mailing list server.
 
 ## Dependencies
 
-- Ruby 2.2.1
+- Ruby 2.2.2
   - bundler
   - foreman
 - Postgres 9.3.5
@@ -14,26 +14,42 @@ Community is a hybrid forum and mailing list server.
 - leiningen
 - Elasticsearch
 
-### Installing dependencies on OS X using rvm, Homebrew, and Postgres.app
+Also, note that because Community is tied to the Recurse Center API, you'll need to be a Recurser to run this.
 
-We recommend [Postgres.app](http://postgresapp.com/) if you're on OS X.
+### Installing dependencies on OS X
 
-**Ruby stuff using rvm:**
+**Postgres:**
+
+We recommend [Postgres.app](http://postgresapp.com/).
+
+**Ruby (using rvm):**
 
 ```sh
+# if you don't already have rvm, follow the instructions at https://rvm.io
 $ rvm get stable
-$ rvm install ruby-2.2.1
-$ rvm use ruby-2.2.1
-$ gem install bundler
-$ gem install foreman
+$ rvm install ruby-2.2.2
+$ rvm use ruby-2.2.2
 ```
 
-**Leiningen and redis using Homebrew:**
+**Leiningen and redis (using Homebrew):**
 
 ```sh
+# if you don't already have homebrew, follow the instructions at https://brew.sh
 $ brew update
 $ brew install leiningen redis elasticsearch
-# follow the printed instructions to have redis and elasticsearch start automatically on boot
+# if you'd rather not start redis-server and elasticsearch every time before hacking
+# on community, follow the printed instructions to have redis and elasticsearch
+# start automatically on boot
+```
+
+`elasticsearch` may fail to build if Java 1.7+ is not installed---if you run into this, you can just run:
+
+```sh
+# If you don't already have caskroom:
+$ brew install caskroom/cask/brew-cask
+# And then:
+$ brew cask install java
+$ brew install elasticsearch
 ```
 
 ## Configuration
@@ -47,6 +63,7 @@ PORT=5001
 RACK_ENV=development
 REDIS_URL=redis://localhost:6379
 
+# See below for instructions on getting this id and secret
 HACKER_SCHOOL_CLIENT_ID=your_client_id
 HACKER_SCHOOL_CLIENT_SECRET=your_client_secret
 
@@ -67,9 +84,12 @@ To generate a Recurse Center client id and secret, go to your [Recurse Center se
 
 ## Running the code
 
+Before doing anything, make sure that `redis-server`, `elasticsearch`, and `postgres` are running.
+
 The first time you run the code, install necessary gems and set up your database.
 
 ```sh
+$ gem install bundler foreman
 $ bundle
 $ bin/rake db:setup
 ```
@@ -83,6 +103,8 @@ $ foreman start
 $ cd client
 $ lein cljsbuild auto
 ```
+
+Lein can take as long as ~30 seconds to build all the Clojurescript, so be patient! This site won't work it's done. Once it's finished, you can visit the site at [localhost:5001](http://localhost:5001/).
 
 ### Running the production ClojureScript
 
