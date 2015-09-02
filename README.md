@@ -104,7 +104,7 @@ $ cd client
 $ lein cljsbuild auto
 ```
 
-Lein can take as long as ~30 seconds to build all the Clojurescript, so be patient! This site won't work it's done. Once it's finished, you can visit the site at [localhost:5001](http://localhost:5001/).
+Lein can take as long as ~30 seconds to build all the Clojurescript, so be patient! The site won't work until it's done. Once it's finished, you can visit it at [localhost:5001](http://localhost:5001/).
 
 ### Running the production ClojureScript
 
