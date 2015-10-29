@@ -66,6 +66,16 @@ class User < ActiveRecord::Base
     self.roles.include? Role.admin
   end
 
+  def deactivate
+    self.roles = []
+    subscriptions.where(subscribed: true).update_all(
+      subscribed: false,
+      reason: "Your account has been deactivated."
+    )
+
+    update!(deactivated: true)
+  end
+
   concerning :Searchable do
     def to_search_mapping
       user_data = {
