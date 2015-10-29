@@ -4,6 +4,8 @@ class Ability
   def initialize(user)
     @user = user
 
+    return if user.deactivated?
+
     can :me, User
 
     can :read, SubforumGroup
