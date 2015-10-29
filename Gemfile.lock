@@ -1,10 +1,3 @@
-GIT
-  remote: https://github.com/recursecenter/eventmachine.git
-  revision: 97f977072b7e1939770db86e0b3c686999d11cf4
-  ref: 97f977072b7e1939770db86e0b3c686999d11cf4
-  specs:
-    eventmachine (1.0.7)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -78,6 +71,7 @@ GEM
       eventmachine (~> 1.0.0)
       pg (>= 0.17.0)
     erubis (2.7.0)
+    eventmachine (1.0.8)
     execjs (2.4.0)
     faraday (0.9.1)
       multipart-post (>= 1.2, < 3)
@@ -229,7 +223,7 @@ DEPENDENCIES
   elasticsearch-model
   elasticsearch-rails
   em-pg-client
-  eventmachine!
+  eventmachine
   faye-websocket
   font-awesome-sass
   jasmine
@@ -253,3 +247,6 @@ DEPENDENCIES
   thread_safe
   uglifier (>= 1.3.0)
   web-console (~> 2.0)
+
+BUNDLED WITH
+   1.10.6
