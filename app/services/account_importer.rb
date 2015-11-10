@@ -93,7 +93,7 @@ class AccountImporter
 
     # currently_at_hacker_school? includes residents. hacker_schooler? does not.
     names += ["Welcome", "Housing"] if hacker_schooler? && batch_in_the_future?
-    names += ["New York", "455 Broadway"] if currently_at_hacker_school?
+    names += ["General", "New York", "455 Broadway"] if currently_at_hacker_school?
 
     names
   end
