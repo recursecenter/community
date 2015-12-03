@@ -22,6 +22,8 @@ class AccountImporter
   end
 
   def import
+    return if user.deactivated?
+
     User.transaction do
       set_or_update_user_data
       autosubscribe_to_subforums
