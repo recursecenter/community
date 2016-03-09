@@ -64,7 +64,7 @@ class AccountImporter
     end
 
     subforums.each do |subforum|
-      user.subscribe_to_unless_existing(subforum, "You are receiving emails because you were auto-subscribed when your account was created.")
+      user.subscribe_to_unless_existing(subforum, "You are receiving emails because you were auto-subscribed when your account was imported from recurse.com.")
     end
   end
 
@@ -117,6 +117,7 @@ class AccountImporter
     names += ["Welcome", "Housing"] if hacker_schooler? && batch_in_the_future?
     names += ["New York", "455 Broadway"] if currently_at_hacker_school?
     names += ["General"] if currently_at_hacker_school? && should_subscribe_to_general?
+    names += ["RC Start"] if rc_start_participant? || active_rc_start_mentor?
 
     names
   end
@@ -149,5 +150,9 @@ class AccountImporter
 
   def currently_at_hacker_school?
     user_data["currently_at_hacker_school"]
+  end
+
+  def active_rc_start_mentor?
+    user_data["active_rc_start_mentor"]
   end
 end
