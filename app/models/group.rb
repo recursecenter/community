@@ -15,6 +15,10 @@ class Group < ActiveRecord::Base
     where(name: "Faculty").first_or_create!
   end
 
+  def self.rc_start
+    where(name: "RC Start participants").first_or_create!
+  end
+
   def self.for_batch_api_data(batch_data)
     group = where(hacker_school_batch_id: batch_data["id"]).first_or_initialize
     group.name = batch_data["name"]

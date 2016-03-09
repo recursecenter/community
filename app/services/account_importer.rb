@@ -40,9 +40,14 @@ class AccountImporter
     user.last_name = user_data["last_name"]
     user.email = user_data["email"]
     user.avatar_url = user_data["image"] if user_data["has_photo"]
-    user.batch_name = user_data["batch"]["name"]
+    user.batch_name = user_data["community_affiliation"]
     user.groups = get_groups
     user.roles = get_roles
+
+    # The welcome message doesn't make sense for RC start participants. Hide it.
+    if rc_start_participant?
+      user.last_read_welcome_message_at = Time.zone.now
+    end
 
     user.save!
   end
@@ -59,12 +64,20 @@ class AccountImporter
     end
 
     subforums.each do |subforum|
-      user.subscribe_to_unless_existing(subforum, "You are receiving emails because you were auto-subscribed at the beginning of your batch.")
+      user.subscribe_to_unless_existing(subforum, "You are receiving emails because you were auto-subscribed when your account was created.")
     end
   end
 
   def get_groups
-    groups = [Group.everyone, Group.for_batch_api_data(user_data["batch"])]
+    groups = [Group.everyone]
+
+    if user_data["batch"]
+      groups += [Group.for_batch_api_data(user_data["batch"])]
+    end
+
+    if rc_start_participant?
+      groups += [Group.rc_start]
+    end
 
     if currently_at_hacker_school? || faculty?
       groups += [Group.current_hacker_schoolers]
@@ -80,11 +93,18 @@ class AccountImporter
   def get_roles
     roles = user.roles.to_set
 
-    roles << Role.everyone
+    if !rc_start_participant?
+      roles << Role.pre_batch
+    end
+
+    if rc_start_participant? || full_hacker_schooler?
+      roles << Role.rc_start
+    end
+
     roles << Role.full_hacker_schooler if full_hacker_schooler?
 
     if faculty?
-      roles |= [Role.everyone, Role.full_hacker_schooler, Role.admin]
+      roles |= [Role.pre_batch, Role.rc_start, Role.full_hacker_schooler, Role.admin]
     end
 
     roles.to_a
@@ -112,7 +132,11 @@ class AccountImporter
   end
 
   def full_hacker_schooler?
-    (Date.parse(user_data["batch"]["start_date"]) - 1.day).past?
+    user_data["batch"] && (Date.parse(user_data["batch"]["start_date"]) - 1.day).past?
+  end
+
+  def rc_start_participant?
+    user_data["is_rc_start_participant"]
   end
 
   def faculty?

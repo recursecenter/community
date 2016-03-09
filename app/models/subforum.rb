@@ -29,6 +29,7 @@ class Subforum < ActiveRecord::Base
   end
 
   validates :name, uniqueness: {case_sensitive: false}
+  validates :required_role_ids, length: {is: 1, message: "must have only one required role" }
 
   # we need to specify class_name because we want "thread" to be pluralized,
   # not "status".
