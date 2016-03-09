@@ -37,4 +37,22 @@ namespace :db do
       end
     end
   end
+
+  desc "Pull production data"
+  task :pull do
+    forker = DatabaseForker.new("community_development")
+    sh "dropdb #{forker.database_name}"
+    sh_without_rubyopt "heroku pg:pull DATABASE #{forker.database_name}"
+  end
+end
+
+def sh_without_rubyopt(cmd)
+  if env_had_key = ENV.has_key?("RUBYOPT")
+    old_rubyopt = ENV["RUBYOPT"]
+    ENV.delete("RUBYOPT")
+  end
+
+  sh cmd
+ensure
+  ENV["RUBYOPT"] = old_rubyopt if env_had_key
 end
