@@ -7,7 +7,7 @@ class SessionsController < ApplicationController
   def complete
     if params.has_key?(:code)
       token = client.auth_code.get_token(params[:code], redirect_uri: login_complete_url)
-      user_data = JSON.parse(token.get("/api/v1/people/me").body)
+      user_data = JSON.parse(token.get("/api/v1/people/me_community?secret_token=#{HackerSchool.secret_token}").body)
 
       user = AccountImporter.new(user_data).import
 
