@@ -75,6 +75,9 @@
                              {:keys [nowrap? title-link?] :or {nowrap? true title-link? true}}]
   (display-name [_] "SubforumInfo")
 
+  (should-update [_ next-props next-state]
+    (not= (dissoc subforum :new-thread) (dissoc next-props :new-thread)))
+
   (render [_]
     (html
       [:div.subforum-info
