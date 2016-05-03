@@ -69,25 +69,28 @@ class AccountImporter
   end
 
   def get_groups
-    groups = [Group.everyone]
+    groups = user.groups.to_set
+    groups << Group.everyone
 
     if user_data["batch"]
-      groups += [Group.for_batch_api_data(user_data["batch"])]
+      groups << Group.for_batch_api_data(user_data["batch"])
     end
 
     if rc_start_participant?
-      groups += [Group.rc_start]
+      groups << Group.rc_start
     end
 
     if currently_at_hacker_school? || faculty?
-      groups += [Group.current_hacker_schoolers]
+      groups << Group.current_hacker_schoolers
     end
 
     if faculty?
-      groups += [Group.faculty]
+      groups << Group.faculty
+    else
+      groups -= [Group.faculty]
     end
 
-    groups
+    groups.to_a
   end
 
   def get_roles
