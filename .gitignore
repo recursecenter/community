@@ -25,3 +25,7 @@ public/client
 .DS_Store
 
 *.swp
+
+# Ignore vagrant related files for future Contributors
+.vagrant
+package.box
