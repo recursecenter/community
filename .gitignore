@@ -25,3 +25,5 @@ public/client
 .DS_Store
 
 *.swp
+
+test/reports
