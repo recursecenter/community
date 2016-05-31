@@ -58,7 +58,7 @@
 (defn loading-icon [color]
   (html
     [:div.push-down.loading
-     [:i.fa.fa-spinner.fa-spin.fa-2x {:style {:color color}}]]))
+     [:i.fa.fa-spinner.fa-pulse.fa-2x {:style {:color color}}]]))
 
 (defn wrap-mentions
   "Wraps @mentions in a post body in <span class=\"at-mention\">"
