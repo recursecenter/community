@@ -80,8 +80,10 @@ class AccountImporter
       groups << Group.rc_start
     end
 
-    if currently_at_hacker_school? || faculty?
+    if currently_at_hacker_school?
       groups << Group.current_hacker_schoolers
+    else
+      groups -= [Group.current_hacker_schoolers]
     end
 
     if faculty?
