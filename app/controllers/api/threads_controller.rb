@@ -61,16 +61,13 @@ private
   end
 
   def subscription_hashes
-    now = Time.now
     to_be_subscribed.map do |user|
       {
         subscribed: true,
         user_id: user.id,
         subscribable_id: @thread.id,
         subscribable_type: @thread.class.name,
-        reason: "You are receiving emails because you were subscribed to this thread's subforum.",
-        created_at: now,
-        updated_at: now
+        reason: "You are receiving emails because you were subscribed to this thread's subforum."
       }
     end
   end
