@@ -49,6 +49,8 @@ GEM
     bootstrap-sass (3.1.1.1)
       sass (~> 3.2)
     builder (3.2.2)
+    bulk_insert (1.2.1)
+      activerecord (>= 4.1.0)
     cancancan (1.10.1)
     coderay (1.1.0)
     dalli (2.7.4)
@@ -225,6 +227,7 @@ PLATFORMS
 
 DEPENDENCIES
   bootstrap-sass (~> 3.1.1)
+  bulk_insert
   cancancan (~> 1.8)
   dalli
   delayed_job_active_record
