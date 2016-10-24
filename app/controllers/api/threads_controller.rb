@@ -17,19 +17,20 @@ class Api::ThreadsController < Api::ApiController
     @thread.transaction do
       @thread.save!
       @post = @thread.posts.create!(post_params)
+
+      if @thread.created_by.subscribe_on_create
+        @thread.created_by.subscribe_to(@thread, "You are receiving emails because you created this thread.")
+      end
+
+      if @post.broadcast_to_subscribers
+        Subscription.bulk_insert(values: subscription_hashes)
+      end
     end
+
     @autocomplete_users = User.select(:id, :first_name, :last_name).ordered_by_first_name
     @valid_broadcast_groups = valid_broadcast_groups
 
     Delayed::Job.enqueue NewThreadNotificationJob.new(@post, mentioned_user_ids)
-
-    if @thread.created_by.subscribe_on_create
-      @thread.created_by.subscribe_to(@thread, "You are receiving emails because you created this thread.")
-    end
-
-    if @post.broadcast_to_subscribers
-      subscribe_subforum_subscribers_to_new_thread
-    end
   end
 
   def pin
@@ -49,17 +50,28 @@ private
       merge(created_by: current_user, subforum: subforum)
   end
 
-  def subscribe_subforum_subscribers_to_new_thread
-    to_be_subscribed = User.joins(:subscriptions).
-      where.not(id: current_user).
-      where(subscribe_new_thread_in_subscribed_subforum: true, subscriptions: {subscribable: @thread.subforum, subscribed: true})
-
-    to_be_subscribed.each do |user|
-      user.subscribe_to(@thread, "You are receiving emails because you were subscribed to this thread's subforum.")
-    end
-  end
-
   def valid_broadcast_groups
     Group.all + [Group::Subscribers.new("Thread Subscribers")]
+  end
+
+  def to_be_subscribed
+    User.joins(:subscriptions).
+      where.not(id: current_user.id).
+      where(subscribe_new_thread_in_subscribed_subforum: true, subscriptions: {subscribable: @thread.subforum, subscribed: true})
+  end
+
+  def subscription_hashes
+    now = Time.now
+    to_be_subscribed.map do |user|
+      {
+        subscribed: true,
+        user_id: user.id,
+        subscribable_id: @thread.id,
+        subscribable_type: @thread.class.name,
+        reason: "You are receiving emails because you were subscribed to this thread's subforum.",
+        created_at: now,
+        updated_at: now
+      }
+    end
   end
 end

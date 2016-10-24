@@ -58,6 +58,7 @@ gem 'faye-websocket'
 gem 'eventmachine'
 
 gem 'em-pg-client'
+gem 'bulk_insert'
 
 gem 'thread_safe'
 
