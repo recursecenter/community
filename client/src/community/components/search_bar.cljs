@@ -92,7 +92,7 @@
                   (js/setTimeout
                    #(when (= text (get-in @app [:search-query :text]))
                       (controller/dispatch :update-search-suggestions text))
-                   100))))
+                   500))))
 
             (blur! []
               (.blur (om/get-node owner "search-box")))
