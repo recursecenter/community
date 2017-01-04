@@ -208,6 +208,6 @@
                 (om/build (routes/dispatch route-data) app))]]]
        [:footer
         [:ul.inline-links
-         [:li [:a {:href "https://github.com/hackerschool/community"} [:i.fa.fa-github-alt] " Code"]]
-         [:li [:a {:href "https://github.com/hackerschool/community/issues"} [:i.fa.fa-exclamation-circle] " Issues"]]
+         [:li [:a {:href "https://github.com/recursecenter/community"} [:i.fa.fa-github-alt] " Code"]]
+         [:li [:a {:href "https://github.com/recursecenter/community/issues"} [:i.fa.fa-exclamation-circle] " Issues"]]
          [:li "Made with " [:i.fa.fa-heart {:style {:color "red"}}] " at the " [:a {:href "https://www.recurse.com"} "Recurse Center"]]]]])))
