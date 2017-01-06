@@ -68,11 +68,7 @@ class User < ActiveRecord::Base
 
   def deactivate
     self.roles = []
-    subscriptions.where(subscribed: true).update_all(
-      subscribed: false,
-      reason: "Your account has been deactivated."
-    )
-
+    subscriptions.destroy_all
     update!(deactivated: true)
   end
 

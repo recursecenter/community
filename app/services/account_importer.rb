@@ -13,6 +13,17 @@ class AccountImporter
     end
   end
 
+  def self.sync_deactivated_accounts
+    open("#{HackerSchool.site}/api/v1/people/deactivated?secret_token=#{HackerSchool.secret_token}") do |f|
+      deactivated_ids = JSON.parse(f.read)
+      User.where(hacker_school_id: deactivated_ids).each do |user|
+        unless user.deactivated?
+          user.deactivate
+        end
+      end
+    end
+  end
+
   attr_reader :user, :user_data
   private :user, :user_data
 
@@ -22,7 +33,12 @@ class AccountImporter
   end
 
   def import
-    return if user.deactivated?
+    if @user_data["deactivated"]
+      # Only deactivate if this user already exists; otherwise just return
+      # and don't create the user at all
+      @user.deactivate if @user.persisted?
+      return
+    end
 
     User.transaction do
       set_or_update_user_data
@@ -35,6 +51,9 @@ class AccountImporter
   private
 
   def set_or_update_user_data
+    # We assume only active users will hit this method, so this
+    # handles reactivating an account if necessary
+    user.deactivated = false
     user.hacker_school_id = user_data["id"]
     user.first_name = user_data["first_name"]
     user.last_name = user_data["last_name"]
@@ -69,11 +88,11 @@ class AccountImporter
   end
 
   def get_groups
-    groups = user.groups.to_set
+    groups = Set.new
     groups << Group.everyone
 
-    if user_data["batch"]
-      groups << Group.for_batch_api_data(user_data["batch"])
+    user_data["batches"].each do |batch|
+      groups << Group.for_batch_api_data(batch)
     end
 
     if rc_start_participant?
