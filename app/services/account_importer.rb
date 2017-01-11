@@ -16,10 +16,8 @@ class AccountImporter
   def self.sync_deactivated_accounts
     open("#{HackerSchool.site}/api/v1/people/deactivated?secret_token=#{HackerSchool.secret_token}") do |f|
       deactivated_ids = JSON.parse(f.read)
-      User.where(hacker_school_id: deactivated_ids).each do |user|
-        unless user.deactivated?
-          user.deactivate
-        end
+      User.where(deactivated: false, hacker_school_id: deactivated_ids).each do |user|
+        user.deactivate
       end
     end
   end
