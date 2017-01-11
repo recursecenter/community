@@ -2,12 +2,16 @@
 -- PostgreSQL database dump
 --
 
+-- Dumped from database version 9.5.4
+-- Dumped by pg_dump version 9.5.4
+
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
+SET row_security = off;
 
 --
 -- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
@@ -44,7 +48,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: delayed_jobs; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: delayed_jobs; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE delayed_jobs (
@@ -83,7 +87,7 @@ ALTER SEQUENCE delayed_jobs_id_seq OWNED BY delayed_jobs.id;
 
 
 --
--- Name: discussion_threads; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: discussion_threads; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE discussion_threads (
@@ -120,7 +124,7 @@ ALTER SEQUENCE discussion_threads_id_seq OWNED BY discussion_threads.id;
 
 
 --
--- Name: group_memberships; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: group_memberships; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE group_memberships (
@@ -152,7 +156,7 @@ ALTER SEQUENCE group_memberships_id_seq OWNED BY group_memberships.id;
 
 
 --
--- Name: groups; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: groups; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE groups (
@@ -184,7 +188,7 @@ ALTER SEQUENCE groups_id_seq OWNED BY groups.id;
 
 
 --
--- Name: groups_posts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: groups_posts; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE groups_posts (
@@ -194,7 +198,7 @@ CREATE TABLE groups_posts (
 
 
 --
--- Name: notifications; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: notifications; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE notifications (
@@ -229,7 +233,7 @@ ALTER SEQUENCE notifications_id_seq OWNED BY notifications.id;
 
 
 --
--- Name: posts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: posts; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE posts (
@@ -265,7 +269,7 @@ ALTER SEQUENCE posts_id_seq OWNED BY posts.id;
 
 
 --
--- Name: roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: roles; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE roles (
@@ -296,7 +300,7 @@ ALTER SEQUENCE roles_id_seq OWNED BY roles.id;
 
 
 --
--- Name: roles_users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: roles_users; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE roles_users (
@@ -306,7 +310,7 @@ CREATE TABLE roles_users (
 
 
 --
--- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE schema_migrations (
@@ -315,7 +319,7 @@ CREATE TABLE schema_migrations (
 
 
 --
--- Name: subforum_groups; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: subforum_groups; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE subforum_groups (
@@ -347,7 +351,7 @@ ALTER SEQUENCE subforum_groups_id_seq OWNED BY subforum_groups.id;
 
 
 --
--- Name: subforums; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: subforums; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE subforums (
@@ -382,7 +386,7 @@ ALTER SEQUENCE subforums_id_seq OWNED BY subforums.id;
 
 
 --
--- Name: subscriptions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: subscriptions; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE subscriptions (
@@ -417,7 +421,7 @@ ALTER SEQUENCE subscriptions_id_seq OWNED BY subscriptions.id;
 
 
 --
--- Name: users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: users; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE users (
@@ -440,7 +444,7 @@ CREATE TABLE users (
 
 
 --
--- Name: visited_statuses; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: visited_statuses; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE visited_statuses (
@@ -555,7 +559,7 @@ ALTER SEQUENCE visited_statuses_id_seq OWNED BY visited_statuses.id;
 
 
 --
--- Name: welcome_messages; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: welcome_messages; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE welcome_messages (
@@ -677,7 +681,7 @@ ALTER TABLE ONLY welcome_messages ALTER COLUMN id SET DEFAULT nextval('welcome_m
 
 
 --
--- Name: delayed_jobs_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: delayed_jobs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY delayed_jobs
@@ -685,7 +689,7 @@ ALTER TABLE ONLY delayed_jobs
 
 
 --
--- Name: discussion_threads_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: discussion_threads_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY discussion_threads
@@ -693,7 +697,7 @@ ALTER TABLE ONLY discussion_threads
 
 
 --
--- Name: group_memberships_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: group_memberships_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY group_memberships
@@ -701,7 +705,7 @@ ALTER TABLE ONLY group_memberships
 
 
 --
--- Name: groups_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: groups_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY groups
@@ -709,7 +713,7 @@ ALTER TABLE ONLY groups
 
 
 --
--- Name: notifications_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: notifications_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY notifications
@@ -717,7 +721,7 @@ ALTER TABLE ONLY notifications
 
 
 --
--- Name: posts_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: posts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY posts
@@ -725,7 +729,7 @@ ALTER TABLE ONLY posts
 
 
 --
--- Name: roles_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: roles_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY roles
@@ -733,7 +737,7 @@ ALTER TABLE ONLY roles
 
 
 --
--- Name: subforum_groups_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: subforum_groups_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY subforum_groups
@@ -741,7 +745,7 @@ ALTER TABLE ONLY subforum_groups
 
 
 --
--- Name: subforums_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: subforums_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY subforums
@@ -749,7 +753,7 @@ ALTER TABLE ONLY subforums
 
 
 --
--- Name: subscriptions_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: subscriptions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY subscriptions
@@ -757,7 +761,7 @@ ALTER TABLE ONLY subscriptions
 
 
 --
--- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY users
@@ -765,7 +769,7 @@ ALTER TABLE ONLY users
 
 
 --
--- Name: visited_statuses_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: visited_statuses_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY visited_statuses
@@ -773,7 +777,7 @@ ALTER TABLE ONLY visited_statuses
 
 
 --
--- Name: welcome_messages_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: welcome_messages_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY welcome_messages
@@ -781,112 +785,112 @@ ALTER TABLE ONLY welcome_messages
 
 
 --
--- Name: delayed_jobs_priority; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: delayed_jobs_priority; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX delayed_jobs_priority ON delayed_jobs USING btree (priority, run_at);
 
 
 --
--- Name: index_discussion_threads_on_created_by_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_discussion_threads_on_created_by_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_discussion_threads_on_created_by_id ON discussion_threads USING btree (created_by_id);
 
 
 --
--- Name: index_discussion_threads_on_last_post_created_by_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_discussion_threads_on_last_post_created_by_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_discussion_threads_on_last_post_created_by_id ON discussion_threads USING btree (last_post_created_by_id);
 
 
 --
--- Name: index_discussion_threads_on_subforum_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_discussion_threads_on_subforum_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_discussion_threads_on_subforum_id ON discussion_threads USING btree (subforum_id);
 
 
 --
--- Name: index_notifications_on_mentioned_by_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_notifications_on_mentioned_by_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_notifications_on_mentioned_by_id ON notifications USING btree (mentioned_by_id);
 
 
 --
--- Name: index_notifications_on_post_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_notifications_on_post_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_notifications_on_post_id ON notifications USING btree (post_id);
 
 
 --
--- Name: index_notifications_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_notifications_on_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_notifications_on_user_id ON notifications USING btree (user_id);
 
 
 --
--- Name: index_posts_on_author_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_posts_on_author_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_posts_on_author_id ON posts USING btree (author_id);
 
 
 --
--- Name: index_posts_on_thread_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_posts_on_thread_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_posts_on_thread_id ON posts USING btree (thread_id);
 
 
 --
--- Name: index_roles_users_on_role_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_roles_users_on_role_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_roles_users_on_role_id ON roles_users USING btree (role_id);
 
 
 --
--- Name: index_roles_users_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_roles_users_on_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_roles_users_on_user_id ON roles_users USING btree (user_id);
 
 
 --
--- Name: index_subscriptions_on_subscribable_id_and_subscribable_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_subscriptions_on_subscribable_id_and_subscribable_type; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_subscriptions_on_subscribable_id_and_subscribable_type ON subscriptions USING btree (subscribable_id, subscribable_type);
 
 
 --
--- Name: index_users_on_hacker_school_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_users_on_hacker_school_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_users_on_hacker_school_id ON users USING btree (hacker_school_id);
 
 
 --
--- Name: index_visited_statuses_on_thread_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_visited_statuses_on_thread_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_visited_statuses_on_thread_id ON visited_statuses USING btree (thread_id);
 
 
 --
--- Name: index_visited_statuses_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_visited_statuses_on_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_visited_statuses_on_user_id ON visited_statuses USING btree (user_id);
 
 
 --
--- Name: unique_schema_migrations; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: unique_schema_migrations; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (version);
@@ -896,7 +900,7 @@ CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (v
 -- PostgreSQL database dump complete
 --
 
-SET search_path TO "$user",public;
+SET search_path TO "$user", public;
 
 INSERT INTO schema_migrations (version) VALUES ('20140510214628');
 
@@ -995,4 +999,6 @@ INSERT INTO schema_migrations (version) VALUES ('20160309191432');
 INSERT INTO schema_migrations (version) VALUES ('20160309194007');
 
 INSERT INTO schema_migrations (version) VALUES ('20160309194724');
+
+INSERT INTO schema_migrations (version) VALUES ('20170111160452');
 
