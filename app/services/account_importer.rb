@@ -33,13 +33,6 @@ class AccountImporter
   end
 
   def import
-    if @user_data["deactivated"]
-      # Only deactivate if this user already exists; otherwise just return
-      # and don't create the user at all
-      @user.deactivate if @user.persisted?
-      return
-    end
-
     User.transaction do
       set_or_update_user_data
       autosubscribe_to_subforums
