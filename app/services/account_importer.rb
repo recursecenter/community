@@ -106,7 +106,7 @@ class AccountImporter
   end
 
   def get_roles
-    roles = user.roles.to_set
+    roles = Set.new
 
     if !rc_start_participant?
       roles << Role.pre_batch
@@ -148,7 +148,11 @@ class AccountImporter
   end
 
   def full_hacker_schooler?
-    user_data["batch"] && (Date.parse(user_data["batch"]["start_date"]) - 1.day).past?
+    stint_started = user_data["stints"].any? do |stint|
+      stint["type"] == "residency" || stint["type"] == "retreat" && (Date.parse(stint["start_date"]) - 1.day).past?
+    end
+
+    stint_started || user_data["batch"] && (Date.parse(user_data["batch"]["start_date"]) - 1.day).past?
   end
 
   def rc_start_participant?
