@@ -106,7 +106,7 @@ class AccountImporter
   end
 
   def get_roles
-    roles = user.roles.to_set
+    roles = Set.new
 
     if !rc_start_participant?
       roles << Role.pre_batch
