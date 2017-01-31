@@ -148,9 +148,11 @@ class AccountImporter
   end
 
   def full_hacker_schooler?
-    user_data["stints"].any? do |stint|
+    stint_started = user_data["stints"].any? do |stint|
       stint["type"] == "residency" || stint["type"] == "retreat" && (Date.parse(stint["start_date"]) - 1.day).past?
     end
+
+    stint_started || user_data["batch"] && (Date.parse(user_data["batch"]["start_date"]) - 1.day).past?
   end
 
   def rc_start_participant?
