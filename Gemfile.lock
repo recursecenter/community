@@ -63,17 +63,17 @@ GEM
     dotenv (2.0.0)
     dotenv-rails (2.0.0)
       dotenv (= 2.0.0)
-    elasticsearch (1.0.8)
-      elasticsearch-api (= 1.0.7)
-      elasticsearch-transport (= 1.0.7)
-    elasticsearch-api (1.0.7)
+    elasticsearch (2.0.1)
+      elasticsearch-api (= 2.0.1)
+      elasticsearch-transport (= 2.0.1)
+    elasticsearch-api (2.0.1)
       multi_json
     elasticsearch-model (0.1.6)
       activesupport (> 3)
       elasticsearch (> 0.4)
       hashie
     elasticsearch-rails (0.1.6)
-    elasticsearch-transport (1.0.7)
+    elasticsearch-transport (2.0.1)
       faraday
       multi_json
     em-pg-client (0.3.4)
@@ -82,7 +82,7 @@ GEM
     erubis (2.7.0)
     eventmachine (1.0.8)
     execjs (2.4.0)
-    faraday (0.9.1)
+    faraday (0.9.2)
       multipart-post (>= 1.2, < 3)
     faye-websocket (0.9.2)
       eventmachine (>= 0.12.0)
@@ -232,7 +232,7 @@ DEPENDENCIES
   dalli
   delayed_job_active_record
   dotenv-rails
-  elasticsearch
+  elasticsearch (~> 2.0)
   elasticsearch-model
   elasticsearch-rails
   em-pg-client
@@ -266,4 +266,4 @@ RUBY VERSION
    ruby 2.3.1p112
 
 BUNDLED WITH
-   1.12.5
+   1.13.6
