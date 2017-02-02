@@ -62,6 +62,6 @@ gem 'bulk_insert'
 
 gem 'thread_safe'
 
-gem 'elasticsearch'
+gem 'elasticsearch', '~> 2.0'
 gem 'elasticsearch-model'
 gem 'elasticsearch-rails'

@@ -13,7 +13,7 @@ module Searchable
     # Configure index to serve completion suggestions.
     settings index: {number_of_shards: 1} do
       mappings dynamic: 'true' do
-        indexes :suggest, type: :completion, index_analyzer: :whitespace, search_analyzer: :whitespace, payloads: true
+        indexes :suggest, type: :completion, analyzer: :whitespace, search_analyzer: :whitespace, payloads: true
       end
     end
   end
