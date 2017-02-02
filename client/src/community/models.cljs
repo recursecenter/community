@@ -50,6 +50,7 @@
 
 (defn names->mention-regexp [names]
   (let [names-with-pipes (->> names
+                              (sort-by #(- (count %)))
                               (map #(str "(" (escape-regexp-chars %) ")"))
                               (str/join "|"))]
     (js/RegExp. (str "@(" names-with-pipes ")") "gi")))
