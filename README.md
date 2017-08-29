@@ -8,7 +8,7 @@ Community is a hybrid forum and mailing list server.
 
 - Ruby 2.4.1
   - bundler
-- Postgres 9.4.5
+- Postgres 9.5.4
 - redis
 - leiningen
 - Elasticsearch 2.4
