@@ -11,7 +11,7 @@ Community is a hybrid forum and mailing list server.
 - Postgres 9.4.5
 - redis
 - leiningen
-- Elasticsearch
+- Elasticsearch 2.4
 
 Also, note that because Community is tied to the Recurse Center API, you'll need to be a Recurser to run this.
 
