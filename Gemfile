@@ -36,13 +36,13 @@ gem 'jquery-rails'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.0'
 # bundle exec rake doc:rails generates the API under doc/api.
-gem 'sdoc', '~> 0.4.0',          group: :doc
+# gem 'sdoc', '~> 0.4.0',          group: :doc
 
 gem 'pry-rails'
 
 group :development do
   gem 'pry-remote'
-  gem 'web-console', '~> 2.0'
+  gem 'web-console'
 end
 
 group :development, :test do
@@ -62,5 +62,5 @@ gem 'bulk_insert'
 gem 'thread_safe'
 
 gem 'elasticsearch', '~> 2.0'
-gem 'elasticsearch-model'
-gem 'elasticsearch-rails'
+gem 'elasticsearch-model', '~> 2.0'
+gem 'elasticsearch-rails', '~> 2.0'
