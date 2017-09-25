@@ -6,7 +6,7 @@ Community is a hybrid forum and mailing list server.
 
 ## Dependencies
 
-- Ruby 2.4.1
+- Ruby 2.4.2
   - bundler
 - Postgres 9.5.4
 - redis
@@ -26,8 +26,8 @@ We recommend [Postgres.app](http://postgresapp.com/).
 ```sh
 # if you don't already have rvm, follow the instructions at https://rvm.io
 $ rvm get stable
-$ rvm install ruby-2.4.1
-$ rvm use ruby-2.4.1
+$ rvm install ruby-2.4.2
+$ rvm use ruby-2.4.2
 ```
 
 **Leiningen and redis (using Homebrew):**
