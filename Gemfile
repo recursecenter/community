@@ -43,6 +43,7 @@ gem 'pry-rails'
 group :development do
   gem 'pry-remote'
   gem 'web-console'
+  gem 'listen'
 end
 
 group :development, :test do
