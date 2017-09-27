@@ -153,6 +153,7 @@ GEM
     rack (2.0.3)
     rack-test (0.6.3)
       rack (>= 1.0)
+    rack-timeout (0.4.2)
     rails (5.0.5)
       actioncable (= 5.0.5)
       actionmailer (= 5.0.5)
@@ -253,6 +254,7 @@ DEPENDENCIES
   pry-rails
   pry-remote
   puma
+  rack-timeout
   rails (= 5.0.5)
   rails_12factor
   redcarpet

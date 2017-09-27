@@ -56,6 +56,7 @@ end
 gem 'puma'
 gem 'faye-websocket'
 gem 'eventmachine'
+gem 'rack-timeout'
 
 gem 'em-pg-client'
 gem 'bulk_insert'

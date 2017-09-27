@@ -14,12 +14,7 @@ module Community
 
     config.active_record.schema_format = :sql
 
-    config.active_record.raise_in_transactional_callbacks = true
-
     config.middleware.use "WebSocketHandler"
-    if Rails.env.production?
-      config.middleware.use "Rack::Timeout"
-    end
   end
 end
 
