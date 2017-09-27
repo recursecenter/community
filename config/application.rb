@@ -6,6 +6,8 @@ require 'rails/all'
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+require_relative '../lib/web_socket_handler'
+
 module Community
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.
@@ -14,7 +16,7 @@ module Community
 
     config.active_record.schema_format = :sql
 
-    config.middleware.use "WebSocketHandler"
+    config.middleware.use WebSocketHandler
   end
 end
 
