@@ -16,6 +16,8 @@ module Community
 
     config.active_record.schema_format = :sql
 
+    config.active_job.queue_adapter = :delayed_job
+
     config.middleware.use WebSocketHandler
   end
 end
