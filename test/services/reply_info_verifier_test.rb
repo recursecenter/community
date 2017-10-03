@@ -16,7 +16,7 @@ class ReplyInfoVerifierTest < ActiveSupport::TestCase
   end
 
   test "v2: generated info is case-insensitive" do
-    assert_nothing_raised ReplyInfoVerifier::InvalidSignature do
+    assert_nothing_raised do
       assert_equal [@user, @post], ReplyInfoVerifier.verify(@info.downcase)
       assert_equal [@user, @post], ReplyInfoVerifier.verify(@info.upcase)
     end
