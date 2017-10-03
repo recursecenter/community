@@ -27,7 +27,7 @@ gem 'uglifier', '>= 1.3.0'
 gem 'rails_12factor', group: [:development, :production]
 
 gem 'oauth2'
-gem 'cancancan', '~> 1.8'
+gem 'cancancan', '~> 2.0'
 
 gem 'redcarpet'
 

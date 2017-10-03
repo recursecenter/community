@@ -1,5 +1,5 @@
 class Api::ApiController < ApplicationController
-  before_filter :require_login
+  before_action :require_login
 
   check_authorization
   rescue_from CanCan::AccessDenied do |e|
