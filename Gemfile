@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 ruby '2.4.2'
 
-gem 'rails', '5.0.5'
+gem 'rails', '5.1.4'
 gem 'pg'
 
 gem 'redis'
