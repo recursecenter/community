@@ -1,4 +1,6 @@
 machine:
+  ruby:
+    version: 2.4.2
   services:
     - redis
   environment:
@@ -8,7 +10,6 @@ machine:
 dependencies:
   cache_directories:
     - elasticsearch-2.4.6
-    - ~/.rvm
 
   post:
     - if [[ ! -e elasticsearch-2.4.6 ]]; then wget https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.4.6/elasticsearch-2.4.6.tar.gz && tar -xvf elasticsearch-2.4.6.tar.gz; fi
