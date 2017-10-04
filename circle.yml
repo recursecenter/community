@@ -9,3 +9,4 @@ machine:
 checkout:
   post:
     - cd client && lein cljsbuild once test
+    - bin/rails search:rebuild
