@@ -6,10 +6,12 @@ class Api::ThreadsControllerTest < ActionController::TestCase
     login(:dave)
 
     assert_difference('DiscussionThread.count', +1) do
-      post :create, format: :json, subforum_id: subforum.id,
+      post :create, format: :json, params: {
+        subforum_id: subforum.id,
         thread: {title: "A new thread"},
         post: {body: "A new post"},
         broadcast_to: [Group::Subscribers::ID]
+      }
     end
 
     assert Subscription.where(user: users(:full_hacker_schooler),
@@ -25,9 +27,11 @@ class Api::ThreadsControllerTest < ActionController::TestCase
     login(:dave)
 
     assert_difference('DiscussionThread.count', +1) do
-      post :create, format: :json, subforum_id: subforum.id,
+      post :create, format: :json, params: {
+        subforum_id: subforum.id,
         thread: {title: "A new thread"},
         post: {body: "A new post"}
+      }
     end
 
     assert_not DiscussionThread.last.subscription_for(user).subscribed
