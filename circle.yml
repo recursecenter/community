@@ -9,4 +9,5 @@ machine:
 checkout:
   post:
     - cd client && lein cljsbuild once test
+    - bundle install
     - bin/rails search:rebuild
