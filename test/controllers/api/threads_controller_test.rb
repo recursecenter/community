@@ -1,3 +1,5 @@
+require 'test_helper'
+
 class Api::ThreadsControllerTest < ActionController::TestCase
   test "User#subscribe_new_thread_in_subscribed_subforum is true and a new thread is made" do
     subforum = subforums(:programming)
