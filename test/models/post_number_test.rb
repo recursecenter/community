@@ -3,7 +3,7 @@ require 'test_helper'
 class PostNumberTest < ActiveSupport::TestCase
   # This test is multi-threaded and thus (we think) can't use
   # transactional fixtures.
-  self.use_transactional_fixtures = false
+  self.use_transactional_tests = false
 
   test "posts created concurrently have monotonically increasing post numbers" do
     t = subforums(:programming).threads.create!(created_by: users(:zach), title: "A new thread")
