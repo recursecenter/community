@@ -17,5 +17,4 @@ dependencies:
 checkout:
   post:
     - cd client && lein cljsbuild once test
-    - bundle install
     - RAILS_ENV=test bin/rails search:create_indexes
