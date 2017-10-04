@@ -10,4 +10,4 @@ checkout:
   post:
     - cd client && lein cljsbuild once test
     - bundle install
-    - bin/rails search:rebuild
+    - RAILS_ENV=test bin/rails search:rebuild
