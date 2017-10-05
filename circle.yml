@@ -14,6 +14,10 @@ dependencies:
     - elasticsearch-2.4.6/bin/elasticsearch: {background: true}
     - sleep 10 && wget --waitretry=5 --retry-connrefused -v http://127.0.0.1:9200/
 
+database:
+  post:
+    - bin/rails search:rebuild
+
 compile:
   post:
     - cd client && lein cljsbuild once test
