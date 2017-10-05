@@ -60,6 +60,7 @@ a sample `.env` file to get you started:
 ```sh
 PORT=5001
 RACK_ENV=development
+RAILS_LOG_TO_STDOUT=enabled
 REDIS_URL=redis://localhost:6379
 
 # See below for instructions on getting this id and secret
