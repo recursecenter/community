@@ -4,7 +4,7 @@ class Api::SearchController < Api::ApiController
   def search
     @current_page = [params[:page].to_i, 1].max
     @query = params[:q]
-    @filters = params[:filters]
+    @filters = params[:filters]&.permit(:author, :thread, :subforum)&.to_h
 
     # TODO: This might have to change when we are able to compose queries/filters.
     if @filters.present? && @filters[:author].present? && @query.blank?
