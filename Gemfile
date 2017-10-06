@@ -20,7 +20,6 @@ gem 'bootstrap-sass', '~> 3.1.1'
 gem 'font-awesome-sass'
 
 gem 'sprockets', '~> 3.7.1'
-gem 'bootsnap', require: false
 
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
@@ -51,6 +50,7 @@ group :development, :test do
   gem 'jasmine'
   gem 'dotenv-rails'
   gem 'minitest-ci', git: 'https://github.com/circleci/minitest-ci.git'
+  gem 'bootsnap', require: false
 end
 
 # Use puma as the app server
