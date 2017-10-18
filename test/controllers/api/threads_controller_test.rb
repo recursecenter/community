@@ -1,3 +1,5 @@
+require 'test_helper'
+
 class Api::ThreadsControllerTest < ActionController::TestCase
   test "User#subscribe_new_thread_in_subscribed_subforum is true and a new thread is made" do
     subforum = subforums(:programming)
@@ -6,10 +8,12 @@ class Api::ThreadsControllerTest < ActionController::TestCase
     login(:dave)
 
     assert_difference('DiscussionThread.count', +1) do
-      post :create, format: :json, subforum_id: subforum.id,
+      post :create, format: :json, params: {
+        subforum_id: subforum.id,
         thread: {title: "A new thread"},
         post: {body: "A new post"},
         broadcast_to: [Group::Subscribers::ID]
+      }
     end
 
     assert Subscription.where(user: users(:full_hacker_schooler),
@@ -25,9 +29,11 @@ class Api::ThreadsControllerTest < ActionController::TestCase
     login(:dave)
 
     assert_difference('DiscussionThread.count', +1) do
-      post :create, format: :json, subforum_id: subforum.id,
+      post :create, format: :json, params: {
+        subforum_id: subforum.id,
         thread: {title: "A new thread"},
         post: {body: "A new post"}
+      }
     end
 
     assert_not DiscussionThread.last.subscription_for(user).subscribed

@@ -1,11 +1,19 @@
-workers Integer(ENV['PUMA_WORKERS'] || 1)
-threads Integer(ENV['MIN_THREADS']  || 1), Integer(ENV['MAX_THREADS'] || 1)
+threads_count = Integer(ENV['RAILS_MAX_THREADS'] || 1)
+
+workers Integer(ENV['WEB_CONCURRENCY'] || 1)
+threads threads_count, threads_count
 
 preload_app!
 
 rackup      DefaultRackup
 port        ENV['PORT']     or raise 'Please set ENV["PORT"]'
 environment ENV['RACK_ENV'] || 'development'
+
+quiet
+
+before_fork do
+  ActiveRecord::Base.connection.disconnect!
+end
 
 on_worker_boot do
   # worker specific setup
@@ -18,3 +26,6 @@ on_worker_boot do
     ActiveRecord::Base.establish_connection(config)
   end
 end
+
+# Allow puma to be restarted by `rails restart` command.
+plugin :tmp_restart

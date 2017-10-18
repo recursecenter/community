@@ -1,6 +1,6 @@
 class ThreadsController < ApplicationController
-  before_filter :require_login, only: [:subscribe, :unsubscribe]
-  before_filter :require_reply_info, only: [:subscribe_with_reply_info, :unsubscribe_with_reply_info]
+  before_action :require_login, only: [:subscribe, :unsubscribe]
+  before_action :require_reply_info, only: [:subscribe_with_reply_info, :unsubscribe_with_reply_info]
 
   load_and_authorize_resource :thread, class: 'DiscussionThread', only: [:subscribe, :unsubscribe]
   skip_authorization_check only: [:subscribe_with_reply_info, :unsubscribe_with_reply_info]

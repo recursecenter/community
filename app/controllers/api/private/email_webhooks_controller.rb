@@ -1,8 +1,8 @@
 require 'openssl'
 
 class Api::Private::EmailWebhooksController < Api::ApiController
-  before_filter :require_mailgun_origin
-  before_filter :require_valid_reply_info
+  before_action :require_mailgun_origin
+  before_action :require_valid_reply_info
   skip_before_action :require_login
   skip_before_action :verify_authenticity_token
   skip_authorization_check

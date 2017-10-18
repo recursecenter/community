@@ -47,7 +47,9 @@ private
   def create_params
     subforum = Subforum.find(params[:subforum_id])
     params.require(:thread).permit(:title).
-      merge(created_by: current_user, subforum: subforum)
+      merge(created_by: current_user,
+        last_post_created_by: current_user,
+        subforum: subforum)
   end
 
   def valid_broadcast_groups

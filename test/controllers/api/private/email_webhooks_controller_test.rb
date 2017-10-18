@@ -1,3 +1,5 @@
+require 'test_helper'
+
 class Api::Private::EmailWebhooksControllerTest < ActionController::TestCase
   def setup
     @reply_info = ReplyInfoVerifier.generate(users(:dave), posts(:zach_post_1))
@@ -5,7 +7,7 @@ class Api::Private::EmailWebhooksControllerTest < ActionController::TestCase
 
   test "valid email reply" do
     assert_difference('Post.count', +1) do
-      post :reply, mailgun_origin_params.merge({
+      post :reply, params: mailgun_origin_params.merge({
         reply_info: @reply_info,
         "stripped-text" => "This is my reply"
       })
@@ -14,12 +16,12 @@ class Api::Private::EmailWebhooksControllerTest < ActionController::TestCase
   end
 
   test "email reply not from mailgun origin" do
-    post :reply, reply_info: @reply_info, "stripped-text" => "This is my reply"
+    post :reply, params: {reply_info: @reply_info, "stripped-text" => "This is my reply"}
     assert_response :not_found
   end
 
   test "email reply with bad reply_info" do
-    post :reply, mailgun_origin_params.merge({
+    post :reply, params: mailgun_origin_params.merge({
       reply_info: @reply_info[0...-1],
       "stripped-text" => "This is my reply"
     })
@@ -31,7 +33,7 @@ class Api::Private::EmailWebhooksControllerTest < ActionController::TestCase
 
     visited_status.update(last_post_number_read: 0)
 
-    post :opened, mailgun_origin_params.merge({reply_info: @reply_info})
+    post :opened, params: mailgun_origin_params.merge({reply_info: @reply_info})
     assert_response :success
 
     visited_status.reload
@@ -44,7 +46,7 @@ class Api::Private::EmailWebhooksControllerTest < ActionController::TestCase
 
     visited_status.update(last_post_number_read: posts(:zach_post_1).post_number + 1)
 
-    post :opened, mailgun_origin_params.merge({reply_info: @reply_info})
+    post :opened, params: mailgun_origin_params.merge({reply_info: @reply_info})
     assert_response 200
 
     visited_status.reload
@@ -57,7 +59,7 @@ class Api::Private::EmailWebhooksControllerTest < ActionController::TestCase
 
     posts(:zach_post_1).thread.destroy
 
-    post :opened, mailgun_origin_params.merge({reply_info: @reply_info})
+    post :opened, params: mailgun_origin_params.merge({reply_info: @reply_info})
     assert_response 406
   end
 

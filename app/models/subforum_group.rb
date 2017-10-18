@@ -11,7 +11,7 @@ class SubforumGroup < ActiveRecord::Base
   scope :for_user, ->(user) do
     joins(:subforums).
       where("subforums.required_role_ids <@ '{?}'", user.role_ids).
-      uniq
+      distinct
   end
 
   has_many :subforums

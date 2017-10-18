@@ -1,3 +1,5 @@
+require 'test_helper'
+
 class Api::PostsControllerTest < ActionController::TestCase
   def setup
     ActionMailer::Base.deliveries.clear
@@ -10,7 +12,7 @@ class Api::PostsControllerTest < ActionController::TestCase
 
     login(:dave)
 
-    post :create, format: :json, thread_id: t.id, post: {body: "A new post"}, broadcast_to: [Group::Subscribers::ID]
+    post :create, format: :json, params: {thread_id: t.id, post: {body: "A new post"}, broadcast_to: [Group::Subscribers::ID]}
 
     assert_equal 1, ActionMailer::Base.deliveries.size
 
@@ -29,7 +31,7 @@ class Api::PostsControllerTest < ActionController::TestCase
 
     login(:dave)
 
-    post :create, format: :json, thread_id: t.id, post: {body: "A new post"}
+    post :create, format: :json, params: {thread_id: t.id, post: {body: "A new post"}}
 
     assert_not ActionMailer::Base.deliveries.any? do |delivery|
       delivery.to.contains? full_hacker_schooler.email
