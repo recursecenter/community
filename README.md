@@ -3,6 +3,7 @@
 Community is a hybrid forum and mailing list server.
 
 [![CircleCI Build Status](https://circleci.com/gh/recursecenter/community.png?circle-token=b21bc07728805b01ea238d0585f7de34dd3b23c3)](https://circleci.com/gh/recursecenter/community)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Frecursecenter%2Fcommunity.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Frecursecenter%2Fcommunity?ref=badge_shield)
 
 ## Dependencies
 
@@ -135,3 +136,6 @@ $ bin/rake jasmine
 Copyright © 2017 the Recurse Center
 
 This software is licensed under the terms of the AGPL, Version 3. The complete license can be found at http://www.gnu.org/licenses/agpl-3.0.html.
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Frecursecenter%2Fcommunity.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Frecursecenter%2Fcommunity?ref=badge_large)
