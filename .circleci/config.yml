@@ -64,6 +64,20 @@ jobs:
 
       - restore_cache:
           keys:
+            - community-frontend
+
+      - run:
+          name: Build front-end tests
+          command: cd client && lein cljsbuild once test
+
+      - save_cache:
+          key: community-frontend
+          paths:
+            - ~/.lein
+            - ~/.m2
+
+      - restore_cache:
+          keys:
             - community-assets
 
       - run:
@@ -75,20 +89,6 @@ jobs:
           paths:
             - tmp/cache
 
-
-      - restore_cache:
-          keys:
-            - community-frontend
-
-      - run:
-          name: Front-end tests
-          command: cd client && lein cljsbuild once test
-
-      - save_cache:
-          key: community-frontend
-          paths:
-            - ~/.lein
-            - ~/.m2
 
       # Save artifacts
       - store_test_results:
