@@ -74,6 +74,7 @@ jobs:
           key: community-frontend
           paths:
             - public/client/client-test.js
+            - public/client/client-test
             - ~/.lein
             - ~/.m2
 
