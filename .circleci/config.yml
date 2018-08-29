@@ -1,0 +1,97 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/community
+
+    docker:
+      - image: recursecenter/community-ci
+        environment:
+          RAILS_ENV: test
+          DATABASE_URL: "postgres://root@localhost:5432/community-test"
+          REDIS_URL: redis://localhost:6379
+          JASMINE_CONFIG_PATH: test/javascripts/support/jasmine.yml
+          PGHOST: 127.0.0.1
+          PGUSER: root
+          BUNDLE_PATH: vendor/bundle
+
+      - image: circleci/postgres:10-alpine-postgis
+        environment:
+          POSTGRES_USER: root
+          POSTGRES_DB: community-test
+
+      - image: redis:4.0
+
+      - image: elasticsearch:2.4.6
+
+    steps:
+      - restore_cache:
+          keys:
+            - source-{{ .Branch }}-{{ .Revision }}
+            - source-{{ .Branch }}-
+            - source-
+
+      - checkout
+
+      - save_cache:
+          key: source-v1-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - ".git"
+
+      # Restore bundle cache
+      - restore_cache:
+          keys:
+            - community-bundle-{{ checksum "Gemfile.lock" }}
+            - community-bundle-
+
+      # Bundle install dependencies
+      - run:
+          name: Install dependencies
+          command: bundle check --path=vendor/bundle || bundle install --path=vendor/bundle --jobs 4 --retry 3
+
+      # Store bundle cache
+      - save_cache:
+          key: community-bundle-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+
+      - run:
+          name: Database setup
+          command: bin/rails db:create db:structure:load
+
+      - run:
+          name: Build Elasticsearch index
+          command: bin/rails search:rebuild
+
+      - restore_cache:
+          keys:
+            - community-frontend-deps-{{ checksum "client/project.clj" }}
+            - community-frontend-deps-
+
+      - run:
+          name: Build front-end tests
+          command: cd client && lein cljsbuild once test
+
+      - save_cache:
+          key: community-frontend-deps-{{ checksum "client/project.clj" }}
+          paths:
+            - ~/.lein
+            - ~/.m2
+
+      - restore_cache:
+          keys:
+            - community-assets-{{ .Branch }}-{{ .Revision }}
+            - community-assets-{{ .Branch }}-
+            - community-assets-
+
+      - run:
+          name: Tests
+          command: bin/rails test && bin/rails jasmine:ci
+
+      - save_cache:
+          key: community-assets-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - tmp/cache
+
+      # Save artifacts
+      - store_test_results:
+          path: test/reports
