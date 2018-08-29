@@ -40,8 +40,8 @@ jobs:
       # Restore bundle cache
       - restore_cache:
           keys:
-            - recurse-bundle-{{ checksum "Gemfile.lock" }}
-            - recurse-bundle-
+            - community-bundle-{{ checksum "Gemfile.lock" }}
+            - community-bundle-
 
       # Bundle install dependencies
       - run:
@@ -52,7 +52,7 @@ jobs:
 
       # Store bundle cache
       - save_cache:
-          key: recurse-bundle-{{ checksum "Gemfile.lock" }}
+          key: community-bundle-{{ checksum "Gemfile.lock" }}
           paths:
             - vendor/bundle
 
@@ -77,7 +77,7 @@ jobs:
           command: cd client && lein cljsbuild once test
 
       - save_cache:
-          key: recurse-assets
+          key: community-assets
           paths:
             - tmp/cache
 
