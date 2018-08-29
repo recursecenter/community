@@ -64,33 +64,33 @@ jobs:
 
       - restore_cache:
           keys:
-            - community-frontend
+            - community-frontend-deps-{{ checksum "client/project.clj" }}
+            - community-frontend-deps-
 
       - run:
           name: Build front-end tests
           command: cd client && lein cljsbuild once test
 
       - save_cache:
-          key: community-frontend
+          key: community-frontend-deps-{{ checksum "client/project.clj" }}
           paths:
-            - public/client/client-test.js
-            - public/client/client-test
             - ~/.lein
             - ~/.m2
 
       - restore_cache:
           keys:
-            - community-assets
+            - community-assets-{{ .Branch }}-{{ .Revision }}
+            - community-assets-{{ .Branch }}-
+            - community-assets-
 
       - run:
           name: Tests
           command: bin/rails test && bin/rails jasmine:ci
 
       - save_cache:
-          key: community-assets
+          key: community-assets-{{ .Branch }}-{{ .Revision }}
           paths:
             - tmp/cache
-
 
       # Save artifacts
       - store_test_results:
