@@ -1,6 +1,6 @@
 # A Docker image for running Community's tests on CircleCI
 
-FROM circleci/ruby:2.4.4-node
+FROM circleci/ruby:2.4.4-node-browsers
 MAINTAINER davidbalbert@gmail.com
 
 RUN sudo apt install -y postgresql-client

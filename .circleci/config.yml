@@ -73,6 +73,7 @@ jobs:
       - save_cache:
           key: community-frontend
           paths:
+            - public/client/client-test.js
             - ~/.lein
             - ~/.m2
 
@@ -82,7 +83,7 @@ jobs:
 
       - run:
           name: Tests
-          command: bin/rails test
+          command: bin/rails test && bin/rails jasmine:ci
 
       - save_cache:
           key: community-assets
