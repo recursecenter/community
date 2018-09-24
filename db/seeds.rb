@@ -4,7 +4,7 @@
 subforum_groups = {
   "Recurse Center" => [["General",       "rgb(121,109,203)", [:everyone, :full_hacker_schooler],
                        "General-interest discussion about the Recurse Center or things that Recursers might find interesting."],
-                      ["455 Broadway",  "rgb(91,182,159)",  [:everyone, :full_hacker_schooler],
+                      ["397 Bridge",  "rgb(91,182,159)",  [:everyone, :full_hacker_schooler],
                        "Announcements and discussion specific to those currently attending the Recurse Center."],
                       ["Welcome",       "#008C9E",          [:everyone],
                        "Welcome to the Recurse Center! Introductions, questions, and announcements for those preparing to attend the Recurse Center."],

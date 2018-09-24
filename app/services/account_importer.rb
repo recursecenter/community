@@ -140,7 +140,7 @@ class AccountImporter
 
     # currently_at_hacker_school? includes residents. hacker_schooler? does not.
     names += ["Welcome", "Housing"] if hacker_schooler? && batch_in_the_future?
-    names += ["New York", "455 Broadway"] if currently_at_hacker_school?
+    names += ["New York", "397 Bridge"] if currently_at_hacker_school?
     names += ["General"] if currently_at_hacker_school? && should_subscribe_to_general?
     names += ["RC Start"] if rc_start_participant? || active_rc_start_mentor?
 
