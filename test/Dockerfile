@@ -1,6 +1,13 @@
 # A Docker image for running Community's tests on CircleCI
+#
+# To update the image, modify the file and then run `docker build .` from within this directory
+#
+# To push an image to Docker Hub:
+#
+#    docker tag <IMAGE ID> recursecenter/community-ci:<TAGNAME e.g. ruby-2.4.5>
+#    docker push recursecenter/community-ci:<TAGNAME>
 
-FROM circleci/ruby:2.4.4-node-browsers
+FROM circleci/ruby:2.4.5-node-browsers
 MAINTAINER davidbalbert@gmail.com
 
 RUN sudo apt install -y postgresql-client

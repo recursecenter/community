@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 
-ruby '2.4.4'
+ruby '2.4.5'
 
-gem 'rails', '5.1.6'
+gem 'rails', '5.1.6.1'
 gem 'pg'
 
 gem 'redis'
