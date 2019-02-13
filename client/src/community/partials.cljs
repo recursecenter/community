@@ -32,12 +32,17 @@
        :tables true
        :smartLists false})
 
+(defn url-policy [s]
+  (if (some #(= (.indexOf s %) 0) ["http:" "https:" "mailto:"])
+    s
+    ""))
+
 ;; TODO: use google's caja html sanitizer instead
 (defn html-from-markdown [md-string]
   ;; htmlSanitize accepts a "url policy" as the optional second
   ;; argument; a function to be applied to every URL attribute value,
-  ;; e.g. src and href. We simply allow all URLs.
-  (let [safe-html-string (goog.string.html.htmlSanitize (js/marked md-string) identity)]
+  ;; e.g. src and href.
+  (let [safe-html-string (goog.string.html.htmlSanitize (js/marked md-string) url-policy)]
     (dom/div #js {:dangerouslySetInnerHTML #js {:__html safe-html-string}})))
 
 (defn scroll-to-bottom []
