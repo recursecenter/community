@@ -19,16 +19,19 @@
                                    :output-dir "../public/client/client-dev"
                                    :optimizations :none
                                    :pretty-print true
+                                   :closure-defines {"goog.json.USE_NATIVE_JSON" true}
                                    :source-map "../public/client/client-dev.js.map"}}
                        {:id "test"
                         :source-paths ["src" "test"]
                         :compiler {:output-to "../public/client/client-test.js"
                                    :output-dir "../public/client/client-test"
                                    :optimizations :whitespace
+                                   :closure-defines {"goog.json.USE_NATIVE_JSON" true}
                                    :pretty-print true}}
                        {:id "prod"
                         :source-paths ["src"]
                         :compiler {:output-to "../app/assets/javascripts/client-prod.js"
                                    :optimizations :advanced
                                    :pretty-print false
+                                   :closure-defines {"goog.json.USE_NATIVE_JSON" true}
                                    :externs ["marked-externs.js" "highlight-externs.js" "bootstrap-tooltip-externs.js"]}}]})
