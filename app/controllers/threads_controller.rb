@@ -42,7 +42,7 @@ private
 
   def require_reply_info
     unless reply_info
-      render text: "404: Invalid link", status: 404
+      render plain: "404: Invalid link", status: 404
     end
   end
 
