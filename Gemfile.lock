@@ -45,6 +45,8 @@ GEM
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
+    airbrake (8.3.2)
+      airbrake-ruby (~> 4.1)
     airbrake-ruby (4.2.1)
       rbtree3 (~> 0.5)
     arel (8.0.0)
@@ -233,7 +235,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  airbrake-ruby (~> 4.2)
+  airbrake
   bootsnap
   bootstrap-sass (~> 3.1.1)
   bulk_insert
