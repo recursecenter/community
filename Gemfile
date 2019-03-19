@@ -13,6 +13,7 @@ gem 'memcachier' # this just sets environmental variables
 gem 'delayed_job_active_record'
 
 gem 'skylight'
+gem 'airbrake-ruby', '~> 4.2'
 
 # Use SCSS for stylesheets
 gem 'sass-rails'
