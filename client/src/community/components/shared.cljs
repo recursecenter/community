@@ -123,7 +123,7 @@
                                           ;; been focused in the meantime.
                                           ;; >:( Seriously, React?
                                           (async/<! (async/timeout 200))
-                                          (when-not (= (.-activeElement js/document) (om/get-node owner "textarea"))
+                                          (when (and (om/mounted? owner) (not= (.-activeElement js/document) (om/get-node owner "textarea")))
                                             (om/set-state! owner :focused? false)))
                                :onFocus #(om/set-state! owner :focused? true)
                                :onChange (fn [e]

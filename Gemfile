@@ -17,7 +17,7 @@ gem 'airbrake'
 
 # Use SCSS for stylesheets
 gem 'sass-rails'
-gem 'bootstrap-sass', '~> 3.1.1'
+gem 'bootstrap-sass', '~> 3.4.1'
 gem 'font-awesome-sass'
 
 gem 'sprockets', '~> 3.7.2'

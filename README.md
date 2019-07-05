@@ -12,6 +12,7 @@ Community is a hybrid forum and mailing list server.
 - redis
 - leiningen
 - Elasticsearch 2.4
+- Java 8 (newer versions don't work)
 
 Also, note that because Community is tied to the Recurse Center API, you'll need to be a Recurser to run this.
 
@@ -29,6 +30,19 @@ $ rvm get stable
 $ rvm install ruby-2.4.2
 $ rvm use ruby-2.4.2
 ```
+
+**Java and jEnv**
+
+- Download and install [JDK 8](https://www.oracle.com/technetwork/java/javase/downloads/java-archive-javase8-2177648.html)
+- Install and configure jEnv (a Java version switcher):
+
+```sh
+$ brew install jenv
+$ echo 'export PATH="$HOME/.jenv/bin:$PATH"' >> ~/.bash_profile
+$ echo 'eval "$(jenv init -)"' >> ~/.bash_profile
+```
+
+Remember to open a new shell after installing jEnv.
 
 **Leiningen and redis (using Homebrew):**
 
