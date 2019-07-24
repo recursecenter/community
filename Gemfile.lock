@@ -157,10 +157,13 @@ GEM
     oj (3.8.1)
     pg (1.1.4)
     phantomjs (2.1.1.0)
-    pry (0.11.1)
+    pry (0.12.2)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
-    pry-rails (0.3.6)
+    pry-doc (1.0.0)
+      pry (~> 0.11)
+      yard (~> 0.9.11)
+    pry-rails (0.3.9)
       pry (>= 0.10.4)
     pry-remote (0.1.8)
       pry (~> 0.9)
@@ -243,6 +246,7 @@ GEM
     websocket-driver (0.7.1)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.4)
+    yard (0.9.20)
 
 PLATFORMS
   ruby
@@ -272,6 +276,7 @@ DEPENDENCIES
   oauth2
   oj
   pg
+  pry-doc
   pry-rails
   pry-remote
   puma
