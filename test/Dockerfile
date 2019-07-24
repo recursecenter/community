@@ -4,10 +4,10 @@
 #
 # To push an image to Docker Hub:
 #
-#    docker tag <IMAGE ID> recursecenter/community-ci:<TAGNAME e.g. ruby-2.4.5>
+#    docker tag <IMAGE ID> recursecenter/community-ci:<TAGNAME e.g. ruby-2.6.3>
 #    docker push recursecenter/community-ci:<TAGNAME>
 
-FROM circleci/ruby:2.4.5-node-browsers
+FROM circleci/ruby:2.6.3-node-browsers
 MAINTAINER davidbalbert@gmail.com
 
 RUN sudo apt install -y postgresql-client
