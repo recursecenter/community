@@ -12,6 +12,8 @@ MAINTAINER davidbalbert@gmail.com
 
 RUN sudo apt install -y postgresql-client software-properties-common
 
+RUN sudo apt remove openjdk-11-*
+
 # Debian 10 doesn’t have OpenJDK 8.
 RUN wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | sudo apt-key add -
 RUN sudo add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
