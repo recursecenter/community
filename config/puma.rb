@@ -34,7 +34,6 @@ preload_app!
 plugin :tmp_restart
 
 on_worker_boot do
-  # worker specific setup
   ActiveSupport.on_load(:active_record) do
     Rails.logger.error "Worker booted. #{ConnectionMonitor::CONNECTIONS.size} checked out connections."
   end
