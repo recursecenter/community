@@ -65,7 +65,7 @@ GEM
     builder (3.2.3)
     bulk_insert (1.7.0)
       activerecord (>= 3.2.0)
-    cancancan (2.0.0)
+    cancancan (3.0.1)
     coderay (1.1.2)
     concurrent-ruby (1.1.5)
     crass (1.0.4)
@@ -253,7 +253,7 @@ DEPENDENCIES
   bootsnap
   bootstrap-sass (~> 3.4.1)
   bulk_insert
-  cancancan (~> 2.0)
+  cancancan
   dalli
   delayed_job_active_record
   dotenv-rails

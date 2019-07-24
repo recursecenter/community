@@ -26,7 +26,7 @@ gem 'sprockets', '~> 3.7.2'
 gem 'uglifier', '>= 1.3.0'
 
 gem 'oauth2'
-gem 'cancancan', '~> 2.0'
+gem 'cancancan'
 
 gem 'redcarpet'
 
