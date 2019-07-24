@@ -5,6 +5,8 @@ ruby '2.6.3'
 gem 'rails', '5.2.3'
 gem 'pg'
 
+gem 'bootsnap', require: false
+
 gem 'redis'
 
 gem 'dalli'
@@ -52,7 +54,6 @@ group :development, :test do
   gem 'jasmine'
   gem 'dotenv-rails'
   gem 'minitest-ci', git: 'https://github.com/circleci/minitest-ci.git'
-  gem 'bootsnap', require: false
 end
 
 # Use puma as the app server
