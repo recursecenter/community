@@ -65,7 +65,7 @@ gem 'rack-timeout'
 gem 'em-pg-client'
 gem 'bulk_insert'
 
-gem 'thread_safe'
+gem 'concurrent-ruby'
 
 gem 'elasticsearch', '~> 2.0'
 gem 'elasticsearch-model', '~> 2.0'
