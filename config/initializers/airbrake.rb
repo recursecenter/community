@@ -4,18 +4,21 @@ if Rails.env.production?
     config.project_key = ENV['AIRBRAKE_PROJECT_KEY']
 
     config.blacklist_keys.push('password', 'password_confirmation', 'current_password', 'api_secret')
+
+    config.root_directory = Rails.root
+    config.environment = Rails.env
   end
 
-  # Errors caused primarily by user error
-  ignored_exceptions = [
-    ActiveRecord::RecordNotFound,
-    AbstractController::ActionNotFound,
-    ActionController::InvalidAuthenticityToken,
-    ActionController::UnknownFormat,
-    ActionController::RoutingError,
-  ]
-
   Airbrake.add_filter do |notice|
+    # Errors caused primarily by user error
+    ignored_exceptions = [
+      ActiveRecord::RecordNotFound,
+      AbstractController::ActionNotFound,
+      ActionController::InvalidAuthenticityToken,
+      ActionController::UnknownFormat,
+      ActionController::RoutingError,
+    ]
+
     notice.ignore! if notice.stash[:exception].class.in? ignored_exceptions
   end
 end

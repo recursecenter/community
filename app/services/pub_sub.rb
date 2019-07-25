@@ -8,7 +8,7 @@ class PubSub
   def initialize
     @logger = Rails.logger
 
-    @subscriptions = ThreadSafe::Hash.new { |h, k| h[k] = ThreadSafe::Hash.new } # Using a ThreadSafe::Hash as a Set
+    @subscriptions = Concurrent::Hash.new { |h, k| h[k] = Concurrent::Hash.new } # Using a Concurrent::Hash as a Set
 
     uri = URI.parse(ENV["REDIS_URL"])
     @redis_sub = Redis.new(host: uri.host, port: uri.port, password: uri.password)

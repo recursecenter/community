@@ -1,9 +1,11 @@
 source 'https://rubygems.org'
 
-ruby '2.4.5'
+ruby '2.6.3'
 
-gem 'rails', '5.1.6.2'
+gem 'rails', '5.2.3'
 gem 'pg'
+
+gem 'bootsnap', require: false
 
 gem 'redis'
 
@@ -26,7 +28,7 @@ gem 'sprockets', '~> 3.7.2'
 gem 'uglifier', '>= 1.3.0'
 
 gem 'oauth2'
-gem 'cancancan', '~> 2.0'
+gem 'cancancan'
 
 gem 'redcarpet'
 
@@ -43,6 +45,7 @@ gem 'pry-rails'
 
 group :development do
   gem 'pry-remote'
+  gem 'pry-doc'
   gem 'web-console'
   gem 'listen'
 end
@@ -51,7 +54,6 @@ group :development, :test do
   gem 'jasmine'
   gem 'dotenv-rails'
   gem 'minitest-ci', git: 'https://github.com/circleci/minitest-ci.git'
-  gem 'bootsnap', require: false
 end
 
 # Use puma as the app server
@@ -63,7 +65,7 @@ gem 'rack-timeout'
 gem 'em-pg-client'
 gem 'bulk_insert'
 
-gem 'thread_safe'
+gem 'concurrent-ruby'
 
 gem 'elasticsearch', '~> 2.0'
 gem 'elasticsearch-model', '~> 2.0'

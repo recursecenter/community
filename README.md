@@ -6,9 +6,8 @@ Community is a hybrid forum and mailing list server.
 
 ## Dependencies
 
-- Ruby 2.4.2
-  - bundler
-- Postgres 9.5.4
+- Ruby
+- Postgres
 - redis
 - leiningen
 - Elasticsearch 2.4
@@ -27,8 +26,8 @@ We recommend [Postgres.app](http://postgresapp.com/).
 ```sh
 # if you don't already have rvm, follow the instructions at https://rvm.io
 $ rvm get stable
-$ rvm install ruby-2.4.2
-$ rvm use ruby-2.4.2
+$ rvm install ruby-2.6.3
+$ rvm use ruby-2.6.3
 ```
 
 **Java and jEnv**
@@ -146,6 +145,6 @@ $ bin/rake jasmine
 
 # License
 
-Copyright © 2017 the Recurse Center
+Copyright © 2019 the Recurse Center
 
 This software is licensed under the terms of the AGPL, Version 3. The complete license can be found at http://www.gnu.org/licenses/agpl-3.0.html.
