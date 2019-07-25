@@ -145,6 +145,6 @@ $ bin/rake jasmine
 
 # License
 
-Copyright © 2017 the Recurse Center
+Copyright © 2019 the Recurse Center
 
 This software is licensed under the terms of the AGPL, Version 3. The complete license can be found at http://www.gnu.org/licenses/agpl-3.0.html.
