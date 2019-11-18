@@ -49,9 +49,9 @@ GEM
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
-    airbrake (9.3.0)
-      airbrake-ruby (~> 4.5)
-    airbrake-ruby (4.5.0)
+    airbrake (9.5.0)
+      airbrake-ruby (~> 4.8)
+    airbrake-ruby (4.8.0)
       rbtree3 (~> 0.5)
     arel (9.0.0)
     autoprefixer-rails (9.6.0)
@@ -296,4 +296,4 @@ RUBY VERSION
    ruby 2.6.5p114
 
 BUNDLED WITH
-   1.17.3
+   2.0.2
