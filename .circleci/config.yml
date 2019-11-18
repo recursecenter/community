@@ -4,7 +4,7 @@ jobs:
     working_directory: ~/community
 
     docker:
-      - image: recursecenter/community-ci:ruby-2.6.3
+      - image: recursecenter/community-ci:ruby-2.6.5
         environment:
           RAILS_ENV: test
           DATABASE_URL: "postgres://root@localhost:5432/community-test"
@@ -42,6 +42,9 @@ jobs:
           keys:
             - community-bundle-{{ checksum "Gemfile.lock" }}
             - community-bundle-
+      - run:
+          name: Install latest bundler
+          command: gem install bundler
 
       # Bundle install dependencies
       - run:
