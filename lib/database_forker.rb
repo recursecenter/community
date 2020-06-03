@@ -36,9 +36,7 @@ class DatabaseForker
   def forks(conn)
     res = nil
 
-    silence_stream(STDOUT) do
-      res = conn.exec_query("SELECT datname FROM pg_database WHERE datname LIKE '#{base_name}-%';")
-    end
+    res = conn.exec_query("SELECT datname FROM pg_database WHERE datname LIKE '#{base_name}-%';")
 
     res.rows.map(&:first)
   end

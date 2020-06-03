@@ -2,9 +2,9 @@ source 'https://rubygems.org'
 
 # When you update the Ruby version, make sure update and rebuild the Docker
 # image in test/Dockerfile and update .circleci/config.yml.
-ruby '2.6.5'
+ruby '2.6.6'
 
-gem 'rails', '5.2.4.1'
+gem 'rails', '5.2.4.3'
 gem 'pg'
 
 gem 'bootsnap', require: false
