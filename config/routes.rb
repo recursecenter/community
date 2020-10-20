@@ -34,6 +34,7 @@ Rails.application.routes.draw do
 
     resources :users do
       get :me, on: :collection
+      post :deactivate, on: :collection
     end
 
     resources :notifications do
