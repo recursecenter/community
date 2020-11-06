@@ -1,7 +1,9 @@
 SET statement_timeout = 0;
 SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
 SET check_function_bodies = false;
 SET client_min_messages = warning;
 SET row_security = off;
@@ -34,8 +36,6 @@ CREATE EXTENSION IF NOT EXISTS pg_stat_statements WITH SCHEMA public;
 COMMENT ON EXTENSION pg_stat_statements IS 'track execution statistics of all SQL statements executed';
 
 
-SET search_path = public, pg_catalog;
-
 SET default_tablespace = '';
 
 SET default_with_oids = false;
@@ -44,7 +44,7 @@ SET default_with_oids = false;
 -- Name: ar_internal_metadata; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE ar_internal_metadata (
+CREATE TABLE public.ar_internal_metadata (
     key character varying NOT NULL,
     value character varying,
     created_at timestamp without time zone NOT NULL,
@@ -56,7 +56,7 @@ CREATE TABLE ar_internal_metadata (
 -- Name: delayed_jobs; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE delayed_jobs (
+CREATE TABLE public.delayed_jobs (
     id integer NOT NULL,
     priority integer DEFAULT 0 NOT NULL,
     attempts integer DEFAULT 0 NOT NULL,
@@ -76,7 +76,7 @@ CREATE TABLE delayed_jobs (
 -- Name: delayed_jobs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE delayed_jobs_id_seq
+CREATE SEQUENCE public.delayed_jobs_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -88,14 +88,14 @@ CREATE SEQUENCE delayed_jobs_id_seq
 -- Name: delayed_jobs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE delayed_jobs_id_seq OWNED BY delayed_jobs.id;
+ALTER SEQUENCE public.delayed_jobs_id_seq OWNED BY public.delayed_jobs.id;
 
 
 --
 -- Name: discussion_threads; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE discussion_threads (
+CREATE TABLE public.discussion_threads (
     id integer NOT NULL,
     title character varying(255),
     subforum_id integer,
@@ -113,7 +113,7 @@ CREATE TABLE discussion_threads (
 -- Name: discussion_threads_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE discussion_threads_id_seq
+CREATE SEQUENCE public.discussion_threads_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -125,14 +125,14 @@ CREATE SEQUENCE discussion_threads_id_seq
 -- Name: discussion_threads_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE discussion_threads_id_seq OWNED BY discussion_threads.id;
+ALTER SEQUENCE public.discussion_threads_id_seq OWNED BY public.discussion_threads.id;
 
 
 --
 -- Name: group_memberships; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE group_memberships (
+CREATE TABLE public.group_memberships (
     id integer NOT NULL,
     group_id integer,
     user_id integer,
@@ -145,7 +145,7 @@ CREATE TABLE group_memberships (
 -- Name: group_memberships_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE group_memberships_id_seq
+CREATE SEQUENCE public.group_memberships_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -157,14 +157,14 @@ CREATE SEQUENCE group_memberships_id_seq
 -- Name: group_memberships_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE group_memberships_id_seq OWNED BY group_memberships.id;
+ALTER SEQUENCE public.group_memberships_id_seq OWNED BY public.group_memberships.id;
 
 
 --
 -- Name: groups; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE groups (
+CREATE TABLE public.groups (
     id integer NOT NULL,
     name character varying(255),
     hacker_school_batch_id integer,
@@ -177,7 +177,7 @@ CREATE TABLE groups (
 -- Name: groups_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE groups_id_seq
+CREATE SEQUENCE public.groups_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -189,14 +189,14 @@ CREATE SEQUENCE groups_id_seq
 -- Name: groups_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE groups_id_seq OWNED BY groups.id;
+ALTER SEQUENCE public.groups_id_seq OWNED BY public.groups.id;
 
 
 --
 -- Name: groups_posts; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE groups_posts (
+CREATE TABLE public.groups_posts (
     group_id integer,
     post_id integer
 );
@@ -206,7 +206,7 @@ CREATE TABLE groups_posts (
 -- Name: notifications; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE notifications (
+CREATE TABLE public.notifications (
     id integer NOT NULL,
     type character varying(255),
     user_id integer,
@@ -222,7 +222,7 @@ CREATE TABLE notifications (
 -- Name: notifications_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE notifications_id_seq
+CREATE SEQUENCE public.notifications_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -234,14 +234,14 @@ CREATE SEQUENCE notifications_id_seq
 -- Name: notifications_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE notifications_id_seq OWNED BY notifications.id;
+ALTER SEQUENCE public.notifications_id_seq OWNED BY public.notifications.id;
 
 
 --
 -- Name: posts; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE posts (
+CREATE TABLE public.posts (
     id integer NOT NULL,
     body text,
     thread_id integer,
@@ -258,7 +258,7 @@ CREATE TABLE posts (
 -- Name: posts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE posts_id_seq
+CREATE SEQUENCE public.posts_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -270,14 +270,14 @@ CREATE SEQUENCE posts_id_seq
 -- Name: posts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE posts_id_seq OWNED BY posts.id;
+ALTER SEQUENCE public.posts_id_seq OWNED BY public.posts.id;
 
 
 --
 -- Name: roles; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE roles (
+CREATE TABLE public.roles (
     id integer NOT NULL,
     name character varying(255),
     created_at timestamp without time zone,
@@ -289,7 +289,7 @@ CREATE TABLE roles (
 -- Name: roles_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE roles_id_seq
+CREATE SEQUENCE public.roles_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -301,14 +301,14 @@ CREATE SEQUENCE roles_id_seq
 -- Name: roles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE roles_id_seq OWNED BY roles.id;
+ALTER SEQUENCE public.roles_id_seq OWNED BY public.roles.id;
 
 
 --
 -- Name: roles_users; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE roles_users (
+CREATE TABLE public.roles_users (
     user_id integer NOT NULL,
     role_id integer NOT NULL
 );
@@ -318,7 +318,7 @@ CREATE TABLE roles_users (
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE schema_migrations (
+CREATE TABLE public.schema_migrations (
     version character varying(255) NOT NULL
 );
 
@@ -327,7 +327,7 @@ CREATE TABLE schema_migrations (
 -- Name: subforum_groups; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE subforum_groups (
+CREATE TABLE public.subforum_groups (
     id integer NOT NULL,
     name character varying(255) NOT NULL,
     ordinal integer NOT NULL,
@@ -340,7 +340,7 @@ CREATE TABLE subforum_groups (
 -- Name: subforum_groups_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE subforum_groups_id_seq
+CREATE SEQUENCE public.subforum_groups_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -352,14 +352,14 @@ CREATE SEQUENCE subforum_groups_id_seq
 -- Name: subforum_groups_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE subforum_groups_id_seq OWNED BY subforum_groups.id;
+ALTER SEQUENCE public.subforum_groups_id_seq OWNED BY public.subforum_groups.id;
 
 
 --
 -- Name: subforums; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE subforums (
+CREATE TABLE public.subforums (
     id integer NOT NULL,
     name character varying(255),
     subforum_group_id integer,
@@ -375,7 +375,7 @@ CREATE TABLE subforums (
 -- Name: subforums_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE subforums_id_seq
+CREATE SEQUENCE public.subforums_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -387,14 +387,14 @@ CREATE SEQUENCE subforums_id_seq
 -- Name: subforums_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE subforums_id_seq OWNED BY subforums.id;
+ALTER SEQUENCE public.subforums_id_seq OWNED BY public.subforums.id;
 
 
 --
 -- Name: subscriptions; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE subscriptions (
+CREATE TABLE public.subscriptions (
     id integer NOT NULL,
     subscribed boolean DEFAULT false,
     reason character varying(255),
@@ -410,7 +410,7 @@ CREATE TABLE subscriptions (
 -- Name: subscriptions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE subscriptions_id_seq
+CREATE SEQUENCE public.subscriptions_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -422,19 +422,19 @@ CREATE SEQUENCE subscriptions_id_seq
 -- Name: subscriptions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE subscriptions_id_seq OWNED BY subscriptions.id;
+ALTER SEQUENCE public.subscriptions_id_seq OWNED BY public.subscriptions.id;
 
 
 --
 -- Name: users; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE users (
+CREATE TABLE public.users (
     id integer NOT NULL,
     first_name character varying(255),
     last_name character varying(255),
     email character varying(255),
-    avatar_url character varying(255),
+    avatar_url character varying,
     batch_name character varying(255),
     hacker_school_id integer,
     created_at timestamp without time zone,
@@ -452,7 +452,7 @@ CREATE TABLE users (
 -- Name: visited_statuses; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE visited_statuses (
+CREATE TABLE public.visited_statuses (
     id integer NOT NULL,
     user_id integer,
     created_at timestamp without time zone,
@@ -466,7 +466,7 @@ CREATE TABLE visited_statuses (
 -- Name: threads_with_visited_status; Type: VIEW; Schema: public; Owner: -
 --
 
-CREATE VIEW threads_with_visited_status AS
+CREATE VIEW public.threads_with_visited_status AS
  SELECT thread_users.id,
     thread_users.title,
     thread_users.subforum_id,
@@ -491,9 +491,9 @@ CREATE VIEW threads_with_visited_status AS
             discussion_threads.last_post_created_at,
             discussion_threads.last_post_created_by_id,
             users.id AS user_id
-           FROM discussion_threads,
-            users) thread_users
-     JOIN visited_statuses ON (((thread_users.id = visited_statuses.thread_id) AND (thread_users.user_id = visited_statuses.user_id))))
+           FROM public.discussion_threads,
+            public.users) thread_users
+     JOIN public.visited_statuses ON (((thread_users.id = visited_statuses.thread_id) AND (thread_users.user_id = visited_statuses.user_id))))
 UNION
  SELECT thread_users.id,
     thread_users.title,
@@ -519,9 +519,9 @@ UNION
             discussion_threads.last_post_created_at,
             discussion_threads.last_post_created_by_id,
             users.id AS user_id
-           FROM discussion_threads,
-            users) thread_users
-     LEFT JOIN visited_statuses ON (((thread_users.id = visited_statuses.thread_id) AND (thread_users.user_id = visited_statuses.user_id))))
+           FROM public.discussion_threads,
+            public.users) thread_users
+     LEFT JOIN public.visited_statuses ON (((thread_users.id = visited_statuses.thread_id) AND (thread_users.user_id = visited_statuses.user_id))))
   WHERE (visited_statuses.id IS NULL);
 
 
@@ -529,7 +529,7 @@ UNION
 -- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE users_id_seq
+CREATE SEQUENCE public.users_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -541,14 +541,14 @@ CREATE SEQUENCE users_id_seq
 -- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE users_id_seq OWNED BY users.id;
+ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 
 
 --
 -- Name: visited_statuses_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE visited_statuses_id_seq
+CREATE SEQUENCE public.visited_statuses_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -560,14 +560,14 @@ CREATE SEQUENCE visited_statuses_id_seq
 -- Name: visited_statuses_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE visited_statuses_id_seq OWNED BY visited_statuses.id;
+ALTER SEQUENCE public.visited_statuses_id_seq OWNED BY public.visited_statuses.id;
 
 
 --
 -- Name: welcome_messages; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE welcome_messages (
+CREATE TABLE public.welcome_messages (
     id integer NOT NULL,
     message text,
     created_at timestamp without time zone,
@@ -579,7 +579,7 @@ CREATE TABLE welcome_messages (
 -- Name: welcome_messages_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE welcome_messages_id_seq
+CREATE SEQUENCE public.welcome_messages_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -591,209 +591,209 @@ CREATE SEQUENCE welcome_messages_id_seq
 -- Name: welcome_messages_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE welcome_messages_id_seq OWNED BY welcome_messages.id;
+ALTER SEQUENCE public.welcome_messages_id_seq OWNED BY public.welcome_messages.id;
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: delayed_jobs id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY delayed_jobs ALTER COLUMN id SET DEFAULT nextval('delayed_jobs_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY discussion_threads ALTER COLUMN id SET DEFAULT nextval('discussion_threads_id_seq'::regclass);
+ALTER TABLE ONLY public.delayed_jobs ALTER COLUMN id SET DEFAULT nextval('public.delayed_jobs_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: discussion_threads id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY group_memberships ALTER COLUMN id SET DEFAULT nextval('group_memberships_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY groups ALTER COLUMN id SET DEFAULT nextval('groups_id_seq'::regclass);
+ALTER TABLE ONLY public.discussion_threads ALTER COLUMN id SET DEFAULT nextval('public.discussion_threads_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: group_memberships id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY notifications ALTER COLUMN id SET DEFAULT nextval('notifications_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY posts ALTER COLUMN id SET DEFAULT nextval('posts_id_seq'::regclass);
+ALTER TABLE ONLY public.group_memberships ALTER COLUMN id SET DEFAULT nextval('public.group_memberships_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: groups id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY roles ALTER COLUMN id SET DEFAULT nextval('roles_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY subforum_groups ALTER COLUMN id SET DEFAULT nextval('subforum_groups_id_seq'::regclass);
+ALTER TABLE ONLY public.groups ALTER COLUMN id SET DEFAULT nextval('public.groups_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: notifications id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY subforums ALTER COLUMN id SET DEFAULT nextval('subforums_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY subscriptions ALTER COLUMN id SET DEFAULT nextval('subscriptions_id_seq'::regclass);
+ALTER TABLE ONLY public.notifications ALTER COLUMN id SET DEFAULT nextval('public.notifications_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: posts id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY visited_statuses ALTER COLUMN id SET DEFAULT nextval('visited_statuses_id_seq'::regclass);
+ALTER TABLE ONLY public.posts ALTER COLUMN id SET DEFAULT nextval('public.posts_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: roles id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY welcome_messages ALTER COLUMN id SET DEFAULT nextval('welcome_messages_id_seq'::regclass);
+ALTER TABLE ONLY public.roles ALTER COLUMN id SET DEFAULT nextval('public.roles_id_seq'::regclass);
 
 
 --
--- Name: ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: subforum_groups id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY ar_internal_metadata
+ALTER TABLE ONLY public.subforum_groups ALTER COLUMN id SET DEFAULT nextval('public.subforum_groups_id_seq'::regclass);
+
+
+--
+-- Name: subforums id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.subforums ALTER COLUMN id SET DEFAULT nextval('public.subforums_id_seq'::regclass);
+
+
+--
+-- Name: subscriptions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.subscriptions ALTER COLUMN id SET DEFAULT nextval('public.subscriptions_id_seq'::regclass);
+
+
+--
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- Name: visited_statuses id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.visited_statuses ALTER COLUMN id SET DEFAULT nextval('public.visited_statuses_id_seq'::regclass);
+
+
+--
+-- Name: welcome_messages id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.welcome_messages ALTER COLUMN id SET DEFAULT nextval('public.welcome_messages_id_seq'::regclass);
+
+
+--
+-- Name: ar_internal_metadata ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ar_internal_metadata
     ADD CONSTRAINT ar_internal_metadata_pkey PRIMARY KEY (key);
 
 
 --
--- Name: delayed_jobs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: delayed_jobs delayed_jobs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY delayed_jobs
+ALTER TABLE ONLY public.delayed_jobs
     ADD CONSTRAINT delayed_jobs_pkey PRIMARY KEY (id);
 
 
 --
--- Name: discussion_threads_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: discussion_threads discussion_threads_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY discussion_threads
+ALTER TABLE ONLY public.discussion_threads
     ADD CONSTRAINT discussion_threads_pkey PRIMARY KEY (id);
 
 
 --
--- Name: group_memberships_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: group_memberships group_memberships_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY group_memberships
+ALTER TABLE ONLY public.group_memberships
     ADD CONSTRAINT group_memberships_pkey PRIMARY KEY (id);
 
 
 --
--- Name: groups_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: groups groups_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY groups
+ALTER TABLE ONLY public.groups
     ADD CONSTRAINT groups_pkey PRIMARY KEY (id);
 
 
 --
--- Name: notifications_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: notifications notifications_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY notifications
+ALTER TABLE ONLY public.notifications
     ADD CONSTRAINT notifications_pkey PRIMARY KEY (id);
 
 
 --
--- Name: posts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: posts posts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY posts
+ALTER TABLE ONLY public.posts
     ADD CONSTRAINT posts_pkey PRIMARY KEY (id);
 
 
 --
--- Name: roles_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: roles roles_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY roles
+ALTER TABLE ONLY public.roles
     ADD CONSTRAINT roles_pkey PRIMARY KEY (id);
 
 
 --
--- Name: subforum_groups_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: subforum_groups subforum_groups_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY subforum_groups
+ALTER TABLE ONLY public.subforum_groups
     ADD CONSTRAINT subforum_groups_pkey PRIMARY KEY (id);
 
 
 --
--- Name: subforums_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: subforums subforums_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY subforums
+ALTER TABLE ONLY public.subforums
     ADD CONSTRAINT subforums_pkey PRIMARY KEY (id);
 
 
 --
--- Name: subscriptions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: subscriptions subscriptions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY subscriptions
+ALTER TABLE ONLY public.subscriptions
     ADD CONSTRAINT subscriptions_pkey PRIMARY KEY (id);
 
 
 --
--- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY users
+ALTER TABLE ONLY public.users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
 
 
 --
--- Name: visited_statuses_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: visited_statuses visited_statuses_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY visited_statuses
+ALTER TABLE ONLY public.visited_statuses
     ADD CONSTRAINT visited_statuses_pkey PRIMARY KEY (id);
 
 
 --
--- Name: welcome_messages_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: welcome_messages welcome_messages_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY welcome_messages
+ALTER TABLE ONLY public.welcome_messages
     ADD CONSTRAINT welcome_messages_pkey PRIMARY KEY (id);
 
 
@@ -801,112 +801,112 @@ ALTER TABLE ONLY welcome_messages
 -- Name: delayed_jobs_priority; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX delayed_jobs_priority ON delayed_jobs USING btree (priority, run_at);
+CREATE INDEX delayed_jobs_priority ON public.delayed_jobs USING btree (priority, run_at);
 
 
 --
 -- Name: index_discussion_threads_on_created_by_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_discussion_threads_on_created_by_id ON discussion_threads USING btree (created_by_id);
+CREATE INDEX index_discussion_threads_on_created_by_id ON public.discussion_threads USING btree (created_by_id);
 
 
 --
 -- Name: index_discussion_threads_on_last_post_created_by_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_discussion_threads_on_last_post_created_by_id ON discussion_threads USING btree (last_post_created_by_id);
+CREATE INDEX index_discussion_threads_on_last_post_created_by_id ON public.discussion_threads USING btree (last_post_created_by_id);
 
 
 --
 -- Name: index_discussion_threads_on_subforum_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_discussion_threads_on_subforum_id ON discussion_threads USING btree (subforum_id);
+CREATE INDEX index_discussion_threads_on_subforum_id ON public.discussion_threads USING btree (subforum_id);
 
 
 --
 -- Name: index_notifications_on_mentioned_by_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_notifications_on_mentioned_by_id ON notifications USING btree (mentioned_by_id);
+CREATE INDEX index_notifications_on_mentioned_by_id ON public.notifications USING btree (mentioned_by_id);
 
 
 --
 -- Name: index_notifications_on_post_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_notifications_on_post_id ON notifications USING btree (post_id);
+CREATE INDEX index_notifications_on_post_id ON public.notifications USING btree (post_id);
 
 
 --
 -- Name: index_notifications_on_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_notifications_on_user_id ON notifications USING btree (user_id);
+CREATE INDEX index_notifications_on_user_id ON public.notifications USING btree (user_id);
 
 
 --
 -- Name: index_posts_on_author_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_posts_on_author_id ON posts USING btree (author_id);
+CREATE INDEX index_posts_on_author_id ON public.posts USING btree (author_id);
 
 
 --
 -- Name: index_posts_on_thread_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_posts_on_thread_id ON posts USING btree (thread_id);
+CREATE INDEX index_posts_on_thread_id ON public.posts USING btree (thread_id);
 
 
 --
 -- Name: index_roles_users_on_role_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_roles_users_on_role_id ON roles_users USING btree (role_id);
+CREATE INDEX index_roles_users_on_role_id ON public.roles_users USING btree (role_id);
 
 
 --
 -- Name: index_roles_users_on_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_roles_users_on_user_id ON roles_users USING btree (user_id);
+CREATE INDEX index_roles_users_on_user_id ON public.roles_users USING btree (user_id);
 
 
 --
 -- Name: index_subscriptions_on_subscribable_id_and_subscribable_type; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_subscriptions_on_subscribable_id_and_subscribable_type ON subscriptions USING btree (subscribable_id, subscribable_type);
+CREATE INDEX index_subscriptions_on_subscribable_id_and_subscribable_type ON public.subscriptions USING btree (subscribable_id, subscribable_type);
 
 
 --
 -- Name: index_users_on_hacker_school_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_users_on_hacker_school_id ON users USING btree (hacker_school_id);
+CREATE INDEX index_users_on_hacker_school_id ON public.users USING btree (hacker_school_id);
 
 
 --
 -- Name: index_visited_statuses_on_thread_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_visited_statuses_on_thread_id ON visited_statuses USING btree (thread_id);
+CREATE INDEX index_visited_statuses_on_thread_id ON public.visited_statuses USING btree (thread_id);
 
 
 --
 -- Name: index_visited_statuses_on_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_visited_statuses_on_user_id ON visited_statuses USING btree (user_id);
+CREATE INDEX index_visited_statuses_on_user_id ON public.visited_statuses USING btree (user_id);
 
 
 --
 -- Name: unique_schema_migrations; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (version);
+CREATE UNIQUE INDEX unique_schema_migrations ON public.schema_migrations USING btree (version);
 
 
 --
@@ -965,6 +965,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20160309191432'),
 ('20160309194007'),
 ('20160309194724'),
-('20170111160452');
+('20170111160452'),
+('20201106150006');
 
 
