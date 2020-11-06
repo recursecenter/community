@@ -4,7 +4,7 @@ jobs:
     working_directory: ~/community
 
     docker:
-      - image: recursecenter/community-ci:ruby-2.6.5
+      - image: recursecenter/community-ci:ruby-2.6.6
         environment:
           RAILS_ENV: test
           DATABASE_URL: "postgres://root@localhost:5432/community-test"

@@ -2,12 +2,14 @@
 #
 # To update the image, modify the file and then run `docker build .` from within this directory
 #
-# To push an image to Docker Hub:
+# To update this image:
 #
+#    docker build .
+#    docker images
 #    docker tag <IMAGE ID> recursecenter/community-ci:<TAGNAME e.g. ruby-2.6.3>
 #    docker push recursecenter/community-ci:<TAGNAME>
 
-FROM circleci/ruby:2.6.5-node-browsers
+FROM circleci/ruby:2.6.6-node-browsers
 MAINTAINER davidbalbert@gmail.com
 
 RUN sudo apt install -y postgresql-client software-properties-common
