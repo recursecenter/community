@@ -45,7 +45,7 @@ class Api::Private::EmailWebhooksController < Api::ApiController
     PubSub.publish :created, :post, post
 
     # TODO: parse and notify @mentions as well
-    ThreadSubscriptionNotifier.new(post).notify
+    ThreadSubscriptionNotifierJob.perform_later(post)
 
     head 200
   end
