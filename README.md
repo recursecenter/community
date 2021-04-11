@@ -60,7 +60,7 @@ $ brew install leiningen redis elasticsearch
 # If you don't already have caskroom:
 $ brew install caskroom/cask/brew-cask
 # And then:
-$ brew cask install java
+$ brew install --cask java
 $ brew install elasticsearch
 ```
 
