@@ -21,7 +21,7 @@ jobs:
       RAILS_ENV: test
       PAGER: cat
       REDIS_URL: redis://localhost:6379
-      JASMINE_CONFIG_PATH=test/javascripts/support/jasmine.yml
+      JASMINE_CONFIG_PATH: test/javascripts/support/jasmine.yml
     steps:
       - checkout
 
