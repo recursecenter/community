@@ -4,19 +4,31 @@
 #
 # To update this image:
 #
-#    docker build .
+#    First time setup only:
+#
+#    brew install colima docker docker-credential-helper
+#    docker login
+#    colima start
+#    docker run --privileged --rm tonistiigi/binfmt --install all
+#
+#    Subsequent builds:
+#
+#    colima start
+#
+#    Every time:
+#
+#    docker build --platform=amd64 .
 #    docker images
 #    docker tag <IMAGE ID> recursecenter/community-ci:<TAGNAME e.g. ruby-2.6.3>
 #    docker push recursecenter/community-ci:<TAGNAME>
+#    colima stop
 
-FROM circleci/ruby:2.6.8-node-browsers
+FROM cimg/ruby:2.6.10-browsers
 MAINTAINER davidbalbert@gmail.com
 
-RUN sudo apt install -y postgresql-client software-properties-common
+RUN sudo apt remove openjdk-*
 
-RUN sudo apt remove openjdk-11-*
-
-# Debian 10 doesn’t have OpenJDK 8.
+# cimg/ruby doesn’t have OpenJDK 8.
 RUN wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | sudo apt-key add -
 RUN sudo add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
 RUN sudo apt update

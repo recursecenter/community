@@ -1,65 +1,38 @@
-version: 2
+version: 2.1
+orbs:
+    ruby: circleci/ruby@1
 jobs:
   build:
-    working_directory: ~/community
-
     docker:
-      - image: recursecenter/community-ci:ruby-2.6.8
+      - image: recursecenter/community-ci:ruby-2.6.10
+      - image: cimg/postgres:14.0-postgis
         environment:
-          RAILS_ENV: test
-          DATABASE_URL: "postgres://root@localhost:5432/community-test"
-          REDIS_URL: redis://localhost:6379
-          JASMINE_CONFIG_PATH: test/javascripts/support/jasmine.yml
-          PGHOST: 127.0.0.1
-          PGUSER: root
-          BUNDLE_PATH: vendor/bundle
-
-      - image: circleci/postgres:10-alpine-postgis
-        environment:
+          POSTGRES_DB: community_test
           POSTGRES_USER: root
-          POSTGRES_DB: community-test
-
+          POSTGRES_PASSWORD: password
       - image: redis:4.0
-
       - image: elasticsearch:2.4.6
-
+    environment:
+      BUNDLE_JOBS: "3"
+      BUNDLE_RETRY: "3"
+      PGHOST: 127.0.0.1
+      PGUSER: root
+      PGPASSWORD: password
+      RAILS_ENV: test
+      PAGER: cat
+      REDIS_URL: redis://localhost:6379
+      JASMINE_CONFIG_PATH: test/javascripts/support/jasmine.yml
     steps:
-      - restore_cache:
-          keys:
-            - source-{{ .Branch }}-{{ .Revision }}
-            - source-{{ .Branch }}-
-            - source-
-
       - checkout
 
-      - save_cache:
-          key: source-v1-{{ .Branch }}-{{ .Revision }}
-          paths:
-            - ".git"
-
-      # Restore bundle cache
-      - restore_cache:
-          keys:
-            - community-bundle-{{ checksum "Gemfile.lock" }}
-            - community-bundle-
+      - ruby/install-deps:
+          key: gems-{{ .Environment.CACHE_VERSION }}
       - run:
-          name: Install latest bundler
-          command: gem install bundler
-
-      # Bundle install dependencies
+          command: 'dockerize -wait tcp://localhost:5432 -timeout 1m'
+          name: Wait for DB
       - run:
-          name: Install dependencies
-          command: bundle check --path=vendor/bundle || bundle install --path=vendor/bundle --jobs 4 --retry 3
-
-      # Store bundle cache
-      - save_cache:
-          key: community-bundle-{{ checksum "Gemfile.lock" }}
-          paths:
-            - vendor/bundle
-
-      - run:
+          command: 'bin/rails db:structure:load --trace'
           name: Database setup
-          command: bin/rails db:create db:structure:load
 
       - run:
           name: Build Elasticsearch index
@@ -67,31 +40,31 @@ jobs:
 
       - restore_cache:
           keys:
-            - community-frontend-deps-{{ checksum "client/project.clj" }}
-            - community-frontend-deps-
+            - community-frontend-deps-{{ .Environment.CACHE_VERSION }}-{{ checksum "client/project.clj" }}
+            - community-frontend-deps-{{ .Environment.CACHE_VERSION }}-
 
       - run:
           name: Build front-end tests
           command: cd client && lein cljsbuild once test
 
       - save_cache:
-          key: community-frontend-deps-{{ checksum "client/project.clj" }}
+          key: community-frontend-deps-{{ .Environment.CACHE_VERSION }}-{{ checksum "client/project.clj" }}
           paths:
             - ~/.lein
             - ~/.m2
 
       - restore_cache:
           keys:
-            - community-assets-{{ .Branch }}-{{ .Revision }}
-            - community-assets-{{ .Branch }}-
-            - community-assets-
+            - community-assets-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ .Revision }}
+            - community-assets-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
+            - community-assets-{{ .Environment.CACHE_VERSION }}-
 
       - run:
           name: Tests
           command: bin/rails test && bin/rails jasmine:ci
 
       - save_cache:
-          key: community-assets-{{ .Branch }}-{{ .Revision }}
+          key: community-assets-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ .Revision }}
           paths:
             - tmp/cache
 
