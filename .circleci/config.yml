@@ -20,6 +20,7 @@ jobs:
       PGPASSWORD: password
       RAILS_ENV: test
       PAGER: cat
+      REDIS_URL: redis://localhost:6379
     steps:
       - checkout
 
