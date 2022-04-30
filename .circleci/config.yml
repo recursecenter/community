@@ -7,7 +7,7 @@ jobs:
       - image: recursecenter/community-ci:ruby-2.6.10
       - image: cimg/postgres:14.0-postgis
         environment:
-          POSTGRES_DB: hackerschool-test
+          POSTGRES_DB: community_test
           POSTGRES_USER: root
           POSTGRES_PASSWORD: password
       - image: redis:4.0
