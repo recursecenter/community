@@ -1,7 +1,6 @@
 version: 2.1
 orbs:
     ruby: circleci/ruby@1
-    node: circleci/node@5
 jobs:
   build:
     docker:
@@ -21,16 +20,11 @@ jobs:
       PGPASSWORD: password
       RAILS_ENV: test
       PAGER: cat
-
-
     steps:
       - checkout
 
       - ruby/install-deps:
           key: gems-{{ .Environment.CACHE_VERSION }}
-      - node/install-packages:
-          pkg-manager: yarn
-          cache-version: "{{ .Environment.CACHE_VERSION }}"
       - run:
           command: 'dockerize -wait tcp://localhost:5432 -timeout 1m'
           name: Wait for DB
