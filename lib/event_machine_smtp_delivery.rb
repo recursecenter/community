@@ -69,10 +69,19 @@ class EventMachineSmtpDelivery
       end
     end
 
+    # Rails 6: this will likely break in Rails 6. At minimum, test it in development. Better idea:
+    # get rid of this entire file and find some other way to send lots of emails quickly.
     def to_insert_sql(record)
-      insert_manager = record.class.arel_table.create_insert
-      insert_manager.insert(record.send(:arel_attributes_with_values_for_create, record.attribute_names))
-      insert_manager.to_sql
+      attribute_values = record.send(:attributes_with_values_for_create, record.attribute_names)
+      substituted_values = record.class.send(:_substitute_values, attribute_values)
+
+      # I didn't want to figure out how to generate prepared statements, so I
+      # just got rid of the Arel::Bind nodes.
+      values_without_binds = substituted_values.map do |attr, bind|
+        [attr, bind.value]
+      end
+
+      record.class.arel_table.compile_insert(values_without_binds).to_sql
     end
 
     def ensure_reactor_running
