@@ -143,7 +143,11 @@ $ bin/rake jasmine
 # Refresh the page to re-run the tests.
 ```
 
-# License
+## Security
+
+Please do not use GitHub Issues to report security vulnerabilities in Community. Instead, please email [security@hackerschool.com](mailto:security@hackerschool.com). You can find our [PGP key](https://www.hackerschool.com/security) on our website.
+
+## License
 
 Copyright © 2019 the Recurse Center
 
