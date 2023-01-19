@@ -16,7 +16,8 @@ gem 'memcachier' # this just sets environmental variables
 
 gem 'delayed_job_active_record'
 
-gem 'skylight'
+# Disable until we're on a newer version of Ruby/Rails
+# gem 'skylight'
 gem 'airbrake'
 
 # Use SCSS for stylesheets
