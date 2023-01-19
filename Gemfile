@@ -30,7 +30,7 @@ gem 'sprockets', '~> 3.7.2'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 
-gem 'oauth2'
+gem 'oauth2', '~> 1.4.11'
 gem 'cancancan'
 
 gem 'redcarpet'
