@@ -1,6 +1,4 @@
 class Admin::SuController < AdminController
-  protect_from_forgery with: :exception
-
   def index
     @su_users = User.all.order(:first_name)
   end
