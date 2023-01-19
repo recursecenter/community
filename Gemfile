@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 # image in test/Dockerfile and update .circleci/config.yml.
 ruby '2.6.10'
 
-gem 'rails', '5.2.7.1'
+gem 'rails', '5.2.8.1'
 gem 'pg'
 
 gem 'bootsnap', require: false

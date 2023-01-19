@@ -11,13 +11,15 @@ require_relative '../lib/web_socket_handler'
 module Community
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 5.1
+    config.load_defaults 5.2
 
     # Settings in config/environments/* take precedence over those specified here.
 
     config.active_record.schema_format = :sql
 
     config.active_job.queue_adapter = :delayed_job
+
+    config.action_controller.per_form_csrf_tokens = false
 
     # Use a different logger for distributed setups.
     # require 'syslog/logger'
