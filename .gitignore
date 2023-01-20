@@ -46,9 +46,6 @@ test/reports
 .DS_Store
 *.swp
 
-/app/clojurescript/target
-/app/clojurescript/classes
-/app/clojurescript/checkouts
 pom.xml
 pom.xml.asc
 *.jar
