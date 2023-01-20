@@ -45,7 +45,7 @@ jobs:
 
       - run:
           name: Build front-end tests
-          command: lein cljsbuild once test
+          command: bin/rails cljs:build
 
       - save_cache:
           key: community-frontend-deps-{{ .Environment.CACHE_VERSION }}-{{ checksum "project.clj" }}

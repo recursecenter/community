@@ -1,4 +1,4 @@
 web: bin/rails server
 worker: bin/rails jobs:work
 # Touch in order to make sure JS is always rebuilt on launch
-cljs: touch app/clojurescript/src/community/core.cljs && bin/rails cljs:build:watch
+cljs: touch app/clojurescript/src/community/core.cljs && bin/rails cljs:watch
