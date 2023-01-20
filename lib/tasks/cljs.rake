@@ -1,4 +1,4 @@
-namespace :clojurescript do
+namespace :cljs do
   desc "Build your ClojureScript bundle"
   task :build do
     unless system "lein cljsbuild once production"
@@ -13,5 +13,5 @@ namespace :clojurescript do
   end
 end
 
-Rake::Task["assets:precompile"].enhance(["clojurescript:build"])
-Rake::Task["assets:clobber"].enhance(["clojurescript:clobber"])
+Rake::Task["assets:precompile"].enhance(["cljs:build"])
+Rake::Task["assets:clobber"].enhance(["cljs:clobber"])

@@ -47,7 +47,6 @@ test/reports
 *.swp
 
 /app/clojurescript/target
-!/app/clojurescript/target/.keep
 /app/clojurescript/classes
 /app/clojurescript/checkouts
 pom.xml
