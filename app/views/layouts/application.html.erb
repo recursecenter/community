@@ -9,12 +9,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
   <% if Community.client_env.production? %>
-    <%= javascript_include_tag "client-prod.js" %>
+    <%= javascript_include_tag "client_production.js" %>
   <% else %>
     <!-- Avoid asset pipeline for development cljs. It's a stupid hack to get
          source maps to work. -->
-    <script src="/client/client-dev/goog/base.js"></script>
-    <script src="/client/client-dev.js"></script>
+    <script src="/assets/client_development/goog/base.js"></script>
+    <script src="/assets/client_development.js"></script>
     <script>goog.require("community.core");</script>
   <% end %>
 </head>

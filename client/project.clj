@@ -9,28 +9,28 @@
 
   :jvm-opts ^:replace ["-Xmx512m" "-server"]
 
-  :plugins [[lein-cljsbuild "1.0.5"]]
+  :plugins [[lein-cljsbuild "1.1.0"]]
 
   :profiles {:dev {:source-paths ["src"]}}
 
-  :cljsbuild {:builds [{:id "dev"
+  :cljsbuild {:builds [{:id "development"
                         :source-paths ["src"]
-                        :compiler {:output-to "../public/client/client-dev.js"
-                                   :output-dir "../public/client/client-dev"
+                        :compiler {:output-to "../app/assets/builds/client_development.js"
+                                   :output-dir "../app/assets/builds/client_development"
                                    :optimizations :none
                                    :pretty-print true
                                    :closure-defines {"goog.json.USE_NATIVE_JSON" true}
-                                   :source-map "../public/client/client-dev.js.map"}}
+                                   :source-map "../app/assets/builds/client_development.js.map"}}
                        {:id "test"
                         :source-paths ["src" "test"]
-                        :compiler {:output-to "../public/client/client-test.js"
-                                   :output-dir "../public/client/client-test"
+                        :compiler {:output-to "../app/assets/builds/client_test.js"
+                                   :output-dir "../app/assets/builds/client_test"
                                    :optimizations :whitespace
                                    :closure-defines {"goog.json.USE_NATIVE_JSON" true}
                                    :pretty-print true}}
-                       {:id "prod"
+                       {:id "production"
                         :source-paths ["src"]
-                        :compiler {:output-to "../app/assets/javascripts/client-prod.js"
+                        :compiler {:output-to "../app/assets/builds/client_production.js"
                                    :optimizations :advanced
                                    :pretty-print false
                                    :closure-defines {"goog.json.USE_NATIVE_JSON" true}

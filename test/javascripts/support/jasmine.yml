@@ -53,7 +53,7 @@ helpers:
 #   - **/*[sS]pec.js
 #
 spec_files:
-  - client/client-test.js
+  - client_test.js
 
 # src_dir
 #
@@ -75,7 +75,7 @@ src_dir:
 #
 # spec_dir: spec/javascripts
 #
-spec_dir: public
+spec_dir: app/assets/builds
 
 # spec_helper
 #

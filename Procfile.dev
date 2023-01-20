@@ -1,0 +1,3 @@
+web: bin/rails server
+worker: bin/rake jobs:work
+cljs: cd client && lein cljsbuild once development && lein cljsbuild auto development
