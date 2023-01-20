@@ -5,7 +5,7 @@
 
                  [org.omcljs/om "0.8.8"]
                  [sablono "0.3.4"]
-                 [prismatic/om-tools "0.3.11"]]
+                 [prismatic/om-tools "0.4.0"]]
 
   :jvm-opts ^:replace ["-Xmx512m" "-server"]
 
