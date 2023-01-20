@@ -11,6 +11,8 @@
 
   :plugins [[lein-cljsbuild "1.1.8"]]
 
+  :hooks [leiningen.cljsbuild]
+
   :profiles {:dev {:source-paths ["app/clojurescript/src"]
                    :test-paths ["app/clojurescript/test"]
                    :resource-paths ["app/clojurescript/resources"]
