@@ -53,7 +53,7 @@ helpers:
 #   - **/*[sS]pec.js
 #
 spec_files:
-  - client_test.js
+  - cljs_test.js
 
 # src_dir
 #
