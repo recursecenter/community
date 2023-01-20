@@ -14,7 +14,7 @@
   :profiles {:dev {:source-paths ["app/clojurescript/src"]
                    :test-paths ["app/clojurescript/test"]
                    :resource-paths ["app/clojurescript/resources"]
-                   :target-path "app/clojurescript/target/%s/"}}
+                   :target-path "tmp/cache/clojurescript/target/%s/"}}
 
   :cljsbuild {:builds [{:id "development"
                         :source-paths ["app/clojurescript/src"]
