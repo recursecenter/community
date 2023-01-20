@@ -15,7 +15,7 @@ jobs:
           name: Install Leiningen
           command: |
             curl -sSL -o $HOME/bin/lein "https://raw.githubusercontent.com/technomancy/leiningen/${LEIN_VERSION}/bin/lein"
-	          chmod +x $HOME/bin/lein
+            chmod +x $HOME/bin/lein
 
       - restore_cache:
           keys:
