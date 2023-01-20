@@ -7,11 +7,12 @@ Community is a hybrid forum and mailing list server.
 ## Dependencies
 
 - Ruby
-- Postgres
-- redis
-- leiningen
-- Elasticsearch 2.4
 - OpenJDK 8 (newer versions don't work)
+- Leiningen
+- Node (for tests)
+- Postgres
+- Redis
+- Elasticsearch 2.4
 
 Also, note that because Community is tied to the Recurse Center API, you'll need to be a Recurser to run this.
 
@@ -21,18 +22,7 @@ Also, note that because Community is tied to the Recurse Center API, you'll need
 $ cd path/to/community
 ```
 
-**Postgres:**
-
-Install [Postgres.app](http://postgresapp.com/).
-
-```sh
-$ echo 'export PATH="/Applications/Postgres.app/Contents/Versions/latest/bin:$PATH"' >> ~/.zshrc
-$ export PATH="/Applications/Postgres.app/Contents/Versions/latest/bin:$PATH"
-$ which pg_config
-/Applications/Postgres.app/Contents/Versions/latest/bin/pg_config
-```
-
-**Ruby (using ruby-install and chruby):**
+**Ruby (using ruby-install and chruby)**
 
 For detailed setup instructions, see the [chruby README](https://github.com/postmodern/chruby/blob/master/README.md).
 
@@ -66,12 +56,29 @@ Then tell jenv about it:
 $ jenv add /Library/Java/JavaVirtualMachines/temurin-8.jdk/Contents/Home
 ```
 
-**Leiningen:**
+**Leiningen**
 
 ```sh
 $ brew install leiningen
 $ lein version
 Leiningen 2.10.0 on Java 1.8.0_312 OpenJDK 64-Bit Server VM
+```
+
+**Node**
+
+```sh
+$ brew install node yarn
+```
+
+**Postgres**
+
+Install [Postgres.app](http://postgresapp.com/).
+
+```sh
+$ echo 'export PATH="/Applications/Postgres.app/Contents/Versions/latest/bin:$PATH"' >> ~/.zshrc
+$ export PATH="/Applications/Postgres.app/Contents/Versions/latest/bin:$PATH"
+$ which pg_config
+/Applications/Postgres.app/Contents/Versions/latest/bin/pg_config
 ```
 
 **Redis**
@@ -110,8 +117,6 @@ REDIS_URL=redis://localhost:6379
 HACKER_SCHOOL_CLIENT_ID=your_client_id
 HACKER_SCHOOL_CLIENT_SECRET=your_client_secret
 
-JASMINE_CONFIG_PATH=test/javascripts/support/jasmine.yml
-
 # If you want to import accounts from the Recurse Center
 # (You won't be able to do this unless you are Recurse Center faculty)
 # HACKER_SCHOOL_API_SECRET_TOKEN=hacker_school_api_secret
@@ -127,10 +132,11 @@ To generate a Recurse Center client id and secret, go to your [Recurse Center se
 
 ## Running the code
 
-Install necessary gems and set up your database.
+Install necessary dependencies and set up your database.
 
 ```sh
 $ bundle install
+$ bin/yarn
 $ rails db:setup
 ```
 
@@ -150,16 +156,26 @@ The production client code will sometimes function differently than the developm
 $ CLJS_ENV=production bin/dev
 ```
 
-## Client testing
+## ClojureScript testing
 
-We use a small ClojureScript wrapper over [Jasmine](http://jasmine.github.io/2.0/introduction.html) for testing our client. If you're running `lein cljsbuild auto` (as above), the client tests will be built automatically.
+We use a small ClojureScript wrapper over [Jasmine](http://jasmine.github.io/2.0/introduction.html) for testing our client. If you're running `lein cljsbuild auto` (as above), the ClojureScript tests will be built automatically.
 
-To run the client tests:
+To build and run ClojureScript tests once, run:
 
 ```sh
-$ bin/rake jasmine
-# Navigate to localhost:8888 to run the tests.
-# Refresh the page to re-run the tests.
+$ rails cljs:build:test cljs:test
+```
+
+For a quicker feedback loop, build the tests in the background:
+
+```sh
+$ rails cljs:watch:test
+```
+
+Then run:
+
+```sh
+$ rails cljs:test
 ```
 
 # License

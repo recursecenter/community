@@ -54,7 +54,6 @@ group :development do
 end
 
 group :development, :test do
-  gem 'jasmine'
   gem 'dotenv-rails'
   gem 'minitest-ci', git: 'https://github.com/circleci/minitest-ci.git'
 end

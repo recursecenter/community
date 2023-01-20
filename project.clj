@@ -28,8 +28,8 @@
                                    :source-map true}}
                        {:id "test"
                         :source-paths ["app/clojurescript/src", "app/clojurescript/test"]
-                        :compiler {:output-to "app/assets/builds/cljs_test.js"
-                                   :output-dir "app/assets/builds/cljs_test"
+                        :compiler {:output-to "test/clojurescript/builds/cljs_test.js"
+                                   :output-dir "test/clojurescript/builds/cljs_test"
                                    :optimizations :whitespace
                                    :closure-defines {"goog.json.USE_NATIVE_JSON" true}
                                    :pretty-print true}}

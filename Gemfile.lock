@@ -128,13 +128,6 @@ GEM
     hashie (3.5.6)
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
-    jasmine (3.99.0)
-      jasmine-core (= 3.99.0)
-      phantomjs
-      rack (>= 2.1.4)
-      rake
-      webrick
-    jasmine-core (3.99.0)
     jbuilder (2.11.5)
       actionview (>= 5.0.0)
       activesupport (>= 5.0.0)
@@ -184,7 +177,6 @@ GEM
       rack (>= 1.2, < 4)
     oj (3.13.23)
     pg (1.4.5)
-    phantomjs (2.1.1.0)
     pry (0.14.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
@@ -304,7 +296,6 @@ DEPENDENCIES
   eventmachine
   faye-websocket
   font-awesome-sass
-  jasmine
   jbuilder (~> 2.0)
   jquery-rails
   listen

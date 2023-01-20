@@ -1,0 +1,18 @@
+{
+  "srcDir": "public",
+  "srcFiles": [
+    "assets/application-*.js"
+  ],
+  "specDir": "test/clojurescript/builds",
+  "specFiles": [
+    "cljs_test.js"
+  ],
+  "env": {
+    "stopSpecOnExpectationFailure": false,
+    "stopOnSpecFailure": false,
+    "random": true
+  },
+  "browser": {
+    "name": "headlessChrome"
+  }
+}
