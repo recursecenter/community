@@ -11,26 +11,29 @@
 
   :plugins [[lein-cljsbuild "1.1.0"]]
 
-  :profiles {:dev {:source-paths ["src"]}}
+  :profiles {:dev {:source-paths ["app/clojurescript/src"]
+                   :test-paths ["app/clojurescript/test"]
+                   :resource-paths ["app/clojurescript/resources"]
+                   :target-path "app/clojurescript/target/%s/"}}
 
   :cljsbuild {:builds [{:id "development"
-                        :source-paths ["src"]
-                        :compiler {:output-to "../app/assets/builds/client_development.js"
-                                   :output-dir "../app/assets/builds/client_development"
+                        :source-paths ["app/clojurescript/src"]
+                        :compiler {:output-to "app/assets/builds/client_development.js"
+                                   :output-dir "app/assets/builds/client_development"
                                    :optimizations :none
                                    :pretty-print true
                                    :closure-defines {"goog.json.USE_NATIVE_JSON" true}
-                                   :source-map "../app/assets/builds/client_development.js.map"}}
+                                   :source-map "app/assets/builds/client_development.js.map"}}
                        {:id "test"
-                        :source-paths ["src" "test"]
-                        :compiler {:output-to "../app/assets/builds/client_test.js"
-                                   :output-dir "../app/assets/builds/client_test"
+                        :source-paths ["app/clojurescript/src", "app/clojurescript/test"]
+                        :compiler {:output-to "app/assets/builds/client_test.js"
+                                   :output-dir "app/assets/builds/client_test"
                                    :optimizations :whitespace
                                    :closure-defines {"goog.json.USE_NATIVE_JSON" true}
                                    :pretty-print true}}
                        {:id "production"
-                        :source-paths ["src"]
-                        :compiler {:output-to "../app/assets/builds/client_production.js"
+                        :source-paths ["app/clojurescript/src"]
+                        :compiler {:output-to "app/assets/builds/client_production.js"
                                    :optimizations :advanced
                                    :pretty-print false
                                    :closure-defines {"goog.json.USE_NATIVE_JSON" true}
