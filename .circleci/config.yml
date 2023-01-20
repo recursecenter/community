@@ -40,7 +40,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - community-frontend-deps-{{ .Environment.CACHE_VERSION }}-{{ checksum "client/project.clj" }}
+            - community-frontend-deps-{{ .Environment.CACHE_VERSION }}-{{ checksum "project.clj" }}
             - community-frontend-deps-{{ .Environment.CACHE_VERSION }}-
 
       - run:
@@ -48,7 +48,7 @@ jobs:
           command: lein cljsbuild once test
 
       - save_cache:
-          key: community-frontend-deps-{{ .Environment.CACHE_VERSION }}-{{ checksum "client/project.clj" }}
+          key: community-frontend-deps-{{ .Environment.CACHE_VERSION }}-{{ checksum "project.clj" }}
           paths:
             - ~/.lein
             - ~/.m2
