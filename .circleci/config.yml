@@ -37,6 +37,11 @@ jobs:
           name: Build ClojureScript
           command: lein cljsbuild once test
 
+      - persist_to_workspace
+          root: test/clojurescript/builds
+          paths:
+            - cljs*
+
 
   # test:
   #   docker:
