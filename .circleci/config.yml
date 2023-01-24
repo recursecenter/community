@@ -73,6 +73,9 @@ jobs:
             - community-assets-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
             - community-assets-{{ .Environment.CACHE_VERSION }}-
       - run:
+          name: Compile assets
+          command: bin/rails assets:precompile
+      - run:
           name: Tests
           command: bin/rails test && bin/rails cljs:test
       - save_cache:

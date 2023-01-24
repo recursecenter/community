@@ -15,7 +15,7 @@ namespace :cljs do
   namespace :build do
     desc "Build your ClojureScript test bundle"
     task :test do
-      system({"RAILS_ENV" => "test"}, "rails cljs:build")
+      system({"RAILS_ENV" => "test"}, "rails assets:precompile")
     end
   end
 
@@ -28,6 +28,11 @@ namespace :cljs do
   namespace :watch do
     desc "Keep your ClojureScript test bundle up to date"
     task :test do
+      # Why CI => true? Because we're building for cljs:test, we'll
+      # need to precompile application.js, but we don't want to trigger
+      # a one-off cljs:build just do spin up another JVM to do a test
+      # build again in cljs:watch.
+      system({"RAILS_ENV" => "test", "CI" => "true"}, "rails assets:precompile")
       exec({"RAILS_ENV" => "test"}, "rails cljs:watch")
     end
   end
@@ -45,5 +50,11 @@ namespace :cljs do
   end
 end
 
-Rake::Task["assets:precompile"].enhance(["cljs:build"])
+# In CI, we build the ClojureScript source in a separate
+# Docker image, so we don't want assets:precompile to
+# attempt to build ClojureScript too.
+unless ENV["CI"]
+  Rake::Task["assets:precompile"].enhance(["cljs:build"])
+end
+
 Rake::Task["assets:clobber"].enhance(["cljs:clobber"])
