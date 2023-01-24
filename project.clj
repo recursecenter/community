@@ -14,7 +14,7 @@
   :hooks [leiningen.cljsbuild]
 
   :profiles {:dev {:source-paths ["app/clojurescript/src"]
-                   :test-paths ["app/clojurescript/test"]
+                   :test-paths ["test/clojurescript"]
                    :resource-paths ["app/clojurescript/resources"]
                    :target-path "tmp/cache/clojurescript/target/%s/"}}
 
@@ -26,12 +26,12 @@
                                    :pretty-print true
                                    :closure-defines {"goog.json.USE_NATIVE_JSON" true}
                                    :main community.core
-                                   :asset-path "assets/cljs"
+                                   :asset-path "/assets/cljs"
                                    :source-map true}}
                        {:id "test"
-                        :source-paths ["app/clojurescript/src", "app/clojurescript/test"]
-                        :compiler {:output-to "test/clojurescript/builds/cljs_test.js"
-                                   :output-dir "test/clojurescript/builds/cljs_test"
+                        :source-paths ["app/clojurescript/src", "test/clojurescript"]
+                        :compiler {:output-to "test/assets/builds/cljs_test.js"
+                                   :output-dir "test/assets/builds/cljs_test"
                                    :optimizations :whitespace
                                    :closure-defines {"goog.json.USE_NATIVE_JSON" true}
                                    :pretty-print true}}

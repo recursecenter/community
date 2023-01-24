@@ -3,7 +3,7 @@
   "srcFiles": [
     "assets/application-*.js"
   ],
-  "specDir": "test/clojurescript/builds",
+  "specDir": "test/assets/builds",
   "specFiles": [
     "cljs_test.js"
   ],

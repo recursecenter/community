@@ -45,7 +45,7 @@ namespace :cljs do
   desc "Remove ClojureScript builds"
   task :clobber do
     rm_rf Dir["app/assets/builds/**/*"], verbose: false
-    rm_rf Dir["test/clojurescript/builds/**/*"], verbose: false
+    rm_rf Dir["test/assets/builds/**/*"], verbose: false
     system "lein clean", exception: true
   end
 end

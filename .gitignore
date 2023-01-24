@@ -37,8 +37,8 @@
 /app/assets/builds/*
 !/app/assets/builds/.keep
 
-/test/clojurescript/builds/*
-!/test/clojurescript/builds/.keep
+/test/assets/builds/*
+!/test/assets/builds/.keep
 
 /node_modules
 
