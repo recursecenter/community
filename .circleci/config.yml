@@ -32,7 +32,7 @@ jobs:
             - ~/.lein
             - ~/.m2
       - persist_to_workspace:
-          root: test/clojurescript/builds
+          root: test/assets/builds
           paths:
             - cljs*
   test:
@@ -52,7 +52,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: test/clojurescript/builds
+          at: test/assets/builds
       - ruby/install-deps:
           key: gems-{{ .Environment.CACHE_VERSION }}
       - node/install-packages:
