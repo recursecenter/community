@@ -43,6 +43,3 @@ module Community
     # the framework and any gems in your application.
   end
 end
-
-require 'event_machine_smtp_delivery'
-ActionMailer::Base.add_delivery_method :eventmachine_smtp, EventMachineSmtpDelivery

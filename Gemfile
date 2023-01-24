@@ -62,10 +62,8 @@ end
 # Use puma as the app server
 gem 'puma'
 gem 'faye-websocket'
-gem 'eventmachine'
 gem 'rack-timeout'
 
-gem 'em-pg-client'
 gem 'bulk_insert'
 
 gem 'concurrent-ruby'

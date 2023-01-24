@@ -1,6 +1,8 @@
 class NotificationMailer < ActionMailer::Base
   add_template_helper ApplicationHelper
 
+  # TODO: rewrite so that we don't depend on EventMachineSmtpDelivery,
+  # and we can have multiple users here.
   RCPT_TO = EventMachineSmtpDelivery::CUSTOM_RCPT_TO_HEADER
 
   def user_mentioned_email(mention)
