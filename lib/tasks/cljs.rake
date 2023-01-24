@@ -15,7 +15,7 @@ namespace :cljs do
   namespace :build do
     desc "Build your ClojureScript test bundle"
     task :test do
-      system({"RAILS_ENV" => "test"}, "rails assets:precompile")
+      system({"RAILS_ENV" => "test"}, "rails assets:precompile", exception: true)
     end
   end
 
@@ -32,21 +32,21 @@ namespace :cljs do
       # need to precompile application.js, but we don't want to trigger
       # a one-off cljs:build just do spin up another JVM to do a test
       # build again in cljs:watch.
-      system({"RAILS_ENV" => "test", "CI" => "true"}, "rails assets:precompile")
+      system({"RAILS_ENV" => "test", "CI" => "true"}, "rails assets:precompile", exception: true)
       exec({"RAILS_ENV" => "test"}, "rails cljs:watch")
     end
   end
 
   desc "Run the ClojureScript tests"
   task :test do
-    system("yarn run test")
+    system("yarn run test", exception: true)
   end
 
   desc "Remove ClojureScript builds"
   task :clobber do
     rm_rf Dir["app/assets/builds/**/*"], verbose: false
     rm_rf Dir["test/clojurescript/builds/**/*"], verbose: false
-    system "lein clean"
+    system "lein clean", exception: true
   end
 end
 
