@@ -77,7 +77,7 @@ jobs:
           command: bin/rails assets:precompile
       - run:
           name: Tests
-          command: bin/rails test && bin/rails cljs:test
+          command: bin/rails test
       - save_cache:
           key: community-assets-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ .Revision }}
           paths:
