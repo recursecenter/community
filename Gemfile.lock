@@ -56,6 +56,9 @@ GEM
     arel (9.0.0)
     autoprefixer-rails (9.6.0)
       execjs
+    barnes (0.0.9)
+      multi_json (~> 1)
+      statsd-ruby (~> 1.1)
     bindex (0.8.1)
     bootsnap (1.4.4)
       msgpack (~> 1.0)
@@ -247,6 +250,7 @@ GEM
       actionpack (>= 5.2)
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
+    statsd-ruby (1.5.0)
     thor (1.2.1)
     thread_safe (0.3.6)
     tilt (2.0.10)
@@ -270,6 +274,7 @@ PLATFORMS
 
 DEPENDENCIES
   airbrake
+  barnes
   bootsnap
   bootstrap-sass (~> 3.4.1)
   bulk_insert
