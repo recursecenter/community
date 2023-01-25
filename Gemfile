@@ -60,7 +60,7 @@ group :development, :test do
 end
 
 # Use puma as the app server
-gem 'puma'
+gem 'puma', '~> 5.6'
 gem 'faye-websocket'
 gem 'eventmachine'
 gem 'rack-timeout'
