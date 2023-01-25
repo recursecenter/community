@@ -20,6 +20,9 @@ gem 'delayed_job_active_record'
 # gem 'skylight'
 gem 'airbrake'
 
+# https://devcenter.heroku.com/articles/language-runtime-metrics-ruby
+gem 'barnes'
+
 # Use SCSS for stylesheets
 gem 'sass-rails'
 gem 'bootstrap-sass', '~> 3.4.1'
