@@ -33,12 +33,6 @@ preload_app!
 # Allow puma to be restarted by `rails restart` command.
 plugin :tmp_restart
 
-# https://devcenter.heroku.com/articles/language-runtime-metrics-ruby
-require 'barnes'
-before_fork do
-  Barnes.start
-end
-
 on_worker_boot do
   ActiveSupport.on_load(:active_record) do
     Rails.logger.error "Worker booted. #{ConnectionMonitor::CONNECTIONS.size} checked out connections."
