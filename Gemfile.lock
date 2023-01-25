@@ -69,6 +69,9 @@ GEM
       rbtree3 (~> 0.5)
     autoprefixer-rails (9.6.0)
       execjs
+    barnes (0.0.9)
+      multi_json (~> 1)
+      statsd-ruby (~> 1.1)
     bindex (0.8.1)
     bootsnap (1.15.0)
       msgpack (~> 1.2)
@@ -188,7 +191,7 @@ GEM
     pry-remote (0.1.8)
       pry (~> 0.9)
       slop (~> 3.0)
-    puma (6.0.2)
+    puma (5.6.5)
       nio4r (~> 2.0)
     racc (1.6.2)
     rack (2.2.6.2)
@@ -255,6 +258,7 @@ GEM
       actionpack (>= 5.2)
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
+    statsd-ruby (1.5.0)
     thor (1.2.1)
     thread_safe (0.3.6)
     tilt (2.0.11)
@@ -281,6 +285,7 @@ PLATFORMS
 
 DEPENDENCIES
   airbrake
+  barnes
   bootsnap
   bootstrap-sass (~> 3.4.1)
   bulk_insert
@@ -307,7 +312,7 @@ DEPENDENCIES
   pry-doc
   pry-rails
   pry-remote
-  puma
+  puma (~> 5.6)
   rack-timeout
   rails (= 6.0.6.1)
   redcarpet

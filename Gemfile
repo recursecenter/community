@@ -20,6 +20,9 @@ gem 'delayed_job_active_record'
 # gem 'skylight'
 gem 'airbrake'
 
+# https://devcenter.heroku.com/articles/language-runtime-metrics-ruby
+gem 'barnes'
+
 # Use SCSS for stylesheets
 gem 'sass-rails'
 gem 'bootstrap-sass', '~> 3.4.1'
@@ -59,7 +62,7 @@ group :development, :test do
 end
 
 # Use puma as the app server
-gem 'puma'
+gem 'puma', '~> 5.6'
 gem 'faye-websocket'
 gem 'eventmachine'
 gem 'rack-timeout'
