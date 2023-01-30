@@ -7,6 +7,8 @@ ruby '2.6.10'
 gem 'rails', '5.2.8.1'
 gem 'pg'
 
+gem 'mail', '~> 2.7.1'
+
 gem 'bootsnap', require: false
 
 gem 'redis'
