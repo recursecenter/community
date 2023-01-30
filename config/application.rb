@@ -7,6 +7,7 @@ require 'rails/all'
 Bundler.require(*Rails.groups)
 
 require_relative '../lib/web_socket_handler'
+require_relative '../lib/batch_mailgun_delivery_method'
 require_relative '../lib/thread_error_logger'
 
 module Community
@@ -41,5 +42,10 @@ module Community
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
+
+    config.before_configuration do
+      ActionMailer::Base.add_delivery_method :batch_mailgun, BatchMailgunDeliveryMethod
+    end
   end
 end
+

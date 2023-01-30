@@ -3,7 +3,7 @@ class NotificationMailer < ActionMailer::Base
 
   # TODO: rewrite so that we don't depend on EventMachineSmtpDelivery,
   # and we can have multiple users here.
-  RCPT_TO = EventMachineSmtpDelivery::CUSTOM_RCPT_TO_HEADER
+  # RCPT_TO = EventMachineSmtpDelivery::CUSTOM_RCPT_TO_HEADER
 
   def user_mentioned_email(mention)
     @user = mention.user
@@ -51,7 +51,7 @@ private
     end
 
     mail(
-      RCPT_TO => user.email,
+      # RCPT_TO => user.email,
       message_id: post.message_id,
       to: list_address(post.thread.subforum),
       from: post.author.display_email,
