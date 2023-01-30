@@ -7,6 +7,9 @@ ruby '2.6.10'
 gem 'rails', '5.2.8.1'
 gem 'pg'
 
+# Remove this when we upgrade to Ruby 3.1 or later.
+gem 'mail', '~> 2.7.1'
+
 gem 'bootsnap', require: false
 
 gem 'redis'
@@ -19,6 +22,9 @@ gem 'delayed_job_active_record'
 # Disable until we're on a newer version of Ruby/Rails
 # gem 'skylight'
 gem 'airbrake'
+
+# https://devcenter.heroku.com/articles/language-runtime-metrics-ruby
+gem 'barnes'
 
 # Use SCSS for stylesheets
 gem 'sass-rails'
@@ -60,7 +66,7 @@ group :development, :test do
 end
 
 # Use puma as the app server
-gem 'puma'
+gem 'puma', '~> 5.6'
 gem 'faye-websocket'
 gem 'rack-timeout'
 
