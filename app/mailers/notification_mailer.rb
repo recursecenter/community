@@ -60,7 +60,7 @@ private
       "List-Id" => list_id(post.thread.subforum),
       "List-Archive" => list_archive(post.thread),
       "List-Post" => list_post(@reply_info),
-      "List-Unsubscribe" => list_unsubscribe(@reply_info),
+      "List-Unsubscribe" => list_unsubscribe(post.thread),
 
       # Mailgun sends these back to us when users reply to a sent email
       "X-Mailgun-Variables" => {reply_info: @reply_info}.to_json
@@ -96,7 +96,7 @@ private
     "<mailto:#{reply_to_post_address(reply_info)}>"
   end
 
-  def list_unsubscribe(reply_info)
-    "<#{unsubscribe_thread_url(reply_info)}>"
+  def list_unsubscribe(thread)
+    "<#{unsubscribe_thread_url(thread)}>"
   end
 end
