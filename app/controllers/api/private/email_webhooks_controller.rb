@@ -1,6 +1,6 @@
 require 'openssl'
 
-class Api::Private::LegacyEmailWebhooksController < Api::ApiController
+class Api::Private::EmailWebhooksController < Api::ApiController
   before_action :require_mailgun_origin
   before_action :require_valid_reply_info
   skip_before_action :require_login

@@ -61,11 +61,8 @@ Rails.application.routes.draw do
     end
 
     namespace :private do
-      post :reply, to: 'legacy_email_webhooks#reply'
-      post :opened, to: 'legacy_email_webhooks#opened'
-
-      post :reply_legacy, to: 'legacy_email_webhooks#reply'
-      post :opened_legacy, to: 'legacy_email_webhooks#opened'
+      post :reply, to: 'email_webhooks#reply'
+      post :opened, to: 'email_webhooks#opened'
     end
   end
 end
