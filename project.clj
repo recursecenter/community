@@ -20,13 +20,13 @@
 
   :cljsbuild {:builds [{:id "development"
                         :source-paths ["app/clojurescript/src"]
-                        :compiler {:output-to "app/assets/builds/cljs.js"
-                                   :output-dir "app/assets/builds/cljs"
+                        :compiler {:output-to "app/assets/builds/cljs_development.js"
+                                   :output-dir "app/assets/builds/cljs_development"
                                    :optimizations :none
                                    :pretty-print true
                                    :closure-defines {"goog.json.USE_NATIVE_JSON" true}
                                    :main community.core
-                                   :asset-path "/assets/cljs"
+                                   :asset-path "/assets/cljs_development"
                                    :source-map true}}
                        {:id "test"
                         :source-paths ["app/clojurescript/src", "test/clojurescript"]
@@ -37,7 +37,7 @@
                                    :pretty-print true}}
                        {:id "production"
                         :source-paths ["app/clojurescript/src"]
-                        :compiler {:output-to "app/assets/builds/cljs.js"
+                        :compiler {:output-to "app/assets/builds/cljs_production.js"
                                    :optimizations :advanced
                                    :pretty-print false
                                    :closure-defines {"goog.json.USE_NATIVE_JSON" true}

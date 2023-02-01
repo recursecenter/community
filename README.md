@@ -146,7 +146,7 @@ After that, use `bin/dev` to start `foreman` which will run the Rails server as 
 $ bin/dev
 ```
 
-Lein can take as long as ~30 seconds to build all the ClojureScript, so be patient! The site won't work until it's done. Once it's finished, simply visit [localhost:5001](http://localhost:5001/).
+`rails cljs:watch` can take as long as ~30 seconds to build all the ClojureScript, so be patient! The site won't work until it's done. Once it's finished, simply visit [localhost:5001](http://localhost:5001/).
 
 ### Running the production ClojureScript
 
@@ -157,8 +157,6 @@ $ CLJS_ENV=production bin/dev
 ```
 
 ## ClojureScript testing
-
-We use a small ClojureScript wrapper over [Jasmine](http://jasmine.github.io/2.0/introduction.html) for testing our client. If you're running `lein cljsbuild auto` (as above), the ClojureScript tests will be built automatically.
 
 To build and run ClojureScript tests once, run:
 

@@ -1,12 +1,9 @@
-module ClojureScript
-  def self.env
-    ENV["CLJS_ENV"] || ENV["CLIENT_ENV"] || ENV["RAILS_ENV"] || "development"
-  end
-end
+require 'clojure_script'
 
 namespace :cljs do
   desc "Build your ClojureScript bundle"
   task :build do
+    puts "Building ClojureScript for #{ClojureScript.env}"
     unless system "lein cljsbuild once #{ClojureScript.env}"
       raise "lein cljsbuild: ClojureScript build failed"
     end
@@ -14,8 +11,19 @@ namespace :cljs do
 
   namespace :build do
     desc "Build your ClojureScript test bundle"
-    task :test do
-      system({"RAILS_ENV" => "test"}, "rails assets:precompile", exception: true)
+    task test: :test_assets do
+      system({"RAILS_ENV" => "test"}, "rails cljs:build", exception: true)
+    end
+
+    # To run tests in the browser, jasmine needs to load application.js, so
+    # we have to precompile it. See jasmine-browser.json. We don't want to
+    # just use assets:precompile, because that will create public/assets
+    # which Rails will use from then on in development, instead of compiling
+    # assets on demand.
+    task test_assets: :environment do
+      assets = Rails.application.assets
+      manifest = Sprockets::Manifest.new(assets.cached, "test/assets/builds")
+      manifest.compile("application.js")
     end
   end
 
@@ -27,12 +35,7 @@ namespace :cljs do
 
   namespace :watch do
     desc "Keep your ClojureScript test bundle up to date"
-    task :test do
-      # Why CI => true? Because we're building for cljs:test, we'll
-      # need to precompile application.js, but we don't want to trigger
-      # a one-off cljs:build just do spin up another JVM to do a test
-      # build again in cljs:watch.
-      system({"RAILS_ENV" => "test", "CI" => "true"}, "rails assets:precompile", exception: true)
+    task test: "build:test_assets" do
       exec({"RAILS_ENV" => "test"}, "rails cljs:watch")
     end
   end

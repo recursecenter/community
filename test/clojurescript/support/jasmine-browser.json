@@ -1,7 +1,7 @@
 {
-  "srcDir": "public",
+  "srcDir": "test/assets/builds",
   "srcFiles": [
-    "assets/application-*.js"
+    "application-*.js"
   ],
   "specDir": "test/assets/builds",
   "specFiles": [
