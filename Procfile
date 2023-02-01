@@ -1,2 +1,2 @@
 web: bin/rails server
-worker: bin/rake jobs:work
+worker: bin/rails jobs:work
