@@ -38,6 +38,8 @@ class Api::Private::EmailWebhooksController < Api::ApiController
       head 406 and return
     end
 
+    Rails.logger.info "Mailgun spam headers: X-Mailgun-Sflag=#{params["X-Mailgun-Sflag"]} X-Mailgun-Sscore=#{params["X-Mailgun-Sscore"]} X-Mailgun-Spf=#{params["X-Mailgun-Spf"]} X-Mailgun-Dkim-Check-Result=#{params["X-Mailgun-Dkim-Check-Result"]}"
+
     post.author = current_user
     post.body = params['stripped-text']
     post.message_id = params["Message-Id"]
