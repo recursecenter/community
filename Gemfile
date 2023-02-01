@@ -10,8 +10,6 @@ gem 'pg'
 # Remove this when we upgrade to Ruby 3.1 or later.
 gem 'mail', '~> 2.7.1'
 
-gem 'mailgun-ruby'
-
 gem 'bootsnap', require: false
 
 gem 'redis'
