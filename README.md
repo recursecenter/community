@@ -37,7 +37,7 @@ $ ruby -v
 ruby 2.6.10p210 (2022-04-12 revision 67958) [arm64-darwin21]
 ```
 
-**Jenv and OpenJDK8**
+**Jenv and OpenJDK 8**
 
 ```sh
 $ brew install jenv
