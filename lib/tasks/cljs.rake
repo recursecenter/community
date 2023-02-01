@@ -11,7 +11,7 @@ namespace :cljs do
 
   namespace :build do
     desc "Build your ClojureScript test bundle"
-    task test: :test_assets do
+    task :test do
       system({"RAILS_ENV" => "test"}, "rails cljs:build", exception: true)
     end
 
@@ -41,7 +41,7 @@ namespace :cljs do
   end
 
   desc "Run the ClojureScript tests"
-  task :test do
+  task test: "build:test_assets" do
     system("yarn run test", exception: true)
   end
 
