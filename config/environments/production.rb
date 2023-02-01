@@ -91,7 +91,7 @@ Rails.application.configure do
     port: ENV["SMTP_PORT"],
     user_name: ENV["SMTP_USERNAME"],
     password: ENV["SMTP_PASSWORD"],
-    tls: ENV["SMTP_TLS"].present?,
+    tls: true,
     authentication: :plain,
     domain: 'mail.community.recurse.com',
   }
