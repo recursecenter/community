@@ -55,6 +55,7 @@ gem 'pry-rails'
 group :development do
   gem 'pry-remote'
   gem 'pry-doc'
+  gem 'pry-byebug'
   gem 'web-console'
   gem 'listen'
 end
@@ -68,10 +69,8 @@ end
 # Use puma as the app server
 gem 'puma', '~> 5.6'
 gem 'faye-websocket'
-gem 'eventmachine'
 gem 'rack-timeout'
 
-gem 'em-pg-client'
 gem 'bulk_insert'
 
 gem 'concurrent-ruby'

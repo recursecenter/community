@@ -6,8 +6,10 @@ class BatchNotificationJob
   end
 
   def perform
-    User.where(id: @ids).each do |u|
-      NotificationMailer.send(@method, u, *@args).deliver_now
+    # Mailgun has a maximum of 1,000 recipients per message. We're
+    # doing 999 just to be safe.
+    User.where(id: @ids).in_batches(of: 999) do |users|
+      NotificationMailer.send(@method, users, *@args).deliver_now
     end
   end
 end
