@@ -176,6 +176,29 @@ Then run:
 $ rails cljs:test
 ```
 
+### Removing ClojureScript
+
+If we keep using Community, we're eventually going to remove ClojureScript. Here's what you need to do.
+
+Delete these files:
+
+- .java-version
+- app/clojurescript
+- app/assets/builds
+- config/initializers/clojure_script.rb
+- lib/clojure_script.rb
+- lib/tasks/cljs.rake
+- package.json
+- project.clj
+- test/clojurescript
+- test/assets
+
+Remove references to ClojureScript from these files:
+
+- .circleci/config.yml
+- app/views/layouts/application.html.erb
+- Procfile.dev
+
 # License
 
 Copyright © 2023 the Recurse Center
