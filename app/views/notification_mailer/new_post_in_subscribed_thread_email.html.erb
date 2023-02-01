@@ -3,7 +3,7 @@
 <div style="border-top: 1px solid #ccc;">
   <p>
     You received this message because you are subscribed to this thread.
-    <%= link_to "Unsubscribe.", unsubscribe_thread_url(token: @reply_info) %>
+    <%= link_to "Unsubscribe.", unsubscribe_thread_url(@post.thread) %>
   </p>
   <p>Reply to this email or <%= link_to "view the post on Community", post_url(slug: @post.thread.slug, thread_id: @post.thread.id, post_number: @post.post_number) %>.</p>
 </div>

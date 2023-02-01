@@ -2,20 +2,18 @@ require 'openssl'
 
 class Api::Private::EmailWebhooksController < Api::ApiController
   before_action :require_mailgun_origin
-  before_action :require_valid_reply_info
   skip_before_action :require_login
   skip_before_action :verify_authenticity_token
   skip_authorization_check
 
   # Mailgun will POST to this endpoint when someone replies to an
-  # email with a reply-to of the form:
+  # email with a reply-to of the forms:
   #
   #     reply-(reply_info)@mail.community.recurse.com
+  #     subforum-name@lists.community.recurse.com
   #
   # important params:
   #
-  #     reply_info, a Base64 encoded and signed string that can be
-  #       verified with ReplyInfoVerifier.verify
   #     stripped-text, the plain-text email body, not including a
   #       signature or trailing quoted text
   #     timestamp, token, signature, used to verify that the POST
@@ -27,11 +25,20 @@ class Api::Private::EmailWebhooksController < Api::ApiController
   # For any other code, Mailgun will retry the POST on an increasing
   # interval over the next 8 hours.
   def reply
-    post = emailed_post.thread.posts.build
+    current_user = User.find_by(email: params["sender"])
+    emailed_post = Post.find_by(message_id: params["In-Reply-To"])
 
-    unless can?(:create, post)
+    unless current_user.present? && emailed_post.present?
       head 406 and return
     end
+
+    post = emailed_post.thread.posts.build
+
+    unless Ability.new(current_user).can?(:create, post)
+      head 406 and return
+    end
+
+    Rails.logger.info "Mailgun spam headers: X-Mailgun-Sflag=#{params["X-Mailgun-Sflag"]} X-Mailgun-Sscore=#{params["X-Mailgun-Sscore"]} X-Mailgun-Spf=#{params["X-Mailgun-Spf"]} X-Mailgun-Dkim-Check-Result=#{params["X-Mailgun-Dkim-Check-Result"]}"
 
     post.author = current_user
     post.body = params['stripped-text']
@@ -51,8 +58,10 @@ class Api::Private::EmailWebhooksController < Api::ApiController
   end
 
   def opened
-    # Skip unless we have a v2 reply info
-    if !params['reply_info'].start_with?("v2--")
+    current_user = User.find_by(email: params["recipient"])
+    emailed_post = Post.find_by(message_id: params["message-id"])
+
+    unless current_user.present? && emailed_post.present?
       head 406 and return
     end
 
@@ -62,26 +71,6 @@ class Api::Private::EmailWebhooksController < Api::ApiController
   end
 
 private
-  def reply_info
-    @reply_info ||= begin
-      ReplyInfoVerifier.verify(params['reply_info'])
-    rescue ReplyInfoVerifier::InvalidSignature, ActiveRecord::RecordNotFound => e
-      nil
-    end
-  end
-
-  def valid_reply_info?
-    !reply_info.nil?
-  end
-
-  def current_user
-    reply_info[0]
-  end
-
-  def emailed_post
-    reply_info[1]
-  end
-
   def require_mailgun_origin
     api_key = ENV["MAILGUN_API_KEY"]
     digest = OpenSSL::Digest::SHA256.new
@@ -89,12 +78,6 @@ private
 
     unless SecureEquals.secure_equals(params[:signature], OpenSSL::HMAC.hexdigest(digest, api_key, data))
       head 404
-    end
-  end
-
-  def require_valid_reply_info
-    unless valid_reply_info?
-      head 406
     end
   end
 end
