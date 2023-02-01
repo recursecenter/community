@@ -7,7 +7,6 @@ require 'rails/all'
 Bundler.require(*Rails.groups)
 
 require_relative '../lib/web_socket_handler'
-require_relative '../lib/event_machine_smtp_delivery'
 require_relative '../lib/thread_error_logger'
 
 module Community
@@ -41,10 +40,6 @@ module Community
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
-
-    config.after_initialize do
-      ActionMailer::Base.add_delivery_method :eventmachine_smtp, EventMachineSmtpDelivery
-    end
   end
 end
 
