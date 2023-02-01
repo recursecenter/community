@@ -5,21 +5,25 @@ zach_post_1:
   thread: one
   author: zach
   post_number: 1
+  message_id: <zach_post_1@example.com>
 
 dave_post_1:
   body: Some other stuff
   thread: one
   author: dave
   post_number: 2
+  message_id: <dave_post_1@example.com>
 
 first_in_thread_created_by_full_hacker_schooler:
   body: a post body
   thread_id: 1
   author: full_hacker_schooler
   post_number: 1
+  message_id: <first_in_thread_created_by_full_hacker_schooler@example.com>
 
 second_in_thread_created_by_full_hacker_schooler:
   body: a post body
   thread_id: 1
   author: full_hacker_schooler
   post_number: 2
+  message_id: <second_in_thread_created_by_full_hacker_schooler@example.com>
