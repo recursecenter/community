@@ -14,10 +14,10 @@ Rails.application.routes.draw do
   get '/s', to: 'pages#index'
   get '/s/:query', to: 'pages#index'
 
-  get '/threads/:id/unsubscribe', to: 'threads#unsubscribe'
-  get '/threads/:id/subscribe', to: 'threads#subscribe'
-  get '/threads/unsubscribe/:token', to: 'threads#unsubscribe_with_reply_info', as: :unsubscribe_thread
-  get '/threads/subscribe/:token', to: 'threads#subscribe_with_reply_info', as: :subscribe_thread
+  get '/threads/:id/unsubscribe', to: 'threads#unsubscribe', as: :unsubscribe_thread
+  get '/threads/:id/subscribe', to: 'threads#subscribe', as: :subscribe_thread
+  get '/threads/unsubscribe/:token', to: 'threads#unsubscribe_with_reply_info'
+  get '/threads/subscribe/:token', to: 'threads#subscribe_with_reply_info'
 
   # sudo for development only
   namespace :admin do

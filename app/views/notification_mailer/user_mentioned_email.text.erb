@@ -4,7 +4,7 @@
 You received this message because <%= @mentioned_by.first_name %> mentioned you in the post above.
 <% unless @user.subscribed_to?(@post.thread) %>
 
-Subscribe to this thread: <%= subscribe_thread_url(@reply_info) %>
+Subscribe to this thread: <%= subscribe_thread_url(@post.thread) %>
 <% end %>
 
 Reply to this email or view the post on Community: <%= post_url(slug: @post.thread.slug, thread_id: @post.thread.id, post_number: @post.post_number) %>

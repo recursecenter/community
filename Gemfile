@@ -7,6 +7,9 @@ ruby '2.6.10'
 gem 'rails', '6.0.6.1'
 gem 'pg'
 
+# Remove this when we upgrade to Ruby 3.1 or later.
+gem 'mail', '~> 2.7.1'
+
 gem 'bootsnap', require: false
 
 gem 'redis'
@@ -52,6 +55,7 @@ gem 'pry-rails'
 group :development do
   gem 'pry-remote'
   gem 'pry-doc'
+  gem 'pry-byebug'
   gem 'web-console'
   gem 'listen'
 end
@@ -64,10 +68,8 @@ end
 # Use puma as the app server
 gem 'puma', '~> 5.6'
 gem 'faye-websocket'
-gem 'eventmachine'
 gem 'rack-timeout'
 
-gem 'em-pg-client'
 gem 'bulk_insert'
 
 gem 'concurrent-ruby'

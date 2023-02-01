@@ -18,7 +18,8 @@ class Api::PostsControllerTest < ActionController::TestCase
 
     mail = ActionMailer::Base.deliveries.first
 
-    assert_equal full_hacker_schooler.email, mail.header[EventMachineSmtpDelivery::CUSTOM_RCPT_TO_HEADER].value
+    assert_equal ["subforum-no-one-subscribes-to@lists.community.recurse.com"], mail.to
+    assert_equal [full_hacker_schooler.email], mail.smtp_envelope_to
     assert_operator mail.text_part.body.to_s, :=~, /subscribed/
   end
 
