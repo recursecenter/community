@@ -34,7 +34,7 @@ class Api::Private::EmailWebhooksController < Api::ApiController
 
     post = emailed_post.thread.posts.build
 
-    unless can?(:create, post)
+    unless Ability.new(current_user).can?(:create, post)
       head 406 and return
     end
 
