@@ -4,9 +4,7 @@ namespace :cljs do
   desc "Build your ClojureScript bundle"
   task :build do
     puts "Building ClojureScript for #{ClojureScript.env}"
-    unless system "lein cljsbuild once #{ClojureScript.env}"
-      raise "lein cljsbuild: ClojureScript build failed"
-    end
+    system("lein cljsbuild once #{ClojureScript.env}", exception: true)
   end
 
   namespace :build do
