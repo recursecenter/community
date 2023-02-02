@@ -7,6 +7,8 @@
                  [sablono "0.3.4"]
                  [prismatic/om-tools "0.4.0"]]
 
+  :min-lein-version "2.0.0"
+
   :jvm-opts ^:replace ["-Xmx512m" "-server"]
 
   :plugins [[lein-cljsbuild "1.1.8"]]
