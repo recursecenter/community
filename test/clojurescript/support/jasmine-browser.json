@@ -1,0 +1,18 @@
+{
+  "srcDir": "test/assets/builds",
+  "srcFiles": [
+    "application-*.js"
+  ],
+  "specDir": "test/assets/builds",
+  "specFiles": [
+    "cljs_test.js"
+  ],
+  "env": {
+    "stopSpecOnExpectationFailure": false,
+    "stopOnSpecFailure": false,
+    "random": true
+  },
+  "browser": {
+    "name": "headlessChrome"
+  }
+}

@@ -1,2 +1,2 @@
-web: bin/puma -C config/puma.rb
-worker: bin/rake jobs:work
+web: bin/rails server
+worker: bin/rails jobs:work

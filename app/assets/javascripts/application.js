@@ -16,8 +16,3 @@
 //= require highlight.pack
 //
 //= require bootstrap/dropdown
-
-// The development version is in the layout to make source maps work
-<% if Community.client_env.production? %>
-    <% require_asset "client-prod" %>
-<% end %>

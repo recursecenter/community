@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "test": "jasmine-browser-runner runSpecs --config=test/clojurescript/support/jasmine-browser.json"
+  },
+  "devDependencies": {
+    "jasmine-browser-runner": "^1.2.0",
+    "jasmine-core": "^4.5.0"
+  }
+}

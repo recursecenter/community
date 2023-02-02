@@ -1,0 +1,1 @@
+require 'clojure_script'

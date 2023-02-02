@@ -22,11 +22,9 @@ default: &default
   pool: 5
   reaping_frequency: 8
 
-<% require 'database_forker' %>
-
 development:
   <<: *default
-  database: <%= DatabaseForker.new("community_development").database_name %>
+  database: community_development
 
   # The specified database role being used to connect to postgres.
   # To create additional roles in postgres see `$ createuser --help`.

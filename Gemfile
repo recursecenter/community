@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 # image in test/Dockerfile and update .circleci/config.yml.
 ruby '2.6.10'
 
-gem 'rails', '5.2.8.1'
+gem 'rails', '6.0.6.1'
 gem 'pg'
 
 # Remove this when we upgrade to Ruby 3.1 or later.
@@ -31,12 +31,12 @@ gem 'sass-rails'
 gem 'bootstrap-sass', '~> 3.4.1'
 gem 'font-awesome-sass'
 
-gem 'sprockets', '~> 3.7.2'
+gem 'sprockets'
 
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 
-gem 'oauth2'
+gem 'oauth2', '~> 1.4.11'
 gem 'cancancan'
 
 gem 'redcarpet'
@@ -61,7 +61,6 @@ group :development do
 end
 
 group :development, :test do
-  gem 'jasmine'
   gem 'dotenv-rails'
   gem 'minitest-ci', git: 'https://github.com/circleci/minitest-ci.git'
 end
