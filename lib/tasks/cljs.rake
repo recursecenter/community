@@ -51,5 +51,8 @@ namespace :cljs do
   end
 end
 
-# Rake::Task["assets:precompile"].enhance(["cljs:build"])
+unless ENV.key?("CLJS_SKIP_BUILD_ON_PRECOMPILE")
+  Rake::Task["assets:precompile"].enhance(["cljs:build"])
+end
+
 Rake::Task["assets:clobber"].enhance(["cljs:clobber"])
