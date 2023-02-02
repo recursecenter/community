@@ -1,3 +1,0 @@
-#!/usr/bin/env sh
-
-echo "       bin/build: Deferring ClojureScript build until bin/rails assets:precompile"

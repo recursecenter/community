@@ -51,5 +51,5 @@ namespace :cljs do
   end
 end
 
-Rake::Task["assets:precompile"].enhance(["cljs:build"])
+# Rake::Task["assets:precompile"].enhance(["cljs:build"])
 Rake::Task["assets:clobber"].enhance(["cljs:clobber"])
