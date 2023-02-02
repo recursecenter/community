@@ -53,11 +53,5 @@ namespace :cljs do
   end
 end
 
-# In CI, we build the ClojureScript source in a separate
-# Docker image, so we don't want assets:precompile to
-# attempt to build ClojureScript too.
-unless ENV["CI"]
-  Rake::Task["assets:precompile"].enhance(["cljs:build"])
-end
-
+Rake::Task["assets:precompile"].enhance(["cljs:build"])
 Rake::Task["assets:clobber"].enhance(["cljs:clobber"])
