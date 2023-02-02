@@ -185,6 +185,7 @@ Delete these files:
 - .java-version
 - app/clojurescript
 - app/assets/builds
+- bin/build
 - config/initializers/clojure_script.rb
 - lib/clojure_script.rb
 - lib/tasks/cljs.rake
@@ -199,6 +200,8 @@ Remove references to ClojureScript from these files:
 - app/views/layouts/application.html.erb
 - Procfile.dev
 - README.md
+
+Remove the heroku/clojure buildpack.
 
 # License
 
