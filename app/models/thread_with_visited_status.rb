@@ -2,6 +2,7 @@ class ThreadWithVisitedStatus < ActiveRecord::Base
   self.table_name = 'threads_with_visited_status'
   self.primary_key = 'id'
 
+  include PostgresView
   include DiscussionThreadCommon
 
   include Slug
@@ -17,9 +18,5 @@ class ThreadWithVisitedStatus < ActiveRecord::Base
     if unread? && !last_post_number_read.zero?
       last_post_number_read + 1
     end
-  end
-
-  def readonly?
-    true
   end
 end

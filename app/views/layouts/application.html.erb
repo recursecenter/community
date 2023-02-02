@@ -3,12 +3,18 @@
 <head>
   <title>Community</title>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,700italic,400,600,700,300" rel="stylesheet">
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
-  <%= javascript_include_tag "cljs_#{ClojureScript.env}" %>
   <%= csrf_meta_tags %>
   <%= favicon_link_tag 'favicon.ico' %>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+  <% unless Community.client_env.production? %>
+    <!-- Avoid asset pipeline for development cljs. It's a stupid hack to get
+         sourcempas to work. -->
+    <script src="/client/client-dev/goog/base.js"></script>
+    <script src="/client/client-dev.js"></script>
+    <script>goog.require("community.core");</script>
+  <% end %>
 </head>
 <body>
 

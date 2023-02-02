@@ -2,4 +2,6 @@
 
 require ::File.expand_path('../config/environment',  __FILE__)
 
+Rails.logger.info "Community client environment: #{Community.client_env}"
+
 run Rails.application

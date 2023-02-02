@@ -13,13 +13,8 @@ module Community
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.2
-    config.autoloader = :zeitwerk
 
     # Settings in config/environments/* take precedence over those specified here.
-
-    # Not default, but recommended by the Configuring Rails
-    # Applications guide.
-    config.add_autoload_paths_to_load_path = false
 
     config.active_record.schema_format = :sql
 
@@ -30,6 +25,12 @@ module Community
     # Use a different logger for distributed setups.
     # require 'syslog/logger'
     # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
+
+    if ENV["RAILS_LOG_TO_STDOUT"].present?
+      logger           = ActiveSupport::Logger.new(STDOUT)
+      logger.formatter = config.log_formatter
+      config.logger    = ActiveSupport::TaggedLogging.new(logger)
+    end
 
     config.middleware.use WebSocketHandler
 

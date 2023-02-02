@@ -1,94 +1,73 @@
 version: 2.1
 orbs:
-    ruby: circleci/ruby@2
-    node: circleci/node@5
-    browser-tools: circleci/browser-tools@1
+    ruby: circleci/ruby@1
 jobs:
   build:
     docker:
-      - image: cimg/openjdk:8.0
-    environment:
-      LEIN_VERSION: 2.10.0
-    steps:
-      - checkout
-      - run:
-          name: Install Leiningen
-          command: |
-            curl -sSL -o $HOME/bin/lein "https://raw.githubusercontent.com/technomancy/leiningen/${LEIN_VERSION}/bin/lein"
-            chmod +x $HOME/bin/lein
-      - restore_cache:
-          keys:
-            - lein-deps-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "project.clj" }}
-            - lein-deps-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
-            - lein-deps-{{ .Environment.CACHE_VERSION }}-
-      - run:
-          name: Install Clojure dependencies
-          command: lein deps
-      - run:
-          name: Build ClojureScript
-          command: lein cljsbuild once test
-      - save_cache:
-          key: lein-deps-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "project.clj" }}
-          paths:
-            - ~/.lein
-            - ~/.m2
-      - persist_to_workspace:
-          root: test/assets/builds
-          paths:
-            - cljs*
-  test:
-    docker:
-      - image: cimg/ruby:2.6.10-browsers
-      - image: cimg/postgres:14.6
+      - image: recursecenter/community-ci:ruby-2.6.10
+      - image: cimg/postgres:14.0-postgis
         environment:
+          POSTGRES_DB: community_test
+          POSTGRES_USER: root
           POSTGRES_PASSWORD: password
       - image: redis:4.0
       - image: elasticsearch:2.4.6
     environment:
-      RAILS_ENV: test
-      DATABASE_URL: postgres://postgres:password@localhost/postgres
-      REDIS_URL: redis://localhost:6379
       BUNDLE_JOBS: "3"
       BUNDLE_RETRY: "3"
+      PGHOST: 127.0.0.1
+      PGUSER: root
+      PGPASSWORD: password
+      RAILS_ENV: test
+      PAGER: cat
+      REDIS_URL: redis://localhost:6379
+      JASMINE_CONFIG_PATH: test/javascripts/support/jasmine.yml
     steps:
       - checkout
-      - attach_workspace:
-          at: test/assets/builds
+
       - ruby/install-deps:
           key: gems-{{ .Environment.CACHE_VERSION }}
-      - node/install-packages:
-          pkg-manager: yarn
-          cache-version: "{{ .Environment.CACHE_VERSION }}"
-      - browser-tools/install-chrome
-      - browser-tools/install-chromedriver
       - run:
           command: 'dockerize -wait tcp://localhost:5432 -timeout 1m'
           name: Wait for DB
       - run:
           command: 'bin/rails db:structure:load --trace'
           name: Database setup
+
       - run:
           name: Build Elasticsearch index
           command: bin/rails search:rebuild
+
+      - restore_cache:
+          keys:
+            - community-frontend-deps-{{ .Environment.CACHE_VERSION }}-{{ checksum "client/project.clj" }}
+            - community-frontend-deps-{{ .Environment.CACHE_VERSION }}-
+
+      - run:
+          name: Build front-end tests
+          command: cd client && lein cljsbuild once test
+
+      - save_cache:
+          key: community-frontend-deps-{{ .Environment.CACHE_VERSION }}-{{ checksum "client/project.clj" }}
+          paths:
+            - ~/.lein
+            - ~/.m2
+
       - restore_cache:
           keys:
             - community-assets-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ .Revision }}
             - community-assets-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
             - community-assets-{{ .Environment.CACHE_VERSION }}-
+
       - run:
           name: Tests
-          command: bin/rails test && bin/rails cljs:test
+          command: bin/rails test && bin/rails jasmine:ci
+
       - save_cache:
           key: community-assets-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ .Revision }}
           paths:
             - tmp/cache
+
+      # Save artifacts
       - store_test_results:
           path: test/reports
-workflows:
-  version: 2
-  build_and_test:
-    jobs:
-      - build
-      - test:
-          requires:
-            - build

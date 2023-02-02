@@ -1,3 +1,0 @@
-web: bin/rails server
-worker: bin/rails jobs:work
-cljs: touch app/clojurescript/src/community/core.cljs && bin/rails cljs:watch
