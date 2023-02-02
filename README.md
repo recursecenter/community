@@ -198,6 +198,7 @@ Remove references to ClojureScript from these files:
 - .circleci/config.yml
 - app/views/layouts/application.html.erb
 - Procfile.dev
+- README.md
 
 # License
 

@@ -60,12 +60,6 @@ Rails.application.configure do
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
-  # Don't cache assets in development. This is a fix required to make
-  # CLIENT_ENV work correctly.
-  config.assets.configure do |env|
-    env.cache = ActiveSupport::Cache.lookup_store(:null_store)
-  end
-
   config.action_mailer.default_url_options = { host: "localhost", port: "5001" }
 
   if ENV["RAILS_LOG_TO_STDOUT"].present?
