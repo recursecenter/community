@@ -55,7 +55,7 @@ gem 'pry-rails'
 group :development do
   gem 'pry-remote'
   gem 'pry-doc'
-  gem 'pry-byebug'
+  gem 'debug'
   gem 'web-console'
   gem 'listen'
 end
