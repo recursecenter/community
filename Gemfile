@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 # When you update the Ruby version, make sure update and rebuild the Docker
 # image in test/Dockerfile and update .circleci/config.yml.
-ruby '2.6.10'
+ruby '2.7.7'
 
 gem 'rails', '6.0.6.1'
 gem 'pg'
@@ -55,7 +55,7 @@ gem 'pry-rails'
 group :development do
   gem 'pry-remote'
   gem 'pry-doc'
-  gem 'pry-byebug'
+  gem 'debug'
   gem 'web-console'
   gem 'listen'
 end
