@@ -6,7 +6,7 @@ class AccountImporter
   class ImportError < StandardError; end
 
   def self.import_all
-    open("#{HackerSchool.site}/api/v1/people?secret_token=#{HackerSchool.secret_token}&only_ids=true") do |f|
+    URI.open("#{HackerSchool.site}/api/v1/people?secret_token=#{HackerSchool.secret_token}&only_ids=true") do |f|
       id_pages = JSON.parse(f.read).each_slice(100)
 
       id_pages.each do |ids|
@@ -16,7 +16,7 @@ class AccountImporter
   end
 
   def self.import(ids)
-    open("#{HackerSchool.site}/api/v1/people?secret_token=#{HackerSchool.secret_token}&ids=#{ids.to_json}") do |f|
+    URI.open("#{HackerSchool.site}/api/v1/people?secret_token=#{HackerSchool.secret_token}&ids=#{ids.to_json}") do |f|
       JSON.parse(f.read).each do |user_data|
         new(user_data).import
       end
@@ -24,7 +24,7 @@ class AccountImporter
   end
 
   def self.sync_deactivated_accounts
-    open("#{HackerSchool.site}/api/v1/people/deactivated?secret_token=#{HackerSchool.secret_token}") do |f|
+    URI.open("#{HackerSchool.site}/api/v1/people/deactivated?secret_token=#{HackerSchool.secret_token}") do |f|
       deactivated_ids = JSON.parse(f.read)
       User.where(deactivated: false, hacker_school_id: deactivated_ids).each do |user|
         user.deactivate
