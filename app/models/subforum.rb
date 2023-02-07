@@ -3,7 +3,6 @@ class Subforum < ActiveRecord::Base
   include SubforumCommon
 
   include Slug
-  include Searchable
   has_slug_for :name
 
   scope :for_user, ->(user) do
@@ -37,6 +36,29 @@ class Subforum < ActiveRecord::Base
 
   def threads_for_user(user)
     threads_with_visited_status.for_user(user)
+  end
+
+  scope :suggestions, ->(query) do
+    return none if query.blank?
+
+    terms = query.split.compact
+    tsquery = terms.join(" <-> ") + ":*"
+
+    where("to_tsvector('simple', name) @@ to_tsquery('simple', ?)", tsquery)
+  end
+
+  def self.suggest(user, query)
+    suggestions(query).limit(5).select do |s|
+      s.required_role_ids - user.role_ids == []
+    end.map do |t|
+      {
+        "text" => t.name,
+        "payload" => {
+          "id" => t.id,
+          "slug" => t.slug
+        }
+      }
+    end
   end
 
   concerning :Searchable do

@@ -1,7 +1,6 @@
 require 'digest'
 
 class User < ActiveRecord::Base
-  include Searchable
   has_many :threads, foreign_key: 'created_by_id', class_name: 'DiscussionThread'
   has_many :posts, foreign_key: 'author_id'
   has_many :notifications
@@ -70,6 +69,26 @@ class User < ActiveRecord::Base
     self.roles = []
     subscriptions.destroy_all
     update!(deactivated: true)
+  end
+
+  scope :suggestions, ->(query) {
+    return none if query.blank?
+
+    terms = query.split.compact
+    tsquery = terms.join(" <-> ") + ":*"
+
+    where("to_tsvector('simple', coalesce(first_name, '')) || to_tsvector('simple', coalesce(last_name, '')) @@ to_tsquery('simple', ?)", tsquery).or(where("email ILIKE ?", "#{query}%"))
+  }
+
+  def self.suggest(user, query)
+    suggestions(query).limit(5).map do |u|
+      {
+        "text" => u.name,
+        "payload" => {
+          "id" => u.id,
+        }
+      }
+    end
   end
 
   concerning :Searchable do

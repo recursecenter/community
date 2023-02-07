@@ -3,7 +3,6 @@ class DiscussionThread < ActiveRecord::Base
   include Subscribable
 
   include Slug
-  include Searchable
   has_slug_for :title
 
   has_many :visited_statuses, foreign_key: 'thread_id'
@@ -26,6 +25,29 @@ class DiscussionThread < ActiveRecord::Base
 
   def resource_name
     "thread"
+  end
+
+  scope :suggestions, ->(query) do
+    return none if query.blank?
+
+    terms = query.split.compact
+    tsquery = terms.join(" <-> ") + ":*"
+
+    where("to_tsvector('simple', title) @@ to_tsquery('simple', ?)", tsquery)
+  end
+
+  def self.suggest(user, query)
+    suggestions(query).includes(:subforum).limit(5).select do |t|
+      t.subforum.required_role_ids - user.role_ids == []
+    end.map do |t|
+      {
+        "text" => t.title,
+        "payload" => {
+          "id" => t.id,
+          "slug" => t.slug
+        }
+      }
+    end
   end
 
   concerning :Searchable do

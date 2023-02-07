@@ -1,6 +1,4 @@
 class Post < ActiveRecord::Base
-  include Searchable
-
   belongs_to :thread, class_name: "DiscussionThread"
   belongs_to :author, class_name: "User"
   has_and_belongs_to_many :broadcast_groups, class_name: "Group"
@@ -53,14 +51,14 @@ class Post < ActiveRecord::Base
     included do
       # Additional indexer settings for posts to serve filtered queries.
       # We don't want them analyzed because we want them to be exact matches.
-      settings index: {number_of_shards: 1} do
-        mappings dynamic: 'true' do
-          indexes :author, type: :string, index: "not_analyzed"
-          indexes :author_email, type: :string, index: "not_analyzed"
-          indexes :thread, type: :string, index: "not_analyzed"
-          indexes :subforum, type: :string, index: "not_analyzed"
-        end
-      end
+      # settings index: {number_of_shards: 1} do
+      #   mappings dynamic: 'true' do
+      #     indexes :author, type: :string, index: "not_analyzed"
+      #     indexes :author_email, type: :string, index: "not_analyzed"
+      #     indexes :thread, type: :string, index: "not_analyzed"
+      #     indexes :subforum, type: :string, index: "not_analyzed"
+      #   end
+      # end
 
       # TODO: once Module::Concerning supports `class_methods { ... }`, get these out of `included`.
       # See:

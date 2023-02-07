@@ -74,6 +74,4 @@ gem 'bulk_insert'
 
 gem 'concurrent-ruby'
 
-gem 'elasticsearch', '~> 2.0'
-gem 'elasticsearch-model', '~> 2.0'
-gem 'elasticsearch-rails', '~> 2.0'
+gem 'pg_search'
