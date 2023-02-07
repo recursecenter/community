@@ -6,7 +6,7 @@ module Searchable
 
   included do
     include Elasticsearch::Model
-    after_commit :upsert_to_search_index!
+    # after_commit :upsert_to_search_index!
 
     index_name "#{table_name}_#{Rails.env}"
 

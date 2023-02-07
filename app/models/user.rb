@@ -54,10 +54,6 @@ class User < ActiveRecord::Base
     end
   end
 
-  def satisfies_roles?(*roles)
-    self.roles.where(id: roles).count == roles.uniq.count
-  end
-
   def last_read_welcome_message_at
     super || Time.zone.at(0).to_datetime # Unix Epoch start
   end

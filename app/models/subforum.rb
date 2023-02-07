@@ -1,13 +1,16 @@
 class Subforum < ActiveRecord::Base
   include Subscribable
-  include SubforumCommon
 
   include Slug
   include Searchable
   has_slug_for :name
 
+  has_many :threads, class_name: 'DiscussionThread'
+  belongs_to :subforum_group
+  belongs_to :required_role, class_name: 'Role'
+
   scope :for_user, ->(user) do
-    where("subforums.required_role_ids <@ '{?}'", user.role_ids)
+    accessible_by(Ability.new(user))
   end
 
   scope :with_counts, -> do
@@ -29,7 +32,6 @@ class Subforum < ActiveRecord::Base
   end
 
   validates :name, uniqueness: {case_sensitive: false}
-  validates :required_role_ids, length: {is: 1, message: "must have only one required role" }
 
   # we need to specify class_name because we want "thread" to be pluralized,
   # not "status".

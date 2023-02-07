@@ -10,6 +10,13 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Name: heroku_ext; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA heroku_ext;
+
+
+--
 -- Name: pg_stat_statements; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -353,8 +360,8 @@ CREATE TABLE public.subforums (
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
     ui_color character varying(255),
-    required_role_ids integer[],
-    description text
+    description text,
+    required_role_id bigint
 );
 
 
@@ -862,6 +869,13 @@ CREATE INDEX index_roles_users_on_user_id ON public.roles_users USING btree (use
 
 
 --
+-- Name: index_subforums_on_required_role_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_subforums_on_required_role_id ON public.subforums USING btree (required_role_id);
+
+
+--
 -- Name: index_subscriptions_on_subscribable_id_and_subscribable_type; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -894,6 +908,14 @@ CREATE INDEX index_visited_statuses_on_user_id ON public.visited_statuses USING 
 --
 
 CREATE UNIQUE INDEX unique_schema_migrations ON public.schema_migrations USING btree (version);
+
+
+--
+-- Name: subforums fk_rails_18d0f31fe2; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.subforums
+    ADD CONSTRAINT fk_rails_18d0f31fe2 FOREIGN KEY (required_role_id) REFERENCES public.roles(id);
 
 
 --
@@ -954,6 +976,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20160309194724'),
 ('20170111160452'),
 ('20201106150006'),
-('20230119202822');
+('20230119202822'),
+('20230207223306');
 
 

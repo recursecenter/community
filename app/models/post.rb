@@ -23,10 +23,6 @@ class Post < ActiveRecord::Base
     end
   end
 
-  def required_roles
-    thread.subforum.required_roles
-  end
-
   def mark_as_visited(user)
     thread.mark_post_as_visited(user, self)
   end

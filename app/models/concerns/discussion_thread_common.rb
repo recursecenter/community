@@ -8,8 +8,4 @@ module DiscussionThreadCommon
 
     has_many :posts, foreign_key: "thread_id", dependent: :destroy
   end
-
-  def required_roles
-    subforum.required_roles
-  end
 end

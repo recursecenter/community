@@ -4,13 +4,13 @@ class SubforumGroup < ActiveRecord::Base
   scope :includes_subforums_for_user, ->(user) do
     includes(:subforums).
       references(:subforums).
-      where("subforums.required_role_ids <@ '{?}'", user.role_ids).
+      merge(Subforum.for_user(user))
       order("subforums.id ASC")
   end
 
   scope :for_user, ->(user) do
     joins(:subforums).
-      where("subforums.required_role_ids <@ '{?}'", user.role_ids).
+      merge(Subforum.for_user(user))
       distinct
   end
 

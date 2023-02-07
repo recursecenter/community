@@ -2,14 +2,18 @@
 
 welcome:
   name: Welcome
+  required_role: everyone
 
 programming:
   id: 1
   name: Programming
+  required_role: full_hacker_schooler
 
 nyc:
   id: 2
   name: NYC
+  required_role: full_hacker_schooler
 
 subforum_no_one_subscribes_to:
   name: Subforum No One Subscribes To
+  required_role: full_hacker_schooler

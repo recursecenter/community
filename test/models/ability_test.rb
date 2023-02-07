@@ -7,8 +7,8 @@ class AbilityTest < ActiveSupport::TestCase
     programming = subforums(:programming)
 
     person.roles = [roles(:everyone)]
-    welcome.required_role_ids = [roles(:everyone).id]
-    programming.required_role_ids = [roles(:everyone).id, roles(:full_hacker_schooler).id]
+    welcome.required_role = roles(:everyone)
+    programming.required_role = roles(:full_hacker_schooler)
 
     assert Ability.new(person).can? :read, subforums(:welcome)
     assert Ability.new(person).cannot? :read, subforums(:programming)
