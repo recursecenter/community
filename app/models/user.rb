@@ -71,7 +71,9 @@ class User < ActiveRecord::Base
     update!(deactivated: true)
   end
 
-  scope :suggestions, ->(query) {
+  include Suggestable
+
+  scope :possible_suggestions, ->(query) {
     return none if query.blank?
 
     terms = query.split.compact
@@ -80,28 +82,21 @@ class User < ActiveRecord::Base
     where("to_tsvector('simple', coalesce(first_name, '')) || to_tsvector('simple', coalesce(last_name, '')) @@ to_tsquery('simple', ?)", tsquery).or(where("email ILIKE ?", "#{query}%"))
   }
 
-  def self.suggest(user, query)
-    suggestions(query).limit(5).map do |u|
-      {
-        "text" => u.name,
-        "payload" => {
-          "id" => u.id,
-        }
-      }
-    end
+  def suggestion_text
+    name
   end
 
-  concerning :Searchable do
-    def to_search_mapping
-      user_data = {
-        suggest: {
-          input: prefix_phrases(name) + [email],
-          output: name,
-          payload: {id: id, email: email, first_name: first_name, last_name: last_name, name: name, required_role_ids: []}
-        }
-      }
-
-      {index: {_id: id, data: user_data}}
-    end
-  end
+#   concerning :Searchable do
+#     def to_search_mapping
+#       user_data = {
+#         suggest: {
+#           input: prefix_phrases(name) + [email],
+#           output: name,
+#           payload: {id: id, email: email, first_name: first_name, last_name: last_name, name: name, required_role_ids: []}
+#         }
+#       }
+#
+#       {index: {_id: id, data: user_data}}
+#     end
+#   end
 end

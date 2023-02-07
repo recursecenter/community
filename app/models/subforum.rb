@@ -38,7 +38,9 @@ class Subforum < ActiveRecord::Base
     threads_with_visited_status.for_user(user)
   end
 
-  scope :suggestions, ->(query) do
+  include Suggestable
+
+  scope :possible_suggestions, ->(query) do
     return none if query.blank?
 
     terms = query.split.compact
@@ -47,31 +49,21 @@ class Subforum < ActiveRecord::Base
     where("to_tsvector('simple', name) @@ to_tsquery('simple', ?)", tsquery)
   end
 
-  def self.suggest(user, query)
-    suggestions(query).limit(5).select do |s|
-      s.required_role_ids - user.role_ids == []
-    end.map do |t|
-      {
-        "text" => t.name,
-        "payload" => {
-          "id" => t.id,
-          "slug" => t.slug
-        }
-      }
-    end
+  def suggestion_text
+    name
   end
 
-  concerning :Searchable do
-    def to_search_mapping
-      subforum_data = {
-        suggest: {
-          input: prefix_phrases(name),
-          output: name,
-          payload: {id: id, slug: slug, required_role_ids: self.required_role_ids}
-        }
-      }
-
-      {index: {_id: id, data: subforum_data}}
-    end
-  end
+#   concerning :Searchable do
+#     def to_search_mapping
+#       subforum_data = {
+#         suggest: {
+#           input: prefix_phrases(name),
+#           output: name,
+#           payload: {id: id, slug: slug, required_role_ids: self.required_role_ids}
+#         }
+#       }
+#
+#       {index: {_id: id, data: subforum_data}}
+#     end
+#   end
 end
