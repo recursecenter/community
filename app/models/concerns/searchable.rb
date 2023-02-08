@@ -3,6 +3,7 @@ module Searchable
 
   # default number of results per page
   RESULTS_PER_PAGE = 25
+  MAX_WORDS = 35
 
   included do
     include Elasticsearch::Model
