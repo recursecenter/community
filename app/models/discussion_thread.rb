@@ -45,32 +45,4 @@ class DiscussionThread < ActiveRecord::Base
   def suggestion_text
     title
   end
-
-  # def self.suggest(user, query)
-  #   suggestions(query).includes(:subforum).limit(5).select do |t|
-  #     t.subforum.required_role_ids - user.role_ids == []
-  #   end.map do |t|
-  #     {
-  #       "text" => t.title,
-  #       "payload" => {
-  #         "id" => t.id,
-  #         "slug" => t.slug
-  #       }
-  #     }
-  #   end
-  # end
-
-  concerning :Searchable do
-    def to_search_mapping
-      thread_data = {
-        suggest: {
-          input: prefix_phrases(title),
-          output: title,
-          payload: {id: id, slug: slug, required_role_ids: subforum.required_role_ids}
-        }
-      }
-
-      {index: {_id: id, data: thread_data}}
-    end
-  end
 end

@@ -89,18 +89,4 @@ class User < ActiveRecord::Base
   def can_suggested_to_someone_with_role_ids?(role_ids)
     true
   end
-
-#   concerning :Searchable do
-#     def to_search_mapping
-#       user_data = {
-#         suggest: {
-#           input: prefix_phrases(name) + [email],
-#           output: name,
-#           payload: {id: id, email: email, first_name: first_name, last_name: last_name, name: name, required_role_ids: []}
-#         }
-#       }
-#
-#       {index: {_id: id, data: user_data}}
-#     end
-#   end
 end

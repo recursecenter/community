@@ -56,18 +56,4 @@ class Subforum < ActiveRecord::Base
   def suggestion_text
     name
   end
-
-#   concerning :Searchable do
-#     def to_search_mapping
-#       subforum_data = {
-#         suggest: {
-#           input: prefix_phrases(name),
-#           output: name,
-#           payload: {id: id, slug: slug, required_role_ids: self.required_role_ids}
-#         }
-#       }
-#
-#       {index: {_id: id, data: subforum_data}}
-#     end
-#   end
 end
