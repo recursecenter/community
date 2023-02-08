@@ -2,38 +2,37 @@ class Api::SearchController < Api::ApiController
   skip_authorization_check only: [:search, :suggestions]
 
   RESULTS_PER_PAGE = 25
+  MAX_WORDS = 35
 
   def search
     @current_page = [params[:page].to_i, 1].max
     @query = params[:q]
-    @filters = params[:filters]&.permit(:author, :thread, :subforum)&.to_h
+    @filters = params[:filters]&.permit(:author)&.to_h
 
-    @posts = Post.search(@query)
-      .with_pg_search_highlight
-      .page(@current_page)
-      .per(RESULTS_PER_PAGE)
-      .includes(:author, thread: {subforum: :subforum_group})
+    @posts = Post.page(@current_page).per(RESULTS_PER_PAGE)
+
+    if @query.present?
+      @posts = @posts.search(@query).with_pg_search_highlight
+    else
+      @posts = @posts.select("posts.*", "ts_headline(posts.body, to_tsquery('simple', '')) AS pg_search_highlight")
+    end
+
+    if @filters.present? && @filters[:author].present?
+      users = User.where("users.first_name || ' ' || users.last_name = ?", @filters[:author])
+
+      @posts = @posts.where(author_id: users)
+
+      if @query.blank?
+        @posts = @posts.order(created_at: :desc)
+      end
+    end
+
+    # Eager load everything related to a post that we need
+    @posts = @posts.includes(:author, thread: {subforum: :subforum_group})
 
     # Search metadata
     @hits = @posts.total_count
     @total_pages = (@hits.to_f / RESULTS_PER_PAGE).ceil
-
-#     # TODO: This might have to change when we are able to compose queries/filters.
-#     if @filters.present? && @filters[:author].present? && @query.blank?
-#       response = Post.search(current_user, @query, @filters, @current_page, sort: {created_at: :desc})
-#     else
-#       response = Post.search(current_user, @query, @filters, @current_page)
-#     end
-#
-#     # Eager load everything related to a post that we need
-#     @posts = response.records.includes({thread: [{subforum: :subforum_group}]}, :author)
-#
-#     # Collect highlights for every record
-#     @highlights = response.map { |result| [result.id, result.highlight.body] }.to_h
-#
-#     # Search metadata
-#     @hits = response.results.total
-#     @total_pages = (response.results.total.to_f / Searchable::RESULTS_PER_PAGE).ceil
   end
 
   def suggestions
