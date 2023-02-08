@@ -1,6 +1,7 @@
 class DiscussionThread < ActiveRecord::Base
   include DiscussionThreadCommon
   include Subscribable
+  include Suggestable
 
   include Slug
   has_slug_for :title
@@ -27,22 +28,24 @@ class DiscussionThread < ActiveRecord::Base
     "thread"
   end
 
-  include Suggestable
+  concerning :Suggestable do
+    included do
+      scope :possible_suggestions, ->(query) do
+        return none if query.blank?
 
-  scope :possible_suggestions, ->(query) do
-    return none if query.blank?
+        terms = query.split.compact
+        tsquery = terms.join(" <-> ") + ":*"
 
-    terms = query.split.compact
-    tsquery = terms.join(" <-> ") + ":*"
+        where("to_tsvector('simple', title) @@ to_tsquery('simple', ?)", tsquery).includes(:subforum)
+      end
+    end
 
-    where("to_tsvector('simple', title) @@ to_tsquery('simple', ?)", tsquery).includes(:subforum)
-  end
+    def can_suggested_to_someone_with_role_ids?(role_ids)
+      subforum.required_role_ids.to_set <= role_ids
+    end
 
-  def can_suggested_to_someone_with_role_ids?(role_ids)
-    subforum.required_role_ids.to_set <= role_ids
-  end
-
-  def suggestion_text
-    title
+    def suggestion_text
+      title
+    end
   end
 end

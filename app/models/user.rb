@@ -1,6 +1,8 @@
 require 'digest'
 
 class User < ActiveRecord::Base
+  include Suggestable
+
   has_many :threads, foreign_key: 'created_by_id', class_name: 'DiscussionThread'
   has_many :posts, foreign_key: 'author_id'
   has_many :notifications
@@ -71,22 +73,24 @@ class User < ActiveRecord::Base
     update!(deactivated: true)
   end
 
-  include Suggestable
+  concerning :Suggestable do
+    included do
+      scope :possible_suggestions, ->(query) do
+        return none if query.blank?
 
-  scope :possible_suggestions, ->(query) {
-    return none if query.blank?
+        terms = query.split.compact
+        tsquery = terms.join(" <-> ") + ":*"
 
-    terms = query.split.compact
-    tsquery = terms.join(" <-> ") + ":*"
+        where("to_tsvector('simple', coalesce(first_name, '')) || to_tsvector('simple', coalesce(last_name, '')) @@ to_tsquery('simple', ?)", tsquery).or(where("email ILIKE ?", "#{query}%"))
+      end
+    end
 
-    where("to_tsvector('simple', coalesce(first_name, '')) || to_tsvector('simple', coalesce(last_name, '')) @@ to_tsquery('simple', ?)", tsquery).or(where("email ILIKE ?", "#{query}%"))
-  }
+    def suggestion_text
+      name
+    end
 
-  def suggestion_text
-    name
-  end
-
-  def can_suggested_to_someone_with_role_ids?(role_ids)
-    true
+    def can_suggested_to_someone_with_role_ids?(role_ids)
+      true
+    end
   end
 end
