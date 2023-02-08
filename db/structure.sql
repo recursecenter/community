@@ -37,8 +37,13 @@ COMMENT ON EXTENSION pg_stat_statements IS 'track execution statistics of all SQ
 CREATE FUNCTION public.update_tsv_on_post() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
+        declare
+          thread_title character varying;
         begin
-          new.tsv := to_tsvector('pg_catalog.english', coalesce(new.body, ''));
+          SELECT title INTO thread_title FROM discussion_threads WHERE id = new.thread_id;
+
+          new.tsv := to_tsvector('pg_catalog.english', coalesce(new.body, '')) ||
+                     to_tsvector('pg_catalog.english', coalesce(thread_title, ''));
           return new;
         end
       $$;
