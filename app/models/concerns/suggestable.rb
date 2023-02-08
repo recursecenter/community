@@ -1,6 +1,17 @@
 module Suggestable
   extend ActiveSupport::Concern
 
+  class_methods do
+    def suggest(user, query)
+      role_ids = user.role_ids.to_set
+
+      possible_suggestions(query).
+        select { |s| s.can_suggested_to_someone_with_role_ids?(role_ids) }.
+        take(5).
+        map { |s| Suggestion.new(s) }
+    end
+  end
+
   class Suggestion
     attr_reader :suggestable
 
@@ -21,17 +32,6 @@ module Suggestable
       end
 
       json
-    end
-  end
-
-  class_methods do
-    def suggest(user, query)
-      role_ids = user.role_ids.to_set
-
-      possible_suggestions(query).
-        select { |s| s.can_suggested_to_someone_with_role_ids?(role_ids) }.
-        take(5).
-        map { |s| Suggestion.new(s) }
     end
   end
 end
