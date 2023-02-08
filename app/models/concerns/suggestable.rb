@@ -1,6 +1,11 @@
 module Suggestable
   extend ActiveSupport::Concern
 
+  # To use this module in class C, your class must implement:
+  # - C.possible_suggestions (active record scope)
+  # - C#can_suggested_to_someone_with_role_ids?
+  # - C#suggestion_text - the text that shows up in the autocomplete menu
+
   class_methods do
     def suggest(user, query)
       role_ids = user.role_ids.to_set
