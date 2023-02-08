@@ -41,9 +41,3 @@ pidfile ENV.fetch("PIDFILE") { "tmp/pids/server.pid" }
 
 # Allow puma to be restarted by `rails restart` command.
 plugin :tmp_restart
-
-on_worker_boot do
-  ActiveSupport.on_load(:active_record) do
-    Rails.logger.error "Worker booted. #{ConnectionMonitor::CONNECTIONS.size} checked out connections."
-  end
-end

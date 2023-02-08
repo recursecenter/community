@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 # image in test/Dockerfile and update .circleci/config.yml.
 ruby '2.7.7'
 
-gem 'rails', '6.0.6.1'
+gem 'rails', '6.1.7.2'
 gem 'pg'
 
 # Remove this when we upgrade to Ruby 3.1 or later.

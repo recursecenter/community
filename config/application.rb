@@ -1,21 +1,26 @@
-require_relative 'boot'
+require_relative "boot"
 
-require 'rails/all'
+require "rails/all"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-require_relative '../lib/web_socket_handler'
-require_relative '../lib/thread_error_logger'
+require_relative "../lib/web_socket_handler"
+require_relative "../lib/thread_error_logger"
 
 module Community
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.0
-    config.autoloader = :zeitwerk
 
-    # Settings in config/environments/* take precedence over those specified here.
+    # Configuration for the application, engines, and railties goes here.
+    #
+    # These settings can be overridden in specific environments using the files
+    # in config/environments, which are processed later.
+    #
+    # config.time_zone = "Central Time (US & Canada)"
+    # config.eager_load_paths << Rails.root.join("extras")
 
     # Not default, but recommended by the Configuring Rails
     # Applications guide.
@@ -27,19 +32,10 @@ module Community
 
     config.action_controller.per_form_csrf_tokens = false
 
-    # Use a different logger for distributed setups.
-    # require 'syslog/logger'
-    # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
-
     config.middleware.use WebSocketHandler
 
     initializer('thread_error_logger', after: :load_config_initializers) do
       config.middleware.insert_before Airbrake::Rack::Middleware, ThreadErrorLogger
     end
-
-    # Application configuration can go into files in config/initializers
-    # -- all .rb files in that directory are automatically loaded after loading
-    # the framework and any gems in your application.
   end
 end
-
