@@ -11,6 +11,35 @@ class Post < ActiveRecord::Base
 
   scope :by_number, -> { order(post_number: :asc) }
 
+  MAX_WORDS_IN_HIGHLIGHT = 35
+
+  include PgSearch::Model
+  pg_search_scope :search,
+                  against: :body,
+                  using: {
+                    tsearch: {
+                      highlight: {
+                        StartSel: "<span class='highlight'>",
+                        StopSel: "</span>",
+                        MaxWords: MAX_WORDS_IN_HIGHLIGHT,
+                      }
+                    }
+                  }
+
+  scope :with_null_pg_search_highlight, -> do
+    select("posts.*", "ts_headline('simple', posts.body, to_tsquery('simple', ''), 'MaxWords=#{MAX_WORDS_IN_HIGHLIGHT}') AS pg_search_highlight")
+  end
+
+  scope :author_named, ->(author_name) do
+    users = User.where("users.first_name || ' ' || users.last_name = ?", author_name)
+
+    where(author_id: users)
+  end
+
+  scope :for_user, ->(user) do
+    joins(:thread).where(discussion_threads: {subforum_id: Subforum.for_user(user)})
+  end
+
   def update_thread_data
     DistributedLock.new("thread_#{thread.id}").synchronize do
       next_post_number = thread.highest_post_number + 1
@@ -46,18 +75,6 @@ class Post < ActiveRecord::Base
 
     message_id != generate_message_id
   end
-
-  include PgSearch::Model
-  pg_search_scope :search,
-                  against: :body,
-                  using: {
-                    tsearch: {
-                      highlight: {
-                        StartSel: "<span class='highlight'>",
-                        StopSel: "</span>",
-                      }
-                    }
-                  }
 
   concerning :Searchable do
     included do
