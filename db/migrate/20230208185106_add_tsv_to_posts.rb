@@ -31,7 +31,7 @@ class AddTsvToPosts < ActiveRecord::Migration[6.0]
       DROP FUNCTION update_tsv_on_post
     SQL
 
-    remove_index :posts, :tsv, using: :gin
+    remove_index :posts, :tsv
     remove_column :posts, :tsv, :tsvector
   end
 end
