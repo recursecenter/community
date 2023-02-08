@@ -49,6 +49,10 @@ class Subforum < ActiveRecord::Base
     where("to_tsvector('simple', name) @@ to_tsquery('simple', ?)", tsquery)
   end
 
+  def can_suggested_to_someone_with_role_ids?(role_ids)
+    required_role_ids.to_set <= role_ids
+  end
+
   def suggestion_text
     name
   end

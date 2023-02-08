@@ -86,6 +86,10 @@ class User < ActiveRecord::Base
     name
   end
 
+  def can_suggested_to_someone_with_role_ids?(role_ids)
+    true
+  end
+
 #   concerning :Searchable do
 #     def to_search_mapping
 #       user_data = {

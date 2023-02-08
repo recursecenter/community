@@ -26,9 +26,12 @@ module Suggestable
 
   class_methods do
     def suggest(user, query)
-      possible_suggestions(query).limit(5).accessable_by(user).map do |suggestable|
-        Suggestion.new(suggestable)
-      end
+      role_ids = user.role_ids.to_set
+
+      possible_suggestions(query).
+        select { |s| s.can_suggested_to_someone_with_role_ids?(role_ids) }.
+        take(5).
+        map { |s| Suggestion.new(s) }
     end
   end
 end

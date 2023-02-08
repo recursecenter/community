@@ -35,7 +35,11 @@ class DiscussionThread < ActiveRecord::Base
     terms = query.split.compact
     tsquery = terms.join(" <-> ") + ":*"
 
-    where("to_tsvector('simple', title) @@ to_tsquery('simple', ?)", tsquery)
+    where("to_tsvector('simple', title) @@ to_tsquery('simple', ?)", tsquery).includes(:subforum)
+  end
+
+  def can_suggested_to_someone_with_role_ids?(role_ids)
+    subforum.required_role_ids.to_set <= role_ids
   end
 
   def suggestion_text
@@ -54,7 +58,7 @@ class DiscussionThread < ActiveRecord::Base
   #       }
   #     }
   #   end
-  end
+  # end
 
   concerning :Searchable do
     def to_search_mapping
