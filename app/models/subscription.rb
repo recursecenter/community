@@ -31,7 +31,7 @@ private
                             subscribable_id: subscribable_id,
                             subscribable_type: subscribable_type).empty?
 
-      errors[:base] << "There can be only one Subscription for a given user and subscribable."
+      errors.add(:base, "There can be only one Subscription for a given user and subscribable.")
     end
   end
 end
