@@ -75,3 +75,4 @@ gem 'bulk_insert'
 gem 'concurrent-ruby'
 
 gem 'pg_search'
+gem 'kaminari'

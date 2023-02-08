@@ -17,7 +17,7 @@ json.results @posts do |post|
     json.subforum_group_name post.thread.subforum.subforum_group.name
   end
 
-  json.highlight @highlights[post.id.to_s].first
+  json.highlight post.pg_search_highlight
 end
 
 json.metadata do

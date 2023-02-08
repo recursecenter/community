@@ -47,6 +47,18 @@ class Post < ActiveRecord::Base
     message_id != generate_message_id
   end
 
+  include PgSearch::Model
+  pg_search_scope :search,
+                  against: :body,
+                  using: {
+                    tsearch: {
+                      highlight: {
+                        StartSel: "<span class='highlight'>",
+                        StopSel: "</span>",
+                      }
+                    }
+                  }
+
   concerning :Searchable do
     included do
       # Additional indexer settings for posts to serve filtered queries.
