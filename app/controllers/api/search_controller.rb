@@ -1,27 +1,37 @@
 class Api::SearchController < Api::ApiController
+  RESULTS_PER_PAGE = 25
+
   skip_authorization_check only: [:search, :suggestions]
 
   def search
     @current_page = [params[:page].to_i, 1].max
     @query = params[:q]
-    @filters = params[:filters]&.permit(:author, :thread, :subforum)&.to_h
+    @filters = params[:filters]&.permit(:author)&.to_h
 
-    # TODO: This might have to change when we are able to compose queries/filters.
-    if @filters.present? && @filters[:author].present? && @query.blank?
-      response = Post.search(current_user, @query, @filters, @current_page, sort: {created_at: :desc})
+    @posts = Post.page(@current_page).per(RESULTS_PER_PAGE)
+
+    if @query.present?
+      @posts = @posts.search(@query).with_pg_search_highlight
     else
-      response = Post.search(current_user, @query, @filters, @current_page)
+      @posts = @posts.with_null_pg_search_highlight
     end
 
-    # Eager load everything related to a post that we need
-    @posts = response.records.includes({thread: [{subforum: :subforum_group}]}, :author)
+    if @filters.present? && @filters[:author].present?
+      @posts = @posts.author_named(@filters[:author])
 
-    # Collect highlights for every record
-    @highlights = response.map { |result| [result.id, result.highlight.body] }.to_h
+      if @query.blank?
+        @posts = @posts.order(created_at: :desc)
+      end
+    end
+
+    @posts = @posts.for_user(current_user)
+
+    # Eager load everything related to a post that we need
+    @posts = @posts.includes(:author, thread: {subforum: :subforum_group})
 
     # Search metadata
-    @hits = response.results.total
-    @total_pages = (response.results.total.to_f / Searchable::RESULTS_PER_PAGE).ceil
+    @hits = @posts.total_count
+    @total_pages = (@hits.to_f / RESULTS_PER_PAGE).ceil
   end
 
   def suggestions

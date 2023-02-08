@@ -12,7 +12,6 @@ Community is a hybrid forum and mailing list server.
 - Node (for tests)
 - Postgres
 - Redis
-- Elasticsearch 2.4
 
 Also, note that because Community is tied to the Recurse Center API, you'll need to be a Recurser to run this.
 
@@ -95,10 +94,6 @@ If redis isn't running, the following command will start it and set it to run on
 ```sh
 $ brew services start redis
 ```
-
-**Elasticsearch**
-
-We're in the process of removing elasticsearch from Community. For now comment out `after_commit :upsert_to_search_index!` in `app/models/concerns/searchable.rb` when running in development.
 
 ## Configuration
 

@@ -1,9 +1,9 @@
 class Subforum < ActiveRecord::Base
   include Subscribable
   include SubforumCommon
+  include Suggestable
 
   include Slug
-  include Searchable
   has_slug_for :name
 
   scope :for_user, ->(user) do
@@ -39,17 +39,24 @@ class Subforum < ActiveRecord::Base
     threads_with_visited_status.for_user(user)
   end
 
-  concerning :Searchable do
-    def to_search_mapping
-      subforum_data = {
-        suggest: {
-          input: prefix_phrases(name),
-          output: name,
-          payload: {id: id, slug: slug, required_role_ids: self.required_role_ids}
-        }
-      }
+  concerning :Suggestable do
+    included do
+      scope :possible_suggestions, ->(query) do
+        return none if query.blank?
 
-      {index: {_id: id, data: subforum_data}}
+        terms = query.split.compact
+        tsquery = terms.join(" <-> ") + ":*"
+
+        where("to_tsvector('simple', name) @@ to_tsquery('simple', ?)", tsquery)
+      end
+    end
+
+    def can_suggested_to_someone_with_role_ids?(role_ids)
+      required_role_ids.to_set <= role_ids
+    end
+
+    def suggestion_text
+      name
     end
   end
 end
