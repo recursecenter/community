@@ -18,6 +18,7 @@ class Post < ActiveRecord::Base
                   against: :body,
                   using: {
                     tsearch: {
+                      dictionary: "english",
                       highlight: {
                         StartSel: "<span class='highlight'>",
                         StopSel: "</span>",
@@ -27,7 +28,7 @@ class Post < ActiveRecord::Base
                   }
 
   scope :with_null_pg_search_highlight, -> do
-    select("posts.*", "ts_headline('simple', posts.body, to_tsquery('simple', ''), 'MaxWords=#{MAX_WORDS_IN_HIGHLIGHT}') AS pg_search_highlight")
+    select("posts.*", "ts_headline('english', posts.body, to_tsquery('english', ''), 'MaxWords=#{MAX_WORDS_IN_HIGHLIGHT}') AS pg_search_highlight")
   end
 
   scope :author_named, ->(author_name) do
