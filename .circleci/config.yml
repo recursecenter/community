@@ -67,9 +67,6 @@ jobs:
       - run:
           command: 'bin/rails db:structure:load --trace'
           name: Database setup
-      - run:
-          name: Build Elasticsearch index
-          command: bin/rails search:rebuild
       - restore_cache:
           keys:
             - community-assets-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ .Revision }}
