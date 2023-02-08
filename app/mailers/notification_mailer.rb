@@ -1,5 +1,5 @@
 class NotificationMailer < ActionMailer::Base
-  add_template_helper ApplicationHelper
+  helper :application
 
   def user_mentioned_email(mention)
     @user = mention.user
