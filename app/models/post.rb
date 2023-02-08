@@ -19,6 +19,7 @@ class Post < ActiveRecord::Base
                   using: {
                     tsearch: {
                       dictionary: "english",
+                      tsvector_column: "tsv",
                       highlight: {
                         StartSel: "<span class='highlight'>",
                         StopSel: "</span>",

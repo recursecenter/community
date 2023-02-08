@@ -10,6 +10,13 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Name: heroku_ext; Type: SCHEMA; Schema: -; Owner: -
+--
+
+CREATE SCHEMA heroku_ext;
+
+
+--
 -- Name: pg_stat_statements; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -21,6 +28,20 @@ CREATE EXTENSION IF NOT EXISTS pg_stat_statements WITH SCHEMA public;
 --
 
 COMMENT ON EXTENSION pg_stat_statements IS 'track execution statistics of all SQL statements executed';
+
+
+--
+-- Name: update_tsv_on_post(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.update_tsv_on_post() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+        begin
+          new.tsv := to_tsvector('pg_catalog.english', coalesce(new.body, ''));
+          return new;
+        end
+      $$;
 
 
 SET default_tablespace = '';
@@ -237,7 +258,8 @@ CREATE TABLE public.posts (
     updated_at timestamp without time zone,
     post_number integer,
     broadcast_to_subscribers boolean DEFAULT true,
-    message_id character varying(255)
+    message_id character varying(255),
+    tsv tsvector
 );
 
 
@@ -848,6 +870,13 @@ CREATE INDEX index_posts_on_thread_id ON public.posts USING btree (thread_id);
 
 
 --
+-- Name: index_posts_on_tsv; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_posts_on_tsv ON public.posts USING gin (tsv);
+
+
+--
 -- Name: index_roles_users_on_role_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -894,6 +923,13 @@ CREATE INDEX index_visited_statuses_on_user_id ON public.visited_statuses USING 
 --
 
 CREATE UNIQUE INDEX unique_schema_migrations ON public.schema_migrations USING btree (version);
+
+
+--
+-- Name: posts update_tsv_on_post; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER update_tsv_on_post BEFORE INSERT OR UPDATE ON public.posts FOR EACH ROW EXECUTE FUNCTION public.update_tsv_on_post();
 
 
 --
@@ -954,6 +990,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20160309194724'),
 ('20170111160452'),
 ('20201106150006'),
-('20230119202822');
+('20230119202822'),
+('20230208185106');
 
 
