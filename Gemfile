@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 # image in test/Dockerfile and update .circleci/config.yml.
 ruby '3.2.1'
 
-gem 'rails', '6.1.7.2'
+gem 'rails', '7.0.4.2'
 gem 'pg'
 
 gem 'bootsnap', require: false
@@ -28,6 +28,7 @@ gem 'sass-rails'
 gem 'bootstrap-sass', '~> 3.4.1'
 gem 'font-awesome-sass'
 
+gem 'sprockets-rails'
 gem 'sprockets'
 
 # Use Uglifier as compressor for JavaScript assets
