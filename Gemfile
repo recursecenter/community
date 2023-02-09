@@ -28,6 +28,7 @@ gem 'sass-rails'
 gem 'bootstrap-sass', '~> 3.4.1'
 gem 'font-awesome-sass'
 
+gem 'sprockets-rails'
 gem 'sprockets'
 
 # Use Uglifier as compressor for JavaScript assets
