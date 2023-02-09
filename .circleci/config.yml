@@ -64,7 +64,7 @@ jobs:
           command: 'dockerize -wait tcp://localhost:5432 -timeout 1m'
           name: Wait for DB
       - run:
-          command: 'bin/rails db:structure:load --trace'
+          command: 'bin/rails db:schema:load --trace'
           name: Database setup
       - restore_cache:
           keys:
