@@ -18,7 +18,12 @@ gem 'delayed_job_active_record'
 
 # Disable until we're on a newer version of Ruby/Rails
 # gem 'skylight'
-gem 'airbrake'
+
+# Attempt to work around https://github.com/airbrake/airbrake-ruby/issues/713
+# by specifying verions of airbrake and airbrake-ruby which match what we're
+# using on recurse.com.
+gem 'airbrake', '13.0.2'
+gem 'airbrake-ruby', '6.1.1'
 
 # https://devcenter.heroku.com/articles/language-runtime-metrics-ruby
 gem 'barnes'
