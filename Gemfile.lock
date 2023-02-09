@@ -91,6 +91,7 @@ GEM
     connection_pool (2.3.0)
     crass (1.0.6)
     dalli (3.2.3)
+    date (3.3.3)
     debug (1.7.1)
       irb (>= 1.5.0)
       reline (>= 0.3.1)
@@ -149,8 +150,11 @@ GEM
     loofah (2.19.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
-    mail (2.7.1)
+    mail (2.8.1)
       mini_mime (>= 0.1.1)
+      net-imap
+      net-pop
+      net-smtp
     marcel (1.0.2)
     memcachier (0.0.2)
     method_source (1.0.0)
@@ -160,6 +164,15 @@ GEM
     msgpack (1.6.0)
     multi_json (1.15.0)
     multi_xml (0.6.0)
+    net-imap (0.3.4)
+      date
+      net-protocol
+    net-pop (0.1.2)
+      net-protocol
+    net-protocol (0.2.1)
+      timeout
+    net-smtp (0.3.3)
+      net-protocol
     nio4r (2.5.8)
     nokogiri (1.14.1)
       mini_portile2 (~> 2.8.0)
@@ -258,6 +271,7 @@ GEM
     statsd-ruby (1.5.0)
     thor (1.2.1)
     tilt (2.0.11)
+    timeout (0.3.1)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     uglifier (4.2.0)
@@ -296,7 +310,6 @@ DEPENDENCIES
   jquery-rails
   kaminari
   listen
-  mail (~> 2.7.1)
   memcachier
   minitest-ci!
   oauth2 (~> 1.4.11)
@@ -317,7 +330,7 @@ DEPENDENCIES
   web-console
 
 RUBY VERSION
-   ruby 2.7.7p221
+   ruby 3.2.1p31
 
 BUNDLED WITH
    2.4.6
