@@ -1,7 +1,7 @@
 class SessionsController < ApplicationController
   def new
     session[:redirect_to] ||= request.referrer
-    redirect_to client.auth_code.authorize_url(redirect_uri: login_complete_url)
+    redirect_to client.auth_code.authorize_url(redirect_uri: login_complete_url), allow_other_host: true
   end
 
   def complete
