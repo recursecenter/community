@@ -51,6 +51,10 @@ namespace :cljs do
   end
 end
 
+# CLJS_SKIP_BUILD_ON_PRECOMPILE is set in CI and on Heroku.
+# In both contexts, ClojureScript is built in a different
+# environment than Ruby – an OpenJKD Docker image on CI and
+# the Clojure buildpack on Heroku.
 unless ENV.key?("CLJS_SKIP_BUILD_ON_PRECOMPILE")
   Rake::Task["assets:precompile"].enhance(["cljs:build"])
 end
