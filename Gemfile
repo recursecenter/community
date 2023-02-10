@@ -38,6 +38,8 @@ gem 'font-awesome-sass'
 gem 'sprockets-rails'
 gem 'sprockets'
 
+gem 'mail', '2.8.0.1'
+
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 

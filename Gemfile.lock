@@ -156,7 +156,7 @@ GEM
     loofah (2.19.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
-    mail (2.8.1)
+    mail (2.8.0.1)
       mini_mime (>= 0.1.1)
       net-imap
       net-pop
@@ -316,6 +316,7 @@ DEPENDENCIES
   jquery-rails
   kaminari
   listen
+  mail (= 2.8.0.1)
   memcachier
   minitest-ci!
   oauth2 (~> 1.4.11)

@@ -9,10 +9,6 @@ Bundler.require(*Rails.groups)
 require_relative "../lib/web_socket_handler"
 require_relative "../lib/thread_error_logger"
 
-Timeout.timeout(5) {
-  # noop
-}
-
 module Community
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
