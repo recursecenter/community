@@ -299,8 +299,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  airbrake (= 13.0.2)
-  airbrake-ruby (= 6.1.1)
+  airbrake
   barnes
   bootsnap
   bootstrap-sass (~> 3.4.1)
@@ -338,7 +337,7 @@ DEPENDENCIES
   web-console
 
 RUBY VERSION
-   ruby 3.0.5p211
+   ruby 3.2.1p31
 
 BUNDLED WITH
    2.4.6

@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 # When you update the Ruby version, make sure update and rebuild the Docker
 # image in test/Dockerfile and update .circleci/config.yml.
-ruby '3.0.5'
+ruby '3.2.1'
 
 gem 'rails', '7.0.4.2'
 gem 'pg'
@@ -20,10 +20,12 @@ gem 'delayed_job_active_record'
 # gem 'skylight'
 
 # Attempt to work around https://github.com/airbrake/airbrake-ruby/issues/713
-# by specifying verions of airbrake and airbrake-ruby which match what we're
+# by specifying versions of airbrake and airbrake-ruby which match what we're
 # using on recurse.com.
-gem 'airbrake', '13.0.2'
-gem 'airbrake-ruby', '6.1.1'
+# gem 'airbrake', '13.0.2'
+# gem 'airbrake-ruby', '6.1.1'
+
+gem 'airbrake'
 
 # https://devcenter.heroku.com/articles/language-runtime-metrics-ruby
 gem 'barnes'
