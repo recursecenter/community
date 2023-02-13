@@ -28,7 +28,7 @@ gem 'delayed_job_active_record'
 gem 'airbrake'
 
 # https://devcenter.heroku.com/articles/language-runtime-metrics-ruby
-gem 'barnes'
+# gem 'barnes'
 
 # Use SCSS for stylesheets
 gem 'sass-rails'
@@ -38,7 +38,7 @@ gem 'font-awesome-sass'
 gem 'sprockets-rails'
 gem 'sprockets'
 
-gem 'mail', '2.8.0.1'
+gem 'mail'
 
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
@@ -75,7 +75,7 @@ end
 # Use puma as the app server
 gem 'puma'
 gem 'faye-websocket'
-gem 'rack-timeout'
+# gem 'rack-timeout'
 
 gem 'bulk_insert'
 
