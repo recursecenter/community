@@ -1,9 +1,6 @@
 Rails.application.routes.draw do
   root 'pages#index'
 
-  get 'nope', to: 'pages#nope'
-  get 'threadlist', to: 'pages#threadlist'
-
   resources :sessions
   get 'login', to: 'sessions#new'
   get 'logout', to: 'sessions#destroy'
