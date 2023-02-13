@@ -1,5 +1,5 @@
 # https://github.com/airbrake/airbrake-ruby/issues/713
-# require 'timeout'
+require 'timeout'
 Timeout.ensure_timeout_thread_created
 
 # Puma can serve each request in a thread from an internal thread pool.
