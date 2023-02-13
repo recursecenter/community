@@ -98,7 +98,6 @@ GEM
     crass (1.0.6)
     dalli (3.2.3)
     date (3.3.3)
-    debug (1.7.1)
     delayed_job (4.1.11)
       activesupport (>= 3.0, < 8.0)
     delayed_job_active_record (4.1.7)
@@ -300,7 +299,6 @@ DEPENDENCIES
   cancancan
   concurrent-ruby
   dalli
-  debug
   delayed_job_active_record
   dotenv-rails
   faye-websocket
