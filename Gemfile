@@ -1,7 +1,5 @@
 source 'https://rubygems.org'
 
-# When you update the Ruby version, make sure update and rebuild the Docker
-# image in test/Dockerfile and update .circleci/config.yml.
 ruby '3.2.1'
 
 gem 'rails', '7.0.4.2'
