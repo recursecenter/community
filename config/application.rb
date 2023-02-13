@@ -6,6 +6,9 @@ require "rails/all"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+# https://github.com/airbrake/airbrake-ruby/issues/713
+Timeout.ensure_timeout_thread_created
+
 require_relative "../lib/web_socket_handler"
 require_relative "../lib/thread_error_logger"
 
