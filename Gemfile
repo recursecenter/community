@@ -17,16 +17,10 @@ gem 'delayed_job_active_record'
 # Disable until we're on a newer version of Ruby/Rails
 # gem 'skylight'
 
-# Attempt to work around https://github.com/airbrake/airbrake-ruby/issues/713
-# by specifying versions of airbrake and airbrake-ruby which match what we're
-# using on recurse.com.
-# gem 'airbrake', '13.0.2'
-# gem 'airbrake-ruby', '6.1.1'
-
 gem 'airbrake'
 
 # https://devcenter.heroku.com/articles/language-runtime-metrics-ruby
-# gem 'barnes'
+gem 'barnes'
 
 # Use SCSS for stylesheets
 gem 'sass-rails'
@@ -73,7 +67,7 @@ end
 # Use puma as the app server
 gem 'puma'
 gem 'faye-websocket'
-# gem 'rack-timeout'
+gem 'rack-timeout'
 
 gem 'bulk_insert'
 

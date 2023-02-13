@@ -1,1 +1,1 @@
-# Rack::Timeout::Logger.disable
+Rack::Timeout::Logger.disable
