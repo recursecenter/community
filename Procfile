@@ -1,3 +1,3 @@
-web: bin/puma -C config/puma.rb
+web: bin/rails server
 worker: bin/rails jobs:work
 release: bin/rails db:migrate
