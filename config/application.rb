@@ -1,5 +1,8 @@
 require_relative "boot"
 
+# https://github.com/airbrake/airbrake-ruby/issues/713
+Timeout.ensure_timeout_thread_created
+
 require "rails/all"
 
 # Require the gems listed in Gemfile, including any gems
