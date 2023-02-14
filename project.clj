@@ -43,4 +43,4 @@
                                    :optimizations :advanced
                                    :pretty-print false
                                    :closure-defines {"goog.json.USE_NATIVE_JSON" true}
-                                   :externs ["marked-externs.js" "highlight-externs.js" "bootstrap-tooltip-externs.js"]}}]})
+                                   :externs ["marked-externs.js" "highlight-externs.js"]}}]})
