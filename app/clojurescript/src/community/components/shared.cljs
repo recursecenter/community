@@ -152,7 +152,7 @@
             (util/transitioned? owner :open? true false)
             (.removeEventListener js/document.body "click" old-cb))))
 
-  (render-state [_, {:keys [open?]}]
+  (render-state [_ {:keys [open?]}]
     (html
       [:div.btn-group.dropup
        [:div.dropdown {:class (if open? "open")}
