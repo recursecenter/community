@@ -12,7 +12,7 @@ gem 'redis'
 gem 'delayed_job_active_record'
 
 # Disable until we're on a newer version of Ruby/Rails
-# gem 'skylight'
+gem 'skylight'
 
 gem 'airbrake'
 
@@ -32,7 +32,7 @@ gem 'mail'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 
-gem 'oauth2', '~> 1.4.11'
+gem 'oauth2'
 gem 'cancancan'
 
 gem 'redcarpet'
