@@ -1,5 +1,6 @@
 (ns community.util
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [om.core :as om]))
 
 (defn throw-if-err
   "Accepts a single value, throwing it if it is a JavaScript Error
@@ -56,3 +57,20 @@
   (first (for [[i el] (map-indexed vector (rseq v))
                :when (pred el)]
            (- (count v) i 1))))
+
+(defn toggle! [owner attr]
+  (om/set-state! owner attr (not (om/get-state owner attr))))
+
+(defn transitioned? [owner attr from to]
+  (and (= from (om/get-render-state owner attr))
+       (= to (om/get-state owner attr))))
+
+(defn child-of? [child parent]
+  (cond (not (.-parentNode child))
+        false
+
+        (identical? (.-parentNode child) parent)
+        true
+
+        :else
+        (recur (.-parentNode child) parent)))
