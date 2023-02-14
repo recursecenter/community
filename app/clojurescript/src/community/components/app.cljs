@@ -86,26 +86,9 @@
                                                (delete-notification! user i))}
                               {:react-key (:id n)})))]]))))
 
-(defn toggle! [owner attr]
-  (om/set-state! owner attr (not (om/get-state owner attr))))
-
-(defn transitioned? [owner attr from to]
-  (and (= from (om/get-render-state owner attr))
-       (= to (om/get-state owner attr))))
-
-(defn child-of? [child parent]
-  (cond (not (.-parentNode child))
-        false
-
-        (identical? (.-parentNode child) parent)
-        true
-
-        :else
-        (recur (.-parentNode child) parent)))
-
 (defn- make-notification-global-click-cb [owner]
   (fn [e]
-    (when-not (child-of? (.-target e) (om/get-node owner))
+    (when-not (util/child-of? (.-target e) (om/get-node owner))
       (om/set-state! owner :open? false))))
 
 (defcomponent notifications-dropdown [user owner]
@@ -114,14 +97,14 @@
 
   (will-update [_ next-props next-state]
     (let [old-cb (om/get-state owner :global-click-cb)]
-      (cond (transitioned? owner :open? false true)
+      (cond (util/transitioned? owner :open? false true)
             (let [new-cb (make-notification-global-click-cb owner)]
               (when old-cb
                 (.removeEventListener js/document.body "click" old-cb))
               (.addEventListener js/document.body "click" new-cb)
               (om/set-state! owner :global-click-cb new-cb))
 
-            (transitioned? owner :open? true false)
+            (util/transitioned? owner :open? true false)
             (.removeEventListener js/document.body "click" old-cb))))
 
   (render-state [_ {:keys [open?]}]
@@ -132,7 +115,7 @@
                               :title "Notifications"
                               :onClick (fn [e]
                                          (.preventDefault e)
-                                         (toggle! owner :open?))}
+                                         (util/toggle! owner :open?))}
           (if-not (zero? unread-count)
             [:span.badge.unread-count-icon unread-count])
           [:i.fa.fa-bell]]

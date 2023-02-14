@@ -2,7 +2,7 @@
   (:require [community.routes :as routes]
             [community.state :as state]
             [community.api :as api]
-            [community.util :refer-macros [p <?]]
+            [community.util :as util :refer-macros [p <?]]
             [community.util.autocomplete :as ac]
             [community.util.selection-list :as selection-list]
             [community.partials :as partials]
@@ -129,25 +129,49 @@
                                :onChange (fn [e]
                                            (on-change (.. e -target -value)))})]]])))))
 
+(defn- make-broadcast-group-global-click-cb [owner]
+  (fn [e]
+    (when-not (util/child-of? (.-target e) (om/get-node owner))
+      (om/set-state! owner :open? false))))
+
 (defcomponent broadcast-group-picker [{:keys [broadcast-groups]} owner {:keys [on-toggle]}]
+  (init-state [_]
+    {:open? false})
+
   (display-name [_] "BroadcastGroupPicker")
 
-  (render [_]
+  (will-update [_ next-props next-state]
+    (let [old-cb (om/get-state owner :global-click-cb)]
+      (cond (util/transitioned? owner :open? false true)
+            (let [new-cb (make-broadcast-group-global-click-cb owner)]
+              (when old-cb
+                (.removeEventListener js/document.body "click" old-cb))
+              (.addEventListener js/document.body "click" new-cb)
+              (om/set-state! owner :global-click-cb new-cb))
+
+            (util/transitioned? owner :open? true false)
+            (.removeEventListener js/document.body "click" old-cb))))
+
+  (render-state [_, {:keys [open?]}]
     (html
-      (let [toggle (fn [id e]
-                     (.preventDefault e)
-                     (on-toggle id))]
-        [:div.btn-group.dropup
-         [:div.dropdown
-          [:button.btn.btn-link.btn-xs.dropdown-toggle {:type "button" :data-toggle "dropdown"}
-           "Add broadcast group"]
-          [:ul.dropdown-menu.broadcast-group-list
-           (for [{:keys [name id]} (filter (complement :selected?) broadcast-groups)]
-             [:li [:a {:href "#" :onClick (partial toggle id)}
-                   name]])]
-          (for [{:keys [name id]} (filter :selected? broadcast-groups)]
-            [:span.label.label-info.broadcast-label {:onClick (partial toggle id)}
-             "× " name])]]))))
+      [:div.btn-group.dropup
+       [:div.dropdown {:class (if open? "open")}
+        [:button.btn.btn-link.btn-xs.dropdown-toggle {:type "button"
+                                                      :onClick (fn [_]
+                                                                 (util/toggle! owner :open?))}
+         "Add broadcast group"]
+        [:ul.dropdown-menu.broadcast-group-list
+         (for [{:keys [name id]} (filter (complement :selected?) broadcast-groups)]
+           [:li [:a {:href "#" :onClick (fn [e]
+                                          (.preventDefault e)
+                                          (util/toggle! owner :open?)
+                                          (on-toggle id))}
+                 name]])]
+        (for [{:keys [name id]} (filter :selected? broadcast-groups)]
+          [:span.label.label-info.broadcast-label {:onClick (fn [e]
+                                                              (.preventDefault e)
+                                                              (on-toggle id))}
+           "× " name])]])))
 
 (defcomponent subscription-info [{:keys [subscribed reason] :as subscription} owner {:keys [reason?] :or {reason? true}}]
   (display-name [_] "SubscriptionInfo")

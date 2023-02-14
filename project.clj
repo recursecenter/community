@@ -29,7 +29,8 @@
                                    :closure-defines {"goog.json.USE_NATIVE_JSON" true}
                                    :main community.core
                                    :asset-path "/assets/cljs_development"
-                                   :source-map true}}
+                                   :source-map true
+                                   :source-map-asset-path "/assets/cljs_development"}}
                        {:id "test"
                         :source-paths ["app/clojurescript/src", "test/clojurescript"]
                         :compiler {:output-to "test/assets/builds/cljs_test.js"
