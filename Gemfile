@@ -9,9 +9,6 @@ gem 'bootsnap', require: false
 
 gem 'redis'
 
-gem 'dalli'
-gem 'memcachier' # this just sets environmental variables
-
 gem 'delayed_job_active_record'
 
 # Disable until we're on a newer version of Ruby/Rails
