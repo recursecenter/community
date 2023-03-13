@@ -7,7 +7,6 @@ require "rails/all"
 Bundler.require(*Rails.groups)
 
 require_relative "../lib/web_socket_handler"
-require_relative "../lib/thread_error_logger"
 
 module Community
   class Application < Rails::Application
@@ -33,9 +32,5 @@ module Community
     config.action_controller.per_form_csrf_tokens = false
 
     config.middleware.use WebSocketHandler
-
-    initializer('thread_error_logger', after: :load_config_initializers) do
-      config.middleware.insert_before Airbrake::Rack::Middleware, ThreadErrorLogger
-    end
   end
 end
