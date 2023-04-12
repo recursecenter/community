@@ -11,9 +11,6 @@ gem 'redis'
 
 gem 'delayed_job_active_record'
 
-# Disable until we're on a newer version of Ruby/Rails
-gem 'skylight'
-
 gem 'airbrake'
 
 # https://devcenter.heroku.com/articles/language-runtime-metrics-ruby
