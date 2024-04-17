@@ -108,6 +108,10 @@ RAILS_LOG_TO_STDOUT=enabled
 RACK_TIMEOUT_SERVICE_TIMEOUT=2592000
 REDIS_URL=redis://localhost:6379
 
+# You can generate a good value for these with `bin/rails secret`
+SECRET_KEY_BASE=secret_key
+EMAIL_SECRET_KEY=email_secret_key
+
 # See below for instructions on getting this id and secret
 HACKER_SCHOOL_CLIENT_ID=your_client_id
 HACKER_SCHOOL_CLIENT_SECRET=your_client_secret
