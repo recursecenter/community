@@ -47,6 +47,10 @@ private
       @env["rack.session"][k] = v
     end
 
+    def request
+      @request ||= Rack::Request.new(@env)
+    end
+
     def ws
       unless @ws
         raise "Cannot access Session#ws until after Session#hijack!"
@@ -63,9 +67,7 @@ private
     end
 
     def authenticated?
-      @req ||= Rack::Request.new(@env)
-
-      valid_authenticity_token?(self, @req.params["csrf_token"])
+      valid_authenticity_token?(self, request.params["csrf_token"])
     end
 
     def current_user
