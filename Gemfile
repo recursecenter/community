@@ -26,8 +26,7 @@ gem 'sprockets'
 
 gem 'mail'
 
-# Use Uglifier as compressor for JavaScript assets
-gem 'uglifier', '>= 1.3.0'
+gem 'terser'
 
 gem 'oauth2'
 gem 'cancancan'
