@@ -46,7 +46,7 @@ class PostTest < ActiveSupport::TestCase
         begin
           post.mark_as_visited(user)
         rescue; end
-        ActiveRecord::Base.clear_active_connections!
+        ActiveRecord::Base.connection_handler.clear_active_connections!
       end
     end.map(&:join)
 

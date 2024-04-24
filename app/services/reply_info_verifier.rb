@@ -12,7 +12,7 @@ class ReplyInfoVerifier
   end
 
   def initialize
-    @secret = Rails.application.secrets[:email_secret_key]
+    @secret = ENV.fetch("EMAIL_SECRET_KEY")
   end
 
   def generate(user, post)

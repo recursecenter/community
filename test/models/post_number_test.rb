@@ -17,7 +17,7 @@ class PostNumberTest < ActiveSupport::TestCase
       Thread.new do
         sleep 0.001
         Post.create!(thread: t, body: "a randomly ordered post #{i}", author: zach)
-        ActiveRecord::Base.clear_active_connections!
+        ActiveRecord::Base.connection_handler.clear_active_connections!
       end
     end.each(&:join)
 
