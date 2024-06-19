@@ -45,7 +45,6 @@ private
       to: list_address(post.thread.subforum),
       from: post.author.display_email,
       subject: subforum_thread_subject(post.thread),
-      reply_to: list_address(post.thread.subforum),
 
       "Precedence" => "list",
       "List-Id" => list_id(post.thread.subforum),
