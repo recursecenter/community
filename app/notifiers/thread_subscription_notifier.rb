@@ -7,7 +7,7 @@ class ThreadSubscriptionNotifier < Notifier
     @post = post
   end
 
-  def notify(email_recipients=possible_recipients)
+  def notify(email_recipients=possible_recipients, exclude_emails=[])
     unless email_recipients.empty?
       Delayed::Job.enqueue BatchNotificationJob.new(:new_post_in_subscribed_thread_email, email_recipients, post)
     end
@@ -18,7 +18,8 @@ class ThreadSubscriptionNotifier < Notifier
       subscribers = post.thread.subscribers
 
       if post.created_via_email?
-        subscribers = subscribers.where.not(id: post.author)
+        excluded_users = User.where(email: exclude_emails)
+        subscribers = subscribers.where.not(id: post.author_id + excluded_users.pluck(:id))
       end
 
       subscribers.
