@@ -54,7 +54,7 @@ class Api::Private::EmailWebhooksController < Api::ApiController
     exclude_emails = (parse_emails(params["To"]) + parse_emails(params["Cc"])).uniq
 
     # TODO: parse and notify @mentions as well
-    ThreadSubscriptionNotifierJob.perform_later(post, exclude_emails=exclude_emails)
+    ThreadSubscriptionNotifierJob.perform_later(post, exclude_emails: exclude_emails)
 
     head 200
   end
