@@ -3,8 +3,9 @@ require 'set'
 class ThreadSubscriptionNotifier < Notifier
   attr_reader :post
 
-  def initialize(post)
+  def initialize(post, exclude_emails: [])
     @post = post
+    @exclude_emails = exclude_emails
   end
 
   def notify(email_recipients=possible_recipients)
@@ -15,7 +16,7 @@ class ThreadSubscriptionNotifier < Notifier
 
   def possible_recipients
     @possible_recipients ||= if post.broadcast_to_subscribers?
-      subscribers = post.thread.subscribers
+      subscribers = post.thread.subscribers.where.not(email: @exclude_emails)
 
       if post.created_via_email?
         subscribers = subscribers.where.not(id: post.author)

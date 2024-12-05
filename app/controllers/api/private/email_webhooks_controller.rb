@@ -51,10 +51,17 @@ class Api::Private::EmailWebhooksController < Api::ApiController
     post.mark_as_visited(current_user)
     PubSub.publish :created, :post, post
 
+    exclude_emails = (parse_emails(params["To"]) + parse_emails(params["Cc"])).uniq
+
     # TODO: parse and notify @mentions as well
-    ThreadSubscriptionNotifierJob.perform_later(post)
+    ThreadSubscriptionNotifierJob.perform_later(post, exclude_emails: exclude_emails)
 
     head 200
+  end
+
+  # extracts email addresses as a list from "To", or "Cc" headers
+  def parse_emails(headers)
+    Mail::AddressList.new(headers).addresses.map(&:address)
   end
 
   def opened
