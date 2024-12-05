@@ -5,5 +5,8 @@
   "devDependencies": {
     "jasmine-browser-runner": "^1.2.0",
     "jasmine-core": "^4.5.0"
+  },
+  "resolutions": {
+    "express": "4.21.1"
   }
 }
