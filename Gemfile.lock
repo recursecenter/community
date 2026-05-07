@@ -222,7 +222,7 @@ GEM
     puma (6.5.0)
       nio4r (~> 2.0)
     racc (1.8.1)
-    rack (2.2.21)
+    rack (2.2.23)
     rack-session (1.0.2)
       rack (< 3)
     rack-test (2.0.2)
@@ -321,7 +321,7 @@ GEM
     websocket-driver (0.7.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
-    yard (0.9.36)
+    yard (0.9.43)
     zeitwerk (2.6.7)
 
 PLATFORMS
