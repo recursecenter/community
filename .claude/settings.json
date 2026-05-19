@@ -1,0 +1,15 @@
+{
+    "extraKnownMarketplaces": {
+      "ombulabs-ai": {
+        "source": {
+          "source": "github",
+          "repo": "ombulabs/claude-skills"
+        }
+      }
+    },
+    "enabledPlugins": {
+      "rails-upgrade@ombulabs-ai": true,
+      "rails-load-defaults@ombulabs-ai": true,
+      "upgrade-cleanup@ombulabs-ai": true
+    }
+  }
