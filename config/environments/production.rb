@@ -52,10 +52,12 @@ Rails.application.configure do
   config.force_ssl = true
   config.ssl_options = { hsts: { subdomains: true } }
 
-  # Log to STDOUT by default
-  config.logger = ActiveSupport::Logger.new(STDOUT)
-    .tap  { |logger| logger.formatter = ::Logger::Formatter.new }
-    .then { |logger| ActiveSupport::TaggedLogging.new(logger) }
+  # Log to STDOUT when RAILS_LOG_TO_STDOUT is set (e.g. on Heroku).
+  if ENV["RAILS_LOG_TO_STDOUT"].present?
+    config.logger = ActiveSupport::Logger.new(STDOUT)
+      .tap  { |logger| logger.formatter = ::Logger::Formatter.new }
+      .then { |logger| ActiveSupport::TaggedLogging.new(logger) }
+  end
 
   # Prepend all log lines with the following tags.
   config.log_tags = [ :request_id ]
