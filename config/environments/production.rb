@@ -84,8 +84,17 @@ Rails.application.configure do
   # the I18n.default_locale when a translation cannot be found).
   config.i18n.fallbacks = true
 
-  # Don't log any deprecations.
-  config.active_support.report_deprecations = false
+  # Print deprecation notices to the Rails logger.
+  config.active_support.deprecation = :log
+
+  # Log disallowed deprecations.
+  config.active_support.disallowed_deprecation = :log
+
+  # Tell Active Support which deprecation messages to disallow.
+  config.active_support.disallowed_deprecation_warnings = []
+
+  # Log all deprecations.
+  config.active_support.report_deprecations = true
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
