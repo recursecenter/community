@@ -7,7 +7,7 @@ class Subforum < ActiveRecord::Base
   has_slug_for :name
 
   scope :for_user, ->(user) do
-    where("subforums.required_role_ids <@ '{?}'", user.role_ids)
+    where("subforums.required_role_ids <@ ARRAY[?]::integer[]", user.role_ids)
   end
 
   scope :with_counts, -> do
