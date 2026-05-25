@@ -2,6 +2,11 @@ ENV['RAILS_ENV'] = 'test'
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 
+# Minitest 6 removed the auto-call to Minitest.load_plugins from Minitest.run,
+# so installed plugins (e.g. minitest-ci, which writes JUnit XML for CircleCI)
+# never get loaded unless we call this explicitly.
+Minitest.load_plugins
+
 ENV['MAILGUN_API_KEY'] = "foobarbaz"
 
 class ActiveSupport::TestCase
