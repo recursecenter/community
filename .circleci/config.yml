@@ -37,6 +37,7 @@ jobs:
           paths:
             - cljs*
   test:
+    resource_class: large
     docker:
       - image: cimg/ruby:3.4.10-browsers
       - image: cimg/postgres:14.6
@@ -49,8 +50,7 @@ jobs:
       REDIS_URL: redis://localhost:6379
       BUNDLE_JOBS: "1"
       BUNDLE_RETRY: "3"
-      # Cap glibc malloc arenas so parallel gem installs don't balloon RSS and
-      # get OOM-killed on the container's memory limit.
+      # Cap glibc malloc arenas to keep gem-install RSS down.
       MALLOC_ARENA_MAX: "2"
     steps:
       - checkout
