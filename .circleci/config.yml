@@ -48,7 +48,7 @@ jobs:
       RAILS_ENV: test
       DATABASE_URL: postgres://postgres:password@localhost/postgres
       REDIS_URL: redis://localhost:6379
-      BUNDLE_JOBS: "1"
+      BUNDLE_JOBS: "3"
       BUNDLE_RETRY: "3"
       # Cap glibc malloc arenas to keep gem-install RSS down.
       MALLOC_ARENA_MAX: "2"
