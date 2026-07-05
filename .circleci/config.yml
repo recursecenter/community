@@ -47,8 +47,11 @@ jobs:
       RAILS_ENV: test
       DATABASE_URL: postgres://postgres:password@localhost/postgres
       REDIS_URL: redis://localhost:6379
-      BUNDLE_JOBS: "3"
+      BUNDLE_JOBS: "1"
       BUNDLE_RETRY: "3"
+      # Cap glibc malloc arenas so parallel gem installs don't balloon RSS and
+      # get OOM-killed on the container's memory limit.
+      MALLOC_ARENA_MAX: "2"
     steps:
       - checkout
       - attach_workspace:
