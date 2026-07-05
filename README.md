@@ -31,9 +31,9 @@ $ echo "source $(brew --prefix chruby)/share/chruby/chruby.sh" >> ~/.zshrc
 $ echo "source $(brew --prefix chruby)/share/chruby/auto.sh" >> ~/.zshrc
 $ source $(brew --prefix chruby)/share/chruby/chruby.sh
 $ source $(brew --prefix chruby)/share/chruby/auto.sh
-$ ruby-install ruby-3.2.1
+$ ruby-install ruby-3.4.10
 $ ruby -v
-ruby 3.2.1 (2023-02-08 revision 31819e82c8) [arm64-darwin22]
+ruby 3.4.10 (2026-06-30 revision 2b0b7728dc) +PRISM [arm64-darwin24]
 ```
 
 **Jenv and OpenJDK 8**

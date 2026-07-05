@@ -37,8 +37,9 @@ jobs:
           paths:
             - cljs*
   test:
+    resource_class: large
     docker:
-      - image: cimg/ruby:3.2.1-browsers
+      - image: cimg/ruby:3.4.10-browsers
       - image: cimg/postgres:14.6
         environment:
           POSTGRES_PASSWORD: password
@@ -49,6 +50,8 @@ jobs:
       REDIS_URL: redis://localhost:6379
       BUNDLE_JOBS: "3"
       BUNDLE_RETRY: "3"
+      # Cap glibc malloc arenas to keep gem-install RSS down.
+      MALLOC_ARENA_MAX: "2"
     steps:
       - checkout
       - attach_workspace:
