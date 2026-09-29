@@ -10,8 +10,7 @@ class PubSub
 
     @subscriptions = Concurrent::Hash.new { |h, k| h[k] = Concurrent::Hash.new } # Using a Concurrent::Hash as a Set
 
-    uri = URI.parse(ENV["REDIS_URL"])
-    @redis_sub = Redis.new(host: uri.host, port: uri.port, password: uri.password)
+    @redis_sub = RedisCache.new_connection
 
     Thread.new { pubsub_loop }
   end
